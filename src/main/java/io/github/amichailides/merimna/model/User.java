@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
 public class User {
@@ -32,13 +32,14 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    // TODO: Προσθηκη @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles = new HashSet<>();
 
     public void addRole(@NonNull Role role) {
         this.roles.add(role);
     }
 
-    public void removeRole(Role role) {
+    public void removeRole(@NonNull Role role) {
         this.roles.remove(role);
     }
 }
