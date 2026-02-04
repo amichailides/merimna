@@ -5,27 +5,45 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE) // super defensive (whatever happens in future don't even think to create a setter
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NonNull @Setter private String username;
-    @NonNull @Setter private String password;
-    @NonNull @Setter private String email;
-    @NonNull @Setter private String firstName;
-    @NonNull @Setter private String lastName;
-    @Setter private String mobile;
-    @Setter private boolean active = true;
+    @NonNull
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    // TODO: Use BCryptPasswordEncoder.encode() στο Service πριν save (αποθήκευση hashed password)
+    @Setter(AccessLevel.NONE)
+    @Column(nullable = false)
+    private String password;
+
+    @NonNull
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @NonNull
+    @Column(nullable = false)
+    private String firstName;
+
+    @NonNull
+    @Column(nullable = false)
+    private String lastName;
+
+    private String mobile;
+    private boolean active = true;
 
     @Builder.Default
-    @Setter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)  // super defensive (whatever happens in future don't even think to create a setter
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -41,5 +59,12 @@ public class User {
 
     public void removeRole(@NonNull Role role) {
         this.roles.remove(role);
+    }
+
+    public void setEncodedPassword(String encodedPassword) {
+        if (encodedPassword == null || encodedPassword.isBlank()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        this.password = encodedPassword;
     }
 }
