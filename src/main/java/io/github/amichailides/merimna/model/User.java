@@ -2,27 +2,30 @@ package io.github.amichailides.merimna.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE) // super defensive (whatever happens in future don't even think to create a setter
     private Long id;
 
-    @Setter private String username;
-    @Setter private String password;
-    @Setter private String email;
-    @Setter private String firstName;
-    @Setter private String lastName;
+    @NonNull @Setter private String username;
+    @NonNull @Setter private String password;
+    @NonNull @Setter private String email;
+    @NonNull @Setter private String firstName;
+    @NonNull @Setter private String lastName;
     @Setter private String mobile;
     @Setter private boolean active = true;
 
+    @Builder.Default
+    @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -31,7 +34,7 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    public void addRole(Role role) {
+    public void addRole(@NonNull Role role) {
         this.roles.add(role);
     }
 
