@@ -7,8 +7,9 @@ import lombok.*;
 @Embeddable
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class Address {
     /*
      * Logic: Μια διεύθυνση θεωρείται έγκυρη μόνο αν είναι πλήρης.
