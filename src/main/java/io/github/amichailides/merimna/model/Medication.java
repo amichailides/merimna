@@ -1,20 +1,40 @@
 package io.github.amichailides.merimna.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.*;
 
 import java.time.LocalTime;
 import java.util.List;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Embeddable
+@Getter
+@Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class Medication {
-    private String Name;
+    @NonNull
+    @Column(nullable = false)
+    private String name;
+
+    @NonNull
+    @Column(nullable = false)
     private String dosage;
+
+    @NonNull
+    @Column(nullable = false)
     private String frequency;
-    private List<LocalTime> administrationTimes;
+
+    @NonNull
+    @Column(nullable = false)
+    /*
+     * Logic: Οι ώρες αποθηκεύονται ως String (π.χ. "08:00, 20:00") για να είναι
+     * συμβατές με το database mapping των ElementCollections.
+     * TODO: Στο μέλλον μπορεί να μετατραπεί σε List<LocalTime> μέσω AttributeConverter
+     * για την υποστήριξη push notifications στο mobile app.
+     */
+    private String administrationTimes;
+
     private String instructions;
 }
