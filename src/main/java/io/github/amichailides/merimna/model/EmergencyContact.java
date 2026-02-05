@@ -35,10 +35,10 @@ public class EmergencyContact {
      */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "street", column = @Column(name = "contact_street")),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "contact_number")),
-            @AttributeOverride(name = "city", column = @Column(name = "contact_city")),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "contact_zip"))
+            @AttributeOverride(name = "street", column = @Column(name = "emergency_street")),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number")),
+            @AttributeOverride(name = "city", column = @Column(name = "emergency_city")),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip"))
     })
     private Address address;
 
