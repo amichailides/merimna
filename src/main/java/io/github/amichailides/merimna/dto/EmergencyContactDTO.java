@@ -12,5 +12,5 @@ public record EmergencyContactDTO (
         String phoneNumber,
         String mobileNumber,
         String email,
-        AddressDTO addressDTO
+        AddressDTO address
 ) {}

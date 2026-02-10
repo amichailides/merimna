@@ -14,5 +14,7 @@ public record BeneficiaryReadOnlyDTO (
     String lastName,
     String amka,
     LocalDate dateOfBirth,
-    String houseUnit
+    String houseUnit,
+    AddressDTO permanentAddress,
+    EmergencyContactDTO emergencyContact
 ) {}
