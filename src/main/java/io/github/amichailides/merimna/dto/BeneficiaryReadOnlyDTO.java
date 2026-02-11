@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
+import io.github.amichailides.merimna.model.HouseUnit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -14,7 +15,7 @@ public record BeneficiaryReadOnlyDTO (
     String lastName,
     String amka,
     LocalDate dateOfBirth,
-    String houseUnit,
+    HouseUnit houseUnit,
     AddressDTO permanentAddress,
     EmergencyContactDTO emergencyContact
 ) {}

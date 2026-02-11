@@ -2,9 +2,7 @@ package io.github.amichailides.merimna.mapper;
 
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.model.Address;
 import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.HouseUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +21,7 @@ public class BeneficiaryMapper {
                 .lastName(entity.getLastName())
                 .amka(entity.getAmka())
                 .dateOfBirth(entity.getDateOfBirth())
-                .houseUnit(entity.getHouseUnit().name())
+                .houseUnit(entity.getHouseUnit())
                 .permanentAddress(addressMapper.fromEntity(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.fromEntity(entity.getEmergencyContact()))
                 .build();
