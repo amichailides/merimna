@@ -22,8 +22,15 @@ public class EmergencyContact {
     @Column(nullable = false)
     private String relationship; // γονεας, δικαστικος συμπαραστατης κλπ
 
-    // TODO: Να προστεθεί Validation logic ώστε να είναι υποχρεωτικό τουλάχιστον ένα από τα δύο.
-    // Προς το παρόν παραμένουν προαιρετικά για διευκόλυνση του development.
+    /**
+     * TODO: ΥΠΟΧΡΕΩΤΙΚΗ ΥΛΟΠΟΙΗΣΗ (Business Requirement):
+     * Πρέπει να προστεθεί Class-level Validator (π.χ. @AtLeastOneContactPresent)
+     * που να διασφαλίζει ότι ΤΟΥΛΑΧΙΣΤΟΝ ΕΝΑ από τα πεδία:
+     * 1. phoneNumber
+     * 2. mobileNumber
+     * είναι συμπληρωμένο. Δεν επιτρέπεται η αποθήκευση επαφής χωρίς κανένα μέσο επικοινωνίας.
+     * Προς το παρόν παραμένουν προαιρετικά (χωρίς @NotBlank) μόνο για τη διευκόλυνση του αρχικού development.
+     */
     private String phoneNumber;
     private String mobileNumber;
     private String email;
