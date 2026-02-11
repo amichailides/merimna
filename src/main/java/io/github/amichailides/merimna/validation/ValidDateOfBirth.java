@@ -1,0 +1,19 @@
+package io.github.amichailides.merimna.validation;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@NotNull(message = "{dob.required}")
+@Past(message = "{dob.past}")
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = DateOfBirthValidator.class)
+public @interface ValidDateOfBirth {
+    String message() default "{name.invalid}";
+}
