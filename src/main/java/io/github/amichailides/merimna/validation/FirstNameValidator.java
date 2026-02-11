@@ -8,6 +8,6 @@ public class FirstNameValidator implements ConstraintValidator<ValidFirstName, S
         if (value == null || value.isBlank()) {
             return true;
         }
-        return value.matches("^[A-Za-zΑ-Ωα-ωΆ-ώ\\s-]+$");
+        return value.matches(ValidationPatterns.GREEK_LATIN_TEXT);
     }
 }

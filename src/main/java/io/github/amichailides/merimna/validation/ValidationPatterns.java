@@ -14,6 +14,9 @@ public final class ValidationPatterns {
     public static final String PHONE = "^\\+?[0-9\\s-]{10,15}$";
     public static final String MOBILE = "^(\\+\\d{1,3})?[0-9\\s-]{10,15}$";
 
+    // ΑΜΚΑ (11 ψηφία)
+    public static final String AMKA = "^\\d{11}$";
+
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }

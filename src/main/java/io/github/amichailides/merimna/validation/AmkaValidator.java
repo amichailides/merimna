@@ -11,6 +11,6 @@ public class AmkaValidator implements ConstraintValidator<ValidAmka, String> {
             return true;
         }
 
-        return value.matches("\\d{11}");
+        return value.matches(ValidationPatterns.AMKA);
     }
 }
