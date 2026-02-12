@@ -51,10 +51,10 @@ public class Beneficiary {
      */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "street", column = @Column(name = "perm_street", nullable = true)),
-            @AttributeOverride(name = "streetNumber", column = @Column (name = "perm_number", nullable = true)),
-            @AttributeOverride(name = "city", column = @Column(name = "perm_city", nullable = true)),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "perm_zip", nullable = true))
+            @AttributeOverride(name = "street", column = @Column(name = "perm_street", nullable = false)),
+            @AttributeOverride(name = "streetNumber", column = @Column (name = "perm_number", nullable = false)),
+            @AttributeOverride(name = "city", column = @Column(name = "perm_city", nullable = false)),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "perm_zip", nullable = false))
     })
     private Address permanentAddress;
 
