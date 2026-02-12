@@ -7,10 +7,15 @@ import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +28,14 @@ import java.util.Optional;
  * - Όλα τα read methods χρησιμοποιούν @Transactional(readOnly = true)
  *   για optimization (skip dirty checking, reduce memory usage)
  */
+
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     private final BeneficiaryRepository repository;
     private final BeneficiaryMapper mapper;
+    private final MessageSource messageSource;
 
     @Override
     @Transactional(readOnly = true)
@@ -70,6 +77,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
     public Page<BeneficiaryReadOnlyDTO> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable) {
         return repository.findByLastNameContainingIgnoreCase(lastName, pageable)
                 .map(mapper::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public BeneficiaryReadOnlyDTO findById(Long id) {
+        return repository.findById(id)
+                .map(mapper::fromEntity)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        messageSource.getMessage("beneficiary.notFound", null, LocaleContextHolder.getLocale())));
     }
 
     @Transactional

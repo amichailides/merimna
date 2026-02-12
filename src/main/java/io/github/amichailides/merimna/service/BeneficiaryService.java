@@ -17,4 +17,5 @@ public interface BeneficiaryService {
     List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);
     Page<BeneficiaryReadOnlyDTO> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
+    BeneficiaryReadOnlyDTO findById(Long id);
 }
