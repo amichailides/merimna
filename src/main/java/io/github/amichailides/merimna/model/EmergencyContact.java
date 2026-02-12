@@ -35,17 +35,12 @@ public class EmergencyContact {
     private String mobileNumber;
     private String email;
 
-
-    /* * Σημείωση Logic: Χρησιμοποιούμε την Address ως Embedded.
-     * Αν υπάρχει επαφή, η διεύθυνση είναι επίσης υποχρεωτική για να ξέρουμε
-     * πού να αναζητήσουμε τον υπεύθυνο.
-     */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "street", column = @Column(name = "emergency_street")),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number")),
-            @AttributeOverride(name = "city", column = @Column(name = "emergency_city")),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip"))
+            @AttributeOverride(name = "street", column = @Column(name = "emergency_street",nullable = false)),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number",nullable = false)),
+            @AttributeOverride(name = "city", column = @Column(name = "emergency_city",nullable = false)),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip", nullable = false))
     })
     private Address address;
 

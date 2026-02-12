@@ -44,10 +44,8 @@ public class Beneficiary {
     private HouseUnit houseUnit;
 
     /*
-     * Logic: Ενώ η κλάση Address απαιτεί πλήρη στοιχεία, εδώ η διεύθυνση
-     * είναι προαιρετική (nullable = true) γιατί ο ωφελούμενος μπορεί να μην έχει
-     * πλέον μόνιμη κατοικία ή οικογένεια.
-     * Αν όμως οριστεί το αντικείμενο, πρέπει να ακολουθεί το NonNull συμβόλαιο της Address.
+     * Υποχρεωτική διεύθυνση. Αν ο ωφελούμενος δεν έχει οικογενειακή διεύθυνση,
+     * καταχωρείται η διεύθυνση της δομής φιλοξενίας.
      */
     @Embedded
     @AttributeOverrides({
@@ -58,11 +56,15 @@ public class Beneficiary {
     })
     private Address permanentAddress;
 
+    /*
+     * Υποχρεωτική επαφή έκτακτης ανάγκης. Αν δεν υπάρχει συγγενής,
+     * καταχωρείται Κοινωνικός Λειτουργός, Υπεύθυνος Δομής ή Νόμιμος Επίτροπος.
+     */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name")),
-            @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name")),
-            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship"))
+            @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name",nullable = false)),
+            @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name",nullable = false)),
+            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship",nullable = false))
     })
     private EmergencyContact emergencyContact;
 
