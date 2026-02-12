@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.validation;
 
 import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 
@@ -16,4 +17,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = DateOfBirthValidator.class)
 public @interface ValidDateOfBirth {
     String message() default "{name.invalid}";
+
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
 }
