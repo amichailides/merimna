@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.service;
 
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.exception.BeneficiaryNotFoundException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
@@ -83,8 +84,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
     public BeneficiaryReadOnlyDTO findById(Long id) {
         return repository.findById(id)
                 .map(mapper::fromEntity)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        messageSource.getMessage("beneficiary.notFound", null, LocaleContextHolder.getLocale())));
+                .orElseThrow(() -> new BeneficiaryNotFoundException(id));
     }
 
     @Transactional
