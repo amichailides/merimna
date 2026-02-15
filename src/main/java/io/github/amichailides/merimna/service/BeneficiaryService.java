@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface BeneficiaryService {
     Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(Pageable pageable);
     Optional<BeneficiaryReadOnlyDTO> findBeneficiaryById(Long id);
-    Optional<BeneficiaryReadOnlyDTO> findByAmka(String amka);
+    BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
     List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);
     Page<BeneficiaryReadOnlyDTO> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);

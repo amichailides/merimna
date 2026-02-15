@@ -33,4 +33,10 @@ public class BeneficiaryController {
 
     }
 
+    @GetMapping("/{amka}")
+    public ResponseEntity<BeneficiaryReadOnlyDTO> findByAmka(@Positive @PathVariable String amka){
+        BeneficiaryReadOnlyDTO dto = service.findByAmka(amka);
+        return ResponseEntity.ok(dto);
+    }
+
 }
