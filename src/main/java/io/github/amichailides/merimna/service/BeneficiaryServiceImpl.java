@@ -43,13 +43,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BeneficiaryReadOnlyDTO> findBeneficiaryById(Long id) {
-        return repository.findById(id)
-                .map(mapper::toReadOnlyDTO);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public BeneficiaryReadOnlyDTO findByAmka(String amka) {
         return repository.findByAmka(amka)
                 .map(mapper::toReadOnlyDTO)

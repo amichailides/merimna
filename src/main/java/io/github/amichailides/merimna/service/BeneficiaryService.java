@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface BeneficiaryService {
     Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(Pageable pageable);
-    Optional<BeneficiaryReadOnlyDTO> findBeneficiaryById(Long id);
     BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
     List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);
