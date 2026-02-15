@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
 
         // Παίρνουμε το localized message
         String message = messageSource.getMessage(
-                "beneficiary.notFound",
-                new Object[]{ex.getBeneficiaryId()},  //  Το ID σαν parameter
+                ex.getMessageKey(),
+                ex.getMessageArgs(),  //  Το ID σαν parameter
                 LocaleContextHolder.getLocale()
         );
 

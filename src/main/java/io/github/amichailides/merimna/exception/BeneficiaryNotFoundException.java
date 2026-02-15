@@ -1,14 +1,10 @@
 package io.github.amichailides.merimna.exception;
 
-public class BeneficiaryNotFoundException extends RuntimeException{
-    private final Long beneficiaryId;
+public abstract class BeneficiaryNotFoundException extends RuntimeException{
 
-    public BeneficiaryNotFoundException(Long id) {
-        super("Beneficiary not found with id: " + id);
-        this.beneficiaryId = id;
+    public BeneficiaryNotFoundException(String message) {
+        super(message);  // Περνάει το message στο RuntimeException
     }
-
-    public Long getBeneficiaryId() {
-        return beneficiaryId;
-    }
+    public abstract String getMessageKey();
+    public abstract Object[] getMessageArgs();
 }
