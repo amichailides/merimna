@@ -24,6 +24,8 @@ public record BeneficiarySaveDTO(
         @ValidDateOfBirth
         LocalDate dateOfBirth,
 
+        Boolean isActive,
+
         @NotNull(message = "{houseUnit.required}")
         HouseUnit houseUnit,
 

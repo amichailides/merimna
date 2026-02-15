@@ -45,6 +45,10 @@ public class Beneficiary {
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
+    @Builder.Default
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
+
     @NonNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

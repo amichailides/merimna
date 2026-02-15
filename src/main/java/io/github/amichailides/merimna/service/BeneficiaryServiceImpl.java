@@ -84,4 +84,13 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
         return mapper.toReadOnlyDTO(savedBeneficiary);
     }
 
+    @Transactional
+    public BeneficiaryReadOnlyDTO deactivate(Long id) {
+        Beneficiary beneficiary = repository.findById(id)
+                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+
+        beneficiary.setIsActive(false);
+
+        return mapper.toReadOnlyDTO(repository.save(beneficiary));
+    }
 }

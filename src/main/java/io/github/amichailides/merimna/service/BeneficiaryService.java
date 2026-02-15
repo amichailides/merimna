@@ -17,4 +17,5 @@ public interface BeneficiaryService {
     Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
     BeneficiaryReadOnlyDTO findById(Long id);
+    BeneficiaryReadOnlyDTO deactivate(Long id);
 }

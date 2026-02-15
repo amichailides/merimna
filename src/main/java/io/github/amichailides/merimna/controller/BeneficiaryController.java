@@ -62,4 +62,10 @@ public class BeneficiaryController {
         Page<BeneficiaryReadOnlyDTO> page = service.findByLastNameStartingWithIgnoreCase(lastName, pageable );
         return ResponseEntity.ok(page);
     }
+
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<BeneficiaryReadOnlyDTO> deactivate (@PathVariable Long id) {
+        BeneficiaryReadOnlyDTO updated = service.deactivate(id);
+        return ResponseEntity.ok(updated);
+    }
 }
