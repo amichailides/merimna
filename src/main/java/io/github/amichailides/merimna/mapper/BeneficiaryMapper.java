@@ -12,7 +12,7 @@ public class BeneficiaryMapper {
     private final AddressMapper addressMapper;
     private final EmergencyContactMapper emergencyMapper;
 
-    public BeneficiaryReadOnlyDTO fromEntity(Beneficiary entity) {
+    public BeneficiaryReadOnlyDTO toReadOnlyDTO(Beneficiary entity) {
         if (entity == null) return null;
 
         return BeneficiaryReadOnlyDTO.builder()
@@ -22,8 +22,8 @@ public class BeneficiaryMapper {
                 .amka(entity.getAmka())
                 .dateOfBirth(entity.getDateOfBirth())
                 .houseUnit(entity.getHouseUnit())
-                .permanentAddress(addressMapper.fromEntity(entity.getPermanentAddress()))
-                .emergencyContact(emergencyMapper.fromEntity(entity.getEmergencyContact()))
+                .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
+                .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
                 .build();
     }
 

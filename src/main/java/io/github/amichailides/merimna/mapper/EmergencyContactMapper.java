@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class EmergencyContactMapper {
     private final AddressMapper addressMapper;
 
-    public EmergencyContactDTO fromEntity(EmergencyContact entity) {
+    public EmergencyContactDTO toDTO(EmergencyContact entity) {
         if (entity == null) return null;
 
         return EmergencyContactDTO.builder()
@@ -20,7 +20,7 @@ public class EmergencyContactMapper {
                 .phoneNumber(entity.getPhoneNumber())
                 .mobileNumber(entity.getMobileNumber())
                 .email(entity.getEmail())
-                .address(addressMapper.fromEntity(entity.getAddress()))
+                .address(addressMapper.toDTO(entity.getAddress()))
                 .build();
     }
 

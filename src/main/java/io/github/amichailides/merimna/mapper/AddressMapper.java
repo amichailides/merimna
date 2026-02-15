@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AddressMapper {
 
-    public AddressDTO fromEntity(Address address) {
+    public AddressDTO toDTO(Address address) {
         if (address == null) return null;
 
         return AddressDTO.builder()
