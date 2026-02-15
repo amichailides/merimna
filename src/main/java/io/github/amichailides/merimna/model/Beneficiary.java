@@ -16,6 +16,13 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
+@Table(name = "beneficiaries",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_beneficiary_amka", columnNames = "amka")
+        },
+        indexes = {
+                @Index(name = "idx_beneficiary_lastname", columnList = "last_name")
+        })
 public class Beneficiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +57,7 @@ public class Beneficiary {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "perm_street", nullable = false)),
-            @AttributeOverride(name = "streetNumber", column = @Column (name = "perm_number", nullable = false)),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "perm_number", nullable = false)),
             @AttributeOverride(name = "city", column = @Column(name = "perm_city", nullable = false)),
             @AttributeOverride(name = "zipCode", column = @Column(name = "perm_zip", nullable = false))
     })
@@ -62,9 +69,9 @@ public class Beneficiary {
      */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name",nullable = false)),
-            @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name",nullable = false)),
-            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship",nullable = false))
+            @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name", nullable = false)),
+            @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name", nullable = false)),
+            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship", nullable = false))
     })
     private EmergencyContact emergencyContact;
 

@@ -15,7 +15,7 @@ public interface BeneficiaryService {
     BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
     List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);
-    Page<BeneficiaryReadOnlyDTO> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
+    Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
     BeneficiaryReadOnlyDTO findById(Long id);
 }

@@ -20,6 +20,9 @@ public interface BeneficiaryRepository extends JpaRepositoryImplementation<Benef
 
     List<Beneficiary> findAllByHouseUnit(HouseUnit houseUnit);
 
-    Page<Beneficiary> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
-
+    /**
+     * Performance Note: Χρήση 'StartingWith' αντί για 'Containing' για την αξιοποίηση
+     * των Database Indexes (Index Seek) και την αποφυγή Full Table Scan.
+     */
+    Page<Beneficiary> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
 }

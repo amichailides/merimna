@@ -6,6 +6,8 @@ import io.github.amichailides.merimna.service.BeneficiaryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,16 +29,37 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> findById(@Positive @PathVariable Long id) {
+    public ResponseEntity<BeneficiaryReadOnlyDTO> getById(@Positive @PathVariable Long id) {
         BeneficiaryReadOnlyDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
 
     }
 
     @GetMapping("/{amka}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> findByAmka(@Positive @PathVariable String amka){
+    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(@Positive @PathVariable String amka){
         BeneficiaryReadOnlyDTO dto = service.findByAmka(amka);
         return ResponseEntity.ok(dto);
     }
 
+    /**
+     * TODO: Refactor to Global Search Pattern
+     * ---------------------------------------
+     * Στόχος: Ενοποίηση των φίλτρων αναζήτησης (AMKA, LastName, κλπ) σε ένα endpoint.
+     * * Σχέδιο Υλοποίησης:
+     * 1. Δημιουργία BeneficiarySearchDTO για bind των προαιρετικών Query Params.
+     * 2. Χρήση Spring Data JPA Specifications στο Service για δυναμικά queries.
+     * 3. Διατήρηση του Pageable για ομοιόμορφη σελιδοποίηση.
+     * * Σημείωση: Οι μέθοδοι /{id} και /amka/{amka} θα παραμείνουν για
+     * direct "List-to-Detail" πρόσβαση και επιστροφή 404 αν δεν βρεθούν.
+     */
+    @GetMapping
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(Pageable pageable) {
+        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(pageable);
+        return ResponseEntity.ok(page);
+    }
+
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getBeneficiariesByLastName(@RequestParam String lastName, Pageable pageable){
+        Page<BeneficiaryReadOnlyDTO> page = service.findByLastNameStartingWithIgnoreCase(lastName, pageable );
+        return ResponseEntity.ok(page);
+    }
 }

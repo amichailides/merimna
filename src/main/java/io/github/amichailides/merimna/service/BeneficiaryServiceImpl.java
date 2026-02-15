@@ -33,7 +33,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     private final BeneficiaryRepository repository;
     private final BeneficiaryMapper mapper;
-    private final MessageSource messageSource;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,8 +72,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable) {
-        return repository.findByLastNameContainingIgnoreCase(lastName, pageable)
+    public Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable) {
+        return repository.findByLastNameStartingWithIgnoreCase(lastName, pageable)
                 .map(mapper::toReadOnlyDTO);
     }
 
