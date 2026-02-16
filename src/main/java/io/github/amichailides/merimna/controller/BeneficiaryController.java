@@ -58,14 +58,16 @@ public class BeneficiaryController {
         return ResponseEntity.ok(page);
     }
 
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getBeneficiariesByLastName(@RequestParam String lastName, Pageable pageable){
-        Page<BeneficiaryReadOnlyDTO> page = service.findByLastNameStartingWithIgnoreCase(lastName, pageable );
-        return ResponseEntity.ok(page);
-    }
-
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<BeneficiaryReadOnlyDTO> deactivate (@PathVariable Long id) {
         BeneficiaryReadOnlyDTO updated = service.deactivate(id);
         return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search (@RequestParam(required = false) String term,
+                                                                Pageable pageable) {
+        Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
+        return ResponseEntity.ok(results);
     }
 }

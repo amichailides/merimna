@@ -8,10 +8,12 @@ import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,5 +94,17 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
         beneficiary.setIsActive(false);
 
         return mapper.toReadOnlyDTO(repository.save(beneficiary));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable) {
+        //  Παίρνουμε το specification που φτιάξαμε
+        Specification<Beneficiary> spec = BeneficiarySpecifications.globalSearch(term);
+
+        // 2. Ζητάμε από το repository να κάνει το search με pagination
+        // 3. Κάνουμε map κάθε Entity που βρέθηκε σε ReadOnlyDTO
+        return repository.findAll(spec, pageable)
+                .map(mapper::toReadOnlyDTO);
     }
 }

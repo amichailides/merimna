@@ -18,4 +18,5 @@ public interface BeneficiaryService {
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
     BeneficiaryReadOnlyDTO findById(Long id);
     BeneficiaryReadOnlyDTO deactivate(Long id);
+    Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable);
 }
