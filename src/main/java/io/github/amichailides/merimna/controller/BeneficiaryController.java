@@ -49,8 +49,9 @@ public class BeneficiaryController {
      * 2. Προσθήκη επιπλέον κριτηρίων αναζήτησης (π.χ. ενεργοί/ανενεργοί ωφελούμενοι).
      */
     @GetMapping
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(Pageable pageable) {
-        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(pageable);
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
+            @RequestParam(name = "includeInactive", defaultValue = "false")  boolean includeInactive, Pageable pageable) {
+        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, pageable);
         return ResponseEntity.ok(page);
     }
 

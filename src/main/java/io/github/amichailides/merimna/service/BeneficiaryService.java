@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BeneficiaryService {
-    Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(Pageable pageable);
+    Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive,Pageable pageable);
     BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
     List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);

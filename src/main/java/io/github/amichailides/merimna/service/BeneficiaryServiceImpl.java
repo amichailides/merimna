@@ -38,9 +38,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(mapper::toReadOnlyDTO);
+    public Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive, Pageable pageable) {
+
+        // Επιλέγουμε το σωστό Page από το repository
+        Page<Beneficiary> beneficiariesPage = includeInactive
+                ? repository.findAll(pageable)
+                : repository.findAllByIsActiveTrue(pageable);
+
+        return beneficiariesPage.map(mapper::toReadOnlyDTO);
     }
 
     @Override

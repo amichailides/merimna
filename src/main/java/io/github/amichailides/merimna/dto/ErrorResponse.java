@@ -8,4 +8,7 @@ public record ErrorResponse(
         String message,
         String path,
         LocalDateTime timestamp
+        // TODO: Add error code field when ready
+        //  e.g., String code (BENEFICIARY_NOT_FOUND, AMKA_ALREADY_EXISTS, etc.)
+        //  Benefits: Frontend can handle errors programmatically, i18n-safe
 ) {}

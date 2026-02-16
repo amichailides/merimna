@@ -25,4 +25,8 @@ public interface BeneficiaryRepository extends JpaRepositoryImplementation<Benef
      * των Database Indexes (Index Seek) και την αποφυγή Full Table Scan.
      */
     Page<Beneficiary> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
+
+    Page<Beneficiary> findAllByIsActiveIsTrue(Pageable pageable);
+
+    Page<Beneficiary> findAllByIsActiveTrue(Pageable pageable);
 }
