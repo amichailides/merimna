@@ -42,15 +42,11 @@ public class BeneficiaryController {
     }
 
     /**
-     * TODO: Refactor to Global Search Pattern
-     * ---------------------------------------
-     * Στόχος: Ενοποίηση των φίλτρων αναζήτησης (AMKA, LastName, κλπ) σε ένα endpoint.
-     * * Σχέδιο Υλοποίησης:
-     * 1. Δημιουργία BeneficiarySearchDTO για bind των προαιρετικών Query Params.
-     * 2. Χρήση Spring Data JPA Specifications στο Service για δυναμικά queries.
-     * 3. Διατήρηση του Pageable για ομοιόμορφη σελιδοποίηση.
-     * * Σημείωση: Οι μέθοδοι /{id} και /amka/{amka} θα παραμείνουν για
-     * direct "List-to-Detail" πρόσβαση και επιστροφή 404 αν δεν βρεθούν.
+     * * TODO: Future Refactoring
+     * -------------------------
+     * 1. Αν προστεθούν πολλά φίλτρα (π.χ. ημερομηνίες, ηλικίες),
+     * μετατροπή των Params σε BeneficiarySearchDTO.
+     * 2. Προσθήκη επιπλέον κριτηρίων αναζήτησης (π.χ. ενεργοί/ανενεργοί ωφελούμενοι).
      */
     @GetMapping
     public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(Pageable pageable) {
