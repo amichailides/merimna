@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.controller;
 
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Validated
@@ -67,4 +70,11 @@ public class BeneficiaryController {
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
     }
+
+    @GetMapping("unit/{houseUnit}")
+    public ResponseEntity<List<BeneficiaryReadOnlyDTO>> getByHouseUnit(@PathVariable HouseUnit houseUnit) {
+        List<BeneficiaryReadOnlyDTO> byHouse = service.findAllByHouseUnit(houseUnit);
+        return ResponseEntity.ok(byHouse);
+    }
+
 }

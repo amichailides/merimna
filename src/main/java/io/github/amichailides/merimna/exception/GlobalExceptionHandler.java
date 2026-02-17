@@ -90,4 +90,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    // TODO: Implement Global Type Mismatch Handler
+// 1. Target Exception: MethodArgumentTypeMismatchException
+// 2. Goal: Catch invalid Enum values (e.g. HouseUnit) or ID type errors in @PathVariables
+// 3. Response: Return 400 Bad Request with a clear message:
+//    "The value '{providedValue}' is not valid for the parameter '{parameterName}'"
+// 4. Benefit: Provides a consistent, professional error response instead of Spring's default 500/400 trace.
+
+
+
 }
