@@ -12,10 +12,11 @@ public final class ValidationPatterns {
 
     // Τηλέφωνα (Δέχεται + στην αρχή, κενά, παύλες και 10-15 ψηφία)
     public static final String PHONE = "^\\+?[0-9\\s-]{10,15}$";
-    public static final String MOBILE = "^(\\+\\d{1,3})?[0-9\\s-]{10,15}$";
+    // Επιτρέπει προαιρετικά το '+' στην αρχή και μετά μόνο ψηφία (από 7 έως 15)
+    public static final String MOBILE = "^(\\+?\\d{1,4})?\\d{7,15}$";
 
     // ΑΜΚΑ (11 ψηφία)
-    public static final String AMKA = "^\\d{11}$";
+    public static final String AMKA = "^\\d+$";
 
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");

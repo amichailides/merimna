@@ -26,7 +26,5 @@ public interface BeneficiaryRepository extends JpaRepositoryImplementation<Benef
      */
     Page<Beneficiary> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
 
-    Page<Beneficiary> findAllByIsActiveIsTrue(Pageable pageable);
-
     Page<Beneficiary> findAllByIsActiveTrue(Pageable pageable);
 }

@@ -1,9 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.validation.ValidFirstName;
-import io.github.amichailides.merimna.validation.ValidLastName;
-import io.github.amichailides.merimna.validation.ValidPhone;
-import io.github.amichailides.merimna.validation.ValidationPatterns;
+import io.github.amichailides.merimna.validation.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,38 +8,31 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
+@AtLeastOnePhonePresent(groups = SecondOrder.class)
 @Builder
-public record EmergencyContactDTO (
-        @ValidFirstName(message = "{emergency.firstName.invalid}")
+public record EmergencyContactDTO(
+        @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
-        @ValidLastName(message = "{emergency.lastName.invalid}")
+        @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
-        @NotBlank(message = "{emergency.relationship.required}")
+        @NotBlank(message = "{emergency.relationship.required}", groups = FirstOrder.class)
         @Pattern(regexp = ValidationPatterns.GREEK_LATIN_TEXT,
-                message = "{emergency.relationship.invalid}")
+                message = "{emergency.relationship.invalid}", groups = SecondOrder.class)
         String relationship,
 
-        @ValidPhone(message = "{emergency.phone.invalid}")
-        String phoneNumber,
 
-        @ValidPhone(message = "{emergency.mobile.invalid}")
+        @ValidLandline(message = "{emergency.landline.invalid}", groups = SecondOrder.class)
+        String landlinePhone,
+
+        @ValidMobile(message = "{emergency.mobile.invalid}", groups = SecondOrder.class)
         String mobileNumber,
 
-        @Email(message = "{emergency.email.invalid}")
+        @Email(message = "{emergency.email.invalid}", groups = SecondOrder.class)
         String email,
 
-        @NotNull(message = "{address.required}")
+        @NotNull(message = "{address.required}", groups = FirstOrder.class)
         @Valid // ΑΠΑΡΑΙΤΗΤΟ: Για να ελεγχθούν τα @Pattern μέσα στο AddressDTO
         AddressDTO address
-) {
-        /*
-         * TODO: ΥΠΟΧΡΕΩΤΙΚΗ ΥΛΟΠΟΙΗΣΗ (Business Requirement):
-         * Πρέπει να προστεθεί Class-level Validator (π.χ. @AtLeastOneContactPresent)
-         * που να διασφαλίζει ότι ΤΟΥΛΑΧΙΣΤΟΝ ΕΝΑ από τα πεδία:
-         * 1. phoneNumber
-         * 2. mobileNumber
-         * είναι συμπληρωμένο. Δεν επιτρέπεται η αποθήκευση επαφής χωρίς κανένα μέσο επικοινωνίας.
-         */
-}
+) {}

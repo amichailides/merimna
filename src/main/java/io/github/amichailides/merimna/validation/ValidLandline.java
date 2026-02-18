@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PhoneValidator.class)
-public @interface ValidPhone {
-    String message() default "{phone.invalid}";
+@Constraint(validatedBy = LandlineValidator.class)
+public @interface ValidLandline {
+    String message() default "{landline.invalid}";
 
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

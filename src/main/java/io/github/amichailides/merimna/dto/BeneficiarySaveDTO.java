@@ -1,10 +1,8 @@
 package io.github.amichailides.merimna.dto;
 
 import io.github.amichailides.merimna.model.HouseUnit;
-import io.github.amichailides.merimna.validation.ValidAmka;
-import io.github.amichailides.merimna.validation.ValidDateOfBirth;
-import io.github.amichailides.merimna.validation.ValidFirstName;
-import io.github.amichailides.merimna.validation.ValidLastName;
+import io.github.amichailides.merimna.validation.*;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -12,16 +10,16 @@ import java.time.LocalDate;
 
 @Builder
 public record BeneficiarySaveDTO(
-        @ValidFirstName
+        @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
-        @ValidLastName
+        @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
-        @ValidAmka
+        @ValidAmka(groups = SecondOrder.class)
         String amka,
 
-        @ValidDateOfBirth
+        @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
         Boolean isActive,

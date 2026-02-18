@@ -1,5 +1,7 @@
 package io.github.amichailides.merimna.dto;
 
+import io.github.amichailides.merimna.validation.FirstOrder;
+import io.github.amichailides.merimna.validation.SecondOrder;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -15,25 +17,25 @@ import lombok.Builder;
 
 @Builder
 public record AddressDTO (
-    @NotBlank(message = "{address.street.required}")
+    @NotBlank(message = "{address.street.required}", groups = FirstOrder.class)
     @Pattern(regexp = ValidationPatterns.GREEK_LATIN_TEXT,
-            message = "{address.street.invalid}")
+            message = "{address.street.invalid}", groups = SecondOrder.class)
     String street,
 
-    @NotBlank(message = "{address.number.required}")
+    @NotBlank(message = "{address.number.required}", groups = FirstOrder.class)
     @Pattern(regexp = ValidationPatterns.STREET_NUMBER,
-            message = "{address.number.invalid}")
+            message = "{address.number.invalid}", groups = SecondOrder.class)
     String streetNumber,
 
-    @NotBlank(message = "{address.city.required}")
+    @NotBlank(message = "{address.city.required}", groups = FirstOrder.class)
     @Pattern(regexp = ValidationPatterns.GREEK_LATIN_TEXT,
-            message = "{address.city.invalid}")
+            message = "{address.city.invalid}", groups = SecondOrder.class)
     String city,
 
 
-    @NotBlank(message = "{address.zip.required}")
+    @NotBlank(message = "{address.zip.required}", groups = FirstOrder.class)
     @Pattern(regexp = ValidationPatterns.POSTAL_CODE,
-            message = "{address.zip.invalid}")
+            message = "{address.zip.invalid}", groups = SecondOrder.class)
     String zipCode
 ) {}
 

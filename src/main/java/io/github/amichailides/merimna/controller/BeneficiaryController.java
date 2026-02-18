@@ -1,9 +1,11 @@
 package io.github.amichailides.merimna.controller;
 
+import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
+import io.github.amichailides.merimna.validation.ValidationGroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +26,25 @@ public class BeneficiaryController {
     private final BeneficiaryService service;
 
     @PostMapping
-    public ResponseEntity<BeneficiaryReadOnlyDTO> save (@Valid @RequestBody BeneficiarySaveDTO dto) {
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> save (
+            @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
         BeneficiaryReadOnlyDTO responseBody = service.save(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(responseBody);
+                .body(ApiResponse.success(
+                        responseBody,
+                        "Ο ωφελούμενος δημιουργήθηκε με επιτυχία!",
+                        HttpStatus.CREATED.value()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> getById(@Positive @PathVariable Long id) {
-        BeneficiaryReadOnlyDTO dto = service.findById(id);
-        return ResponseEntity.ok(dto);
-
+    public ResponseEntity
+            <ApiResponse<BeneficiaryReadOnlyDTO>> getById(@Positive @PathVariable Long id) {
+        BeneficiaryReadOnlyDTO responseBody = service.findById(id);
+        return ResponseEntity.ok(ApiResponse.success(
+                responseBody,
+                "Επιτυχής ανάκτηση στοιχείων ωφελούμενου",
+                HttpStatus.OK.value()));
     }
 
     @GetMapping("/amka/{amka}")

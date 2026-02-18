@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.exception;
 
-import io.github.amichailides.merimna.dto.ErrorResponse;
+import io.github.amichailides.merimna.common.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -25,8 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BeneficiaryNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleBeneficiaryNotFound(
+    public ResponseEntity<ApiResponse<Void>> handleBeneficiaryNotFound(
             BeneficiaryNotFoundException ex,
             HttpServletRequest request) {
 
@@ -37,17 +35,18 @@ public class GlobalExceptionHandler {
                 LocaleContextHolder.getLocale()
         );
 
-        return new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                message,
-                request.getRequestURI(),
-                LocalDateTime.now()
-        );
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()
+                ));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(
+    public ResponseEntity<ApiResponse<Void>> handleConflict(
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
 
@@ -57,38 +56,52 @@ public class GlobalExceptionHandler {
                 LocaleContextHolder.getLocale()
         );
 
-
-        ErrorResponse error= new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
-                message,
-                request.getRequestURI(),
-                LocalDateTime.now()
-        );
-
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()
+                ));
     }
 
     // TODO: Future Refactoring - Αντικατάσταση του String message με Map<String, String>
     // για την ταυτόχρονη επιστροφή όλων των validation errors (field-level errors).
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(
+    public ResponseEntity<ApiResponse<Void>> handleValidationErrors(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
-        // Παίρνουμε το πρώτο λάθος που θα βρει (π.χ. "Το επώνυμο είναι υποχρεωτικό")
-        String errorMessage = ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
+        String errorMessage;
+        var bindingResult = ex.getBindingResult();
 
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation Failed",
-                errorMessage,
-                request.getRequestURI(),
-                LocalDateTime.now()
-        );
+        // 1. Ελέγχουμε αν υπάρχει Field Error (π.χ. @NotBlank στο firstName)
+        if (bindingResult.hasFieldErrors()) {
+            var fieldError = bindingResult.getFieldError();
+            errorMessage = fieldError.getField() + ": " + fieldError.getDefaultMessage();
+        }
+        // 2. Ελέγχουμε αν υπάρχει Global Error (π.χ. ο @AtLeastOnePhonePresent)
+        else if (bindingResult.hasGlobalErrors()) {
+            var globalError = bindingResult.getGlobalError();
+            errorMessage = globalError.getDefaultMessage(); // Εδώ παίρνει το "{emergency.contact.missing}"
+        }
+        else {
+            errorMessage = "Validation error";
+        }
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        errorMessage,
+                        request.getRequestURI()
+                ));
     }
+
+
 
     // TODO: Implement Global Type Mismatch Handler
 // 1. Target Exception: MethodArgumentTypeMismatchException

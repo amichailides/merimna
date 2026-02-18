@@ -75,7 +75,10 @@ public class Beneficiary {
     @AttributeOverrides({
             @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name", nullable = false)),
             @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name", nullable = false)),
-            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship", nullable = false))
+            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship", nullable = false)),
+            @AttributeOverride(name = "landlinePhone", column = @Column(name = "emergency_landline_phone")),
+            @AttributeOverride(name = "mobileNumber", column = @Column(name = "emergency_mobile_number")),
+            @AttributeOverride(name = "email", column = @Column(name = "emergency_email"))
     })
     private EmergencyContact emergencyContact;
 

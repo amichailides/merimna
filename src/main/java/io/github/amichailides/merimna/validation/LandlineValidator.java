@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PhoneValidator implements ConstraintValidator<ValidPhone, String> {
+public class LandlineValidator implements ConstraintValidator<ValidLandline, String> {
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isBlank()) {
             return true;

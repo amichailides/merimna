@@ -10,8 +10,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@NotNull(message = "{dob.required}")
-@Past(message = "{dob.past}")
+@NotNull(message = "{dob.required}", groups = FirstOrder.class)
+@Past(message = "{dob.past}",groups = FirstOrder.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateOfBirthValidator.class)

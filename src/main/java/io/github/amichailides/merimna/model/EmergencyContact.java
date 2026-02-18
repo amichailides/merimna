@@ -26,12 +26,12 @@ public class EmergencyContact {
      * TODO: ΥΠΟΧΡΕΩΤΙΚΗ ΥΛΟΠΟΙΗΣΗ (Business Requirement):
      * Πρέπει να προστεθεί Class-level Validator (π.χ. @AtLeastOneContactPresent)
      * που να διασφαλίζει ότι ΤΟΥΛΑΧΙΣΤΟΝ ΕΝΑ από τα πεδία:
-     * 1. phoneNumber
+     * 1. landlinePhone
      * 2. mobileNumber
      * είναι συμπληρωμένο. Δεν επιτρέπεται η αποθήκευση επαφής χωρίς κανένα μέσο επικοινωνίας.
      * Προς το παρόν παραμένουν προαιρετικά (χωρίς @NotBlank) μόνο για τη διευκόλυνση του αρχικού development.
      */
-    private String phoneNumber;
+    private String landlinePhone;
     private String mobileNumber;
     private String email;
 
