@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.exception;
 
 import io.github.amichailides.merimna.common.ApiResponse;
+import io.github.amichailides.merimna.common.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -23,9 +24,9 @@ public class GlobalExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(BeneficiaryNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBeneficiaryNotFound(
-            BeneficiaryNotFoundException ex,
+    @ExceptionHandler(BaseBusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(
+            BaseBusinessException ex,
             HttpServletRequest request) {
 
         // Παίρνουμε το localized message
@@ -36,10 +37,11 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(ex.getStatus())
                 .body(ApiResponse.error(
-                        HttpStatus.NOT_FOUND.value(),
-                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        ex.getErrorCode(),
+                        ex.getStatus().value(),
+                        ex.getStatus().getReasonPhrase(),
                         message,
                         request.getRequestURI()
                 ));
@@ -59,6 +61,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(
+                        ErrorCode.AMKA_ALREADY_EXISTS,
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
                         message,
@@ -94,6 +97,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(
+                        ErrorCode.VALIDATION_FAILED,
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         errorMessage,

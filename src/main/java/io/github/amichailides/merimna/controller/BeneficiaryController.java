@@ -5,8 +5,8 @@ import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
+import io.github.amichailides.merimna.validation.ValidAmka;
 import io.github.amichailides.merimna.validation.ValidationGroupSequence;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,8 +26,9 @@ public class BeneficiaryController {
     private final BeneficiaryService service;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> save (
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> save(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
+
         BeneficiaryReadOnlyDTO responseBody = service.save(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,8 +39,9 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity
-            <ApiResponse<BeneficiaryReadOnlyDTO>> getById(@Positive @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getById(
+            @Positive @PathVariable Long id) {
+
         BeneficiaryReadOnlyDTO responseBody = service.findById(id);
         return ResponseEntity.ok(ApiResponse.success(
                 responseBody,
@@ -48,7 +50,8 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/amka/{amka}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(@Positive @PathVariable String amka){
+    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
+            @Positive @PathVariable @ValidAmka String amka) {
         BeneficiaryReadOnlyDTO dto = service.findByAmka(amka);
         return ResponseEntity.ok(dto);
     }
@@ -62,20 +65,20 @@ public class BeneficiaryController {
      */
     @GetMapping
     public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
-            @RequestParam(name = "includeInactive", defaultValue = "false")  boolean includeInactive, Pageable pageable) {
+            @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive, Pageable pageable) {
         Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, pageable);
         return ResponseEntity.ok(page);
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> deactivate (@PathVariable Long id) {
+    public ResponseEntity<BeneficiaryReadOnlyDTO> deactivate(@PathVariable Long id) {
         BeneficiaryReadOnlyDTO updated = service.deactivate(id);
         return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search (@RequestParam(required = false) String term,
-                                                                Pageable pageable) {
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search(@RequestParam(required = false) String term,
+                                                               Pageable pageable) {
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
     }

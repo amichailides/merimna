@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @NotBlank(message = "{amka.required}", groups = FirstOrder.class)
 @Size(min = 11, max = 11, message = "{amka.size}", groups = FirstOrder.class)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AmkaValidator.class)
 public @interface ValidAmka {

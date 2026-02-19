@@ -1,18 +1,15 @@
 package io.github.amichailides.merimna.exception;
 
-public class BeneficiaryNotFoundByAmkaException extends BeneficiaryNotFoundException{
-    private final String beneficiaryAmka;
+import io.github.amichailides.merimna.common.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+public class BeneficiaryNotFoundByAmkaException extends BaseBusinessException{
 
     public BeneficiaryNotFoundByAmkaException(String beneficiaryAmka) {
-        super("Δεν βρέθηκε ωφελούμενος στο σύστημα με ΑΜΚΑ: " + beneficiaryAmka);
-        this.beneficiaryAmka = beneficiaryAmka;
+        super(ErrorCode.BENEFICIARY_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+                "beneficiary.notFoundByAmka",
+                beneficiaryAmka);
     }
 
-    public String getMessageKey() {
-        return "beneficiaryByAmka.notFound";
-    }
-
-    public Object[] getMessageArgs() {
-        return new Object[]{beneficiaryAmka};
-    }
 }

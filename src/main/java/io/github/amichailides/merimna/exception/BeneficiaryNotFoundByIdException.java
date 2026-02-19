@@ -1,20 +1,15 @@
 package io.github.amichailides.merimna.exception;
 
-public class BeneficiaryNotFoundByIdException extends BeneficiaryNotFoundException{
-    private final Long beneficiaryId;
+import io.github.amichailides.merimna.common.ErrorCode;
+import org.springframework.http.HttpStatus;
 
-    public BeneficiaryNotFoundByIdException(Long BeneficiaryId) {
-        super("Δεν βρέθηκε ωφελούμενος στο σύστημα με ID: " + BeneficiaryId);  // Για logs
-        this.beneficiaryId = BeneficiaryId;
+public class BeneficiaryNotFoundByIdException extends BaseBusinessException {
+
+    public BeneficiaryNotFoundByIdException(Long beneficiaryId) {
+        super(ErrorCode.BENEFICIARY_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+                "beneficiary.notFoundById",
+                beneficiaryId);
     }
 
-    @Override
-    public String getMessageKey() {
-        return "beneficiaryById.notFound";
-    }
-
-    @Override
-    public Object[] getMessageArgs() {
-        return new Object[]{beneficiaryId};
-    }
 }
