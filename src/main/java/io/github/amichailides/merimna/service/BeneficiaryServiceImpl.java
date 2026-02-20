@@ -8,9 +8,9 @@ import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -35,6 +34,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     private final BeneficiaryRepository repository;
     private final BeneficiaryMapper mapper;
+    private final BeneficiaryValidator validator;
 
     @Override
     @Transactional(readOnly = true)
@@ -86,6 +86,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     @Transactional
     public BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto) {
+
+        validator.validateForSave(dto);
+
         Beneficiary beneficiary = mapper.toEntity(dto);
         Beneficiary savedBeneficiary =  repository.save(beneficiary);
         return mapper.toReadOnlyDTO(savedBeneficiary);

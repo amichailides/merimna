@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -16,6 +17,7 @@ public class ApiResponse<T> {
     private T data;
     private int status;
     private String error;       // null σε success
+    private Map<String, String> validationErrors;  // null σε non-validation errors, το @JsonInclude το κρύβει
     private String message;     // null σε success
     private String path;        // null σε success
     private String timestamp;
@@ -41,6 +43,20 @@ public class ApiResponse<T> {
                 .status(status)
                 .error(error)
                 .message(message)
+                .path(path)
+                .timestamp(formatTimestamp())
+                .build();
+    }
+
+    public static <T> ApiResponse<T> validationError(ErrorCode errorCode, int status,
+                                                     String error, Map<String, String> errors,
+                                                     String path) {
+        return ApiResponse.<T>builder()
+                .success(false)
+                .errorCode(errorCode)
+                .status(status)
+                .error(error)
+                .validationErrors(errors)   // νέο field
                 .path(path)
                 .timestamp(formatTimestamp())
                 .build();

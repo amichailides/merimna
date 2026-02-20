@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.common.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -43,6 +46,33 @@ public class GlobalExceptionHandler {
                         ex.getStatus().value(),
                         ex.getStatus().getReasonPhrase(),
                         message,
+                        request.getRequestURI()
+                ));
+    }
+
+    @ExceptionHandler(BaseValidationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(
+            BaseValidationException ex,
+            HttpServletRequest request) {
+
+        String generalMessage = translate(ex.getMessageKey());
+
+        // 2. Μεταφράζουμε κάθε σφάλμα μέσα στο Map
+        Map<String, String> localizedErrors = ex.getValidationErrors().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> translate(entry.getValue()), // Μετάφραση της τιμής (value)
+                        (existing, replacement) -> existing,    // Merge function (σε περίπτωση διπλότυπων)
+                        LinkedHashMap::new                                  // Διατήρηση της σειράς (Insertion Order)
+                ));
+
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(ApiResponse.validationError(
+                        ex.getErrorCode(),
+                        ex.getStatus().value(),
+                        generalMessage,
+                        localizedErrors,
                         request.getRequestURI()
                 ));
     }
@@ -88,8 +118,7 @@ public class GlobalExceptionHandler {
         else if (bindingResult.hasGlobalErrors()) {
             var globalError = bindingResult.getGlobalError();
             errorMessage = globalError.getDefaultMessage(); // Εδώ παίρνει το "{emergency.contact.missing}"
-        }
-        else {
+        } else {
             errorMessage = "Validation error";
         }
 
@@ -105,7 +134,19 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-
+    /**
+     * Helper μέθοδος για να τραβάμε μεταφράσεις από το messages.properties.
+     * Χρησιμοποιεί το LocaleContextHolder για να καταλάβει αυτόματα τη γλώσσα του χρήστη.
+     */
+    private String translate(String key, Object... args) {
+        try {
+            return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException e) {
+            // Αν ξεχάσουμε να ορίσουμε ένα κλειδί στο properties,
+            // επέστρεψε το ίδιο το κλειδί αντί να σκάσει η εφαρμογή.
+            return key;
+        }
+    }
 
     // TODO: Implement Global Type Mismatch Handler
 // 1. Target Exception: MethodArgumentTypeMismatchException
@@ -113,7 +154,6 @@ public class GlobalExceptionHandler {
 // 3. Response: Return 400 Bad Request with a clear message:
 //    "The value '{providedValue}' is not valid for the parameter '{parameterName}'"
 // 4. Benefit: Provides a consistent, professional error response instead of Spring's default 500/400 trace.
-
 
 
 }
