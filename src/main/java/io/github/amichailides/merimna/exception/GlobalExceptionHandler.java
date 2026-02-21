@@ -10,9 +10,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -104,39 +106,86 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // TODO: Future Refactoring - Αντικατάσταση του String message με Map<String, String>
-    // για την ταυτόχρονη επιστροφή όλων των validation errors (field-level errors).
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationErrors(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
-        String errorMessage;
-        var bindingResult = ex.getBindingResult();
+        Map<String, String> errors = new LinkedHashMap<>();
 
-        // 1. Ελέγχουμε αν υπάρχει Field Error (π.χ. @NotBlank στο firstName)
-        if (bindingResult.hasFieldErrors()) {
-            var fieldError = bindingResult.getFieldError();
-            errorMessage = fieldError.getField() + ": " + fieldError.getDefaultMessage();
-        }
-        // 2. Ελέγχουμε αν υπάρχει Global Error (π.χ. ο @AtLeastOnePhonePresent)
-        else if (bindingResult.hasGlobalErrors()) {
-            var globalError = bindingResult.getGlobalError();
-            errorMessage = globalError.getDefaultMessage(); // Εδώ παίρνει το "{emergency.contact.missing}"
-        } else {
-            errorMessage = "Validation error";
-        }
+        // 1. Μαζεύουμε τα Field Errors (lastName, amka κλπ)
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.merge(error.getField(),
+                    error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
+                    (existing, replacement) -> existing + " | " + replacement);
+        });
 
+        // 2. ΜΑΖΕΥΟΥΜΕ ΤΑ GLOBAL ERRORS (Εδώ κρύβεται το EmergencyContact!)
+        ex.getBindingResult().getGlobalErrors().forEach(error -> {
+            // Η Spring για τα nested objects χρησιμοποιεί το όνομα του πεδίου
+            // ή το όνομα της κλάσης (emergencyContactDTO). Το καθαρίζουμε:
+            String key = error.getObjectName().replace("DTO", "");
+
+            // Αν το σφάλμα αφορά το nested αντικείμενο, το βάζουμε στο Map
+            errors.merge(key,
+                    error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
+                    (existing, replacement) -> existing + " | " + replacement);
+        });
+
+        log.warn("Validation failed for {}: {}", request.getRequestURI(), errors);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(
+                .body(ApiResponse.validationError(
                         ErrorCode.VALIDATION_FAILED,
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        errorMessage,
+                        errors,
                         request.getRequestURI()
-                ));
+                                ));
+    }
+
+    // TODO: [Refactor] Εδώ μπορούμε να αναβαθμίσουμε τον Handler
+    // χρησιμοποιώντας το InvalidFormatException του Jackson.
+    // Σκοπός: Να εξάγουμε το συγκεκριμένο πεδίο (fieldName) και την άκυρη τιμή (invalidValue)
+    // ώστε το μήνυμα να λέει: "Η τιμή 'abc' δεν είναι έγκυρη για το πεδίο 'houseUnit'".
+    // Χρήσιμα tools: formatException.getPath(), formatException.getValue().
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+        log.error("JSON parse error: {}", ex.getMessage());
+        String message = "Μη έγκυρη μορφή δεδομένων στο σώμα του αιτήματος.";
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        ErrorCode.INVALID_INPUT,
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()));
+    }
+
+    // 2. Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) - ΤΟ TODO ΣΟΥ!
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+
+        String propertyName = ex.getName();
+        Object providedValue = ex.getValue();
+
+        log.error("Type mismatch for parameter '{}': {}", propertyName, providedValue);
+
+        String message = String.format("Η τιμή '%s' δεν είναι έγκυρη για την παράμετρο '%s'.",
+                providedValue, propertyName);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        ErrorCode.INVALID_INPUT,
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()));
     }
 
     /**
@@ -152,13 +201,5 @@ public class GlobalExceptionHandler {
             return key;
         }
     }
-
-    // TODO: Implement Global Type Mismatch Handler
-// 1. Target Exception: MethodArgumentTypeMismatchException
-// 2. Goal: Catch invalid Enum values (e.g. HouseUnit) or ID type errors in @PathVariables
-// 3. Response: Return 400 Bad Request with a clear message:
-//    "The value '{providedValue}' is not valid for the parameter '{parameterName}'"
-// 4. Benefit: Provides a consistent, professional error response instead of Spring's default 500/400 trace.
-
 
 }

@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
-@AtLeastOnePhonePresent(groups = SecondOrder.class)
+@AtLeastOnePhonePresent
 @Builder
 public record EmergencyContactDTO(
         @ValidFirstName(groups = SecondOrder.class)
