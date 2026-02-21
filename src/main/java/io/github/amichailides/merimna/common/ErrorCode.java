@@ -6,10 +6,16 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+    // General
+    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "Internal server error"),
+    DATABASE_ERROR("DATABASE_ERROR", "error.database.conflict"),
+    VALIDATION_FAILED("VALIDATION_FAILED", "Validation failed"),
+
+    // Beneficiary
     BENEFICIARY_NOT_FOUND("BENEFICIARY_NOT_FOUND", "beneficiary not found"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", "AMKA already exists"),
-    VALIDATION_FAILED("VALIDATION_FAILED", "Validation failed"),
-    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "Internal server error");
+    AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", "beneficiary.amkaDateMismatch");
+
 
     private final String code;
     private final String messageKey;

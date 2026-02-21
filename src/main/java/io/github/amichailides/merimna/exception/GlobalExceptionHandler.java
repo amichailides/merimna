@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.exception;
 import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.common.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -17,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -78,12 +80,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleConflict(
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
 
+        // Log το error για να δούμε τι έγινε στην DB
+        log.error("Database integrity violation: {}", ex.getMostSpecificCause().getMessage());
+
         String message = messageSource.getMessage(
-                "beneficiary.amkaAlreadyExists",
+                "error.database.conflict",
                 null,
                 LocaleContextHolder.getLocale()
         );
@@ -91,7 +96,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(
-                        ErrorCode.AMKA_ALREADY_EXISTS,
+                        ErrorCode.DATABASE_ERROR,
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
                         message,

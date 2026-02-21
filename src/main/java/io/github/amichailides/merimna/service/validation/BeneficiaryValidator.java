@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.service.validation;
 
+import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
@@ -38,14 +39,14 @@ public class BeneficiaryValidator {
         Map<String, String> errors = new LinkedHashMap<>();
 
         if (repository.existsByAmka(dto.amka())) {
-            errors.put("amka", "beneficiary.amkaAlreadyExists");
+            errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
         }
 
         // 2. Έλεγχος ΑΜΚΑ vs Ημερομηνία Γέννησης
         if (dto.amka() != null && dto.dateOfBirth() != null) {
             String dobPart = formatToAmkaDate(dto.dateOfBirth()); // π.χ. 250395
             if (!dto.amka().startsWith(dobPart)) {
-                errors.put("amka", "beneficiary.amkaDateMismatch");
+                errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
             }
         }
 
