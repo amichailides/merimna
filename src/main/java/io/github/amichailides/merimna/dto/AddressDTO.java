@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.validation.FirstOrder;
-import io.github.amichailides.merimna.validation.SecondOrder;
+import io.github.amichailides.merimna.validation.groups.FirstOrder;
+import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

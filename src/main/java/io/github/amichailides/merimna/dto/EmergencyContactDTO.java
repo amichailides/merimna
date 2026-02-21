@@ -1,6 +1,9 @@
 package io.github.amichailides.merimna.dto;
 
 import io.github.amichailides.merimna.validation.*;
+import io.github.amichailides.merimna.validation.annotations.*;
+import io.github.amichailides.merimna.validation.groups.FirstOrder;
+import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

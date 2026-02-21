@@ -10,6 +10,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Validator για την οντότητα Beneficiary (Ωφελούμενος).
+ * * Ο σκοπός αυτής της κλάσης είναι να συγκεντρώνει όλο το "Semantic Validation"
+ * (επιχειρησιακοί κανόνες), διαχωρίζοντάς το από το "Syntactic Validation"
+ * (format/regex) που γίνεται στα DTOs μέσω annotations.
+ * * Κύριες αρμοδιότητες:
+ * 1. Έλεγχος μοναδικότητας στοιχείων στη βάση δεδομένων (π.χ. ΑΜΚΑ).
+ * 2. Έλεγχος συνδυαστικών πεδίων (Cross-field validation), όπως η συμφωνία
+ * ΑΜΚΑ με την ημερομηνία γέννησης.
+ * 3. Επιβολή σύνθετων κοινωνικών κανόνων (π.χ. υποχρεωτικός κηδεμόνας για ανηλίκους).
+ * * Αν εντοπιστούν σφάλματα, η κλάση συγκεντρώνει όλα τα μηνύματα σε ένα Map
+ * και πετάει μια {@link BeneficiaryValidationException}, η οποία
+ * μεταφράζεται αυτόματα από τον GlobalExceptionHandler.
+ */
+
 @Component
 public class BeneficiaryValidator {
 

@@ -1,6 +1,7 @@
-package io.github.amichailides.merimna.validation;
+package io.github.amichailides.merimna.validation.validators;
 
 import io.github.amichailides.merimna.dto.EmergencyContactDTO;
+import io.github.amichailides.merimna.validation.annotations.AtLeastOnePhonePresent;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

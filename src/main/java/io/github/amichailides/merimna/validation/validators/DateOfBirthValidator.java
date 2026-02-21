@@ -1,5 +1,6 @@
-package io.github.amichailides.merimna.validation;
+package io.github.amichailides.merimna.validation.validators;
 
+import io.github.amichailides.merimna.validation.annotations.ValidDateOfBirth;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;

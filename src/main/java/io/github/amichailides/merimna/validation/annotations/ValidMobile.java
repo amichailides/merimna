@@ -1,5 +1,6 @@
-package io.github.amichailides.merimna.validation;
+package io.github.amichailides.merimna.validation.annotations;
 
+import io.github.amichailides.merimna.validation.validators.MobileValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;

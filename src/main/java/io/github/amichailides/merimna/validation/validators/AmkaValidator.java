@@ -1,5 +1,7 @@
-package io.github.amichailides.merimna.validation;
+package io.github.amichailides.merimna.validation.validators;
 
+import io.github.amichailides.merimna.validation.ValidationPatterns;
+import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
