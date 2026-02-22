@@ -20,6 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Κεντρικός διαχειριστής εξαιρέσεων.
+ * <p>Μετατρέπει τα exceptions σε {@link ApiResponse} χρησιμοποιώντας
+ * τους προκαθορισμένους κωδικούς του {@link ErrorCode}.</p>
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -166,7 +171,7 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    // 2. Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) - ΤΟ TODO ΣΟΥ!
+    // 2. Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) -
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
@@ -201,5 +206,10 @@ public class GlobalExceptionHandler {
             return key;
         }
     }
+
+    // TODO: Υλοποίηση Handler για ConstraintViolationException.
+// Στόχος: Μετατροπή του 500 Internal Server Error σε 400 Bad Request
+// όταν αποτυγχάνει το validation σε @PathVariable ή @RequestParam (π.χ. μήκος ΑΜΚΑ στο URL).
+// Πρέπει να επιστρέφει το μήνυμα σφάλματος μέσω του ApiResponse.
 
 }

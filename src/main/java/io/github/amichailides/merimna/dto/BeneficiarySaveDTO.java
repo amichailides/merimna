@@ -10,7 +10,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
+import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 
+/**
+ * Η επικύρωση ακολουθεί το {@link ValidationGroupSequence} για σταδιακό έλεγχο σφαλμάτων.
+ */
 @Builder
 public record BeneficiarySaveDTO(
         @ValidFirstName(groups = SecondOrder.class)

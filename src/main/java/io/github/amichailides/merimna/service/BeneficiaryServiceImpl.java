@@ -21,13 +21,9 @@ import java.util.List;
 
 
 /**
- * Service layer για Beneficiary operations.
- *
- * Performance Notes:
- * - Όλα τα read methods χρησιμοποιούν @Transactional(readOnly = true)
- *   για optimization (skip dirty checking, reduce memory usage)
+ * Υλοποίηση με business validation μέσω του {@link BeneficiaryValidator}
+ * και βελτιστοποιημένα {@code readOnly = true} transactions.
  */
-
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryServiceImpl implements BeneficiaryService{

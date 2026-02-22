@@ -4,11 +4,13 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.groups.Default;
 
 /**
- * Καθορίζει τη σειρά με την οποία εκτελούνται τα validation groups.
- * Η σειρά είναι:
- * 1. Default (Βασικοί έλεγχοι & Custom Validators χωρίς group)
- * 2. FirstOrder (Πρώτο επίπεδο λογικής)
- * 3. SecondOrder (Πιο σύνθετοι έλεγχοι)
+ * Καθορίζει την ιεραρχική σειρά επικύρωσης (Waterfall validation).
+ * <p>Η σειρά εκτέλεσης είναι:</p>
+ * <ul>
+ * <li>{@link Default}: Έλεγχος ύπαρξης και δομής (π.χ. {@code @NotNull}, {@code @NotBlank})</li>
+ * <li>{@link FirstOrder}: Μορφολογικοί έλεγχοι και περιορισμοί μεγέθους ({@code @Size})</li>
+ * <li>{@link SecondOrder}: Επιχειρηματική λογική, σύνθετα patterns και custom validators</li>
+ * </ul>
  */
 @GroupSequence({Default.class, FirstOrder.class, SecondOrder.class})
 public interface ValidationGroupSequence {

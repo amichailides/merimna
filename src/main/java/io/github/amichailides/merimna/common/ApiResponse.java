@@ -66,7 +66,7 @@ public class ApiResponse<T> {
     // Helper για timestamp formatting
     private static String formatTimestamp() {
         return LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
 }

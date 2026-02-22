@@ -25,8 +25,12 @@ import java.util.List;
 public class BeneficiaryController {
     private final BeneficiaryService service;
 
+    /**
+     * Δημιουργεί έναν νέο ωφελούμενο.
+     * Η επικύρωση ενεργοποιείται μέσω του {@link ValidationGroupSequence} για short-circuiting λογική.
+     */
     @PostMapping
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> save(
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
 
         BeneficiaryReadOnlyDTO responseBody = service.save(dto);

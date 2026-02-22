@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,6 +10,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Οντότητα Ωφελούμενου.
+ * * <p><b>TODO (Database Strategy):</b>
+ * <ul>
+ * <li>Μεταφορά του Schema Management (Indexes, Constraints) σε <b>Liquibase changelogs</b>.</li>
+ * <li>Υλοποίηση Partial Index στην PostgreSQL για το {@code is_active = true} (Performance optimization).</li>
+ * <li>Μετάβαση σε {@code ddl-auto=validate} για Docker-ready deployment.</li>
+ * </ul>
+ * </p>
+ */
 @Entity
 @Getter
 @Setter
