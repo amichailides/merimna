@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 
 import java.util.List;
 
@@ -80,6 +81,19 @@ public class BeneficiaryController {
         return ResponseEntity.ok(updated);
     }
 
+    /**
+     * Αναζήτηση ωφελουμένων με global search term.
+     * <p>Χρησιμοποιεί {@link BeneficiarySpecifications} για αναζήτηση σε πολλαπλά πεδία.</p>
+     * * <p><b>TODO: Scalability & Advanced Filtering</b><br>
+     * Η τρέχουσα υλοποίηση καλύπτει το 90% των αναγκών του MVP. Η μετάβαση σε
+     * {@code BeneficiarySearchDTO} θα πραγματοποιηθεί εάν:</p>
+     * <ul>
+     * <li>Απαιτηθούν σύνθετα φίλτρα (π.χ. "Στέγη Α' + Ηλικία > 70")</li>
+     * <li>Οι {@code @RequestParam} ξεπεράσουν τις 3 (Clean Code / YAGNI)</li>
+     * <li>Απαιτηθεί Advanced Reporting ή δυναμικό Export δεδομένων</li>
+     * </ul>
+     * <p>Η μελλοντική υλοποίηση θα βασίζεται σε Specification Builder για δυναμικά Predicates.</p>
+     */
     @GetMapping("/search")
     public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search(@RequestParam(required = false) String term,
                                                                Pageable pageable) {

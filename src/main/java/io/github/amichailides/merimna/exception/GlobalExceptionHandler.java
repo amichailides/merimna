@@ -3,6 +3,8 @@ package io.github.amichailides.merimna.exception;
 import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.common.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -42,11 +44,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         // Παίρνουμε το localized message
-        String message = messageSource.getMessage(
-                ex.getMessageKey(),
-                ex.getMessageArgs(),  //  Το ID σαν parameter
-                LocaleContextHolder.getLocale()
-        );
+        String message = translate(ex.getMessageKey(), ex.getMessageArgs());
 
         return ResponseEntity
                 .status(ex.getStatus())
@@ -66,13 +64,13 @@ public class GlobalExceptionHandler {
 
         String generalMessage = translate(ex.getMessageKey());
 
-        // 2. Μεταφράζουμε κάθε σφάλμα μέσα στο Map
+        // Μετατροπή των error keys σε ανθρώπινα μηνύματα (i18n)
         Map<String, String> localizedErrors = ex.getValidationErrors().entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> translate(entry.getValue()), // Μετάφραση της τιμής (value)
-                        (existing, replacement) -> existing,    // Merge function (σε περίπτωση διπλότυπων)
-                        LinkedHashMap::new                                  // Διατήρηση της σειράς (Insertion Order)
+                        entry -> translate(entry.getValue()),
+                        (existing, replacement) -> existing + " | " + replacement,
+                        LinkedHashMap::new         // Διατήρηση της σειράς (Insertion Order)
                 ));
 
         return ResponseEntity
@@ -171,10 +169,11 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    // 2. Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) -
+    // Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) -
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+            MethodArgumentTypeMismatchException ex,
+            HttpServletRequest request) {
 
         String propertyName = ex.getName();
         Object providedValue = ex.getValue();
@@ -193,13 +192,67 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConstraintViolation(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+
+// Χρησιμοποιούμε LinkedHashMap για να κρατήσουμε τη σειρά των σφαλμάτων
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            String propertyPath = violation.getPropertyPath().toString();
+            // Καθαρισμός: Από "getByAmka.amka" κρατάμε ό,τι είναι μετά την τελευταία τελεία -> "amka"
+            String fieldName = propertyPath.substring(propertyPath.lastIndexOf('.') + 1);
+            String message = violation.getMessage();
+
+            errors.merge(fieldName, message, (existing, newMsg) -> existing + " | " + newMsg);
+        }
+
+        return ResponseEntity.
+                status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.validationError(
+                        ErrorCode.VALIDATION_FAILED,
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        errors,
+                        request.getRequestURI()));
+    }
+
+    // Πιανει τα παντα που δεν εχουν πιασει οι προηγουμενοι
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleAllUncaughtException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        log.error("Unexpected error occurred: ", ex);
+
+        String message = messageSource.getMessage(
+                "error.internal.server",
+                null,
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(
+                        ErrorCode.INTERNAL_SERVER_ERROR,
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()
+                ));
+    }
+
+
     /**
      * Helper μέθοδος για να τραβάμε μεταφράσεις από το messages.properties.
      * Χρησιμοποιεί το LocaleContextHolder για να καταλάβει αυτόματα τη γλώσσα του χρήστη.
      */
     private String translate(String key, Object... args) {
         try {
-            return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            // Η getMessage με 4 παραμέτρους επιστρέφει το default αν δεν βρει το key
+            return messageSource.getMessage(key, args, key, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException e) {
             // Αν ξεχάσουμε να ορίσουμε ένα κλειδί στο properties,
             // επέστρεψε το ίδιο το κλειδί αντί να σκάσει η εφαρμογή.
@@ -207,9 +260,5 @@ public class GlobalExceptionHandler {
         }
     }
 
-    // TODO: Υλοποίηση Handler για ConstraintViolationException.
-// Στόχος: Μετατροπή του 500 Internal Server Error σε 400 Bad Request
-// όταν αποτυγχάνει το validation σε @PathVariable ή @RequestParam (π.χ. μήκος ΑΜΚΑ στο URL).
-// Πρέπει να επιστρέφει το μήνυμα σφάλματος μέσω του ApiResponse.
 
 }
