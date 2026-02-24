@@ -17,8 +17,16 @@ public class BeneficiarySpecifications {
 
             // Χρησιμοποιούμε την unaccent της Postgres (DB side)
             return cb.or(
-                    cb.like(cb.function("unaccent", String.class, cb.lower(root.get("firstName"))), pattern),
-                    cb.like(cb.function("unaccent", String.class, cb.lower(root.get("lastName"))), pattern),
+                    cb.like(
+                            cb.function("replace", String.class,
+                                    cb.function("unaccent", String.class, cb.lower(root.get("firstName"))),
+                                    cb.literal("ς"), cb.literal("σ")),
+                            pattern),
+                    cb.like(
+                            cb.function("replace", String.class,
+                                    cb.function("unaccent", String.class, cb.lower(root.get("lastName"))),
+                                    cb.literal("ς"), cb.literal("σ")),
+                            pattern),
                     cb.like(root.get("amka"), pattern)
             );
         };
@@ -31,7 +39,8 @@ public class BeneficiarySpecifications {
      */
     private static String stripAccents(String s) {
         if (s == null) return null;
-        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{M}", "");
+        String normalized = Normalizer.normalize(s.toLowerCase(), Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "")
+                .replace('ς', 'σ');
     }
 }

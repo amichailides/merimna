@@ -15,7 +15,8 @@ public enum ErrorCode {
     // Beneficiary
     BENEFICIARY_NOT_FOUND("BENEFICIARY_NOT_FOUND", "beneficiary not found"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", "beneficiary.amkaAlreadyExists"),
-    AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", "beneficiary.amkaDateMismatch");
+    AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", "beneficiary.amkaDateMismatch"),
+    BENEFICIARY_ALREADY_INACTIVE("ALREADY_INACTIVE", "beneficiary.alreadyInactive");
 
 
     private final String code;

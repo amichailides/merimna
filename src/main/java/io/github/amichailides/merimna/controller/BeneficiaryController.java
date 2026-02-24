@@ -78,9 +78,13 @@ public class BeneficiaryController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> deactivate(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> deactivate(@PathVariable Long id) {
         BeneficiaryReadOnlyDTO updated = service.deactivate(id);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(ApiResponse.success(
+                updated,
+                "Ο ωφελούμενος απενεργοποιήθηκε με επιτυχία!",
+                HttpStatus.OK.value()
+        ));
     }
 
     /**

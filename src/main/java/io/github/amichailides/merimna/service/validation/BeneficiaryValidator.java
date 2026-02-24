@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
+import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +53,21 @@ public class BeneficiaryValidator {
 
         // άλλα business checks εδώ...
 
+
+        if (!errors.isEmpty()) {
+            throw new BeneficiaryValidationException(errors);
+        }
+    }
+
+    public void validateForDeactivate(Beneficiary beneficiary) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        if (beneficiary.getIsActive() != null && !beneficiary.getIsActive()) {
+            errors.put("isActive", ErrorCode.BENEFICIARY_ALREADY_INACTIVE.getMessageKey());
+        }
+
+        // Εδώ μελλοντικά προσθέτουμε και άλλους κανόνες,
+        // π.χ. να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
 
         if (!errors.isEmpty()) {
             throw new BeneficiaryValidationException(errors);

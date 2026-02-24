@@ -16,8 +16,14 @@ import java.util.Map;
 public abstract class BaseValidationException extends BaseBusinessException {
     private final Map<String, String> validationErrors;
 
-    protected BaseValidationException(ErrorCode code, HttpStatus status, String key, Map<String, String> errors) {
-        super(code, status, key);
-        this.validationErrors = errors;
+    protected BaseValidationException(
+            ErrorCode errorCode,
+            HttpStatus status,
+            String messageKey,
+            Map<String, String> validationErrors) {
+
+        // Καλούμε τον constructor της BaseBusinessException
+        super(errorCode, status, messageKey);
+        this.validationErrors = validationErrors;
     }
 }
