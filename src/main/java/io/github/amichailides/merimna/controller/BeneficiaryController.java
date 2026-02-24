@@ -70,8 +70,10 @@ public class BeneficiaryController {
      */
     @GetMapping
     public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
-            @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive, Pageable pageable) {
-        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, pageable);
+            @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive,
+            @RequestParam(name = "houseUnit", required = false) HouseUnit houseUnit, // Προαιρετικό φίλτρο
+            Pageable pageable) {
+        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, houseUnit, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -99,12 +101,6 @@ public class BeneficiaryController {
                                                                Pageable pageable) {
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
-    }
-
-    @GetMapping("unit/{houseUnit}")
-    public ResponseEntity<List<BeneficiaryReadOnlyDTO>> getByHouseUnit(@PathVariable HouseUnit houseUnit) {
-        List<BeneficiaryReadOnlyDTO> byHouse = service.findAllByHouseUnit(houseUnit);
-        return ResponseEntity.ok(byHouse);
     }
 
 }

@@ -34,12 +34,23 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive, Pageable pageable) {
+    public Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(
+            boolean includeInactive,
+            HouseUnit houseUnit,
+            Pageable pageable) {
 
-        // Επιλέγουμε το σωστό Page από το repository
-        Page<Beneficiary> beneficiariesPage = includeInactive
-                ? repository.findAll(pageable)
-                : repository.findAllByIsActiveTrue(pageable);
+        Page<Beneficiary> beneficiariesPage;
+
+        if (houseUnit != null) {
+            beneficiariesPage = includeInactive
+                    ? repository.findAllByHouseUnit(houseUnit, pageable)
+                    : repository.findAllByHouseUnitAndIsActiveTrue(houseUnit, pageable);
+        } else {
+            beneficiariesPage = includeInactive
+                    ? repository.findAll(pageable)
+                    : repository.findAllByIsActiveTrue(pageable);
+        }
+
 
         return beneficiariesPage.map(mapper::toReadOnlyDTO);
     }
@@ -56,14 +67,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
     @Transactional(readOnly = true)
     public boolean existsByAmka(String amka) {
         return repository.existsByAmka(amka);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit) {
-        return repository.findAllByHouseUnit(houseUnit).stream()
-                .map(mapper::toReadOnlyDTO)
-                .toList();
     }
 
     @Override

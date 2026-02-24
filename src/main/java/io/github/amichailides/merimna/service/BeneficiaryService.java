@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BeneficiaryService {
-    Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive,Pageable pageable);
+    Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive, HouseUnit houseUnit, Pageable pageable);
     BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
-    List<BeneficiaryReadOnlyDTO> findAllByHouseUnit(HouseUnit houseUnit);
     Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
     BeneficiaryReadOnlyDTO findById(Long id);

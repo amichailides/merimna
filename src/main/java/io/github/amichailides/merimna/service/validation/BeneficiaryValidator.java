@@ -42,8 +42,8 @@ public class BeneficiaryValidator {
             errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
         }
 
-        // 2. Έλεγχος ΑΜΚΑ vs Ημερομηνία Γέννησης
-        if (dto.amka() != null && dto.dateOfBirth() != null) {
+        //  Τρέχει ΜΟΝΟ αν το ΑΜΚΑ δεν υπάρχει (no need να φτασει εδω αν υπαρχει το amka)
+        else if (dto.amka() != null && dto.dateOfBirth() != null) {
             String dobPart = formatToAmkaDate(dto.dateOfBirth()); // π.χ. 250395
             if (!dto.amka().startsWith(dobPart)) {
                 errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
