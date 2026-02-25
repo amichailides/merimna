@@ -20,7 +20,7 @@ public class EmergencyContact {
 
     @NonNull
     @Column(nullable = false)
-    private String relationship; // γονεας, δικαστικος συμπαραστατης κλπ
+    private String relationship; // γονέας, δικαστικός συμπαραστάτης κλπ
 
     /**
      * TODO: ΥΠΟΧΡΕΩΤΙΚΗ ΥΛΟΠΟΙΗΣΗ (Business Requirement):

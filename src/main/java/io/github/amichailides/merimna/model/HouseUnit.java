@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum HouseUnit {
     UNIT_A("Στέγη Α", "Ελπίδας 10, Μαρούσι"),
-    UNIT_B("Στέγη Β", "Μέγα Αλέξανδρου 2, Μαρουσι"),
-    UNIT_C("Στέγη Γ", "Αγίου Μελετίου 22, Πατησια");
+    UNIT_B("Στέγη Β", "Μέγα Αλέξανδρου 2, Μαρούσι"),
+    UNIT_C("Στέγη Γ", "Αγίου Μελετίου 22, Πατήσια");
 
     private final String displayName;
     private final String address;

@@ -21,7 +21,7 @@ import java.util.Map;
  * 1. Έλεγχος μοναδικότητας στοιχείων στη βάση δεδομένων (π.χ. ΑΜΚΑ).
  * 2. Έλεγχος συνδυαστικών πεδίων (Cross-field validation), όπως η συμφωνία
  * ΑΜΚΑ με την ημερομηνία γέννησης.
- * 3. Επιβολή σύνθετων κοινωνικών κανόνων (π.χ. υποχρεωτικός κηδεμόνας για ανηλίκους).
+ * 3. Επιβολή σύνθετων κοινωνικών κανόνων (π.χ. Υποχρεωτικός κηδεμόνας για ανηλίκους).
  * * Αν εντοπιστούν σφάλματα, η κλάση συγκεντρώνει όλα τα μηνύματα σε ένα Map
  * και πετάει μια {@link BeneficiaryValidationException}, η οποία
  * μεταφράζεται αυτόματα από τον GlobalExceptionHandler.
@@ -43,7 +43,7 @@ public class BeneficiaryValidator {
             errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
         }
 
-        //  Τρέχει ΜΟΝΟ αν το ΑΜΚΑ δεν υπάρχει (no need να φτασει εδω αν υπαρχει το amka)
+        //  Τρέχει ΜΟΝΟ αν το ΑΜΚΑ δεν υπάρχει (no need να φτάσει εδω αν υπάρχει το amka)
         else if (dto.amka() != null && dto.dateOfBirth() != null) {
             String dobPart = formatToAmkaDate(dto.dateOfBirth()); // π.χ. 250395
             if (!dto.amka().startsWith(dobPart)) {
@@ -67,7 +67,7 @@ public class BeneficiaryValidator {
         }
 
         // Εδώ μελλοντικά προσθέτουμε και άλλους κανόνες,
-        // π.χ. να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
+        // π.χ. Να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
 
         if (!errors.isEmpty()) {
             throw new BeneficiaryValidationException(errors);

@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,11 +22,7 @@ public interface BeneficiaryRepository extends JpaRepositoryImplementation<Benef
     Page<Beneficiary> findAllByHouseUnit(HouseUnit houseUnit, Pageable pageable);
 
     Page<Beneficiary> findAllByHouseUnitAndIsActiveTrue(HouseUnit houseUnit, Pageable pageable);
-    /**
-     * Performance Note: Χρήση 'StartingWith' αντί για 'Containing' για την αξιοποίηση
-     * των Database Indexes (Index Seek) και την αποφυγή Full Table Scan.
-     */
-    Page<Beneficiary> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
+
 
 
 }

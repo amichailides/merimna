@@ -2,8 +2,6 @@ package io.github.amichailides.merimna.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLRestriction;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -2,10 +2,12 @@ package io.github.amichailides.merimna.specification;
 
 import io.github.amichailides.merimna.model.Beneficiary;
 import org.springframework.data.jpa.domain.Specification;
+
 import java.text.Normalizer;
 
 public class BeneficiarySpecifications {
-    private BeneficiarySpecifications() {}
+    private BeneficiarySpecifications() {
+    }
 
     public static Specification<Beneficiary> globalSearch(String searchTerm) {
         return (root, query, cb) -> {
@@ -13,7 +15,11 @@ public class BeneficiarySpecifications {
 
             // Καθαρίζουμε τους τόνους από το search term (Java side)
             String cleanSearchTerm = stripAccents(searchTerm.toLowerCase());
+
+            // Χρήση 'Containing' για μέγιστη ευελιξία στην αναζήτηση.
+            // Λόγω μικρού όγκου δεδομένων, η χρήση Like %...% δεν επηρεάζει την απόδοση.
             String pattern = "%" + cleanSearchTerm + "%";
+
 
             // Χρησιμοποιούμε την unaccent της Postgres (DB side)
             return cb.or(

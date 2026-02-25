@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.model.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecifications {
-    private UserSpecifications() {};
+    private UserSpecifications() {}
 
     public static Specification<User> globalSearch(String term) {
         return (root, query, cb) -> {

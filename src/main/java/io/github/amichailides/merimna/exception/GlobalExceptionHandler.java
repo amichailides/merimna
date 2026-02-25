@@ -219,7 +219,7 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    // Πιανει τα παντα που δεν εχουν πιασει οι προηγουμενοι
+    // Πιάνει τα πάντα που δεν έχουν πιάσει οι προηγούμενοί
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleAllUncaughtException(
             Exception ex,
@@ -251,7 +251,7 @@ public class GlobalExceptionHandler {
      */
     private String translate(String key, Object... args) {
         try {
-            // Η getMessage με 4 παραμέτρους επιστρέφει το default αν δεν βρει το key
+            // Η getMessage με 4 παραμέτρους επιστρέφει το default αν δε βρει το key
             return messageSource.getMessage(key, args, key, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException e) {
             // Αν ξεχάσουμε να ορίσουμε ένα κλειδί στο properties,

@@ -4,9 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
-import java.time.LocalTime;
-import java.util.List;
-
 @Embeddable
 @Getter
 @Setter

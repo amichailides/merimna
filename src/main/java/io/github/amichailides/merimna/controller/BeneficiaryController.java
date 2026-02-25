@@ -21,8 +21,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 
-import java.util.List;
-
 @RestController
 @Validated
 @RequestMapping("/api/beneficiaries")

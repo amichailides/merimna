@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.exception;
 
 import io.github.amichailides.merimna.common.ErrorCode;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 

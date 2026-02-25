@@ -1,11 +1,10 @@
 package io.github.amichailides.merimna.service;
 
-import io.github.amichailides.merimna.common.ErrorCode;
+
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
@@ -18,9 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
 
 
 /**
