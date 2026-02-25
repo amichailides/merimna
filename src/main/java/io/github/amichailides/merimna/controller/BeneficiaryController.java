@@ -9,8 +9,12 @@ import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BeneficiaryController {
     private final BeneficiaryService service;
+    private final MessageSource messageSource;
 
     /**
      * Δημιουργεί έναν νέο ωφελούμενο.
@@ -34,12 +39,12 @@ public class BeneficiaryController {
     public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
 
-        BeneficiaryReadOnlyDTO responseBody = service.save(dto);
+        BeneficiaryReadOnlyDTO beneficiary = service.save(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
-                        responseBody,
-                        "Ο ωφελούμενος δημιουργήθηκε με επιτυχία!",
+                        beneficiary,
+                        getMessage("beneficiary.create.success"),
                         HttpStatus.CREATED.value()));
     }
 
@@ -47,18 +52,24 @@ public class BeneficiaryController {
     public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getById(
             @Positive @PathVariable Long id) {
 
-        BeneficiaryReadOnlyDTO responseBody = service.findById(id);
+        BeneficiaryReadOnlyDTO beneficiary = service.findById(id);
         return ResponseEntity.ok(ApiResponse.success(
-                responseBody,
-                "Επιτυχής ανάκτηση στοιχείων ωφελούμενου",
+                beneficiary,
+                getMessage("beneficiary.fetch.success"),
                 HttpStatus.OK.value()));
     }
 
     @GetMapping("/amka/{amka}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
-            @Positive @PathVariable @ValidAmka String amka) {
-        BeneficiaryReadOnlyDTO dto = service.findByAmka(amka);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getByAmka(
+            @PathVariable @ValidAmka String amka) {
+
+        BeneficiaryReadOnlyDTO beneficiary = service.findByAmka(amka);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                beneficiary,
+                getMessage("beneficiary.fetch.success"),
+                HttpStatus.OK.value()
+        ));
     }
 
     /**
@@ -73,18 +84,20 @@ public class BeneficiaryController {
             @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive,
             @RequestParam(name = "houseUnit", required = false) HouseUnit houseUnit, // Προαιρετικό φίλτρο
             Pageable pageable) {
+
         Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, houseUnit, pageable);
         return ResponseEntity.ok(page);
     }
 
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> deactivate(@PathVariable Long id) {
+
         BeneficiaryReadOnlyDTO updated = service.deactivate(id);
         return ResponseEntity.ok(ApiResponse.success(
                 updated,
-                "Ο ωφελούμενος απενεργοποιήθηκε με επιτυχία!",
-                HttpStatus.OK.value()
-        ));
+                getMessage("beneficiary.deactivate.success"),
+                HttpStatus.OK.value()));
+
     }
 
     /**
@@ -101,10 +114,21 @@ public class BeneficiaryController {
      * <p>Η μελλοντική υλοποίηση θα βασίζεται σε Specification Builder για δυναμικά Predicates.</p>
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search(@RequestParam(required = false) String term,
-                                                               Pageable pageable) {
+    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search(
+            @RequestParam(required = false) String term,
+            @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * Helper για να τραβάμε τα μηνύματα επιτυχίας.
+     */
+    private String getMessage(String code) {
+        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    }
 }
+
+
+

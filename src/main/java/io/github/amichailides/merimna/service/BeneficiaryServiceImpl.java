@@ -72,13 +72,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return repository.existsByAmka(amka);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable) {
-        return repository.findByLastNameStartingWithIgnoreCase(lastName, pageable)
-                .map(mapper::toReadOnlyDTO);
-    }
-
     @Transactional(readOnly = true)
     public BeneficiaryReadOnlyDTO findById(Long id) {
         return repository.findById(id)

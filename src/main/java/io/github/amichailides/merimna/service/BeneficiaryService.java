@@ -13,7 +13,6 @@ public interface BeneficiaryService {
     Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive, HouseUnit houseUnit, Pageable pageable);
     BeneficiaryReadOnlyDTO findByAmka(String amka);
     boolean existsByAmka(String amka);
-    Page<BeneficiaryReadOnlyDTO> findByLastNameStartingWithIgnoreCase(String lastName, Pageable pageable);
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
     BeneficiaryReadOnlyDTO findById(Long id);
     BeneficiaryReadOnlyDTO deactivate(Long id);
