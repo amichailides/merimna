@@ -1,16 +1,24 @@
 package io.github.amichailides.merimna.mapper;
 
+import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.model.Allergy;
 import io.github.amichailides.merimna.model.Beneficiary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class BeneficiaryMapper {
     private final AddressMapper addressMapper;
     private final EmergencyContactMapper emergencyMapper;
+    private final AllergyMapper allergyMapper;
+    private final MedicationMapper medicationMapper;
 
     public BeneficiaryReadOnlyDTO toReadOnlyDTO(Beneficiary entity) {
         if (entity == null) return null;
@@ -25,6 +33,10 @@ public class BeneficiaryMapper {
                 .houseUnit(entity.getHouseUnit())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
+                .medicalTreatment(entity.getMedicalTreatment().stream()
+                        .map(medicationMapper::toDTO).toList())
+                .allergies(entity.getAllergies().stream()
+                        .map(allergyMapper::toDTO).toList())
                 .build();
     }
 
@@ -32,7 +44,7 @@ public class BeneficiaryMapper {
     public Beneficiary toEntity(BeneficiarySaveDTO dto) {
         if (dto == null) return null;
 
-        return Beneficiary.builder()
+        Beneficiary beneficiary = Beneficiary.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .amka(dto.amka())
@@ -42,6 +54,52 @@ public class BeneficiaryMapper {
                 .permanentAddress(addressMapper.toEntity(dto.permanentAddress()))
                 .emergencyContact(emergencyMapper.toEntity(dto.emergencyContact()))
                 .build();
+
+        //  Προσθήκη Φαρμάκων
+        if (dto.medicalTreatment() != null) {
+            dto.medicalTreatment().stream()
+                    .map(medicationMapper::toEntity)
+                    .forEach(beneficiary.getMedicalTreatment()::add);
+        }
+
+        //  Προσθήκη Αλλεργιών
+        if (dto.allergies() != null) {
+            dto.allergies().forEach(aDto -> {
+                // Εδώ καλούμε τον allergyMapper
+                Allergy allergy = allergyMapper.toEntity(aDto);
+                beneficiary.addAllergy(allergy);
+            });
+        }
+
+        return beneficiary;
+    }
+
+    public void updateEntity(BeneficiaryUpdateDTO dto, Beneficiary existing) {
+        if (dto == null || existing == null) return;
+
+
+        existing.setFirstName(dto.firstName());
+        existing.setLastName(dto.lastName());
+        existing.setAmka(dto.amka());
+        existing.setDateOfBirth(dto.dateOfBirth());
+        existing.setHouseUnit(dto.houseUnit());
+
+        if (dto.permanentAddress() != null) {
+            existing.setPermanentAddress(addressMapper.toEntity(dto.permanentAddress()));
+        }
+        if (dto.emergencyContact() != null) {
+            existing.setEmergencyContact(emergencyMapper.toEntity(dto.emergencyContact()));
+        }
+        // Update Medical Treatment (Embeddables - Replace list)
+        if (dto.medicalTreatment() != null) {
+            existing.getMedicalTreatment().clear();
+            dto.medicalTreatment().stream()
+                    .map(medicationMapper::toEntity)
+                    .forEach(existing.getMedicalTreatment()::add);
+        }
+
+
+
     }
 
 }

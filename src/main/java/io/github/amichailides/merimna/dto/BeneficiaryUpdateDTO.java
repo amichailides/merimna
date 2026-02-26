@@ -12,13 +12,8 @@ import lombok.Builder;
 import java.time.LocalDate;
 import java.util.List;
 
-import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-
-/**
- * Η επικύρωση ακολουθεί το {@link ValidationGroupSequence} για σταδιακό έλεγχο σφαλμάτων.
- */
 @Builder
-public record BeneficiarySaveDTO(
+public record BeneficiaryUpdateDTO(
         @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
@@ -31,8 +26,6 @@ public record BeneficiarySaveDTO(
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
-        Boolean isActive,
-
         @NotNull(message = "{houseUnit.required}")
         HouseUnit houseUnit,
 
@@ -42,13 +35,8 @@ public record BeneficiarySaveDTO(
 
         @Valid
         @NotNull(message = "{emergencyContact.required}")
-        // TODO: [Daya-Refactor] Αλλαγή του String relationship σε Enum (RelationshipType)
-        // για να αποφύγουμε ελεύθερο κείμενο και λάθη πληκτρολόγησης.
         EmergencyContactDTO emergencyContact,
 
-        @Valid
-        List<MedicationCreateDTO> medicalTreatment,
+        List<MedicationCreateDTO> medicalTreatment
 
-        @Valid
-        List<AllergyCreateDTO> allergies
 ) {}

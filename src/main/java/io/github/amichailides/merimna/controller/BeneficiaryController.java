@@ -1,12 +1,12 @@
 package io.github.amichailides.merimna.controller;
 
 import io.github.amichailides.merimna.common.ApiResponse;
-import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
-import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -44,6 +44,15 @@ public class BeneficiaryController {
                         beneficiary,
                         getMessage("beneficiary.create.success"),
                         HttpStatus.CREATED.value()));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BeneficiaryReadOnlyDTO> updateBeneficiary(
+            @PathVariable Long id,
+            @Valid @RequestBody BeneficiaryUpdateDTO dto) {
+
+        BeneficiaryReadOnlyDTO beneficiary = service.updateBeneficiary(id, dto);
+        return ResponseEntity.ok(beneficiary);
     }
 
     @GetMapping("/{id}")
@@ -119,6 +128,35 @@ public class BeneficiaryController {
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
     }
+
+    @PostMapping("/{id}/allergies")
+    public ResponseEntity<AllergyReadOnlyDTO> addAllergy(
+            @PathVariable Long id,
+            @Valid @RequestBody AllergyCreateDTO dto) {
+
+        AllergyReadOnlyDTO allergy = service.addAllergy(id, dto);
+        return ResponseEntity.ok(allergy);
+    }
+
+    @PatchMapping("/{id}/allergies/{allergyId}")
+    public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
+            @PathVariable Long id,
+            @PathVariable Long allergyId,
+            @Valid @RequestBody AllergyUpdateDTO dto) {
+
+        AllergyReadOnlyDTO allergy = service.updateAllergy(id, allergyId, dto);
+        return ResponseEntity.ok(allergy);
+    }
+
+    @DeleteMapping("/{id}/allergies/{allergyId}")
+    public ResponseEntity<Void> deleteAllergy(
+            @PathVariable Long id,
+            @PathVariable Long allergyId) {
+
+        service.deleteAllergy(id, allergyId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     /**
      * Helper για να τραβάμε τα μηνύματα επιτυχίας.

@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.model.HouseUnit;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Builder
@@ -16,5 +17,7 @@ public record BeneficiaryReadOnlyDTO (
     Boolean isActive,
     HouseUnit houseUnit,
     AddressDTO permanentAddress,
-    EmergencyContactDTO emergencyContact
+    EmergencyContactDTO emergencyContact,
+    List<MedicationReadOnlyDTO> medicalTreatment,
+    List<AllergyReadOnlyDTO> allergies
 ) {}

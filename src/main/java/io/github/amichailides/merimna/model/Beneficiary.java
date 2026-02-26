@@ -91,6 +91,9 @@ public class Beneficiary {
     })
     private EmergencyContact emergencyContact;
 
+
+    // TODO: Medication should become an Entity in the future (O Θεός να βάλει το χέρι του !)
+    // Reasons: audit history, caregiver tracking, notifications
     @ElementCollection
     @CollectionTable(name = "beneficiary_medication", joinColumns = @JoinColumn(name = "beneficiary_id"))
     @OrderColumn(name = "med_order")

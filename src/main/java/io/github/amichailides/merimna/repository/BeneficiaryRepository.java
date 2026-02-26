@@ -23,6 +23,8 @@ public interface BeneficiaryRepository extends JpaRepositoryImplementation<Benef
 
     Page<Beneficiary> findAllByHouseUnitAndIsActiveTrue(HouseUnit houseUnit, Pageable pageable);
 
+    boolean existsByAmkaAndIdNot(String amka, Long id);
+
 
 
 }

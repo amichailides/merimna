@@ -2,6 +2,8 @@ package io.github.amichailides.merimna.service.validation;
 
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.exception.BeneficiaryAlreadyExistsException;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
@@ -39,16 +41,14 @@ public class BeneficiaryValidator {
     public void validateForSave(BeneficiarySaveDTO dto) {
         Map<String, String> errors = new LinkedHashMap<>();
 
-        if (repository.existsByAmka(dto.amka())) {
+        String amka = dto.amka();
+        LocalDate dob = dto.dateOfBirth();
+
+        if (repository.existsByAmka(amka)) {
             errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
         }
-
-        //  Τρέχει ΜΟΝΟ αν το ΑΜΚΑ δεν υπάρχει (no need να φτάσει εδω αν υπάρχει το amka)
-        else if (dto.amka() != null && dto.dateOfBirth() != null) {
-            String dobPart = formatToAmkaDate(dto.dateOfBirth()); // π.χ. 250395
-            if (!dto.amka().startsWith(dobPart)) {
-                errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
-            }
+        else if (!isAmkaConsistentWithDob(amka, dob)) {
+            errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
         }
 
         // άλλα business checks εδώ...
@@ -74,10 +74,39 @@ public class BeneficiaryValidator {
         }
     }
 
+    public void validateForUpdate(Long id, BeneficiaryUpdateDTO dto) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        String amka = dto.amka();
+        LocalDate dob = dto.dateOfBirth();
+
+        //  Έλεγχος αν το νέο ΑΜΚΑ υπάρχει ήδη σε ΑΛΛΟΝ ωφελούμενο
+        if (repository.existsByAmkaAndIdNot(amka, id)) {
+            errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
+        }
+        else if (!isAmkaConsistentWithDob(amka, dob)) {
+            errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
+        }
+
+        if (!errors.isEmpty()) {
+            throw new BeneficiaryValidationException(errors);
+        }
+    }
+
     // Helper για να πάρει τα πρώτα 6 ψηφία του ΑΜΚΑ από το Date
     private String formatToAmkaDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
         return date.format(formatter);
+    }
+
+    /**
+     * Ελέγχει αν τα πρώτα 6 ψηφία του ΑΜΚΑ ταυτίζονται με την ημερομηνία γέννησης.
+     */
+    private boolean isAmkaConsistentWithDob(String amka, LocalDate dateOfBirth) {
+        if (amka == null || dateOfBirth == null) return true;
+
+        String dobPart = formatToAmkaDate(dateOfBirth);
+        return amka.startsWith(dobPart);
     }
 
 }
