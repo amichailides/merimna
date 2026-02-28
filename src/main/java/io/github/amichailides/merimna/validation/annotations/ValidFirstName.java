@@ -12,12 +12,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@NotBlank(message = "{name.required}", groups = FirstOrder.class)
 @Size(min=2, max=20, message = "{name.size}", groups = FirstOrder.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FirstNameValidator.class)
 public @interface ValidFirstName {
+
     String message() default "{name.invalid}";
 
     Class<?>[] groups() default {};

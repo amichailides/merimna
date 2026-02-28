@@ -12,7 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@NotBlank(message = "{lastname.required}", groups = FirstOrder.class)
 @Size( min = 2, max = 20, message = "{lastname.size}", groups = FirstOrder.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -74,17 +74,24 @@ public class BeneficiaryValidator {
         }
     }
 
-    public void validateForUpdate(Long id, BeneficiaryUpdateDTO dto) {
+    // Ελέγχουμε αν το AMKA υπάρχει ήδη σε άλλον ωφελούμενο (μόνο αν άλλαξε).
+    // Αν ναι, fast-fail — δεν έχει νόημα να συνεχίσουμε.
+    // Αλλιώς, αν άλλαξε AMKA ή DOB, ελέγχουμε consistency μεταξύ τους,
+    // γιατί ακόμα και PATCH μόνο του DOB μπορεί να οδηγήσει σε data corruption
+    // (π.χ. AMKA 150580... με DOB 1992-11-20).
+    public void validateForUpdate(Beneficiary existing, BeneficiaryUpdateDTO dto) {
         Map<String, String> errors = new LinkedHashMap<>();
+        Long id = existing.getId();
 
-        String amka = dto.amka();
-        LocalDate dob = dto.dateOfBirth();
+        String finalAmka = (dto.amka() != null) ? dto.amka() : existing.getAmka();
+        LocalDate finalDob = (dto.dateOfBirth() != null) ? dto.dateOfBirth() : existing.getDateOfBirth();
 
-        //  Έλεγχος αν το νέο ΑΜΚΑ υπάρχει ήδη σε ΑΛΛΟΝ ωφελούμενο
-        if (repository.existsByAmkaAndIdNot(amka, id)) {
+        boolean amkaChanged = dto.amka() != null;
+        boolean dobChanged = dto.dateOfBirth() != null;
+
+        if (amkaChanged && repository.existsByAmkaAndIdNot(finalAmka, id)) {
             errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
-        }
-        else if (!isAmkaConsistentWithDob(amka, dob)) {
+        } else if ((amkaChanged || dobChanged) && !isAmkaConsistentWithDob(finalAmka, finalDob)) {
             errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
         }
 

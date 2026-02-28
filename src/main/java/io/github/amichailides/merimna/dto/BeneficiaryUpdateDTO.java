@@ -26,15 +26,14 @@ public record BeneficiaryUpdateDTO(
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
-        @NotNull(message = "{houseUnit.required}")
+        Boolean isActive,
+
         HouseUnit houseUnit,
 
         @Valid
-        @NotNull(message = "{address.required}")
         AddressDTO permanentAddress,
 
         @Valid
-        @NotNull(message = "{emergencyContact.required}")
         EmergencyContactDTO emergencyContact,
 
         List<MedicationCreateDTO> medicalTreatment

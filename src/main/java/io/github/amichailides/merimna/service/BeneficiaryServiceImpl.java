@@ -119,7 +119,12 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary existing = beneficiaryRepository.findById(id)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
 
-        validator.validateForUpdate(id,dto);
+        validator.validateForUpdate(existing,dto);
+
+        if (dto.isActive() != null && !dto.isActive()) {
+            validator.validateForDeactivate(existing);
+        }
+
         beneficiaryMapper.updateEntity(dto, existing);
 
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(existing));

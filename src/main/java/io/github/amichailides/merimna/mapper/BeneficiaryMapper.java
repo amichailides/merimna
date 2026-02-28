@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.mapper;
 
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
@@ -9,8 +8,6 @@ import io.github.amichailides.merimna.model.Beneficiary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +36,6 @@ public class BeneficiaryMapper {
                         .map(allergyMapper::toDTO).toList())
                 .build();
     }
-
 
     public Beneficiary toEntity(BeneficiarySaveDTO dto) {
         if (dto == null) return null;
@@ -78,11 +74,12 @@ public class BeneficiaryMapper {
         if (dto == null || existing == null) return;
 
 
-        existing.setFirstName(dto.firstName());
-        existing.setLastName(dto.lastName());
-        existing.setAmka(dto.amka());
-        existing.setDateOfBirth(dto.dateOfBirth());
-        existing.setHouseUnit(dto.houseUnit());
+        if (dto.firstName() != null) existing.setFirstName(dto.firstName());
+        if (dto.lastName() != null) existing.setLastName(dto.lastName());
+        if (dto.amka() != null) existing.setAmka(dto.amka());
+        if (dto.dateOfBirth() != null) existing.setDateOfBirth(dto.dateOfBirth());
+        if (dto.houseUnit() != null) existing.setHouseUnit(dto.houseUnit());
+        if (dto.isActive() != null) existing.setIsActive(dto.isActive());
 
         if (dto.permanentAddress() != null) {
             existing.setPermanentAddress(addressMapper.toEntity(dto.permanentAddress()));
@@ -97,8 +94,6 @@ public class BeneficiaryMapper {
                     .map(medicationMapper::toEntity)
                     .forEach(existing.getMedicalTreatment()::add);
         }
-
-
 
     }
 

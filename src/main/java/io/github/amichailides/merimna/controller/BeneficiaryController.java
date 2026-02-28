@@ -49,7 +49,7 @@ public class BeneficiaryController {
     @PatchMapping("/{id}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> updateBeneficiary(
             @PathVariable Long id,
-            @Valid @RequestBody BeneficiaryUpdateDTO dto) {
+            @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.updateBeneficiary(id, dto);
         return ResponseEntity.ok(beneficiary);
@@ -66,9 +66,9 @@ public class BeneficiaryController {
                 HttpStatus.OK.value()));
     }
 
-    @GetMapping("/amka/{amka}")
+    @GetMapping(params = "amka")
     public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getByAmka(
-            @PathVariable @ValidAmka String amka) {
+            @RequestParam @ValidAmka String amka) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.findByAmka(amka);
 
@@ -96,6 +96,7 @@ public class BeneficiaryController {
         return ResponseEntity.ok(page);
     }
 
+    /*
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> deactivate(@PathVariable Long id) {
 
@@ -104,8 +105,9 @@ public class BeneficiaryController {
                 updated,
                 getMessage("beneficiary.deactivate.success"),
                 HttpStatus.OK.value()));
-
     }
+
+     */
 
     /**
      * Αναζήτηση ωφελουμένων με global search term.
