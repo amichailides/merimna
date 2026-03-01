@@ -23,7 +23,7 @@ import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 
 @RestController
 @Validated
-@RequestMapping("/api/beneficiaries")
+@RequestMapping("/beneficiaries")
 @RequiredArgsConstructor
 public class BeneficiaryController {
     private final BeneficiaryService service;
@@ -127,35 +127,6 @@ public class BeneficiaryController {
         Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
         return ResponseEntity.ok(results);
     }
-
-    @PostMapping("/{id}/allergies")
-    public ResponseEntity<AllergyReadOnlyDTO> addAllergy(
-            @PathVariable Long id,
-            @Valid @RequestBody AllergyCreateDTO dto) {
-
-        AllergyReadOnlyDTO allergy = service.addAllergy(id, dto);
-        return ResponseEntity.ok(allergy);
-    }
-
-    @PatchMapping("/{id}/allergies/{allergyId}")
-    public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
-            @PathVariable Long id,
-            @PathVariable Long allergyId,
-            @Valid @RequestBody AllergyUpdateDTO dto) {
-
-        AllergyReadOnlyDTO allergy = service.updateAllergy(id, allergyId, dto);
-        return ResponseEntity.ok(allergy);
-    }
-
-    @DeleteMapping("/{id}/allergies/{allergyId}")
-    public ResponseEntity<Void> deleteAllergy(
-            @PathVariable Long id,
-            @PathVariable Long allergyId) {
-
-        service.deleteAllergy(id, allergyId);
-        return ResponseEntity.noContent().build();
-    }
-
 
     /**
      * Helper για να τραβάμε τα μηνύματα επιτυχίας.

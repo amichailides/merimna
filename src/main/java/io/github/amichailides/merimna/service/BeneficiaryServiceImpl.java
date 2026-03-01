@@ -35,6 +35,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryValidator validator;
     private final AllergyMapper allergyMapper;
     private final AllergyRepository allergyRepository;
+    private final AllergiesService allergiesService;
 
     @Override
     @Transactional(readOnly = true)
@@ -128,46 +129,19 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     @Transactional
     public AllergyReadOnlyDTO addAllergy(Long id, AllergyCreateDTO dto) {
-
-        Beneficiary existing = beneficiaryRepository.findById(id)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
-
-        Allergy allergy = allergyMapper.toEntity(dto);
-        existing.addAllergy(allergy);
-        Allergy savedAllergy = allergyRepository.save(allergy);
-
-        return allergyMapper.toDTO(savedAllergy);
+        return allergiesService.addAllergy(id, dto);
     }
 
     @Override
     @Transactional
     public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
-        Beneficiary existing = beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
-
-        Allergy allergy = existing.getAllergies().stream()
-                .filter(a -> a.getId().equals(allergyId))
-                .findFirst()
-                .orElseThrow( () -> new AllergyNotFoundException(allergyId));
-
-        allergyMapper.updateEntity(dto, allergy);
-        // dirty checking → αυτόματο UPDATE στο commit
-        return allergyMapper.toDTO(allergy);
+        return allergiesService.updateAllergy(beneficiaryId, allergyId, dto);
     }
 
     @Override
     @Transactional
     public void deleteAllergy(Long beneficiaryId, Long allergyId) {
-        Beneficiary existing = beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
-
-        Allergy allergy = existing.getAllergies().stream()
-                .filter(a -> a.getId().equals(allergyId))
-                .findFirst()
-                .orElseThrow(() -> new AllergyNotFoundException(allergyId));
-
-        // orphanRemoval=true → Hibernate τη σβήνει αυτόματα
-        existing.removeAllergy(allergy);
+        allergiesService.deleteAllergy(beneficiaryId, allergyId);
     }
 
 
