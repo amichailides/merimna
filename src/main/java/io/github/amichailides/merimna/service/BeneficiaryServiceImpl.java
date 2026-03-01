@@ -90,14 +90,12 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Transactional
-    public BeneficiaryReadOnlyDTO deactivate(Long id) {
-
+    public BeneficiaryReadOnlyDTO discharge(Long id) {
         Beneficiary beneficiary = beneficiaryRepository.findById(id)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
 
-        validator.validateForDeactivate(beneficiary);
-
-        beneficiary.setIsActive(false);
+        beneficiary.discharge(); // state check
+        validator.validateForDischarge(beneficiary); // business rules
 
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(beneficiary));
     }
@@ -120,10 +118,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
 
         validator.validateForUpdate(existing,dto);
-
-        if (dto.isActive() != null && !dto.isActive()) {
-            validator.validateForDeactivate(existing);
-        }
 
         beneficiaryMapper.updateEntity(dto, existing);
 

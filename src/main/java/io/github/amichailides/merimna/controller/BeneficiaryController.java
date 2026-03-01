@@ -96,18 +96,15 @@ public class BeneficiaryController {
         return ResponseEntity.ok(page);
     }
 
-    /*
-    @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> deactivate(@PathVariable Long id) {
+    @PostMapping("/{id}/discharge")
+    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> discharge(@PathVariable Long id) {
 
-        BeneficiaryReadOnlyDTO updated = service.deactivate(id);
+        BeneficiaryReadOnlyDTO updated = service.discharge(id);
         return ResponseEntity.ok(ApiResponse.success(
                 updated,
-                getMessage("beneficiary.deactivate.success"),
+                getMessage("beneficiary.discharge.success"),
                 HttpStatus.OK.value()));
     }
-
-     */
 
     /**
      * Αναζήτηση ωφελουμένων με global search term.

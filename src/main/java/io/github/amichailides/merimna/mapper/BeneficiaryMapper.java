@@ -79,7 +79,6 @@ public class BeneficiaryMapper {
         if (dto.amka() != null) existing.setAmka(dto.amka());
         if (dto.dateOfBirth() != null) existing.setDateOfBirth(dto.dateOfBirth());
         if (dto.houseUnit() != null) existing.setHouseUnit(dto.houseUnit());
-        if (dto.isActive() != null) existing.setIsActive(dto.isActive());
 
         if (dto.permanentAddress() != null) {
             existing.setPermanentAddress(addressMapper.toEntity(dto.permanentAddress()));

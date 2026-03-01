@@ -26,8 +26,6 @@ public record BeneficiaryUpdateDTO(
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
-        Boolean isActive,
-
         HouseUnit houseUnit,
 
         @Valid

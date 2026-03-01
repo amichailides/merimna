@@ -1,5 +1,7 @@
 package io.github.amichailides.merimna.model;
 
+import io.github.amichailides.merimna.common.ErrorCode;
+import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -54,6 +56,7 @@ public class Beneficiary {
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
+    @Setter(AccessLevel.NONE)
     @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
@@ -104,6 +107,19 @@ public class Beneficiary {
     @Setter(AccessLevel.NONE)
     @Builder.Default
     private Set<Allergy> allergies = new HashSet<>();
+
+    public void discharge() {
+
+        if (!isActive) {
+            throw new BeneficiaryAlreadyInactiveException();
+        }
+
+        this.isActive = false;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
 
     public void addAllergy(@NonNull Allergy allergy) {
         this.allergies.add(allergy);

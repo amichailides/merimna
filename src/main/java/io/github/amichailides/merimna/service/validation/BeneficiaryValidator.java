@@ -59,13 +59,8 @@ public class BeneficiaryValidator {
         }
     }
 
-    public void validateForDeactivate(Beneficiary beneficiary) {
+    public void validateForDischarge(Beneficiary beneficiary) {
         Map<String, String> errors = new LinkedHashMap<>();
-
-        if (beneficiary.getIsActive() != null && !beneficiary.getIsActive()) {
-            errors.put("isActive", ErrorCode.BENEFICIARY_ALREADY_INACTIVE.getMessageKey());
-        }
-
         // Εδώ μελλοντικά προσθέτουμε και άλλους κανόνες,
         // π.χ. Να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
 
