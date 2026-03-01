@@ -115,6 +115,7 @@ public class Beneficiary {
         }
 
         this.isActive = false;
+        // TODO: add exitReason, exitDate, approvedBy fields when DischargeDTO is implemented
     }
 
     public boolean isActive() {
