@@ -76,3 +76,5 @@ architecture, and enterprise-level scalability.
 - **Full-Stack Application:** Develop a front-end application for care professionals.
 - **Security:** Implement Role-Based Access Control (RBAC) using Spring Security.
 - **CI/CD:** Set up automated pipelines for testing and deployment.
+
+This is a test for AI slop detection.
