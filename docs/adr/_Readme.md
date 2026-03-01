@@ -11,10 +11,10 @@
 ---
 
 ## Ευρετήριο
-
-| #                                                             | Τίτλος                                    | Status   | Ημερομηνία |
-|---------------------------------------------------------------|-------------------------------------------|----------|------------|
-| [ADR-001](ADR-001-validation-presence-vs-value-separation.md) | Διαχωρισμός Presence από Value Validation | Accepted | 2026-02-28 |
+| #                                                             | Τίτλος                                                       | Status   | Ημερομηνία |
+|---------------------------------------------------------------|--------------------------------------------------------------|----------|------------|
+| [ADR-001](ADR-001-validation-presence-vs-value-separation.md) | Διαχωρισμός Presence από Value Validation                    | Accepted | 2026-02-28 |
+| [ADR-002](ADR-002-business-vs-entity-validation.md)           | Fail-Fast Strategy & Rich Domain Model για State Transitions | Accepted | 2026-03-01 |
 
 ---
 

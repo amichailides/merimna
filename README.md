@@ -22,6 +22,8 @@ architecture, and enterprise-level scalability.
   structure.
 - **Lifecycle Management:** Soft-delete functionality to deactivate beneficiaries while preserving historical data
   integrity.
+- - **Rich Domain Model:** State transitions (e.g., discharge) enforced directly
+    in the entity, ensuring data integrity regardless of the caller.
 
 ## Technical Stack
 
@@ -33,14 +35,18 @@ architecture, and enterprise-level scalability.
 
 ## API Endpoints
 
-| Method  | Endpoint                             | Description                                                |
-|---------|--------------------------------------|------------------------------------------------------------|
-| `POST`  | `/api/beneficiaries`                 | Creates a new beneficiary with full validation.            |
-| `GET`   | `/api/beneficiaries/{id}`            | Retrieves a beneficiary by their unique ID.                |
-| `GET`   | `/api/beneficiaries/amka/{amka}`     | Retrieves a beneficiary by their AMKA.                     |
-| `GET`   | `/api/beneficiaries`                 | Retrieves all beneficiaries with pagination/filters.       |
-| `PATCH` | `/api/beneficiaries/{id}/deactivate` | Soft-deactivates a beneficiary record.                     |
-| `GET`   | `/api/beneficiaries/search`          | Performs a global search using the Greek-optimized engine. |
+| Method   | Endpoint                                           | Description                                                |
+|----------|----------------------------------------------------|------------------------------------------------------------|
+| `POST`   | `/api/beneficiaries`                               | Creates a new beneficiary with full validation.            |
+| `GET`    | `/api/beneficiaries/{id}`                          | Retrieves a beneficiary by their unique ID.                |
+| `GET`    | `/api/beneficiaries/amka/{amka}`                   | Retrieves a beneficiary by their AMKA.                     |
+| `GET`    | `/api/beneficiaries`                               | Retrieves all beneficiaries with pagination/filters.       |
+| `PATCH`  | `/api/beneficiaries/{id}`                          | Updates beneficiary details (partial update).              |
+| `PATCH`  | `/api/beneficiaries/{id}/discharge`                | Discharges a beneficiary from the structure.               |
+| `GET`    | `/api/beneficiaries/search`                        | Performs a global search using the Greek-optimized engine. |
+| `POST`   | `/api/beneficiaries/{id}/allergies`                | Adds a new allergy to a beneficiary.                       |
+| `PATCH`  | `/api/beneficiaries/{id}/allergies/{allergyId}`    | Updates a specific allergy of a beneficiary.               |
+| `DELETE` | `/api/beneficiaries/{id}/allergies/{allergyId}`    | Removes a specific allergy from a beneficiary.             |
 
 ## Development Setup
 
