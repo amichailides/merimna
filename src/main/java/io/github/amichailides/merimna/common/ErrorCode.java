@@ -16,7 +16,10 @@ public enum ErrorCode {
     BENEFICIARY_NOT_FOUND("BENEFICIARY_NOT_FOUND", "beneficiary not found"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", "beneficiary.amkaAlreadyExists"),
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", "beneficiary.amkaDateMismatch"),
-    BENEFICIARY_ALREADY_INACTIVE("ALREADY_INACTIVE", "beneficiary.alreadyInactive");
+    BENEFICIARY_ALREADY_INACTIVE("ALREADY_INACTIVE", "beneficiary.alreadyInactive"),
+
+    // Allergy
+    ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", "allergy.notFound");
 
 
     private final String code;

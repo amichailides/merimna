@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.service;
 
 
 import io.github.amichailides.merimna.dto.*;
+import io.github.amichailides.merimna.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.mapper.AllergyMapper;
@@ -147,8 +148,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Allergy allergy = existing.getAllergies().stream()
                 .filter(a -> a.getId().equals(allergyId))
                 .findFirst()
-                //TODO μην ξεχάσεις custom exception
-                .orElseThrow( () -> new RuntimeException(String.valueOf(allergyId)));
+                .orElseThrow( () -> new AllergyNotFoundException(allergyId));
 
         allergyMapper.updateEntity(dto, allergy);
         // dirty checking → αυτόματο UPDATE στο commit
@@ -164,8 +164,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Allergy allergy = existing.getAllergies().stream()
                 .filter(a -> a.getId().equals(allergyId))
                 .findFirst()
-                //TODO μην ξεχάσεις custom exception
-                .orElseThrow(() -> new RuntimeException(String.valueOf(allergyId)));
+                .orElseThrow(() -> new AllergyNotFoundException(allergyId));
 
         // orphanRemoval=true → Hibernate τη σβήνει αυτόματα
         existing.removeAllergy(allergy);

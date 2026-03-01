@@ -4,7 +4,6 @@ import io.github.amichailides.merimna.model.AllergySeverity;
 import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;
 import jakarta.validation.constraints.NotNull;
 
-// TODO: add @NotNull validation - null = νέα, not null = υπάρχουσα
 public record AllergyUpdateDTO(
 
         Long id,

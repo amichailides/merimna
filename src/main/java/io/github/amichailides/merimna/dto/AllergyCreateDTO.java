@@ -5,7 +5,7 @@ import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-// TODO: add @NotNull validation - null = νέα, not null = υπάρχουσα
+
 public record AllergyCreateDTO(
         @NotBlank(message = "{allergy.substance.required}")
         @ValidGreekLatinText(max = 50, message = "{allergy.substance.invalid}")
