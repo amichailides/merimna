@@ -41,6 +41,7 @@ public class AllergiesServiceImpl implements AllergiesService{
         Beneficiary existing = beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
 
+        //TODO ownership οπως στο medication bro
         Allergy allergy = existing.getAllergies().stream()
                 .filter(a -> a.getId().equals(allergyId))
                 .findFirst()
@@ -57,6 +58,8 @@ public class AllergiesServiceImpl implements AllergiesService{
         Beneficiary existing = beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
 
+        // TODO: AllergyValidator. business rules πχ duplicate allergy check,
+        //  σοβαρότητα αλλεργίας σε συνδυασμό με ενεργά φάρμακα (cross-check με Medication)
         Allergy allergy = existing.getAllergies().stream()
                 .filter(a -> a.getId().equals(allergyId))
                 .findFirst()

@@ -38,6 +38,7 @@ public class Allergy {
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
+            //TODO custom exception
             throw new IllegalStateException("Αυτή η αλλεργία είναι ήδη συνδεδεμένη με άλλον ωφελούμενο. " +
                     "Πρέπει πρώτα να γίνει clearBeneficiary().");
         }

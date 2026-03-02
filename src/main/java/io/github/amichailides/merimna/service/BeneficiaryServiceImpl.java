@@ -121,7 +121,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         validator.validateForUpdate(existing,dto);
 
-        beneficiaryMapper.updateEntity(dto, existing);
+        beneficiaryMapper.updateEntity(existing, dto);
 
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(existing));
     }

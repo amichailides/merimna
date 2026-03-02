@@ -19,8 +19,11 @@ public enum ErrorCode {
     BENEFICIARY_ALREADY_INACTIVE("ALREADY_INACTIVE", "beneficiary.alreadyInactive"),
 
     // Allergy
-    ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", "allergy.notFound");
+    ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", "allergy.notFound"),
 
+    // Medication
+    MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", "medication.notFound"),
+    MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", "medication.notOwnedByBeneficiary");
 
     private final String code;
     private final String messageKey;

@@ -1,16 +1,22 @@
 package io.github.amichailides.merimna.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Embeddable
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class Medication {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    Long id;
+
     @NonNull
     @Column(nullable = false)
     private String name;
@@ -23,15 +29,34 @@ public class Medication {
     @Column(nullable = false)
     private String frequency;
 
-    @NonNull
-    @Column(nullable = false)
     /*
      * Logic: Οι ώρες αποθηκεύονται ως String (π.χ. "08:00, 20:00") για να είναι
      * συμβατές με το database mapping των ElementCollections.
      * TODO: Στο μέλλον μπορεί να μετατραπεί σε List<LocalTime> μέσω AttributeConverter
      * για την υποστήριξη push notifications στο mobile app.
      */
+    @NonNull
+    @Column(nullable = false)
     private String administrationTimes;
 
+    @Column
     private String instructions;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "beneficiary_id", nullable = false)
+    @Setter(AccessLevel.PACKAGE)
+    private Beneficiary beneficiary;
+
+    public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
+        if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
+            //TODO custom exception
+            throw new IllegalStateException("Αυτή η φαρμακευτική αγωγή είναι ήδη συνδεδεμένη με άλλον ωφελούμενο. " +
+                    "Πρέπει πρώτα να γίνει clearBeneficiary().");
+        }
+        this.beneficiary = beneficiary;
+    }
+
+    void clearBeneficiary() {
+        this.beneficiary = null;
+    }
 }

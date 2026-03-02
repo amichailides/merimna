@@ -1,14 +1,12 @@
 package io.github.amichailides.merimna.model;
 
-import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Οντότητα Ωφελούμενου.
@@ -97,16 +95,50 @@ public class Beneficiary {
 
     // TODO: Medication should become an Entity in the future (O Θεός να βάλει το χέρι του !)
     // Reasons: audit history, caregiver tracking, notifications
-    @ElementCollection
-    @CollectionTable(name = "beneficiary_medication", joinColumns = @JoinColumn(name = "beneficiary_id"))
-    @OrderColumn(name = "med_order")
+    @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter(AccessLevel.NONE)
     @Builder.Default
-    private List<Medication> medicalTreatment = new ArrayList<>();
+    private Set<Medication> medicalTreatment = new HashSet<>();
+
+    public void addMedication(@NonNull Medication medication) {
+        this.medicalTreatment.add(medication);
+        medication.assignToBeneficiary(this);
+    }
+
+    public void removeMedication(@NonNull Medication medication) {
+        this.medicalTreatment.remove(medication);
+        medication.clearBeneficiary();
+    }
+
+    public Set<Medication> getMedications() {
+        return unmodifiableSet(medicalTreatment);
+    }
+
+    public boolean belongsToThisBeneficiary(Medication medication) {
+        return getId().equals(medication.getBeneficiary().getId());
+    }
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Builder.Default
     private Set<Allergy> allergies = new HashSet<>();
+
+
+    public void addAllergy(@NonNull Allergy allergy) {
+        this.allergies.add(allergy);
+        allergy.assignToBeneficiary(this);
+    }
+
+    public void removeAllergy(@NonNull Allergy allergy) {
+        this.allergies.remove(allergy);
+        allergy.clearBeneficiary();
+    }
+
+    public Set<Allergy> getAllergies() {
+
+        return unmodifiableSet(allergies);
+    }
+
 
     public void discharge() {
 
@@ -122,17 +154,5 @@ public class Beneficiary {
         return isActive;
     }
 
-    public void addAllergy(@NonNull Allergy allergy) {
-        this.allergies.add(allergy);
-        allergy.assignToBeneficiary(this);
-    }
 
-    public void removeAllergy(@NonNull Allergy allergy) {
-        this.allergies.remove(allergy);
-        allergy.clearBeneficiary();
-    }
-
-    public Set<Allergy> getAllergies() {
-        return java.util.Collections.unmodifiableSet(allergies);
-    }
 }

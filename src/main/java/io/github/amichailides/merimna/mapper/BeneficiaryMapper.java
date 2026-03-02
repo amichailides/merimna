@@ -70,7 +70,7 @@ public class BeneficiaryMapper {
         return beneficiary;
     }
 
-    public void updateEntity(BeneficiaryUpdateDTO dto, Beneficiary existing) {
+    public void updateEntity(Beneficiary existing, BeneficiaryUpdateDTO dto) {
         if (dto == null || existing == null) return;
 
 
