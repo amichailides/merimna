@@ -14,7 +14,7 @@ import io.github.amichailides.merimna.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +61,15 @@ public class MedicationServiceImpl implements MedicationService{
             throw new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryId);
         }
         beneficiary.removeMedication(medication);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(Long beneficiaryId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+
+        return beneficiary.getMedications().stream()
+                .map(medicationMapper::toDTO)
+                .toList();
     }
 
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {

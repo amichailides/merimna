@@ -93,10 +93,11 @@ public class Beneficiary {
     private EmergencyContact emergencyContact;
 
 
-    // TODO: Medication should become an Entity in the future (O Θεός να βάλει το χέρι του !)
+    // TODO: Medication should become an Entity in the future (Completed)
     // Reasons: audit history, caregiver tracking, notifications
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private Set<Medication> medicalTreatment = new HashSet<>();
 
@@ -120,6 +121,7 @@ public class Beneficiary {
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     private Set<Allergy> allergies = new HashSet<>();
 

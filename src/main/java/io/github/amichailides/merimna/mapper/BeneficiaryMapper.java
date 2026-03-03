@@ -30,7 +30,7 @@ public class BeneficiaryMapper {
                 .houseUnit(entity.getHouseUnit())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
-                .medicalTreatment(entity.getMedicalTreatment().stream()
+                .medicalTreatment(entity.getMedications().stream()
                         .map(medicationMapper::toDTO).toList())
                 .allergies(entity.getAllergies().stream()
                         .map(allergyMapper::toDTO).toList())
@@ -55,7 +55,7 @@ public class BeneficiaryMapper {
         if (dto.medicalTreatment() != null) {
             dto.medicalTreatment().stream()
                     .map(medicationMapper::toEntity)
-                    .forEach(beneficiary.getMedicalTreatment()::add);
+                    .forEach(beneficiary.getMedications()::add);
         }
 
         //  Προσθήκη Αλλεργιών
@@ -86,12 +86,11 @@ public class BeneficiaryMapper {
         if (dto.emergencyContact() != null) {
             existing.setEmergencyContact(emergencyMapper.toEntity(dto.emergencyContact()));
         }
-        // Update Medical Treatment (Embeddables - Replace list)
+
         if (dto.medicalTreatment() != null) {
-            existing.getMedicalTreatment().clear();
             dto.medicalTreatment().stream()
                     .map(medicationMapper::toEntity)
-                    .forEach(existing.getMedicalTreatment()::add);
+                    .forEach(existing::addMedication);
         }
 
     }
