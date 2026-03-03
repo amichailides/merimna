@@ -246,7 +246,7 @@ public class GlobalExceptionHandler {
 
 
     /**
-     * Helper μέθοδος για να τραβάμε μεταφράσεις από το messages.properties.
+     * Helper μέθοδος για να τραβάμε μεταφράσεις από το ValidationMessages.properties.
      * Χρησιμοποιεί το LocaleContextHolder για να καταλάβει αυτόματα τη γλώσσα του χρήστη.
      */
     private String translate(String key, Object... args) {

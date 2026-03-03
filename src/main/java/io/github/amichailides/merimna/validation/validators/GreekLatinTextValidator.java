@@ -8,11 +8,13 @@ import jakarta.validation.ConstraintValidatorContext;
 public class GreekLatinTextValidator implements ConstraintValidator<ValidGreekLatinText, String> {
     private int min;
     private int max;
+    private boolean extended;
 
     @Override
     public void initialize(ValidGreekLatinText constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
+        this.extended = constraintAnnotation.extended();
     }
 
     @Override
@@ -26,7 +28,10 @@ public class GreekLatinTextValidator implements ConstraintValidator<ValidGreekLa
             return false;
         }
 
-        return value.matches(ValidationPatterns.GREEK_LATIN_TEXT);
+        String pattern = extended
+                ? ValidationPatterns.GREEK_LATIN_EXTENDED
+                : ValidationPatterns.GREEK_LATIN_TEXT;
+        return value.matches(pattern);
     }
 
 }

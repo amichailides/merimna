@@ -1,10 +1,22 @@
 package io.github.amichailides.merimna.dto;
 
+import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;
+import io.github.amichailides.merimna.validation.groups.SecondOrder;
+
 public record MedicationUpdateDTO(
         //TODO validation - groups
+        @ValidGreekLatinText(message = "{medication.name.size}", groups = SecondOrder.class)
         String name,
+
+        @ValidGreekLatinText (message = "{medication.dosage.size}", extended = true, groups = SecondOrder.class)
         String dosage,
+
+        @ValidGreekLatinText(message = "{medication.frequency.size}", extended = true, groups = SecondOrder.class)
         String frequency,
+
+        @ValidGreekLatinText(message = "{medication.administrationTimes.size}", extended = true, groups = SecondOrder.class)
         String administrationTimes,
+
+        @ValidGreekLatinText(min = 0, max = 500, message = "{medication.instructions.size}", extended = true, groups = SecondOrder.class)
         String instructions
 ) {}

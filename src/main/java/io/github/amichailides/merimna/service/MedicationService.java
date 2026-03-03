@@ -1,4 +1,13 @@
 package io.github.amichailides.merimna.service;
 
+import io.github.amichailides.merimna.dto.MedicationCreateDTO;
+import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
+import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
+
 public interface MedicationService {
+    MedicationReadOnlyDTO addMedication(Long beneficiaryId, MedicationCreateDTO dto);
+
+    MedicationReadOnlyDTO updateMedication(Long beneficiaryId, Long medicationId, MedicationUpdateDTO dto);
+
+    void deleteMedication(Long beneficiaryId, Long medicationId);
 }

@@ -40,7 +40,8 @@ public class MedicationMapper {
         if (dto.dosage() != null && !dto.dosage().isBlank()) existing.setDosage(dto.dosage());
         if (dto.frequency() != null && !dto.frequency().isBlank()) existing.setFrequency(dto.frequency());
         if (dto.administrationTimes() != null && !dto.administrationTimes().isBlank()) existing.setAdministrationTimes(dto.administrationTimes());
-        if (dto.instructions() != null && !dto.instructions().isBlank()) existing.setInstructions(dto.instructions());
+        // Αφήνουμε blank στο instructions (αν Θέλει να τη σβήσει)
+        if (dto.instructions() != null) existing.setInstructions(dto.instructions());
 
 
     }

@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface ValidGreekLatinText {
     int min() default 2;
     int max() default 100;
+    boolean extended() default false;
+
     String message() default "{text.invalid}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
