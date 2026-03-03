@@ -1,29 +1,29 @@
 # Architecture Decision Records (ADR)
 
-Αυτός ο φάκελος περιέχει τις αρχιτεκτονικές αποφάσεις του project.
+This folder contains the architectural decisions of the project.
 
-Κάθε ADR καταγράφει:
+Each ADR records:
 
-- **Τι** αποφασίστηκε
-- **Γιατί** αποφασίστηκε
-- **Τι εναλλακτικές** εξετάστηκαν
+- **What** was decided
+- **Why** it was decided
+- **What alternatives** were considered
 
 ---
 
-## Ευρετήριο
-| #                                                             | Τίτλος                                                       | Status   | Ημερομηνία |
+## Index
+| #                                                             | Title                                                        | Status   | Date       |
 |---------------------------------------------------------------|--------------------------------------------------------------|----------|------------|
-| [ADR-001](ADR-001-validation-presence-vs-value-separation.md) | Διαχωρισμός Presence από Value Validation                    | Accepted | 2026-02-28 |
-| [ADR-002](ADR-002-business-vs-entity-validation.md)           | Fail-Fast Strategy & Rich Domain Model για State Transitions | Accepted | 2026-03-01 |
+| [ADR-001](ADR-001-validation-presence-vs-value-separation.md) | Separation of Presence from Value Validation                 | Accepted | 2026-02-28 |
+| [ADR-002](ADR-002-business-vs-entity-validation.md)           | Fail-Fast Strategy & Rich Domain Model for State Transitions | Accepted | 2026-03-01 |
+| [ADR-003](ADR-003-medication-embeddable-to-entity.md)         | Converting MedicalTreatment from @Embeddable to @Entity      | Accepted | 2026-03-02 |
 
 ---
 
-## Status Ορισμοί
+## Status Definitions
 
-| Status          | Σημασία                              |
-|-----------------|--------------------------------------|
-| `Proposed`      | Προτείνεται, δεν έχει εγκριθεί ακόμα |
-| `Accepted`      | Εγκρίθηκε και υλοποιείται            |
-| `Deprecated`    | Αντικαταστάθηκε από νεότερη απόφαση  |
-| `Superseded by` | Αντικαταστάθηκε από συγκεκριμένο ADR |
-
+| Status          | Meaning                                  |
+|-----------------|------------------------------------------|
+| `Proposed`      | Proposed, not yet approved               |
+| `Accepted`      | Approved and being implemented           |
+| `Deprecated`    | Replaced by a newer decision             |
+| `Superseded by` | Replaced by a specific ADR               |

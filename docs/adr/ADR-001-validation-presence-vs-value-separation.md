@@ -1,89 +1,89 @@
-# ADR-001: Διαχωρισμός Presence Validation από Value Validation στα Custom Annotations
+# ADR-001: Separation of Presence Validation from Value Validation in Custom Annotations
 
 ## Status
 Accepted
 
-## Ημερομηνία
+## Date
 2026-02-28
 
 ---
 
-## Πλαίσιο
+## Context
 
-Το project χρησιμοποιεί custom validation annotations (`@ValidFirstName`, `@ValidLastName`, `@ValidAmka`, `@ValidDateOfBirth`)
-με validation groups σε δύο φάσεις:
+The project uses custom validation annotations (`@ValidFirstName`, `@ValidLastName`, `@ValidAmka`, `@ValidDateOfBirth`)
+with validation groups in two phases:
 
 - `FirstOrder` → structural checks (`@NotBlank`, `@Size`, `@NotNull`, `@Past`)
 - `SecondOrder` → business logic, regex patterns, custom validators
 
-Αρχικά, τα custom annotations περιείχαν **και** τους presence checks (`@NotBlank`, `@NotNull`) **και** τους value checks (size, regex):
+Initially, custom annotations contained **both** presence checks (`@NotBlank`, `@NotNull`) **and** value checks (size, regex):
 
 ```java
-// Αρχική υλοποίηση
+// Initial implementation
 @NotBlank(message = "{name.required}", groups = FirstOrder.class)
 @Size(min=2, max=20, message = "{name.size}", groups = FirstOrder.class)
 @Constraint(validatedBy = FirstNameValidator.class)
 public @interface ValidFirstName { ... }
 ```
 
-Αυτό δούλευε καλά για το **POST (Create)** endpoint με `@Validated(ValidationGroupSequence.class)`.
+This worked well for the **POST (Create)** endpoint using `@Validated(ValidationGroupSequence.class)`.
 
 ---
 
-## Πρόβλημα
+## Problem
 
-Κατά την υλοποίηση του **PATCH (Update)** endpoint, προέκυψε conflict:
+During the implementation of the **PATCH (Update)** endpoint, a conflict arose:
 
-- Με `@Valid` → τρέχει μόνο το `Default` group, τα `FirstOrder`/`SecondOrder` αγνοούνται εντελώς
-- Με `@Validated(ValidationGroupSequence.class)` → το `@NotBlank` απορρίπτει τα `null` πεδία, σπάζοντας το partial update
+- With `@Valid` → only the `Default` group runs, `FirstOrder`/`SecondOrder` are completely ignored.
+- With `@Validated(ValidationGroupSequence.class)` → `@NotBlank` rejects `null` fields, breaking partial updates.
 
-Το PATCH endpoint θέλουμε να δέχεται μερικά δεδομένα (π.χ. μόνο `{ "active": false }`),
-αλλά ταυτόχρονα αν σταλεί κάποιο πεδίο να τρέχει κανονικά το validation.
-
----
-
-## Εναλλακτικές που εξετάστηκαν
-
-**1. Ξεχωριστά annotations για Update** (`@ValidFirstNameUpdate`)
-- ❌ Boilerplate — διπλά annotations για κάθε πεδίο
-- ❌ Δύσκολη συντήρηση
-
-**2. `required` attribute στο annotation** (`@ValidFirstName(required = false)`)
-- ❌ Ο custom validator δεν μπορεί να χειριστεί `@NotBlank`/`@Size` conditionally
-- ❌ Χάνονται τα ξεχωριστά μηνύματα λάθους
-
-**3. `JsonNullable` για PATCH semantics**
-- ✅ Η πιο complete λύση μακροπρόθεσμα
-- ❌ Premature για το τρέχον στάδιο — το API δεν έχει σταθεροποιηθεί ακόμα
-- 📌 Καταγράφεται ως Phase 2 evolution
-
-**4. Διαχωρισμός presence από value validation** ✅ ΕΠΙΛΕΧΘΗΚΕ
-- Τα custom annotations κρατούν μόνο value validation (size, regex, format)
-- Τα presence checks (`@NotBlank`, `@NotNull`) μπαίνουν ξεχωριστά μόνο στο `SaveDTO`
+The PATCH endpoint needs to accept partial data (e.g., only `{ "active": false }`),
+but at the same time, if a field is sent, it must run normal validation.
 
 ---
 
-## Απόφαση
+## Considered Options
 
-Τα custom annotations **δεν πρέπει να αναλαμβάνουν** την ευθύνη του "είναι υποχρεωτικό το πεδίο".
-Αυτή είναι ευθύνη του **DTO** που γνωρίζει το context (Create vs Update).
+**1. Separate annotations for Update** (`@ValidFirstNameUpdate`)
+- ❌ Boilerplate — duplicate annotations for every field
+- ❌ Difficult maintenance
+
+**2. `required` attribute in annotation** (`@ValidFirstName(required = false)`)
+- ❌ The custom validator cannot handle `@NotBlank`/`@Size` conditionally
+- ❌ Separate error messages are lost
+
+**3. `JsonNullable` for PATCH semantics**
+- ✅ The most complete solution long-term
+- ❌ Premature for the current stage — the API has not stabilized yet
+- 📌 Recorded as Phase 2 evolution
+
+**4. Separation of presence from value validation** ✅ SELECTED
+- Custom annotations keep only value validation (size, regex, format)
+- Presence checks (`@NotBlank`, `@NotNull`) are placed separately only in `SaveDTO`
+
+---
+
+## Decision
+
+Custom annotations **should not assume** the responsibility of "is the field required".
+This is the responsibility of the **DTO** which knows the context (Create vs Update).
 
 ```
 presence constraint ≠ value constraint
 ```
 
-### Αλλαγές
+### Changes
 
-**Custom annotations** → αφαιρούνται οι presence checks:
+**Custom annotations** → presence checks are removed:
 
-| Annotation | Αφαιρείται |
+| Annotation | Removed |
 |---|---|
 | `@ValidFirstName` | `@NotBlank` |
 | `@ValidLastName` | `@NotBlank` |
 | `@ValidAmka` | `@NotBlank` |
 | `@ValidDateOfBirth` | `@NotNull`, `@Past` |
 
-**`BeneficiarySaveDTO`** → προστίθενται οι presence checks ξεχωριστά:
+**`BeneficiarySaveDTO`** → presence checks are added separately:
 
 ```java
 @NotBlank(message = "{name.required}", groups = FirstOrder.class)
@@ -91,7 +91,7 @@ presence constraint ≠ value constraint
 String firstName,
 ```
 
-**`BeneficiaryUpdateDTO`** → μόνο value validation, χωρίς presence:
+**`BeneficiaryUpdateDTO`** → only value validation, without presence:
 
 ```java
 @ValidFirstName(groups = SecondOrder.class)
@@ -100,16 +100,16 @@ String firstName,
 
 ---
 
-## Συνέπειες
+## Consequences
 
-✅ PATCH δέχεται partial updates χωρίς να σπάει
-✅ Αν σταλεί πεδίο, τρέχει κανονικά το size/regex validation
-✅ POST συνεχίζει να απαιτεί όλα τα υποχρεωτικά πεδία
-✅ Καθαρός διαχωρισμός ευθυνών
+*   ✅ PATCH accepts partial updates without breaking
+*   ✅ If a field is sent, size/regex validation runs normally
+*   ✅ POST continues to require all mandatory fields
+*   ✅ Clean separation of concerns
 
 ---
 
 ## Future (Phase 2)
 
-Όταν το API σταθεροποιηθεί, εξετάζεται εισαγωγή `JsonNullable` για explicit διαχωρισμό
-μεταξύ `null` = "δεν στάλθηκε" και `null` = "σβήσε την τιμή".
+When the API stabilizes, the introduction of `JsonNullable` is considered for explicit separation
+between `null` = "not sent" and `null` = "delete value".
