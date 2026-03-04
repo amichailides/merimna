@@ -10,5 +10,6 @@ public interface AllergiesService {
     AllergyReadOnlyDTO addAllergy(Long id, AllergyCreateDTO dto);
     AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto);
     void deleteAllergy(Long beneficiaryId, Long allergyId);
-    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(Long beneficiaryId);
+    List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(Long beneficiaryId);
+    AllergyReadOnlyDTO getAllergy(Long beneficiaryId, Long allergyId);
 }

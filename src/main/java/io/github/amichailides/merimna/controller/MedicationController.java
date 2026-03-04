@@ -8,7 +8,6 @@ import io.github.amichailides.merimna.service.MedicationService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,12 +44,21 @@ public class MedicationController {
                 .body(medication);
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<MedicationReadOnlyDTO>> getMedications(@PathVariable Long beneficiaryId) {
 
         List<MedicationReadOnlyDTO> medications = medicationService.getMedicationsByBeneficiary(beneficiaryId);
 
         return ResponseEntity.ok(medications);
+    }
+
+    @GetMapping("/{medicationId}")
+    public ResponseEntity<MedicationReadOnlyDTO> getMedication(
+            @PathVariable Long beneficiaryId,
+            @PathVariable Long medicationId) {
+
+        MedicationReadOnlyDTO dto =  medicationService.getMedication(beneficiaryId, medicationId);
+        return ResponseEntity.ok(dto);
     }
 
     @PatchMapping("/{medicationId}")
@@ -73,13 +81,6 @@ public class MedicationController {
         medicationService.deleteMedication(beneficiaryId, medicationId);
 
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Helper για να τραβάμε τα μηνύματα επιτυχίας.
-     */
-    private String getMessage(String code) {
-        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }
 
     private URI buildLocationUri(Object id) {

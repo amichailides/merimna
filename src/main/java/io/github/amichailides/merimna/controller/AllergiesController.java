@@ -3,14 +3,15 @@ package io.github.amichailides.merimna.controller;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.model.Allergy;
 import io.github.amichailides.merimna.service.AllergiesService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
 
 // TODO: Standardize API responses after feature completion
@@ -31,9 +32,9 @@ public class AllergiesController {
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyCreateDTO dto) {
 
         AllergyReadOnlyDTO allergy = allergiesService.addAllergy(beneficiaryId, dto);
-        // TODO: Add Location header for created allergy (REST best practice)
+
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .created(buildLocationUri(allergy.id()))
                 .body(allergy);
     }
 
@@ -57,10 +58,28 @@ public class AllergiesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergies(@PathVariable Long beneficiaryId) {
+    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergies (@PathVariable Long beneficiaryId) {
 
         List<AllergyReadOnlyDTO> allergies = allergiesService.getAllergiesByBeneficiary(beneficiaryId);
 
         return ResponseEntity.ok(allergies);
+    }
+
+    @GetMapping("/{allergyId}")
+    public ResponseEntity<AllergyReadOnlyDTO> getAllergy (
+            @PathVariable Long beneficiaryId,
+            @PathVariable Long allergyId) {
+
+        AllergyReadOnlyDTO allergy = allergiesService.getAllergy(beneficiaryId, allergyId);
+        return ResponseEntity.ok(allergy);
+
+    }
+
+    private URI buildLocationUri(Object id) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
     }
 }

@@ -74,6 +74,12 @@ public class AllergiesServiceImpl implements AllergiesService{
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public AllergyReadOnlyDTO getAllergy(Long beneficiaryId, Long allergyId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+        return allergyMapper.toDTO(getAllergyOrThrow(beneficiary, allergyId));
+    }
+
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
         return  beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
@@ -88,7 +94,11 @@ public class AllergiesServiceImpl implements AllergiesService{
         return  beneficiary.getAllergies().stream()
                 .filter(m -> m.getId().equals(allergyId))
                 .findFirst()
-                .orElseThrow(() ->
-                        new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiary.getId()));
+                .orElseThrow(() -> {
+                    if (!allergyRepository.existsById(allergyId)) {
+                        return new AllergyNotFoundException(allergyId);
+                    }
+                    return new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiary.getId());
+                });
     }
 }

@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.exception.MedicationNotFoundById;
+import io.github.amichailides.merimna.exception.MedicationNotFound;
 import io.github.amichailides.merimna.exception.MedicationNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.mapper.MedicationMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
@@ -57,6 +57,13 @@ public class MedicationServiceImpl implements MedicationService{
     }
 
     @Transactional(readOnly = true)
+    public MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId) {
+
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+        return medicationMapper.toDTO(getMedicationOrThrow(beneficiary, medicationId));
+    }
+
+    @Transactional(readOnly = true)
     public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(Long beneficiaryId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
@@ -79,7 +86,12 @@ public class MedicationServiceImpl implements MedicationService{
         return  beneficiary.getMedications().stream()
                 .filter(m -> m.getId().equals(medicationId))
                 .findFirst()
-                .orElseThrow(() ->
-                        new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiary.getId()));
+                .orElseThrow(() -> {
+                    if (!medicationRepository.existsById(medicationId)) {
+                        return new MedicationNotFound(medicationId);
+                    }
+                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiary.getId());
+                });
+
     }
 }

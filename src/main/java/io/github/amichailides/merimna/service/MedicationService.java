@@ -14,4 +14,6 @@ public interface MedicationService {
     void deleteMedication(Long beneficiaryId, Long medicationId);
 
     List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(Long beneficiaryId);
+
+    public MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId);
 }
