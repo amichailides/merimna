@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.model;
 
+import io.github.amichailides.merimna.exception.MedicationAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,8 +51,7 @@ public class Medication {
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
             //TODO custom exception
-            throw new IllegalStateException("Αυτή η φαρμακευτική αγωγή είναι ήδη συνδεδεμένη με άλλον ωφελούμενο. " +
-                    "Πρέπει πρώτα να γίνει clearBeneficiary().");
+            throw new MedicationAlreadyAssignedException();
         }
         this.beneficiary = beneficiary;
     }
