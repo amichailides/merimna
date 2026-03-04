@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.controller;
 
 import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.dto.*;
+import io.github.amichailides.merimna.exception.AllergyAlreadyAssignedException;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;

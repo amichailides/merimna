@@ -160,7 +160,8 @@ public class GlobalExceptionHandler {
         log.error("JSON parse error: {}", ex.getMessage());
         String message = "Μη έγκυρη μορφή δεδομένων στο σώμα του αιτήματος.";
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(
                         ErrorCode.INVALID_INPUT,
                         HttpStatus.BAD_REQUEST.value(),
@@ -183,7 +184,8 @@ public class GlobalExceptionHandler {
         String message = String.format("Η τιμή '%s' δεν είναι έγκυρη για την παράμετρο '%s'.",
                 providedValue, propertyName);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(
                         ErrorCode.INVALID_INPUT,
                         HttpStatus.BAD_REQUEST.value(),
@@ -209,8 +211,8 @@ public class GlobalExceptionHandler {
             errors.merge(fieldName, message, (existing, newMsg) -> existing + " | " + newMsg);
         }
 
-        return ResponseEntity.
-                status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.validationError(
                         ErrorCode.VALIDATION_FAILED,
                         HttpStatus.BAD_REQUEST.value(),
@@ -218,6 +220,25 @@ public class GlobalExceptionHandler {
                         errors,
                         request.getRequestURI()));
     }
+
+    @ExceptionHandler(BaseDomainException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceAssignmentException(
+            BaseDomainException ex,
+            HttpServletRequest request) {
+
+        String message = translate(ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(
+                        ex.getErrorCode(),
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        message,
+                        request.getRequestURI()
+                ));
+
+    }
+
 
     // Πιάνει τα πάντα που δεν έχουν πιάσει οι προηγούμενοί
     @ExceptionHandler(Exception.class)

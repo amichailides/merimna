@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.model;
 
+import io.github.amichailides.merimna.exception.AllergyAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,9 +39,7 @@ public class Allergy {
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
-            //TODO custom exception
-            throw new IllegalStateException("Αυτή η αλλεργία είναι ήδη συνδεδεμένη με άλλον ωφελούμενο. " +
-                    "Πρέπει πρώτα να γίνει clearBeneficiary().");
+            throw new AllergyAlreadyAssignedException();
         }
         this.beneficiary = beneficiary;
     }
