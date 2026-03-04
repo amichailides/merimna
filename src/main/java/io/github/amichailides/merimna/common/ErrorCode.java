@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     // Medication
     MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", "medication.notFound"),
+    MEDICATION_ALREADY_ASSIGNED("MEDICATION_ALREADY_ASSIGNED", "medication.alreadyAssigned"),
     MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", "medication.notOwnedByBeneficiary");
 
     private final String code;
