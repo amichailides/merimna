@@ -50,11 +50,5 @@ public record BeneficiarySaveDTO(
         @NotNull(message = "{emergencyContact.required}")
         // TODO: [Daya-Refactor] Αλλαγή του String relationship σε Enum (RelationshipType)
         // για να αποφύγουμε ελεύθερο κείμενο και λάθη πληκτρολόγησης.
-        EmergencyContactDTO emergencyContact,
-
-        @Valid
-        List<MedicationCreateDTO> medicalTreatment,
-
-        @Valid
-        List<AllergyCreateDTO> allergies
+        EmergencyContactDTO emergencyContact
 ) {}

@@ -34,6 +34,8 @@ public class MedicationMapper {
         );
     }
 
+    // TODO implement helper method updateIfNotNull()
+    // updateIfNotNull(dto.name(), entity::setName);
     public void updateEntity(Medication existing, MedicationUpdateDTO dto) {
 
         if (dto.name() != null && !dto.name().isBlank() ) existing.setName(dto.name());

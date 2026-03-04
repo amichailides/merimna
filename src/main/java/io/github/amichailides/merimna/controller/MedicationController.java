@@ -1,14 +1,14 @@
 package io.github.amichailides.merimna.controller;
 
-import io.github.amichailides.merimna.common.ApiResponse;
+
 import io.github.amichailides.merimna.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
+import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.service.MedicationService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,42 +31,48 @@ public class MedicationController {
     private final MessageSource messageSource;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<MedicationReadOnlyDTO>> addMedication(
+    public ResponseEntity<MedicationReadOnlyDTO> addMedication(
             @PathVariable Long beneficiaryId,
             @Validated(ValidationGroupSequence.class) @RequestBody MedicationCreateDTO dto) {
 
         MedicationReadOnlyDTO medication = medicationService.addMedication(beneficiaryId, dto);
 
         // TODO: Όταν συνδεθεί το Front-end, πρέπει να γίνει expose το "Location" header στο CORS config
-        // location header
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(medication.id())
-                .toUri();
+
 
         return ResponseEntity
-                .created(location)
-                .body(ApiResponse.success(
-                        medication,
-                        getMessage("medication.create.success"),
-                        HttpStatus.CREATED.value()
-                ));
+                .created(buildLocationUri(medication.id()))
+                .body(medication);
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<MedicationReadOnlyDTO>>> getMedications(@PathVariable Long beneficiaryId) {
+    public ResponseEntity<List<MedicationReadOnlyDTO>> getMedications(@PathVariable Long beneficiaryId) {
 
         List<MedicationReadOnlyDTO> medications = medicationService.getMedicationsByBeneficiary(beneficiaryId);
 
-        return ResponseEntity.ok(
-                ApiResponse.success(
-                        medications,
-                        getMessage("medication.fetch.success"),
-                        HttpStatus.OK.value()
-                )
-        );
+        return ResponseEntity.ok(medications);
+    }
 
+    @PatchMapping("/{medicationId}")
+    public ResponseEntity<MedicationReadOnlyDTO> updateMedication(
+            @PathVariable Long beneficiaryId,
+            @PathVariable Long medicationId,
+            @Validated(ValidationGroupSequence.class) @RequestBody MedicationUpdateDTO dto) {
+
+        MedicationReadOnlyDTO updated = medicationService.updateMedication(beneficiaryId, medicationId, dto);
+
+        return ResponseEntity.ok(updated);
+
+    }
+
+    @DeleteMapping("/{medicationId}")
+    public ResponseEntity<Void> deleteMedication (
+            @PathVariable Long beneficiaryId,
+            @PathVariable Long medicationId) {
+
+        medicationService.deleteMedication(beneficiaryId, medicationId);
+
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -74,5 +80,13 @@ public class MedicationController {
      */
     private String getMessage(String code) {
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    }
+
+    private URI buildLocationUri(Object id) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
     }
 }
