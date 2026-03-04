@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.controller;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.model.Allergy;
 import io.github.amichailides.merimna.service.AllergiesService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 // TODO: Standardize API responses after feature completion
 // - Apply pure REST style to all endpoints (remove ApiResponse wrapper)
@@ -52,5 +54,13 @@ public class AllergiesController {
 
         allergiesService.deleteAllergy(beneficiaryId, allergyId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergies(@PathVariable Long beneficiaryId) {
+
+        List<AllergyReadOnlyDTO> allergies = allergiesService.getAllergiesByBeneficiary(beneficiaryId);
+
+        return ResponseEntity.ok(allergies);
     }
 }

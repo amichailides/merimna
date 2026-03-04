@@ -20,6 +20,7 @@ public enum ErrorCode {
 
     // Allergy
     ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", "allergy.notFound"),
+    ALLERGY_NOT_OWNED_BY_BENEFICIARY("ALLERGY_NOT_OWNED_BY_BENEFICIARY", "allergy.notOwnedByBeneficiary"),
 
     // Medication
     MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", "medication.notFound"),

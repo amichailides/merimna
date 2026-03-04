@@ -32,8 +32,6 @@ public record BeneficiaryUpdateDTO(
         AddressDTO permanentAddress,
 
         @Valid
-        EmergencyContactDTO emergencyContact,
-
-        List<MedicationCreateDTO> medicalTreatment
+        EmergencyContactDTO emergencyContact
 
 ) {}
