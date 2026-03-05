@@ -43,7 +43,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    //factory για error
+
     public static <T> ApiResponse<T> error(ErrorCode errorCode, int status, String error,
                                            String message, String path) {
         return ApiResponse.<T>builder()
