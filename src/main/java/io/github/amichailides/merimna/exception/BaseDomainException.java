@@ -2,14 +2,16 @@ package io.github.amichailides.merimna.exception;
 
 import io.github.amichailides.merimna.common.ErrorCode;
 import lombok.Getter;
+import java.util.Arrays;
 
 @Getter
-public class BaseDomainException extends RuntimeException {
+public abstract class BaseDomainException extends RuntimeException {
     private final ErrorCode errorCode;
+    private final Object[] args;
 
-    protected BaseDomainException(ErrorCode errorCode, String message) {
-        super(message);
+    protected BaseDomainException(ErrorCode errorCode, Object... args) {
+        super(String.format("%s - args=%s", errorCode.getCode(), Arrays.toString(args)));
         this.errorCode = errorCode;
+        this.args = args;
     }
-
 }

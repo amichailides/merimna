@@ -8,7 +8,6 @@ public class AllergyAlreadyAssignedException extends BaseDomainException {
 
 
     public AllergyAlreadyAssignedException() {
-        super(ErrorCode.ALLERGY_ALREADY_ASSIGNED,
-                ErrorCode.ALLERGY_ALREADY_ASSIGNED.getMessageKey());
+        super(ErrorCode.ALLERGY_ALREADY_ASSIGNED);
     }
 }

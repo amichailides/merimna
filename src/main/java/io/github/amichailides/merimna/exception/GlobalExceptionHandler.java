@@ -21,7 +21,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+//TODO αλλαξε το generalName σε detail αν σε μπερδευει
 /**
  * Κεντρικός διαχειριστής εξαιρέσεων.
  * <p>Μετατρέπει τα exceptions σε {@link ApiResponse} χρησιμοποιώντας
@@ -38,21 +38,21 @@ public class GlobalExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(BaseBusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusinessException(
-            BaseBusinessException ex,
+    @ExceptionHandler(BaseDomainException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDomainException(
+            BaseDomainException ex,
             HttpServletRequest request) {
-
+        HttpStatus status = ex.getErrorCode().getStatus();
         // Παίρνουμε το localized message
-        String message = translate(ex.getMessageKey(), ex.getMessageArgs());
+        String generalMessage = translate(ex.getErrorCode().getMessageKey(), ex.getArgs());
 
         return ResponseEntity
-                .status(ex.getStatus())
+                .status(ex.getErrorCode().getStatus())
                 .body(ApiResponse.error(
                         ex.getErrorCode(),
-                        ex.getStatus().value(),
-                        ex.getStatus().getReasonPhrase(),
-                        message,
+                        status.value(),
+                        status.getReasonPhrase(),
+                        generalMessage,
                         request.getRequestURI()
                 ));
     }
@@ -62,7 +62,9 @@ public class GlobalExceptionHandler {
             BaseValidationException ex,
             HttpServletRequest request) {
 
-        String generalMessage = translate(ex.getMessageKey());
+        HttpStatus status = ex.getErrorCode().getStatus();
+
+        String generalMessage = translate(ex.getErrorCode().getMessageKey(), ex.getArgs());
 
         // Μετατροπή των error keys σε ανθρώπινα μηνύματα (i18n)
         Map<String, String> localizedErrors = ex.getValidationErrors().entrySet().stream()
@@ -70,16 +72,17 @@ public class GlobalExceptionHandler {
                         Map.Entry::getKey,
                         entry -> translate(entry.getValue()),
                         (existing, replacement) -> existing + " | " + replacement,
-                        LinkedHashMap::new         // Διατήρηση της σειράς (Insertion Order)
+                        LinkedHashMap::new
                 ));
 
         return ResponseEntity
-                .status(ex.getStatus())
+                .status(status)
                 .body(ApiResponse.validationError(
-                        ex.getErrorCode(),
-                        ex.getStatus().value(),
-                        generalMessage,
-                        localizedErrors,
+                                ex.getErrorCode(),
+                                status.value(),
+                                status.getReasonPhrase(), // title
+                                generalMessage,
+                                localizedErrors,
                         request.getRequestURI()
                 ));
     }
@@ -136,6 +139,7 @@ public class GlobalExceptionHandler {
         });
 
         log.warn("Validation failed for {}: {}", request.getRequestURI(), errors);
+        String generalMessage = translate(ErrorCode.VALIDATION_FAILED.getMessageKey());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -143,9 +147,10 @@ public class GlobalExceptionHandler {
                         ErrorCode.VALIDATION_FAILED,
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        generalMessage,
                         errors,
                         request.getRequestURI()
-                                ));
+                ));
     }
 
     // TODO: [Refactor] Εδώ μπορούμε να αναβαθμίσουμε τον Handler
@@ -158,7 +163,7 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex, HttpServletRequest request) {
 
         log.error("JSON parse error: {}", ex.getMessage());
-        String message = "Μη έγκυρη μορφή δεδομένων στο σώμα του αιτήματος.";
+        String message = translate(ErrorCode.INVALID_INPUT.getMessageKey());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -211,16 +216,20 @@ public class GlobalExceptionHandler {
             errors.merge(fieldName, message, (existing, newMsg) -> existing + " | " + newMsg);
         }
 
+        String generalMessage = translate(ErrorCode.VALIDATION_FAILED.getMessageKey());
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.validationError(
                         ErrorCode.VALIDATION_FAILED,
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        generalMessage,
                         errors,
                         request.getRequestURI()));
     }
 
+    /*
     @ExceptionHandler(BaseDomainException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceAssignmentException(
             BaseDomainException ex,
@@ -238,6 +247,8 @@ public class GlobalExceptionHandler {
                 ));
 
     }
+
+     */
 
 
     // Πιάνει τα πάντα που δεν έχουν πιάσει οι προηγούμενοί

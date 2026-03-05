@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.exception;
 
 import io.github.amichailides.merimna.common.ErrorCode;
-import org.springframework.http.HttpStatus;
+
 import java.util.Map;
 
 /**
@@ -13,9 +13,7 @@ import java.util.Map;
 public class BeneficiaryValidationException extends BaseValidationException {
     public BeneficiaryValidationException(Map<String, String> errors) {
         super(
-                ErrorCode.VALIDATION_FAILED,
-                HttpStatus.UNPROCESSABLE_CONTENT,
-                "beneficiary.validation.failed",
+                ErrorCode.BENEFICIARY_VALIDATION_FAILED,
                 errors // Το πακέτο με τα λάθη
         );
     }
