@@ -67,6 +67,7 @@ public class Beneficiary {
      * Υποχρεωτική διεύθυνση. Αν ο ωφελούμενος δεν έχει οικογενειακή διεύθυνση,
      * καταχωρείται η διεύθυνση της δομής φιλοξενίας.
      */
+    @NonNull
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "perm_street", nullable = false)),
@@ -78,8 +79,9 @@ public class Beneficiary {
 
     /*
      * Υποχρεωτική επαφή έκτακτης ανάγκης. Αν δεν υπάρχει συγγενής,
-     * καταχωρείται Κοινωνικός Λειτουργός, Υπεύθυνος Δομής ή Νόμιμος Επίτροπος.
+     * μπορεί να καταχωρηθεί Κοινωνικός Λειτουργός ή Υπεύθυνος Δομής.
      */
+    @NonNull
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name", nullable = false)),
@@ -91,29 +93,36 @@ public class Beneficiary {
     })
     private EmergencyContact emergencyContact;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "type", column = @Column(name = "legal_type" )),
+            @AttributeOverride(name = "firstName", column = @Column(name = "legal_first_name")),
+            @AttributeOverride(name = "lastName", column = @Column(name = "legal_last_name")),
+            @AttributeOverride(name = "mobileNumber", column = @Column(name = "legal_mobile_number")),
+            @AttributeOverride(name = "landlinePhone", column = @Column(name = "legal_landline_phone")),
+            @AttributeOverride(name = "email", column = @Column(name = "legal_email")),
+            @AttributeOverride(name = "notes", column = @Column(name = "legal_notes"))
+    })
+    private LegalRepresentative legalRepresentative;
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     @Builder.Default
-    private Set<Medication> medicalTreatment = new HashSet<>();
+    private Set<Medication> medications = new HashSet<>();
 
     public void addMedication(@NonNull Medication medication) {
-        this.medicalTreatment.add(medication);
+        this.medications.add(medication);
         medication.assignToBeneficiary(this);
     }
 
     public void removeMedication(@NonNull Medication medication) {
-        this.medicalTreatment.remove(medication);
+        this.medications.remove(medication);
         medication.clearBeneficiary();
     }
 
     public Set<Medication> getMedications() {
-        return unmodifiableSet(medicalTreatment);
-    }
-
-    public boolean belongsToThisBeneficiary(Medication medication) {
-        return getId().equals(medication.getBeneficiary().getId());
+        return unmodifiableSet(medications);
     }
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)

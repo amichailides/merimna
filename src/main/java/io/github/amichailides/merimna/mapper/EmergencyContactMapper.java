@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.mapper;
 
 import io.github.amichailides.merimna.dto.EmergencyContactDTO;
+import io.github.amichailides.merimna.dto.EmergencyContactUpdateDTO;
 import io.github.amichailides.merimna.model.EmergencyContact;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,23 @@ public class EmergencyContactMapper {
                 .build();
     }
 
+    public void updateEntity(EmergencyContact existing, EmergencyContactUpdateDTO dto) {
+        if (dto == null || existing == null) return;
+
+        if (dto.firstName() != null) existing.setFirstName(dto.firstName());
+        if (dto.lastName() != null) existing.setLastName(dto.lastName());
+        if (dto.relationshipType() != null) existing.setRelationshipType(dto.relationshipType());
+        if (dto.landlinePhone() != null) existing.setLandlinePhone(dto.landlinePhone());
+        if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
+        if (dto.email() != null) existing.setEmail(dto.email());
+        if (dto.address() != null) {
+            addressMapper.updateEntity(existing.getAddress(), dto.address());
+        }
+    }
+
+}
+
     // TODO: Re-evaluate mapper strategy for EmergencyContact updates.
     // If nested update flows become more complex, consider adding
     // updateEntityFromDto(...) instead of always rebuilding the embeddable.
-}
+

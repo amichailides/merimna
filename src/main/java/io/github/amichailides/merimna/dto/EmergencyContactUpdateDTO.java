@@ -1,30 +1,23 @@
 package io.github.amichailides.merimna.dto;
 
 import io.github.amichailides.merimna.model.RelationshipType;
-
-import io.github.amichailides.merimna.validation.annotations.*;
-import io.github.amichailides.merimna.validation.groups.FirstOrder;
+import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
+import io.github.amichailides.merimna.validation.annotations.ValidLandline;
+import io.github.amichailides.merimna.validation.annotations.ValidLastName;
+import io.github.amichailides.merimna.validation.annotations.ValidMobile;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
-@AtLeastOnePhonePresent
-@Builder
-public record EmergencyContactDTO(
-        @NotBlank(message = "{emergency.firstName.required}", groups = FirstOrder.class)
+
+public record EmergencyContactUpdateDTO(
         @ValidFirstName(message = "{emergency.firstName.invalid}", groups = SecondOrder.class)
         String firstName,
 
-        @NotBlank(message = "{emergency.lastName.required}", groups = FirstOrder.class)
         @ValidLastName(message = "{emergency.lastName.invalid}", groups = SecondOrder.class)
         String lastName,
 
-        @NotNull(message = "{emergency.relationship.required}", groups = FirstOrder.class)
         RelationshipType relationshipType,
-
 
         @ValidLandline(message = "{emergency.landline.invalid}", groups = SecondOrder.class)
         String landlinePhone,
@@ -35,7 +28,6 @@ public record EmergencyContactDTO(
         @Email(message = "{emergency.email.invalid}", groups = SecondOrder.class)
         String email,
 
-        @NotNull(message = "{address.required}", groups = FirstOrder.class)
         @Valid
-        AddressDTO address
+        AddressUpdateDTO address
 ) {}

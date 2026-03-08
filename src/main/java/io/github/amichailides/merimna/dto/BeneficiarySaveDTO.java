@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
-import java.util.List;
 
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 

@@ -27,10 +27,11 @@ public class EmergencyContact {
     private String mobileNumber;
     private String email;
 
+    @NonNull
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "emergency_street",nullable = false)),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number",nullable = false)),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number")),
             @AttributeOverride(name = "city", column = @Column(name = "emergency_city",nullable = false)),
             @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip", nullable = false))
     })

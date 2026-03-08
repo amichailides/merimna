@@ -29,7 +29,7 @@ public class BeneficiaryMapper {
                 .houseUnit(entity.getHouseUnit())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
-                .medicalTreatment(entity.getMedications().stream()
+                .medications(entity.getMedications().stream()
                         .map(medicationMapper::toDTO).toList())
                 .allergies(entity.getAllergies().stream()
                         .map(allergyMapper::toDTO).toList())
@@ -62,10 +62,11 @@ public class BeneficiaryMapper {
         if (dto.houseUnit() != null) existing.setHouseUnit(dto.houseUnit());
 
         if (dto.permanentAddress() != null) {
-            existing.setPermanentAddress(addressMapper.toEntity(dto.permanentAddress()));
+            addressMapper.updateEntity(existing.getPermanentAddress(), dto.permanentAddress());
         }
+
         if (dto.emergencyContact() != null) {
-            existing.setEmergencyContact(emergencyMapper.toEntity(dto.emergencyContact()));
+            emergencyMapper.updateEntity(existing.getEmergencyContact(), dto.emergencyContact());
         }
 
     }

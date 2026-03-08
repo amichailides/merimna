@@ -29,9 +29,9 @@ public record BeneficiaryUpdateDTO(
         HouseUnit houseUnit,
 
         @Valid
-        AddressDTO permanentAddress,
+        AddressUpdateDTO permanentAddress,
 
         @Valid
-        EmergencyContactDTO emergencyContact
+        EmergencyContactUpdateDTO emergencyContact
 
 ) {}

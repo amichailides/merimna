@@ -18,6 +18,6 @@ public record BeneficiaryReadOnlyDTO (
     HouseUnit houseUnit,
     AddressDTO permanentAddress,
     EmergencyContactDTO emergencyContact,
-    List<MedicationReadOnlyDTO> medicalTreatment,
+    List<MedicationReadOnlyDTO> medications,
     List<AllergyReadOnlyDTO> allergies
 ) {}

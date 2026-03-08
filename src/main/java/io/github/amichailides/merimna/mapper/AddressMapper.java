@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.mapper;
 
 import io.github.amichailides.merimna.dto.AddressDTO;
+import io.github.amichailides.merimna.dto.AddressUpdateDTO;
 import io.github.amichailides.merimna.model.Address;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,15 @@ public class AddressMapper {
                 .city(dto.city())
                 .zipCode(dto.zipCode())
                 .build();
+    }
+
+    public void updateEntity(Address existing, AddressUpdateDTO dto) {
+        if (dto == null || existing == null) return;
+
+        if (dto.street() != null) existing.setStreet(dto.street());
+        if (dto.streetNumber() != null) existing.setStreetNumber(dto.streetNumber());
+        if (dto.city() != null) existing.setCity(dto.city());
+        if (dto.zipCode() != null) existing.setZipCode(dto.zipCode());
     }
 }
 
