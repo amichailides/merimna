@@ -16,7 +16,7 @@ public class EmergencyContactMapper {
         return EmergencyContactDTO.builder()
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
-                .relationship(entity.getRelationship())
+                .relationshipType(entity.getRelationshipType())
                 .landlinePhone(entity.getLandlinePhone())
                 .mobileNumber(entity.getMobileNumber())
                 .email(entity.getEmail())
@@ -30,11 +30,15 @@ public class EmergencyContactMapper {
         return EmergencyContact.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .relationship(dto.relationship())
+                .relationshipType(dto.relationshipType())
                 .landlinePhone(dto.landlinePhone())
                 .mobileNumber(dto.mobileNumber())
                 .email(dto.email())
                 .address(addressMapper.toEntity(dto.address()))
                 .build();
     }
+
+    // TODO: Re-evaluate mapper strategy for EmergencyContact updates.
+    // If nested update flows become more complex, consider adding
+    // updateEntityFromDto(...) instead of always rebuilding the embeddable.
 }

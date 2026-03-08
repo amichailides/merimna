@@ -1,14 +1,13 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.validation.*;
+import io.github.amichailides.merimna.model.RelationshipType;
+
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @AtLeastOnePhonePresent
@@ -20,10 +19,8 @@ public record EmergencyContactDTO(
         @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
-        @NotBlank(message = "{emergency.relationship.required}", groups = FirstOrder.class)
-        @Pattern(regexp = ValidationPatterns.GREEK_LATIN_TEXT,
-                message = "{emergency.relationship.invalid}", groups = SecondOrder.class)
-        String relationship,
+        @NotNull(message = "{emergency.relationship.required}", groups = FirstOrder.class)
+        RelationshipType relationshipType,
 
 
         @ValidLandline(message = "{emergency.landline.invalid}", groups = SecondOrder.class)

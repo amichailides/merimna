@@ -9,7 +9,6 @@ import java.util.*;
 import static java.util.Collections.unmodifiableSet;
 
 /**
- * Οντότητα Ωφελούμενου.
  * * <p><b>TODO (Database Strategy):</b>
  * <ul>
  * <li>Μεταφορά του Schema Management (Indexes, Constraints) σε <b>Liquibase changelogs</b>.</li>
@@ -85,7 +84,7 @@ public class Beneficiary {
     @AttributeOverrides({
             @AttributeOverride(name = "firstName", column = @Column(name = "emergency_first_name", nullable = false)),
             @AttributeOverride(name = "lastName", column = @Column(name = "emergency_last_name", nullable = false)),
-            @AttributeOverride(name = "relationship", column = @Column(name = "emergency_relationship", nullable = false)),
+            @AttributeOverride(name = "relationshipType", column = @Column(name = "emergency_relationship", nullable = false)),
             @AttributeOverride(name = "landlinePhone", column = @Column(name = "emergency_landline_phone")),
             @AttributeOverride(name = "mobileNumber", column = @Column(name = "emergency_mobile_number")),
             @AttributeOverride(name = "email", column = @Column(name = "emergency_email"))
@@ -93,8 +92,6 @@ public class Beneficiary {
     private EmergencyContact emergencyContact;
 
 
-    // TODO: Medication should become an Entity in the future (Completed)
-    // Reasons: audit history, caregiver tracking, notifications
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
@@ -151,10 +148,5 @@ public class Beneficiary {
         this.isActive = false;
         // TODO: add exitReason, exitDate, approvedBy fields when DischargeDTO is implemented
     }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
 
 }

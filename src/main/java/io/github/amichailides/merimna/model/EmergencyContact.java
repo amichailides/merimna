@@ -19,18 +19,10 @@ public class EmergencyContact {
     private String lastName;
 
     @NonNull
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String relationship; // γονέας, δικαστικός συμπαραστάτης κλπ
+    private RelationshipType relationshipType; // γονέας, δικαστικός συμπαραστάτης κλπ
 
-    /**
-     * TODO: ΥΠΟΧΡΕΩΤΙΚΗ ΥΛΟΠΟΙΗΣΗ (Business Requirement):
-     * Πρέπει να προστεθεί Class-level Validator (π.χ. @AtLeastOneContactPresent)
-     * που να διασφαλίζει ότι ΤΟΥΛΑΧΙΣΤΟΝ ΕΝΑ από τα πεδία:
-     * 1. landlinePhone
-     * 2. mobileNumber
-     * είναι συμπληρωμένο. Δεν επιτρέπεται η αποθήκευση επαφής χωρίς κανένα μέσο επικοινωνίας.
-     * Προς το παρόν παραμένουν προαιρετικά (χωρίς @NotBlank) μόνο για τη διευκόλυνση του αρχικού development.
-     */
     private String landlinePhone;
     private String mobileNumber;
     private String email;
