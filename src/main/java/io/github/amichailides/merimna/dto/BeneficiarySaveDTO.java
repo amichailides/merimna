@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
-
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 
 /**
@@ -19,11 +18,11 @@ import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
  */
 @Builder
 public record BeneficiarySaveDTO(
-        @NotBlank(message = "{name.required}", groups = FirstOrder.class)
+        @NotBlank(message = "{firstName.required}", groups = FirstOrder.class)
         @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
-        @NotBlank(message = "{lastname.required}", groups = FirstOrder.class)
+        @NotBlank(message = "{lastName.required}", groups = FirstOrder.class)
         @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
@@ -47,7 +46,5 @@ public record BeneficiarySaveDTO(
 
         @Valid
         @NotNull(message = "{emergencyContact.required}")
-        // TODO: [Daya-Refactor] Αλλαγή του String relationship σε Enum (RelationshipType)
-        // για να αποφύγουμε ελεύθερο κείμενο και λάθη πληκτρολόγησης.
         EmergencyContactDTO emergencyContact
 ) {}

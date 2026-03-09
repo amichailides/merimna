@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = AtLeastOnePhonePresentValidator.class)
 public @interface AtLeastOnePhonePresent {
-    String message() default "{emergency.contact.missing}";
+    String message() default "{contact.missing}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

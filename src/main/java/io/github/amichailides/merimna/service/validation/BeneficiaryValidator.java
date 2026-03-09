@@ -3,9 +3,11 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryAlreadyExistsException;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
 import io.github.amichailides.merimna.model.Beneficiary;
+import io.github.amichailides.merimna.model.LegalRepresentative;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.springframework.stereotype.Component;
 

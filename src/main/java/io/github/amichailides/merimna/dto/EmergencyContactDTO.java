@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.model.RelationshipType;
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
+import io.github.amichailides.merimna.validation.validators.HasPhoneFields;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,4 +39,4 @@ public record EmergencyContactDTO(
         @NotNull(message = "{address.required}", groups = FirstOrder.class)
         @Valid
         AddressDTO address
-) {}
+) implements HasPhoneFields {}

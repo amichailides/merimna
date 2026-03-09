@@ -7,10 +7,8 @@ import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLastName;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 public record BeneficiaryUpdateDTO(

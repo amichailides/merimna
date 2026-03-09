@@ -93,6 +93,7 @@ public class Beneficiary {
     })
     private EmergencyContact emergencyContact;
 
+    @Setter(AccessLevel.NONE)
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "type", column = @Column(name = "legal_type" )),
@@ -147,6 +148,9 @@ public class Beneficiary {
         return unmodifiableSet(allergies);
     }
 
+    public void addLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
+        this.legalRepresentative = legalRepresentative;
+    }
 
     public void discharge() {
 

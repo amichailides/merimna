@@ -13,7 +13,7 @@ public enum ErrorCode {
     INVALID_INPUT("INVALID_INPUT", HttpStatus.BAD_REQUEST, "error.invalid_input"),
     DATABASE_ERROR("DATABASE_ERROR", HttpStatus.CONFLICT, "error.database.conflict"),
     VALIDATION_FAILED("VALIDATION_FAILED", HttpStatus.BAD_REQUEST, "validation.failed"),
-
+    AT_LEAST_ONE_PHONE_REQUIRED("AT_LEAST_ONE_PHONE_REQUIRED", HttpStatus.valueOf(422), "validation.legalRepresentative.phone.atLeastOneRequired"),
 
     // Beneficiary
     BENEFICIARY_NOT_FOUND_BY_ID("BENEFICIARY_NOT_FOUND", HttpStatus.NOT_FOUND, "beneficiary.notFoundById"),
@@ -22,6 +22,7 @@ public enum ErrorCode {
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "beneficiary.amkaDateMismatch"),
     BENEFICIARY_ALREADY_INACTIVE("BENEFICIARY_ALREADY_INACTIVE", HttpStatus.CONFLICT, "beneficiary.alreadyInactive"),
     BENEFICIARY_VALIDATION_FAILED("BENEFICIARY_VALIDATION_FAILED", HttpStatus.BAD_REQUEST, "beneficiary.validation.failed"),
+    BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE("BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE", HttpStatus.CONFLICT, "error.beneficiary.legalRepresentative.alreadyExists"),
 
     // Allergy
     ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", HttpStatus.NOT_FOUND, "allergy.notFound"),

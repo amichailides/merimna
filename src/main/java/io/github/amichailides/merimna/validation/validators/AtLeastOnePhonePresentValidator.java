@@ -1,15 +1,14 @@
 package io.github.amichailides.merimna.validation.validators;
 
-import io.github.amichailides.merimna.dto.EmergencyContactDTO;
 import io.github.amichailides.merimna.validation.annotations.AtLeastOnePhonePresent;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class AtLeastOnePhonePresentValidator
-        implements ConstraintValidator<AtLeastOnePhonePresent, EmergencyContactDTO> {
+        implements ConstraintValidator<AtLeastOnePhonePresent, HasPhoneFields> {
 
     @Override
-    public boolean isValid(EmergencyContactDTO dto, ConstraintValidatorContext context) {
+    public boolean isValid(HasPhoneFields dto, ConstraintValidatorContext context) {
         // Αν το DTO είναι null, ο έλεγχος θεωρείται έγκυρος (το null το πιάνει το @NotNull)
         if (dto == null) {
             return true;

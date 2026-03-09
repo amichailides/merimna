@@ -19,5 +19,6 @@ public record BeneficiaryReadOnlyDTO (
     AddressDTO permanentAddress,
     EmergencyContactDTO emergencyContact,
     List<MedicationReadOnlyDTO> medications,
-    List<AllergyReadOnlyDTO> allergies
+    List<AllergyReadOnlyDTO> allergies,
+    LegalRepresentativeReadOnlyDTO legalRepresentative
 ) {}

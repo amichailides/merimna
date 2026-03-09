@@ -15,6 +15,7 @@ public class BeneficiaryMapper {
     private final EmergencyContactMapper emergencyMapper;
     private final AllergyMapper allergyMapper;
     private final MedicationMapper medicationMapper;
+    private final LegalRepresentativeMapper legalRepresentativeMapper;
 
     public BeneficiaryReadOnlyDTO toReadOnlyDTO(Beneficiary entity) {
         if (entity == null) return null;
@@ -33,6 +34,7 @@ public class BeneficiaryMapper {
                         .map(medicationMapper::toDTO).toList())
                 .allergies(entity.getAllergies().stream()
                         .map(allergyMapper::toDTO).toList())
+                .legalRepresentative(legalRepresentativeMapper.toDTO(entity.getLegalRepresentative()))
                 .build();
     }
 
