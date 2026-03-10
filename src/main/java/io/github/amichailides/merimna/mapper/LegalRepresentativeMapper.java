@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LegalRepresentativeMapper {
-    public LegalRepresentativeReadOnlyDTO toDTO (LegalRepresentative existing) {
+    public LegalRepresentativeReadOnlyDTO toReadOnlyDTO(LegalRepresentative existing) {
         if (existing == null) return null;
 
         return LegalRepresentativeReadOnlyDTO.builder()

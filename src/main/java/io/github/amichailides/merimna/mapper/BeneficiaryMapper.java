@@ -34,7 +34,7 @@ public class BeneficiaryMapper {
                         .map(medicationMapper::toDTO).toList())
                 .allergies(entity.getAllergies().stream()
                         .map(allergyMapper::toDTO).toList())
-                .legalRepresentative(legalRepresentativeMapper.toDTO(entity.getLegalRepresentative()))
+                .legalRepresentative(legalRepresentativeMapper.toReadOnlyDTO(entity.getLegalRepresentative()))
                 .build();
     }
 

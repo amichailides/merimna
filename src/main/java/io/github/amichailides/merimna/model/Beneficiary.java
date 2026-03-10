@@ -152,6 +152,10 @@ public class Beneficiary {
         this.legalRepresentative = legalRepresentative;
     }
 
+    public void removeLegalRepresentative() {
+        this.legalRepresentative = null;
+    }
+
     public void discharge() {
 
         if (!isActive) {

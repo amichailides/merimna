@@ -23,6 +23,7 @@ public enum ErrorCode {
     BENEFICIARY_ALREADY_INACTIVE("BENEFICIARY_ALREADY_INACTIVE", HttpStatus.CONFLICT, "beneficiary.alreadyInactive"),
     BENEFICIARY_VALIDATION_FAILED("BENEFICIARY_VALIDATION_FAILED", HttpStatus.BAD_REQUEST, "beneficiary.validation.failed"),
     BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE("BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE", HttpStatus.CONFLICT, "error.beneficiary.legalRepresentative.alreadyExists"),
+    BENEFICIARY_HAS_NO_LEGAL_REPRESENTATIVE("BENEFICIARY_HAS_NO_LEGAL_REPRESENTATIVE", HttpStatus.NOT_FOUND, "error.beneficiary.legalRepresentative.notFound"),
 
     // Allergy
     ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", HttpStatus.NOT_FOUND, "allergy.notFound"),
