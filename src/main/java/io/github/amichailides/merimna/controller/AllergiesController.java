@@ -10,15 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 
-// TODO: Standardize API responses after feature completion
-// - Apply pure REST style to all endpoints (remove ApiResponse wrapper)
-// - Ensure all endpoints follow consistent pattern
-// - Use Location header for created resources
-// - Success messages in body removed; frontend handles notifications
+
 @RestController
 @Validated
 @RequestMapping("/beneficiaries/{beneficiaryId}/allergies")

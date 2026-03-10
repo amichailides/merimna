@@ -50,7 +50,6 @@ public class Medication {
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
-            //TODO custom exception
             throw new MedicationAlreadyAssignedException();
         }
         this.beneficiary = beneficiary;

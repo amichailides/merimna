@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 
 public record MedicationUpdateDTO(
-        //TODO validation - groups
+
         @ValidGreekLatinText(message = "{medication.name.size}", groups = SecondOrder.class)
         String name,
 

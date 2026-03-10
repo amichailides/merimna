@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.controller;
 
-import io.github.amichailides.merimna.common.ApiResponse;
 import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
@@ -8,46 +7,36 @@ import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-// TODO: Standardize API responses after feature completion
-// - Apply pure REST style to all endpoints (remove ApiResponse wrapper)
-// - Ensure all endpoints follow consistent pattern
-// - Use Location header for created resources
-// - Success messages in body removed; frontend handles notifications
+import java.net.URI;
+
 @RestController
 @Validated
 @RequestMapping("/beneficiaries")
 @RequiredArgsConstructor
 public class BeneficiaryController {
     private final BeneficiaryService service;
-    private final MessageSource messageSource;
 
     /**
-     * Δημιουργεί έναν νέο ωφελούμενο.
      * Η επικύρωση ενεργοποιείται μέσω του {@link ValidationGroupSequence} για short-circuiting λογική.
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> create(
+    public ResponseEntity<BeneficiaryReadOnlyDTO> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.save(dto);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(
-                        beneficiary,
-                        getMessage("beneficiary.create.success"),
-                        HttpStatus.CREATED.value()));
+                .created(buildLocationUri(beneficiary.id()))
+                .body(beneficiary);
     }
 
     @PatchMapping("/{id}")
@@ -60,27 +49,20 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getById(
+    public ResponseEntity<BeneficiaryReadOnlyDTO> getById(
             @Positive @PathVariable Long id) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.findById(id);
-        return ResponseEntity.ok(ApiResponse.success(
-                beneficiary,
-                getMessage("beneficiary.fetch.success"),
-                HttpStatus.OK.value()));
+        return ResponseEntity.ok(beneficiary);
     }
 
     @GetMapping(params = "amka")
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> getByAmka(
+    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
             @RequestParam @ValidAmka String amka) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.findByAmka(amka);
 
-        return ResponseEntity.ok(ApiResponse.success(
-                beneficiary,
-                getMessage("beneficiary.fetch.success"),
-                HttpStatus.OK.value()
-        ));
+        return ResponseEntity.ok(beneficiary);
     }
 
     /**
@@ -101,13 +83,10 @@ public class BeneficiaryController {
     }
 
     @PostMapping("/{id}/discharge")
-    public ResponseEntity<ApiResponse<BeneficiaryReadOnlyDTO>> discharge(@PathVariable Long id) {
+    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge(@PathVariable Long id) {
 
         BeneficiaryReadOnlyDTO updated = service.discharge(id);
-        return ResponseEntity.ok(ApiResponse.success(
-                updated,
-                getMessage("beneficiary.discharge.success"),
-                HttpStatus.OK.value()));
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -132,11 +111,12 @@ public class BeneficiaryController {
         return ResponseEntity.ok(results);
     }
 
-    /**
-     * Helper για να τραβάμε τα μηνύματα επιτυχίας.
-     */
-    private String getMessage(String code) {
-        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    private URI buildLocationUri(Object id) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
     }
 }
 

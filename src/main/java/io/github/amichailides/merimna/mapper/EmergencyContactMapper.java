@@ -55,7 +55,3 @@ public class EmergencyContactMapper {
 
 }
 
-    // TODO: Re-evaluate mapper strategy for EmergencyContact updates.
-    // If nested update flows become more complex, consider adding
-    // updateEntityFromDto(...) instead of always rebuilding the embeddable.
-

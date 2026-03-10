@@ -2,15 +2,11 @@ package io.github.amichailides.merimna.service;
 
 
 import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.mapper.AllergyMapper;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
-import io.github.amichailides.merimna.model.Allergy;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.HouseUnit;
-import io.github.amichailides.merimna.repository.AllergyRepository;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
@@ -33,8 +29,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final BeneficiaryMapper beneficiaryMapper;
     private final BeneficiaryValidator validator;
-    private final AllergyMapper allergyMapper;
-    private final AllergyRepository allergyRepository;
     private final AllergiesService allergiesService;
 
     @Override

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -31,17 +30,6 @@ public class ApiResponse<T> {
     private String detail;     // null σε success
     private String path;        // null σε success
     private String timestamp;
-
-    // TODO να το σβησω οταν καθαρισω τα success endpoint
-    public static <T> ApiResponse<T> success(T data, String message, int status) {
-        // Type witness: βοηθάμε τον compiler να συμπεράνει το T σε generic builder chain
-        return ApiResponse.<T>builder()
-                .data(data)
-                .detail(message)
-                .status(status)
-                .timestamp(formatTimestamp())
-                .build();
-    }
 
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode, int status, String error,

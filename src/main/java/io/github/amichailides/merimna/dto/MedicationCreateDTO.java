@@ -6,7 +6,6 @@ import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.NotBlank;
 
 public record MedicationCreateDTO(
-        //TODO validation - groups
         @NotBlank(message = "{medication.name.required}", groups = FirstOrder.class)
         @ValidGreekLatinText(message = "{medication.name.size}", groups = SecondOrder.class)
         String name,
