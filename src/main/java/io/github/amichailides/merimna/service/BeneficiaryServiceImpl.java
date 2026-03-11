@@ -70,9 +70,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Transactional(readOnly = true)
     public BeneficiaryReadOnlyDTO findById(Long id) {
-        return beneficiaryRepository.findById(id)
-                .map(beneficiaryMapper::toReadOnlyDTO)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
+        return beneficiaryMapper.toReadOnlyDTO(beneficiary);
     }
 
     @Transactional
@@ -87,8 +86,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Transactional
     public BeneficiaryReadOnlyDTO discharge(Long id) {
-        Beneficiary beneficiary = beneficiaryRepository.findById(id)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
 
         beneficiary.discharge(); // state check
         validator.validateForDischarge(beneficiary); // business rules
@@ -110,8 +108,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Transactional
     public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
-        Beneficiary existing = beneficiaryRepository.findById(id)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+        Beneficiary existing = getBeneficiaryOrThrow(id);
 
         validator.validateForUpdate(existing,dto);
 
@@ -136,6 +133,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public void deleteAllergy(Long beneficiaryId, Long allergyId) {
         allergiesService.deleteAllergy(beneficiaryId, allergyId);
+    }
+
+    private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
+        return  beneficiaryRepository.findById(beneficiaryId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
 
 
