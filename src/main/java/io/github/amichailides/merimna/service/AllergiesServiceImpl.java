@@ -42,7 +42,6 @@ public class AllergiesServiceImpl implements AllergiesService{
     public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
         Beneficiary beneficiary =getBeneficiaryOrThrow(beneficiaryId);
 
-        //TODO ownership όπως στο medication bro
         Allergy allergy = getAllergyOrThrow(beneficiary, allergyId);
 
         allergyMapper.updateEntity(dto, allergy);

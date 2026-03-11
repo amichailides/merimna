@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -55,7 +57,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // TODO array αντι " | " merge
     @ExceptionHandler(BaseValidationException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(
             BaseValidationException ex,
@@ -66,12 +67,12 @@ public class GlobalExceptionHandler {
         String detail = translate(ex.getErrorCode().getMessageKey(), ex.getArgs());
 
         // Μετατροπή των error keys σε μηνύματα (i18n)
-        Map<String, String> localizedErrors = ex.getValidationErrors().entrySet().stream()
+        Map<String, List<String>> localizedErrors = ex.getValidationErrors().entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> translate(entry.getValue()),
-                        (existing, replacement) -> existing + " | " + replacement,
-                        LinkedHashMap::new
+                        entry -> entry.getValue().stream()
+                                .map(this::translate)
+                                .collect(Collectors.toList())
                 ));
 
         return ResponseEntity
@@ -92,7 +93,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         HttpStatus status = ErrorCode.DATABASE_ERROR.getStatus();
-        // Log το error για να δούμε τι έγινε στην DB
+
         log.error("Database integrity violation: {}", ex.getMostSpecificCause().getMessage());
 
         String detail = translate(ErrorCode.DATABASE_ERROR.getMessageKey());
@@ -113,37 +114,30 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
-        Map<String, String> errors = new LinkedHashMap<>();
+        Map<String, List<String>> errors = new LinkedHashMap<>();
 
-        // 1. Μαζεύουμε τα Field Errors (lastName, amka κλπ)
         ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.merge(error.getField(),
-                    error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
-                    (existing, replacement) -> existing + " | " + replacement);
+            String fieldPath = error.getField();
+            String message = translate(error.getDefaultMessage());
+            errors.computeIfAbsent(fieldPath, k -> new ArrayList<>()).add(message);
         });
 
-        // 2. ΜΑΖΕΥΟΥΜΕ ΤΑ GLOBAL ERRORS (Εδώ κρύβεται το EmergencyContact!)
         ex.getBindingResult().getGlobalErrors().forEach(error -> {
-            // Η Spring για τα nested objects χρησιμοποιεί το όνομα του πεδίου
-            // ή το όνομα της κλάσης (emergencyContactDTO). Το καθαρίζουμε:
-            String key = error.getObjectName().replace("DTO", "");
-
-            // Αν το σφάλμα αφορά το nested αντικείμενο, το βάζουμε στο Map
-            errors.merge(key,
-                    error.getDefaultMessage() != null ? error.getDefaultMessage() : "Invalid value",
-                    (existing, replacement) -> existing + " | " + replacement);
+            String message = translate(error.getDefaultMessage());
+            errors.computeIfAbsent("_global", k -> new ArrayList<>()).add(message);
         });
 
         log.warn("Validation failed for {}: {}", request.getRequestURI(), errors);
-        String detail = translate(ErrorCode.VALIDATION_FAILED.getMessageKey());
+
+        ErrorCode code = ErrorCode.VALIDATION_FAILED;
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(code.getStatus())
                 .body(ApiResponse.validationError(
-                        ErrorCode.VALIDATION_FAILED,
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        detail,
+                        code,
+                        code.getStatus().value(),
+                        code.getStatus().getReasonPhrase(),
+                        translate(code.getMessageKey()),
                         errors,
                         request.getRequestURI()
                 ));
@@ -201,7 +195,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         // Χρησιμοποιούμε LinkedHashMap για να κρατήσουμε τη σειρά των σφαλμάτων
-        Map<String, String> errors = new LinkedHashMap<>();
+        Map<String, List<String>> errors = new LinkedHashMap<>();
 
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
             String propertyPath = violation.getPropertyPath().toString();
@@ -209,7 +203,7 @@ public class GlobalExceptionHandler {
             String fieldName = propertyPath.substring(propertyPath.lastIndexOf('.') + 1);
             String message = violation.getMessage();
 
-            errors.merge(fieldName, message, (existing, newMsg) -> existing + " | " + newMsg);
+            errors.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(message);
         }
 
         String detail = translate(ErrorCode.VALIDATION_FAILED.getMessageKey());
@@ -252,14 +246,12 @@ public class GlobalExceptionHandler {
      * Χρησιμοποιεί το LocaleContextHolder για να καταλάβει αυτόματα τη γλώσσα του χρήστη.
      */
     private String translate(String key, Object... args) {
-        try {
-            // Η getMessage με 4 παραμέτρους επιστρέφει το default αν δε βρει το key
-            return messageSource.getMessage(key, args, key, LocaleContextHolder.getLocale());
-        } catch (NoSuchMessageException e) {
-            // Αν ξεχάσουμε να ορίσουμε ένα κλειδί στο properties,
-            // επέστρεψε το ίδιο το κλειδί αντί να σκάσει η εφαρμογή.
-            return key;
-        }
+        return messageSource.getMessage(
+                key,
+                args,
+                key, // fallback αν δεν υπάρχει το key
+                LocaleContextHolder.getLocale()
+        );
     }
 
 
