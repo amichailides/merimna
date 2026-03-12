@@ -1,25 +1,39 @@
 package io.github.amichailides.merimna.service;
 
 import io.github.amichailides.merimna.common.ErrorCode;
+import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,5 +108,151 @@ public class BeneficiaryServiceImplTest {
 
         verify(beneficiaryRepository, never()).save(any());
 
+    }
+
+    @Test
+    @DisplayName("Update should fail fast when beneficiary is missing")
+    void update_shouldFailFast_whenNotFound() {
+        Long beneficiaryId = 1L;
+        BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder().build();
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
+
+        assertThrows(BeneficiaryNotFoundByIdException.class,
+                () -> beneficiaryService.updateBeneficiary(beneficiaryId, dto)
+        );
+
+        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(beneficiaryRepository, never()).save(any());
+        verifyNoInteractions(validator);
+    }
+
+    @Test
+    @DisplayName("Discharge: Fail when ID not found")
+    void discharge_shouldThrowNotFound_whenIdMissing() {
+        Long beneficiaryId = 1L;
+        when(beneficiaryRepository.findById(beneficiaryId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                BeneficiaryNotFoundByIdException.class,
+                () -> beneficiaryService.discharge(beneficiaryId)
+        );
+        verify(beneficiaryRepository).findById(beneficiaryId);
+        verifyNoInteractions(validator);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when beneficiary is already inactive")
+    void discharge_shouldThrowException_whenAlreadyInactive() {
+        Long beneficiaryId = 1L;
+        Beneficiary beneficiary = createDefaultBeneficiary();
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
+
+        assertThrows(BeneficiaryAlreadyInactiveException.class,
+                () -> beneficiaryService.discharge(beneficiaryId));
+
+        verify(beneficiaryRepository, never()).save(any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFilterCombinations")
+    @DisplayName("Should call correct repository method based on filters")
+    void findAll_shouldUseCorrectRepositoryMethod(
+            boolean includeInactive,
+            HouseUnit houseUnit,
+            String expectedMethodName) {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Beneficiary> mockPage = new PageImpl<>(List.of(createDefaultBeneficiary()));
+
+        lenient().when(beneficiaryRepository.findAll(pageable)).thenReturn(mockPage);
+        lenient().when(beneficiaryRepository.findAllByIsActiveTrue(pageable)).thenReturn(mockPage);
+        lenient().when(beneficiaryRepository.findAllByHouseUnit(any(), any())).thenReturn(mockPage);
+        lenient().when(beneficiaryRepository.findAllByHouseUnitAndIsActiveTrue(any(), any())).thenReturn(mockPage);
+
+
+        beneficiaryService.findAllBeneficiaries(includeInactive, houseUnit, pageable);
+
+
+        if (houseUnit != null) {
+            if (includeInactive) {
+                verify(beneficiaryRepository).findAllByHouseUnit(houseUnit, pageable);
+            } else {
+                verify(beneficiaryRepository).findAllByHouseUnitAndIsActiveTrue(houseUnit, pageable);
+            }
+        } else {
+            if (includeInactive) {
+                verify(beneficiaryRepository).findAll(pageable);
+            } else {
+                verify(beneficiaryRepository).findAllByIsActiveTrue(pageable);
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Should return a mapped page of DTOs when searching")
+    void search_shouldReturnMappedPage() {
+        String term = "Παπαδοπουλος";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Beneficiary beneficiary = createDefaultBeneficiary();
+        Page<Beneficiary> entityPage = new PageImpl<>(List.of(beneficiary));
+
+        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder().build();
+
+        when(beneficiaryRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(entityPage);
+
+        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
+
+        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.search(term, pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(expectedDto, result.getContent().get(0));
+
+
+        verify(beneficiaryRepository).findAll(any(Specification.class), eq(pageable));
+
+    }
+
+    // Η πηγή των δεδομένων για το test
+    private static Stream<Arguments> provideFilterCombinations() {
+        return Stream.of(
+                Arguments.of(true, HouseUnit.UNIT_A, "findAllByHouseUnit"),
+                Arguments.of(false, HouseUnit.UNIT_A, "findAllByHouseUnitAndIsActiveTrue"),
+                Arguments.of(true, null, "findAll"),
+                Arguments.of(false, null, "findAllByIsActiveTrue")
+        );
+    }
+
+    private Beneficiary createDefaultBeneficiary() {
+        return Beneficiary.builder()
+                .firstName("Joe")
+                .lastName("Doe")
+                .amka(("12345678912"))
+                .dateOfBirth(LocalDate.of(1986, 4, 6))
+                .houseUnit(HouseUnit.UNIT_A)
+                .permanentAddress( Address.builder()
+                        .street("Αγιου Μελετιου")
+                        .streetNumber("32")
+                        .city("Αθηνα")
+                        .zipCode("11361")
+                        .build())
+                .emergencyContact(EmergencyContact.builder()
+                        .firstName("Γιαννης")
+                        .lastName("Παπαδοπουλος")
+                        .relationshipType(RelationshipType.FRIEND)
+                        .address(Address.builder()
+                                .street("Αγου Μελετιου")
+                                .streetNumber("32")
+                                .city("Αθηνα")
+                                .zipCode("11361")
+                                .build())
+                        .build())
+                .isActive(false)
+                .build();
     }
 }
