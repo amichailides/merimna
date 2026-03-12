@@ -40,9 +40,8 @@ public class AllergiesServiceImpl implements AllergiesService{
     @Override
     @Transactional
     public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
-        Beneficiary beneficiary =getBeneficiaryOrThrow(beneficiaryId);
 
-        Allergy allergy = getAllergyOrThrow(beneficiary, allergyId);
+        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
         allergyMapper.updateEntity(dto, allergy);
         // dirty checking  αυτόματο UPDATE στο commit
@@ -56,7 +55,7 @@ public class AllergiesServiceImpl implements AllergiesService{
 
         // TODO: AllergyValidator. business rules πχ duplicate allergy check,
         //  σοβαρότητα αλλεργίας σε συνδυασμό με ενεργά φάρμακα (cross-check με Medication)
-        Allergy allergy = getAllergyOrThrow(beneficiary, allergyId);
+        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
         // orphanRemoval=true → Hibernate τη σβήνει αυτόματα
         beneficiary.removeAllergy(allergy);
@@ -73,8 +72,7 @@ public class AllergiesServiceImpl implements AllergiesService{
 
     @Transactional(readOnly = true)
     public AllergyReadOnlyDTO getAllergy(Long beneficiaryId, Long allergyId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        return allergyMapper.toDTO(getAllergyOrThrow(beneficiary, allergyId));
+        return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryId));
     }
 
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
@@ -82,20 +80,13 @@ public class AllergiesServiceImpl implements AllergiesService{
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
 
-    // TODO [Polish]: Consider lazy-safe retrieval for medications
-    // Currently we stream the lazy-loaded set from beneficiary,
-    // which triggers a SELECT for all medications.
-    // consider using repository query:
-    // findByIdAndBeneficiaryId(allergyId, beneficiaryId)
-    private Allergy getAllergyOrThrow (Beneficiary beneficiary, Long allergyId) {
-        return  beneficiary.getAllergies().stream()
-                .filter(m -> m.getId().equals(allergyId))
-                .findFirst()
+    private Allergy getAllergyOrThrow (Long allergyId, Long beneficiaryId) {
+        return  allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)
                 .orElseThrow(() -> {
                     if (!allergyRepository.existsById(allergyId)) {
                         return new AllergyNotFoundException(allergyId);
                     }
-                    return new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiary.getId());
+                    return new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryId);
                 });
     }
 }

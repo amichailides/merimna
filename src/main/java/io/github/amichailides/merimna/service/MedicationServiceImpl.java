@@ -38,8 +38,8 @@ public class MedicationServiceImpl implements MedicationService{
             Long beneficiaryId,
             Long medicationId,
             MedicationUpdateDTO dto) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        Medication existing = getMedicationOrThrow(beneficiary, medicationId);
+
+        Medication existing = getMedicationOrThrow(medicationId, beneficiaryId);
 
         // TODO: MedicationValidator - business rules π.χ. conflict μεταξύ φαρμάκων,
         //  max δόση ανά ηλικία/βάρος, ή αν ο ωφελούμενος είναι ανενεργός
@@ -51,7 +51,7 @@ public class MedicationServiceImpl implements MedicationService{
     @Transactional
     public void deleteMedication (Long beneficiaryId, Long medicationId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        Medication medication = getMedicationOrThrow(beneficiary, medicationId);
+        Medication medication = getMedicationOrThrow(medicationId, beneficiaryId);
 
         beneficiary.removeMedication(medication);
     }
@@ -59,8 +59,7 @@ public class MedicationServiceImpl implements MedicationService{
     @Transactional(readOnly = true)
     public MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId) {
 
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        return medicationMapper.toDTO(getMedicationOrThrow(beneficiary, medicationId));
+        return medicationMapper.toDTO(getMedicationOrThrow(medicationId, beneficiaryId));
     }
 
     @Transactional(readOnly = true)
@@ -77,20 +76,13 @@ public class MedicationServiceImpl implements MedicationService{
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
 
-    // TODO [Polish]: Consider lazy-safe retrieval for medications
-    // Currently we stream the lazy-loaded set from beneficiary,
-    // which triggers a SELECT for all medications.
-    // consider using repository query:
-    // findByIdAndBeneficiaryId(medicationId, beneficiaryId)
-    private Medication getMedicationOrThrow (Beneficiary beneficiary, Long medicationId) {
-        return  beneficiary.getMedications().stream()
-                .filter(m -> m.getId().equals(medicationId))
-                .findFirst()
+    private Medication getMedicationOrThrow (Long medicationId, Long beneficiaryId) {
+        return  medicationRepository.findByIdAndBeneficiaryId(medicationId, beneficiaryId)
                 .orElseThrow(() -> {
                     if (!medicationRepository.existsById(medicationId)) {
                         return new MedicationNotFound(medicationId);
                     }
-                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiary.getId());
+                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryId);
                 });
 
     }
