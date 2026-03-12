@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
-@AtLeastOnePhonePresent
+@AtLeastOnePhonePresent(message = "{contact.missing}", groups = FirstOrder.class)
 @Builder
 public record EmergencyContactDTO(
         @NotBlank(message = "{emergency.firstName.required}", groups = FirstOrder.class)

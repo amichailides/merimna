@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class BeneficiaryValidationException extends BaseValidationException {
     public BeneficiaryValidationException(Map<String, String> validationErrors) {
         super(
-                ErrorCode.BENEFICIARY_VALIDATION_FAILED,
+                ErrorCode.DOMAIN_RULE_VIOLATION,
                 validationErrors.entrySet().stream()
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey,
