@@ -98,4 +98,4 @@ Some changes that shaped the current codebase include:
 
 Architectural decisions are documented in the [ADR section](docs/adr).
 
-Ongoing improvements are tracked through [Issues](issues).
+Ongoing improvements are tracked through [Issues](https://github.com/amichailides/merimna/issues).
