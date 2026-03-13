@@ -96,4 +96,6 @@ Some changes that shaped the current codebase include:
 - Making validation and domain rules more explicit and isolated by responsibility.
 - Centralizing error handling so API responses remain consistent.
 
-Architectural decisions are documented in the [ADR section](docs/adr/_Readme.md).
+Architectural decisions are documented in the [ADR section](docs/adr).
+
+Ongoing improvements are tracked through [Issues](issues).
