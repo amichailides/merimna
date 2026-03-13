@@ -1,6 +1,8 @@
 # Architecture Decision Records (ADR)
 
-This folder contains the architectural decisions of the project.
+This directory contains the architectural decisions made during the development of the project.
+
+The project uses the ADR (Architecture Decision Record) approach to document important technical decisions.
 
 Each ADR records:
 
