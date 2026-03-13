@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+// TODO(#2): Improve validation error message granularity
 public class FirstNameValidator implements ConstraintValidator<ValidFirstName, String> {
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.isBlank()) {
