@@ -6,8 +6,9 @@ import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
-
+@Builder
 public record AllergyCreateDTO(
         @NotBlank(message = "{allergy.substance.required}", groups = FirstOrder.class)
         @ValidGreekLatinText(max = 50, message = "{allergy.substance.invalid}", groups = SecondOrder.class)

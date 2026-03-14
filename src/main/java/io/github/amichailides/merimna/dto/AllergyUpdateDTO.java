@@ -3,8 +3,9 @@ package io.github.amichailides.merimna.dto;
 import io.github.amichailides.merimna.model.AllergySeverity;
 import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
+import lombok.Builder;
 
-
+@Builder
 public record AllergyUpdateDTO(
         Long id,
 

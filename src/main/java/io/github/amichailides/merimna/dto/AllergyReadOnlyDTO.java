@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.dto;
 import io.github.amichailides.merimna.model.AllergySeverity;
 import lombok.Builder;
 
+@Builder
 public record AllergyReadOnlyDTO(
         Long id,
         String substance,

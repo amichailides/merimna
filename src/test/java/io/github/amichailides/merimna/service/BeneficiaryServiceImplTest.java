@@ -1,9 +1,7 @@
 package io.github.amichailides.merimna.service;
 
 import io.github.amichailides.merimna.common.ErrorCode;
-import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
-import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
@@ -18,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,14 +46,11 @@ public class BeneficiaryServiceImplTest {
     @Mock
     private BeneficiaryValidator validator;
 
-    @Mock
-    private AllergiesService allergiesService;
-
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
 
     @Test
-    @DisplayName("Should throw exception when beneficiary with given id does not exist")
+    //@DisplayName("Should throw exception when beneficiary with given id does not exist")
     void findById_shouldThrowException_whenBeneficiaryMissing() {
         Long beneficiaryId = 1L;
         when(beneficiaryRepository.findById(beneficiaryId))
@@ -69,7 +65,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when beneficiary with given AMKA does not exist")
+    //@DisplayName("Should throw exception when beneficiary with given AMKA does not exist")
     void findByAmka_shouldThrowException_whenBeneficiaryMissing() {
         String amka = "12345678912";
 
@@ -83,7 +79,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should not save beneficiary when validation fails")
+    //@DisplayName("Should not save beneficiary when validation fails")
     void save_shouldNotPersist_whenValidationFails() {
         BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
                 .firstName("Joe")
@@ -111,7 +107,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Update should fail fast when beneficiary is missing")
+    //@DisplayName("Update should fail fast when beneficiary is missing")
     void update_shouldFailFast_whenNotFound() {
         Long beneficiaryId = 1L;
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder().build();
@@ -128,7 +124,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Discharge: Fail when ID not found")
+    //@DisplayName("Discharge: Fail when ID not found")
     void discharge_shouldThrowNotFound_whenIdMissing() {
         Long beneficiaryId = 1L;
         when(beneficiaryRepository.findById(beneficiaryId))
@@ -143,10 +139,11 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when beneficiary is already inactive")
+    //@DisplayName("Should throw exception when beneficiary is already inactive")
     void discharge_shouldThrowException_whenAlreadyInactive() {
         Long beneficiaryId = 1L;
-        Beneficiary beneficiary = createDefaultBeneficiary();
+        Beneficiary beneficiary = createDefaultBeneficiary(false);
+
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
 
@@ -158,14 +155,14 @@ public class BeneficiaryServiceImplTest {
 
     @ParameterizedTest
     @MethodSource("provideFilterCombinations")
-    @DisplayName("Should call correct repository method based on filters")
+    //@DisplayName("Should call correct repository method based on filters")
     void findAll_shouldUseCorrectRepositoryMethod(
             boolean includeInactive,
             HouseUnit houseUnit,
             String expectedMethodName) {
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Beneficiary> mockPage = new PageImpl<>(List.of(createDefaultBeneficiary()));
+        Page<Beneficiary> mockPage = new PageImpl<>(List.of(createDefaultBeneficiary(true)));
 
         lenient().when(beneficiaryRepository.findAll(pageable)).thenReturn(mockPage);
         lenient().when(beneficiaryRepository.findAllByIsActiveTrue(pageable)).thenReturn(mockPage);
@@ -192,18 +189,20 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should return a mapped page of DTOs when searching")
-    void search_shouldReturnMappedPage() {
-        String term = "Παπαδοπουλος";
+    //@DisplayName("Should return a mapped page of DTOs when searching")
+    void search_shouldReturnMappedPage_whenValidTermProvided() {
+        String term = "Παπαδόπουλος";
         Pageable pageable = PageRequest.of(0, 10);
 
-        Beneficiary beneficiary = createDefaultBeneficiary();
+        Beneficiary beneficiary = createDefaultBeneficiary(true);
         Page<Beneficiary> entityPage = new PageImpl<>(List.of(beneficiary));
 
         BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder().build();
 
-        when(beneficiaryRepository.findAll(any(Specification.class), any(Pageable.class)))
-                .thenReturn(entityPage);
+        when(beneficiaryRepository.findAll(
+                ArgumentMatchers.<Specification<Beneficiary>>any(),
+                eq(pageable)
+        )).thenReturn(entityPage);
 
         when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
 
@@ -211,14 +210,81 @@ public class BeneficiaryServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
-        assertEquals(expectedDto, result.getContent().get(0));
+        assertEquals(expectedDto, result.getContent().getFirst());
 
 
-        verify(beneficiaryRepository).findAll(any(Specification.class), eq(pageable));
+        verify(beneficiaryRepository)
+                .findAll(ArgumentMatchers.<Specification<Beneficiary>>any(), eq(pageable));
+        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
 
     }
 
-    // Η πηγή των δεδομένων για το test
+    @Test
+    //@DisplayName("getBeneficiaryById: Should return DTO when beneficiary exists")
+    void getBeneficiaryById_shouldReturnDto_whenIdExists(){
+        Long beneficiaryId = 1L;
+        Beneficiary beneficiary = createDefaultBeneficiary(true);
+        beneficiary.setId(beneficiaryId);
+
+        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder()
+                .id(beneficiaryId)
+                .build();
+
+        when(beneficiaryRepository.findById(beneficiaryId))
+                .thenReturn(Optional.of(beneficiary));
+
+        when(beneficiaryMapper.toReadOnlyDTO(beneficiary))
+                .thenReturn(expectedDto);
+
+        BeneficiaryReadOnlyDTO result = beneficiaryService.findById(beneficiaryId);
+
+        assertEquals(expectedDto, result);
+
+        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
+
+    }
+
+    @Test
+    void getBeneficiaryByAmka_shouldReturnDto_whenAmkaExists() {
+        String amka = "12345678912";
+        Beneficiary beneficiary = createDefaultBeneficiary(true);
+
+        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder().build();
+
+        when(beneficiaryRepository.findByAmka(amka)).thenReturn(Optional.of(beneficiary));
+        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
+
+        BeneficiaryReadOnlyDTO result = beneficiaryService.findByAmka(amka);
+
+        assertEquals(expectedDto, result);
+        verify(beneficiaryRepository).findByAmka(amka);
+        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
+    }
+
+    @Test
+    void save_shouldPersistAndReturnDto_whenValidInputProvided() {
+        BeneficiarySaveDTO saveDto = createDefaultBeneficiarySaveDTO();
+        Beneficiary entityFromMapper = createDefaultBeneficiary(false);
+        Beneficiary savedEntity = createDefaultBeneficiary(true);
+        savedEntity.setId(1L);
+
+        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L);
+
+        when(beneficiaryMapper.toEntity(saveDto)).thenReturn(entityFromMapper);
+        when(beneficiaryRepository.save(entityFromMapper)).thenReturn(savedEntity);
+        when(beneficiaryMapper.toReadOnlyDTO(savedEntity)).thenReturn(expectedDto);
+
+        BeneficiaryReadOnlyDTO result = beneficiaryService.save(saveDto);
+
+        assertNotNull(result);
+        assertEquals(expectedDto, result);
+        assertTrue(result.isActive());
+
+        verify(beneficiaryRepository).save(entityFromMapper);
+        verify(validator).validateForSave(saveDto);
+    }
+
     private static Stream<Arguments> provideFilterCombinations() {
         return Stream.of(
                 Arguments.of(true, HouseUnit.UNIT_A, "findAllByHouseUnit"),
@@ -228,7 +294,8 @@ public class BeneficiaryServiceImplTest {
         );
     }
 
-    private Beneficiary createDefaultBeneficiary() {
+
+    private Beneficiary createDefaultBeneficiary(boolean isActive) {
         return Beneficiary.builder()
                 .firstName("Joe")
                 .lastName("Doe")
@@ -252,7 +319,51 @@ public class BeneficiaryServiceImplTest {
                                 .zipCode("11361")
                                 .build())
                         .build())
-                .isActive(false)
+                .isActive(isActive)
+                .build();
+    }
+
+    private BeneficiarySaveDTO createDefaultBeneficiarySaveDTO() {
+        return BeneficiarySaveDTO.builder()
+                .firstName("Joe")
+                .lastName("Doe")
+                .amka("12345678912")
+                .dateOfBirth(LocalDate.of(1986, 4, 6))
+                .houseUnit(HouseUnit.UNIT_A)
+                .permanentAddress(createDefaultAddressDTO())
+                .emergencyContact(createDefaultEmergencyContactDTO())
+                .build();
+    }
+
+    private AddressDTO createDefaultAddressDTO() {
+        return AddressDTO.builder()
+                .street("Αγίου Μελετίου")
+                .streetNumber("32")
+                .city("Αθήνα")
+                .zipCode("11361")
+                .build();
+    }
+
+    private EmergencyContactDTO createDefaultEmergencyContactDTO() {
+        return EmergencyContactDTO.builder()
+                .firstName("Γιάννης")
+                .lastName("Παπαδόπουλος")
+                .relationshipType(RelationshipType.FRIEND)
+                .address(createDefaultAddressDTO()) // Επαναχρησιμοποίηση!
+                .build();
+    }
+
+    private BeneficiaryReadOnlyDTO createDefaultReadOnlyDTO(Long id) {
+        return BeneficiaryReadOnlyDTO.builder()
+                .id(id)
+                .firstName("Joe")
+                .lastName("Doe")
+                .amka("12345678912")
+                .dateOfBirth(LocalDate.of(1986, 4, 6))
+                .houseUnit(HouseUnit.UNIT_A)
+                .isActive(true)
+                .permanentAddress(createDefaultAddressDTO())
+                .emergencyContact(createDefaultEmergencyContactDTO())
                 .build();
     }
 }
