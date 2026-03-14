@@ -52,10 +52,12 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Should throw exception when beneficiary with given id does not exist")
     void findById_shouldThrowException_whenBeneficiaryMissing() {
+        // arrange
         Long beneficiaryId = 1L;
         when(beneficiaryRepository.findById(beneficiaryId))
                 .thenReturn(Optional.empty());
 
+        // act & assert
         assertThrows(
                 BeneficiaryNotFoundByIdException.class,
                 () -> beneficiaryService.findById(beneficiaryId)
@@ -67,11 +69,13 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Should throw exception when beneficiary with given AMKA does not exist")
     void findByAmka_shouldThrowException_whenBeneficiaryMissing() {
+        // arrange
         String amka = "12345678912";
 
         when(beneficiaryRepository.findByAmka(amka))
                 .thenReturn(Optional.empty());
 
+        // act & assert
         assertThrows(
                 BeneficiaryNotFoundByAmkaException.class,
                 () -> beneficiaryService.findByAmka(amka)
@@ -81,6 +85,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Should not save beneficiary when validation fails")
     void save_shouldNotPersist_whenValidationFails() {
+        // arrange
         BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
                 .firstName("Joe")
                 .lastName("Doe")
@@ -93,6 +98,7 @@ public class BeneficiaryServiceImplTest {
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
         );
 
+        // act & assert
         doThrow(new BeneficiaryValidationException(errors))
                 .when(validator)
                 .validateForSave(dto);
@@ -109,11 +115,13 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Update should fail fast when beneficiary is missing")
     void update_shouldFailFast_whenNotFound() {
+        // arrange
         Long beneficiaryId = 1L;
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder().build();
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
 
+        // act & assert
         assertThrows(BeneficiaryNotFoundByIdException.class,
                 () -> beneficiaryService.updateBeneficiary(beneficiaryId, dto)
         );
@@ -126,10 +134,12 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Discharge: Fail when ID not found")
     void discharge_shouldThrowNotFound_whenIdMissing() {
+        // arrange
         Long beneficiaryId = 1L;
         when(beneficiaryRepository.findById(beneficiaryId))
                 .thenReturn(Optional.empty());
 
+        // act & assert
         assertThrows(
                 BeneficiaryNotFoundByIdException.class,
                 () -> beneficiaryService.discharge(beneficiaryId)
@@ -141,12 +151,13 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Should throw exception when beneficiary is already inactive")
     void discharge_shouldThrowException_whenAlreadyInactive() {
+        // arrange
         Long beneficiaryId = 1L;
         Beneficiary beneficiary = createDefaultBeneficiary(false);
 
-
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
 
+        // act & assert
         assertThrows(BeneficiaryAlreadyInactiveException.class,
                 () -> beneficiaryService.discharge(beneficiaryId));
 
@@ -158,9 +169,8 @@ public class BeneficiaryServiceImplTest {
     //@DisplayName("Should call correct repository method based on filters")
     void findAll_shouldUseCorrectRepositoryMethod(
             boolean includeInactive,
-            HouseUnit houseUnit,
-            String expectedMethodName) {
-
+            HouseUnit houseUnit) {
+        // arrange
         Pageable pageable = PageRequest.of(0, 10);
         Page<Beneficiary> mockPage = new PageImpl<>(List.of(createDefaultBeneficiary(true)));
 
@@ -169,10 +179,10 @@ public class BeneficiaryServiceImplTest {
         lenient().when(beneficiaryRepository.findAllByHouseUnit(any(), any())).thenReturn(mockPage);
         lenient().when(beneficiaryRepository.findAllByHouseUnitAndIsActiveTrue(any(), any())).thenReturn(mockPage);
 
-
+        // act
         beneficiaryService.findAllBeneficiaries(includeInactive, houseUnit, pageable);
 
-
+        // assert
         if (houseUnit != null) {
             if (includeInactive) {
                 verify(beneficiaryRepository).findAllByHouseUnit(houseUnit, pageable);
@@ -191,6 +201,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("Should return a mapped page of DTOs when searching")
     void search_shouldReturnMappedPage_whenValidTermProvided() {
+        // arrange
         String term = "Παπαδόπουλος";
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -206,8 +217,10 @@ public class BeneficiaryServiceImplTest {
 
         when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
 
+        // act
         Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.search(term, pageable);
 
+        // assert
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
         assertEquals(expectedDto, result.getContent().getFirst());
@@ -222,6 +235,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     //@DisplayName("getBeneficiaryById: Should return DTO when beneficiary exists")
     void getBeneficiaryById_shouldReturnDto_whenIdExists(){
+        // arrange
         Long beneficiaryId = 1L;
         Beneficiary beneficiary = createDefaultBeneficiary(true);
         beneficiary.setId(beneficiaryId);
@@ -236,8 +250,10 @@ public class BeneficiaryServiceImplTest {
         when(beneficiaryMapper.toReadOnlyDTO(beneficiary))
                 .thenReturn(expectedDto);
 
+        // act
         BeneficiaryReadOnlyDTO result = beneficiaryService.findById(beneficiaryId);
 
+        // assert
         assertEquals(expectedDto, result);
 
         verify(beneficiaryRepository).findById(beneficiaryId);
@@ -247,6 +263,7 @@ public class BeneficiaryServiceImplTest {
 
     @Test
     void getBeneficiaryByAmka_shouldReturnDto_whenAmkaExists() {
+        // arrange
         String amka = "12345678912";
         Beneficiary beneficiary = createDefaultBeneficiary(true);
 
@@ -255,8 +272,10 @@ public class BeneficiaryServiceImplTest {
         when(beneficiaryRepository.findByAmka(amka)).thenReturn(Optional.of(beneficiary));
         when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
 
+        // act
         BeneficiaryReadOnlyDTO result = beneficiaryService.findByAmka(amka);
 
+        // assert
         assertEquals(expectedDto, result);
         verify(beneficiaryRepository).findByAmka(amka);
         verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
@@ -342,6 +361,27 @@ public class BeneficiaryServiceImplTest {
         verify(beneficiaryMapper).toReadOnlyDTO(existing);
     }
 
+    @Test
+    void search_shouldReturnEmptyPage_whenNoMatchesFound() {
+        // arrange
+        String term = "Παπαχαραλάμπους";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(beneficiaryRepository.findAll(
+                ArgumentMatchers.<Specification<Beneficiary>>any(),
+                eq(pageable)
+        )).thenReturn(Page.empty());
+
+        // act
+        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.search(term, pageable);
+
+        // assert
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.getTotalElements());
+        verifyNoInteractions(beneficiaryMapper);
+
+    }
+
 
 
     private static Stream<Arguments> provideFilterCombinations() {
@@ -361,19 +401,19 @@ public class BeneficiaryServiceImplTest {
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
                 .houseUnit(HouseUnit.UNIT_A)
                 .permanentAddress( Address.builder()
-                        .street("Αγιου Μελετιου")
+                        .street("Αγίου Μελέτιου")
                         .streetNumber("32")
-                        .city("Αθηνα")
+                        .city("Αθήνα")
                         .zipCode("11361")
                         .build())
                 .emergencyContact(EmergencyContact.builder()
-                        .firstName("Γιαννης")
-                        .lastName("Παπαδοπουλος")
+                        .firstName("Γιάννης")
+                        .lastName("Παπαδόπουλος")
                         .relationshipType(RelationshipType.FRIEND)
                         .address(Address.builder()
-                                .street("Αγου Μελετιου")
+                                .street("Άγου Μελέτιου")
                                 .streetNumber("32")
-                                .city("Αθηνα")
+                                .city("Αθήνα")
                                 .zipCode("11361")
                                 .build())
                         .build())
