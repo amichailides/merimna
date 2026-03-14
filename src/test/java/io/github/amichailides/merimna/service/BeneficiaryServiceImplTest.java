@@ -264,26 +264,85 @@ public class BeneficiaryServiceImplTest {
 
     @Test
     void save_shouldPersistAndReturnDto_whenValidInputProvided() {
+        // arrange
         BeneficiarySaveDTO saveDto = createDefaultBeneficiarySaveDTO();
         Beneficiary entityFromMapper = createDefaultBeneficiary(false);
         Beneficiary savedEntity = createDefaultBeneficiary(true);
         savedEntity.setId(1L);
 
-        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L);
+        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L, true);
 
         when(beneficiaryMapper.toEntity(saveDto)).thenReturn(entityFromMapper);
         when(beneficiaryRepository.save(entityFromMapper)).thenReturn(savedEntity);
         when(beneficiaryMapper.toReadOnlyDTO(savedEntity)).thenReturn(expectedDto);
 
+        // act
         BeneficiaryReadOnlyDTO result = beneficiaryService.save(saveDto);
 
+        // assert
         assertNotNull(result);
         assertEquals(expectedDto, result);
-        assertTrue(result.isActive());
 
         verify(beneficiaryRepository).save(entityFromMapper);
+        verify(beneficiaryMapper).toEntity(saveDto);
+        verify(beneficiaryMapper).toReadOnlyDTO(savedEntity);
         verify(validator).validateForSave(saveDto);
     }
+
+    @Test
+    void update_shouldPersistAndReturnDto_whenValidInputProvided() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Beneficiary existing = createDefaultBeneficiary(true);
+        existing.setId(1L);
+
+        BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
+                .houseUnit(HouseUnit.UNIT_B)
+                .build();
+
+        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(beneficiaryId, true);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
+        when(beneficiaryRepository.save(existing)).thenReturn(existing);
+        when(beneficiaryMapper.toReadOnlyDTO(existing)).thenReturn(expectedDto);
+
+        // act
+        BeneficiaryReadOnlyDTO result = beneficiaryService.updateBeneficiary(beneficiaryId, updateDto);
+
+        // assert
+        assertNotNull(result);
+        assertEquals(result, expectedDto);
+        verify(validator).validateForUpdate(existing, updateDto);
+        verify(beneficiaryMapper).updateEntity(existing, updateDto);
+        verify(beneficiaryRepository).save(existing);
+
+    }
+
+    @Test
+    void discharge_shouldSetInactiveAndReturnDto_whenBeneficiaryIsActive() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Beneficiary existing = createDefaultBeneficiary(true);
+        existing.setId(1L);
+
+        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(beneficiaryId, false);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
+        when(beneficiaryRepository.save(existing)).thenReturn(existing);
+        when(beneficiaryMapper.toReadOnlyDTO(existing)).thenReturn(expectedDto);
+
+        //act
+        BeneficiaryReadOnlyDTO result = beneficiaryService.discharge(beneficiaryId);
+
+        //assert
+        assertFalse(existing.getIsActive());
+        assertEquals(result, expectedDto);
+        verify(validator).validateForDischarge(existing);
+        verify(beneficiaryRepository).save(existing);
+        verify(beneficiaryMapper).toReadOnlyDTO(existing);
+    }
+
+
 
     private static Stream<Arguments> provideFilterCombinations() {
         return Stream.of(
@@ -293,7 +352,6 @@ public class BeneficiaryServiceImplTest {
                 Arguments.of(false, null, "findAllByIsActiveTrue")
         );
     }
-
 
     private Beneficiary createDefaultBeneficiary(boolean isActive) {
         return Beneficiary.builder()
@@ -353,7 +411,7 @@ public class BeneficiaryServiceImplTest {
                 .build();
     }
 
-    private BeneficiaryReadOnlyDTO createDefaultReadOnlyDTO(Long id) {
+    private BeneficiaryReadOnlyDTO createDefaultReadOnlyDTO(Long id, boolean isActive) {
         return BeneficiaryReadOnlyDTO.builder()
                 .id(id)
                 .firstName("Joe")
@@ -361,7 +419,7 @@ public class BeneficiaryServiceImplTest {
                 .amka("12345678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
                 .houseUnit(HouseUnit.UNIT_A)
-                .isActive(true)
+                .isActive(isActive)
                 .permanentAddress(createDefaultAddressDTO())
                 .emergencyContact(createDefaultEmergencyContactDTO())
                 .build();
