@@ -97,11 +97,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     @Transactional(readOnly = true)
     public Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable) {
-        //  Παίρνουμε το specification που φτιάξαμε
         Specification<Beneficiary> spec = BeneficiarySpecifications.globalSearch(term);
 
-        // 2. Ζητάμε από το repository να κάνει το search με pagination
-        // 3. Κάνουμε map κάθε Entity που βρέθηκε σε ReadOnlyDTO
         return beneficiaryRepository.findAll(spec, pageable)
                 .map(beneficiaryMapper::toReadOnlyDTO);
     }
@@ -110,36 +107,16 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
         Beneficiary existing = getBeneficiaryOrThrow(id);
 
-        validator.validateForUpdate(existing,dto);
+        validator.validateForUpdate(existing, dto);
 
         beneficiaryMapper.updateEntity(existing, dto);
 
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(existing));
     }
 
-    @Override
-    @Transactional
-    public AllergyReadOnlyDTO addAllergy(Long id, AllergyCreateDTO dto) {
-        return allergiesService.addAllergy(id, dto);
-    }
-
-    @Override
-    @Transactional
-    public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
-        return allergiesService.updateAllergy(beneficiaryId, allergyId, dto);
-    }
-
-    @Override
-    @Transactional
-    public void deleteAllergy(Long beneficiaryId, Long allergyId) {
-        allergiesService.deleteAllergy(beneficiaryId, allergyId);
-    }
-
-    private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
-        return  beneficiaryRepository.findById(beneficiaryId)
+    private Beneficiary getBeneficiaryOrThrow(Long beneficiaryId) {
+        return beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
-
-
 
 }

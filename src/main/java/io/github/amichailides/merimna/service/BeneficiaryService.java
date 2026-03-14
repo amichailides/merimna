@@ -13,8 +13,5 @@ public interface BeneficiaryService {
     BeneficiaryReadOnlyDTO findById(Long id);
     BeneficiaryReadOnlyDTO discharge(Long id);
     Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable);
-    AllergyReadOnlyDTO addAllergy(Long id, AllergyCreateDTO dto);
-    AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto);
-    public void deleteAllergy(Long beneficiaryId, Long allergyId);
     public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto);
 }
