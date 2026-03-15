@@ -4,8 +4,7 @@ import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
-import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,7 @@ public class BeneficiaryValidatorTest {
 
         assertEquals(
                 ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey(),
-                ex.getValidationErrors().get("amka"));
+                ex.getValidationErrors().get("amka").getFirst()); // Map<String, List<String>>
 
     }
 
@@ -68,7 +67,7 @@ public class BeneficiaryValidatorTest {
         );
 
         assertEquals(ErrorCode.AMKA_DATE_MISMATCH.getMessageKey(),
-                ex.getValidationErrors().get("amka"));
+                ex.getValidationErrors().get("amka").getFirst());
     }
 
     @Test
@@ -88,15 +87,7 @@ public class BeneficiaryValidatorTest {
     void shouldThrowWhenAmkaAlreadyExistsOnUpdate () {
 
         // @NonNull στο Entity
-        Beneficiary existing = Beneficiary.builder()
-                .id(1L)
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("06046678912")
-                .dateOfBirth(LocalDate.of(1966, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
-                .build();
-
+        Beneficiary existing = createDefaultBeneficiary(true);
         BeneficiaryUpdateDTO dto =  BeneficiaryUpdateDTO.builder()
                 .amka("06046678912")
                 .build();
@@ -110,7 +101,7 @@ public class BeneficiaryValidatorTest {
 
         assertEquals(
                 ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey(),
-                ex.getValidationErrors().get("amka")
+                ex.getValidationErrors().get("amka").getFirst()
         );
 
     }
@@ -118,14 +109,7 @@ public class BeneficiaryValidatorTest {
     @Test
     void shouldThrowWhenAmkaChangedAndMismatchesDobOnUpdate () {
 
-        Beneficiary existing = Beneficiary.builder()
-                .id(1L)
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("06046678912")
-                .dateOfBirth(LocalDate.of(1966, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
-                .build();
+        Beneficiary existing = createDefaultBeneficiary(true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .amka("06045678912")
@@ -140,20 +124,13 @@ public class BeneficiaryValidatorTest {
 
         assertEquals(
                 ErrorCode.AMKA_DATE_MISMATCH.getMessageKey(),
-                ex.getValidationErrors().get("amka")
+                ex.getValidationErrors().get("amka").getFirst()
         );
     }
 
     @Test
     void shouldThrowWhenDobChangedAndMismatchesAmkaOnUpdate () {
-        Beneficiary existing = Beneficiary.builder()
-                .id(1L)
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("06046678912")
-                .dateOfBirth(LocalDate.of(1966, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
-                .build();
+        Beneficiary existing = createDefaultBeneficiary(true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .dateOfBirth(LocalDate.of(1956,4, 6))
@@ -167,28 +144,61 @@ public class BeneficiaryValidatorTest {
 
         assertEquals(
                 ErrorCode.AMKA_DATE_MISMATCH.getMessageKey(),
-                ex.getValidationErrors().get("amka")
+                ex.getValidationErrors().get("amka").getFirst()
         );
 
     }
 
     @Test
     void shouldNotThrowExceptionWhenDataIsValidOnUpdate() {
-        Beneficiary existing = Beneficiary.builder()
-                .id(1L)
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("06046678912")
-                .dateOfBirth(LocalDate.of(1966, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
-                .build();
+        Beneficiary existing = createDefaultBeneficiary(true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
-                .amka("06046678912")
+                .amka("06048678913")
                 .build();
 
         when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(false);
 
         assertDoesNotThrow(() -> validator.validateForUpdate(existing, dto));
+    }
+
+    @Test
+    void shouldNotThrowWhenNothingChangedOnUpdate() {
+        Beneficiary existing = createDefaultBeneficiary(true);
+
+        BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
+                .houseUnit(HouseUnit.UNIT_B)
+                .build();
+
+        assertDoesNotThrow(() -> validator.validateForUpdate(existing, dto));
+    }
+
+
+    private Beneficiary createDefaultBeneficiary(boolean isActive) {
+        return Beneficiary.builder()
+                .firstName("Joe")
+                .lastName("Doe")
+                .amka(("12345678912"))
+                .dateOfBirth(LocalDate.of(1986, 4, 6))
+                .houseUnit(HouseUnit.UNIT_A)
+                .permanentAddress( Address.builder()
+                        .street("Αγίου Μελέτιου")
+                        .streetNumber("32")
+                        .city("Αθήνα")
+                        .zipCode("11361")
+                        .build())
+                .emergencyContact(EmergencyContact.builder()
+                        .firstName("Γιάννης")
+                        .lastName("Παπαδόπουλος")
+                        .relationshipType(RelationshipType.FRIEND)
+                        .address(Address.builder()
+                                .street("Άγου Μελέτιου")
+                                .streetNumber("32")
+                                .city("Αθήνα")
+                                .zipCode("11361")
+                                .build())
+                        .build())
+                .isActive(isActive)
+                .build();
     }
 }
