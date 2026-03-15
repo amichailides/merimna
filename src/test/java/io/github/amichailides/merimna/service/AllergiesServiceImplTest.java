@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +110,32 @@ public class AllergiesServiceImplTest {
         verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
         verify(allergyMapper).toDTO(allergy);
 
+    }
+
+    @Test
+    void getAllergiesByBeneficiary_shouldReturnListDto_whenBeneficiaryExists() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Allergy allergy = createDefaultAllergy(allergyId);
+        List<Allergy> allergiesList = (List.of(allergy));
+        AllergyReadOnlyDTO dto = createDefaultReadOnlyDTO(allergyId);
+        List<AllergyReadOnlyDTO> expectedDto = List.of(dto);
+
+        when(beneficiaryRepository.existsById(beneficiaryId)).thenReturn(true);
+        when(allergyRepository.findAllByBeneficiaryId(beneficiaryId)).thenReturn(allergiesList);
+        when(allergyMapper.toDTO(allergy)).thenReturn(dto);
+
+        // act
+        List<AllergyReadOnlyDTO> result = allergiesService.getAllergiesByBeneficiary(beneficiaryId);
+
+        // assert
+        assertNotNull(result);
+        assertEquals(expectedDto, result);
+        verify(beneficiaryRepository).existsById(beneficiaryId);
+        verify(allergyRepository).findAllByBeneficiaryId(beneficiaryId);
+        verify(allergyMapper).toDTO(allergy);
     }
 
     private Beneficiary createDefaultBeneficiary(Long id) {
