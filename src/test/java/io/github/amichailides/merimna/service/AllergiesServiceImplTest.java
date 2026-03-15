@@ -16,8 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,7 +42,7 @@ public class AllergiesServiceImplTest {
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
 
-        Beneficiary beneficiary = createDefaultBeneficiary();
+        Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId);
 
         AllergyCreateDTO createDTO = createDefaultAllergyCreateDTO();
         Allergy entityFromMapper = createDefaultAllergy(null);
@@ -55,9 +54,10 @@ public class AllergiesServiceImplTest {
         when(allergyRepository.save(any(Allergy.class))).thenReturn(savedAllergy); // any() γιατί το object αλλάζει state μετά το addAllergy()
         when(allergyMapper.toDTO(savedAllergy)).thenReturn(expectedDto);
 
-        // act & assert
+        // act
         AllergyReadOnlyDTO result = allergiesService.addAllergy(beneficiaryId, createDTO);
 
+        // assert
         assertNotNull(result);
         assertEquals(expectedDto, result);
         verify(beneficiaryRepository).findById(beneficiaryId);
@@ -67,8 +67,53 @@ public class AllergiesServiceImplTest {
 
     }
 
-    private Beneficiary createDefaultBeneficiary() {
+    @Test
+    void deleteAllergy_shouldRemoveAllergy_whenBeneficiaryAndAllergyExist() {
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId);
+        Allergy allergy = createDefaultAllergy(allergyId);
+        beneficiary.addAllergy(allergy);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.of(allergy));
+
+        // act
+        allergiesService.deleteAllergy(beneficiaryId, allergyId);
+
+        // assert
+        assertTrue(beneficiary.getAllergies().isEmpty());
+        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
+
+    }
+
+    @Test
+    void getAllergy_shouldReturnDto_whenBeneficiaryAndAllergyExist() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Allergy allergy = createDefaultAllergy(allergyId);
+        AllergyReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(allergyId);
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.of(allergy));
+        when(allergyMapper.toDTO(allergy)).thenReturn(expectedDto);
+
+        // act
+        AllergyReadOnlyDTO result = allergiesService.getAllergy(beneficiaryId, allergyId);
+
+        // assert
+        assertEquals(expectedDto, result);
+        verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
+        verify(allergyMapper).toDTO(allergy);
+
+    }
+
+    private Beneficiary createDefaultBeneficiary(Long id) {
         return Beneficiary.builder()
+                .id(id)
                 .firstName("Joe")
                 .lastName("Doe")
                 .amka(("06048678912"))
@@ -123,7 +168,7 @@ public class AllergiesServiceImplTest {
         return AllergyReadOnlyDTO.builder()
                 .id(allergyId)
                 .substance("Γύρη / Pollen")
-                .severity(AllergySeverity.HIGH)
+                .severity(AllergySeverity.MEDIUM)
                 .reaction("Δυσκολία στην αναπνοή και φτέρνισμα")
                 .build();
     }
