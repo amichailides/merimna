@@ -330,7 +330,7 @@ public class BeneficiaryServiceImplTest {
 
         // assert
         assertNotNull(result);
-        assertEquals(result, expectedDto);
+        assertEquals(expectedDto, result);
         verify(validator).validateForUpdate(existing, updateDto);
         verify(beneficiaryMapper).updateEntity(existing, updateDto);
         verify(beneficiaryRepository).save(existing);
@@ -355,7 +355,7 @@ public class BeneficiaryServiceImplTest {
 
         //assert
         assertFalse(existing.getIsActive());
-        assertEquals(result, expectedDto);
+        assertEquals(expectedDto, result);
         verify(validator).validateForDischarge(existing);
         verify(beneficiaryRepository).save(existing);
         verify(beneficiaryMapper).toReadOnlyDTO(existing);
@@ -382,14 +382,61 @@ public class BeneficiaryServiceImplTest {
 
     }
 
+    @Test
+    void update_shouldNotPersist_whenValidationFails() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Beneficiary existing = createDefaultBeneficiary(true);
+        existing.setId(beneficiaryId);
+
+        BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
+                .amka("06047678912")
+                .build();
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
+        doThrow(new BeneficiaryValidationException(Map.of(
+                "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
+        )))
+                .when(validator)
+                .validateForUpdate(existing, updateDto);
+
+        // act & assert
+        assertThrows(BeneficiaryValidationException.class,
+                () -> beneficiaryService.updateBeneficiary(beneficiaryId, updateDto));
+
+        verify(beneficiaryRepository, never()).save(any());
+        verify(beneficiaryMapper, never()).toReadOnlyDTO(existing);
+    }
+
+    @Test
+    void findAll_shouldReturnMappedPage_whenRepositoryReturnsEntities() {
+        // arrange
+        Pageable pageable = PageRequest.of(0, 10);
+        Beneficiary beneficiary = createDefaultBeneficiary(true);
+        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L, true);
+
+        when(beneficiaryRepository.findAllByIsActiveTrue(pageable))
+                .thenReturn(new PageImpl<>(List.of(beneficiary)));
+        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
+
+        // act
+        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.findAllBeneficiaries(
+                false, null, pageable);
+
+        // assert
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(expectedDto, result.getContent().getFirst());
+        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
+    }
 
 
     private static Stream<Arguments> provideFilterCombinations() {
         return Stream.of(
-                Arguments.of(true, HouseUnit.UNIT_A, "findAllByHouseUnit"),
-                Arguments.of(false, HouseUnit.UNIT_A, "findAllByHouseUnitAndIsActiveTrue"),
-                Arguments.of(true, null, "findAll"),
-                Arguments.of(false, null, "findAllByIsActiveTrue")
+                Arguments.of(true, HouseUnit.UNIT_A),
+                Arguments.of(false, HouseUnit.UNIT_A),
+                Arguments.of(true, null),
+                Arguments.of(false, null)
         );
     }
 

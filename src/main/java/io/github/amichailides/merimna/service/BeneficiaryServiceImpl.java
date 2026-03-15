@@ -29,7 +29,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final BeneficiaryMapper beneficiaryMapper;
     private final BeneficiaryValidator validator;
-    private final AllergiesService allergiesService;
 
     @Override
     @Transactional(readOnly = true)
