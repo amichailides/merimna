@@ -57,15 +57,19 @@ public class AllergiesServiceImpl implements AllergiesService{
         //  σοβαρότητα αλλεργίας σε συνδυασμό με ενεργά φάρμακα (cross-check με Medication)
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
-        // orphanRemoval=true → Hibernate τη σβήνει αυτόματα
+        // orphanRemoval=true  Hibernate τη σβήνει αυτόματα
         beneficiary.removeAllergy(allergy);
     }
 
     @Transactional(readOnly = true)
     public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(Long beneficiaryId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
-        return beneficiary.getAllergies().stream()
+        if (!beneficiaryRepository.existsById(beneficiaryId)) {
+            throw new BeneficiaryNotFoundByIdException(beneficiaryId);
+        }
+
+        return allergyRepository.findAllByBeneficiaryId(beneficiaryId)
+                .stream()
                 .map(allergyMapper::toDTO)
                 .toList();
     }
@@ -76,6 +80,7 @@ public class AllergiesServiceImpl implements AllergiesService{
     }
 
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
+
         return  beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
