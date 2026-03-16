@@ -3,6 +3,9 @@ package io.github.amichailides.merimna.service;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.exception.AllergyNotFoundException;
+import io.github.amichailides.merimna.exception.AllergyNotOwnedByBeneficiaryException;
+import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.mapper.AllergyMapper;
 import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.AllergyRepository;
@@ -19,8 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AllergiesServiceImplTest {
@@ -136,6 +138,82 @@ public class AllergiesServiceImplTest {
         verify(beneficiaryRepository).existsById(beneficiaryId);
         verify(allergyRepository).findAllByBeneficiaryId(beneficiaryId);
         verify(allergyMapper).toDTO(allergy);
+    }
+
+    @Test
+    void addAllergy_shouldThrowException_WhenBeneficiaryMissing() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+        AllergyCreateDTO dto = createDefaultAllergyCreateDTO();
+        Allergy allergy = createDefaultAllergy(allergyId);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
+        // act & assert
+        assertThrows(
+                BeneficiaryNotFoundByIdException.class,
+                () -> allergiesService.addAllergy(beneficiaryId, dto)
+        );
+
+        verify(allergyRepository, never()).save(allergy);
+    }
+
+    @Test
+    void deleteAllergy_shouldThrowException_whenBeneficiaryMissing() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(
+                BeneficiaryNotFoundByIdException.class,
+                () -> allergiesService.deleteAllergy(beneficiaryId, allergyId)
+        );
+
+        verify(allergyRepository, never()).findByIdAndBeneficiaryId(any(), any());
+
+    }
+
+    @Test
+    void deleteAllergy_shouldThrowException_whenAllergyMissing() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+        when(allergyRepository.existsById(allergyId)).thenReturn(false);
+
+        // act & assert
+        assertThrows(
+                AllergyNotFoundException.class,
+                () -> allergiesService.deleteAllergy(beneficiaryId, allergyId)
+        );
+
+    }
+
+    @Test
+    void deleteAllergy_shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId);
+
+        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
+        when(allergyRepository.existsById(allergyId)).thenReturn(true);
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(
+                AllergyNotOwnedByBeneficiaryException.class,
+                () -> allergiesService.deleteAllergy(beneficiaryId, allergyId)
+        );
+
     }
 
     private Beneficiary createDefaultBeneficiary(Long id) {
