@@ -216,6 +216,76 @@ public class AllergiesServiceImplTest {
 
     }
 
+    @Test
+    void updateAllergy_shouldPersistAndReturnDto_whenValidInputProvided() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        Allergy existed = createDefaultAllergy(allergyId);
+        AllergyUpdateDTO updateDto = createDefaultUpdateDTO();
+        AllergyReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(allergyId);
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.of(existed));
+        when(allergyMapper.toDTO(existed)).thenReturn(expectedDto);
+
+        // Act
+        AllergyReadOnlyDTO result = allergiesService.updateAllergy(beneficiaryId, allergyId, updateDto);
+
+        // assert
+        assertEquals(expectedDto, result);
+        verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
+        verify(allergyMapper).updateEntity(updateDto, existed);
+        verify(allergyMapper).toDTO(existed);
+
+    }
+
+    @Test
+    void updateAllergy_shouldThrowException_whenAllergyNotFound() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+        AllergyUpdateDTO updateDto = createDefaultUpdateDTO();
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+        when(allergyRepository.existsById(allergyId)).thenReturn(false);
+
+        // act & assert
+        assertThrows(
+                AllergyNotFoundException.class,
+                () -> allergiesService.updateAllergy(beneficiaryId, allergyId, updateDto)
+        );
+
+        verify(allergyRepository).existsById(allergyId);
+        verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
+        verify(allergyMapper, never()).updateEntity(any(), any());
+        verify(allergyMapper, never()).toDTO(any());
+    }
+
+    @Test
+    void updateAllergy_shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+        AllergyUpdateDTO updateDto = createDefaultUpdateDTO();
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+        when(allergyRepository.existsById(allergyId)).thenReturn(true);
+
+        // act & assert
+        assertThrows(
+                AllergyNotOwnedByBeneficiaryException.class,
+                () -> allergiesService.updateAllergy(beneficiaryId, allergyId, updateDto)
+        );
+
+        verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
+        verify(allergyRepository).existsById(allergyId);
+        verify(allergyMapper, never()).updateEntity(any(), any());
+        verify(allergyMapper, never()).toDTO(any());
+    }
+
+
+
     private Beneficiary createDefaultBeneficiary(Long id) {
         return Beneficiary.builder()
                 .id(id)
