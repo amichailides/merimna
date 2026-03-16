@@ -146,7 +146,6 @@ public class AllergiesServiceImplTest {
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
         AllergyCreateDTO dto = createDefaultAllergyCreateDTO();
-        Allergy allergy = createDefaultAllergy(allergyId);
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
         // act & assert
@@ -155,7 +154,7 @@ public class AllergiesServiceImplTest {
                 () -> allergiesService.addAllergy(beneficiaryId, dto)
         );
 
-        verify(allergyRepository, never()).save(allergy);
+        verify(allergyRepository, never()).save(any());
     }
 
     @Test
@@ -283,6 +282,58 @@ public class AllergiesServiceImplTest {
         verify(allergyMapper, never()).updateEntity(any(), any());
         verify(allergyMapper, never()).toDTO(any());
     }
+
+    @Test
+    void getAllergiesByBeneficiary_shouldThrowException_whenBeneficiaryMissing() {
+        // arrange
+        Long beneficiaryId = 1L;
+
+        when(beneficiaryRepository.existsById(beneficiaryId)).thenReturn(false);
+
+        // act & assert
+        assertThrows(BeneficiaryNotFoundByIdException.class,
+                () -> allergiesService.getAllergiesByBeneficiary(beneficiaryId));
+
+        verify(allergyRepository, never()).findAllByBeneficiaryId(beneficiaryId);
+        verify(allergyMapper, never()).toDTO(any());
+    }
+
+    @Test
+    void getAllergy_shouldThrowException_whenAllergyNotFound() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+        when(allergyRepository.existsById(allergyId)).thenReturn(false);
+
+        // act & assert
+        assertThrows(
+                AllergyNotFoundException.class,
+                () -> allergiesService.getAllergy(beneficiaryId, allergyId)
+        );
+
+        verify(allergyMapper, never()).toDTO(any());
+    }
+
+    @Test
+    void getAllergy_shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
+        // arrange
+        Long beneficiaryId = 1L;
+        Long allergyId = 1L;
+
+        when(allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)).thenReturn(Optional.empty());
+        when(allergyRepository.existsById(allergyId)).thenReturn(true);
+
+        // act & assert
+        assertThrows(
+                AllergyNotOwnedByBeneficiaryException.class,
+                () -> allergiesService.getAllergy(beneficiaryId, allergyId)
+        );
+
+        verify(allergyMapper, never()).toDTO(any());
+    }
+
 
 
 
