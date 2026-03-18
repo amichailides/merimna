@@ -27,9 +27,6 @@ import static java.util.Collections.unmodifiableSet;
 @Table(name = "beneficiaries",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_beneficiary_amka", columnNames = "amka")
-        },
-        indexes = {
-                @Index(name = "idx_beneficiary_lastname", columnList = "last_name")
         })
 public class Beneficiary {
     @Id
@@ -94,17 +91,14 @@ public class Beneficiary {
     private EmergencyContact emergencyContact;
 
     @Setter(AccessLevel.NONE)
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "type", column = @Column(name = "legal_type" )),
-            @AttributeOverride(name = "firstName", column = @Column(name = "legal_first_name")),
-            @AttributeOverride(name = "lastName", column = @Column(name = "legal_last_name")),
-            @AttributeOverride(name = "mobileNumber", column = @Column(name = "legal_mobile_number")),
-            @AttributeOverride(name = "landlinePhone", column = @Column(name = "legal_landline_phone")),
-            @AttributeOverride(name = "email", column = @Column(name = "legal_email")),
-            @AttributeOverride(name = "notes", column = @Column(name = "legal_notes"))
-    })
-    private LegalRepresentative legalRepresentative;
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "beneficiary_legal_representatives",
+            joinColumns = @JoinColumn(name = "beneficiary_id"),
+            inverseJoinColumns = @JoinColumn(name = "legal_representative_id")
+    )
+    private Set<LegalRepresentative> legalRepresentatives = new HashSet<>();
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
@@ -149,11 +143,13 @@ public class Beneficiary {
     }
 
     public void addLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
-        this.legalRepresentative = legalRepresentative;
+        this.legalRepresentatives.add(legalRepresentative);
+        legalRepresentative.getBeneficiaries().add(this);
     }
 
-    public void removeLegalRepresentative() {
-        this.legalRepresentative = null;
+    public void removeLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
+        this.legalRepresentatives.remove(legalRepresentative);
+        legalRepresentative.removeBeneficiary(this);
     }
 
     public void discharge() {

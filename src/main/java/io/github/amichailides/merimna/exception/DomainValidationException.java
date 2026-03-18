@@ -10,14 +10,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Exception που υποδηλώνει αποτυχία σε business validation κανόνες
- * που αφορούν την οντότητα {@link Beneficiary}
- * ή τα συνδεδεμένα με αυτήν δεδομένα (π.χ. LegalRepresentative).
- * <p>
- * Δέχεται ένα απλό Map (πεδίο -> κλειδί μηνύματος) και το μετατρέπει στη δομή
- * Map<String, List<String>> που απαιτεί η {@link BaseValidationException},
- * ώστε να διατηρηθεί η συνέπεια στο API error response.
- * </p>
+ * Exception που υποδηλώνει αποτυχία σε business/domain validation κανόνες.
+ *
+ * <p>Δέχεται ένα απλό Map (πεδίο -> κλειδί μηνύματος) και το μετατρέπει
+ * στη δομή Map<String, List<String>> που απαιτεί η {@link BaseValidationException},
+ * ώστε να διατηρείται η συνέπεια στο API error response.</p>
  */
 @Getter
 public class BeneficiaryValidationException extends BaseValidationException {

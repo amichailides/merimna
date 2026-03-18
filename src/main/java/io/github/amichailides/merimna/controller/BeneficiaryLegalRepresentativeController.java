@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/beneficiaries/{beneficiaryId}/legal-representative")
+@RequestMapping("/beneficiaries/{beneficiaryId}/legal-representatives")
 @RequiredArgsConstructor
 public class LegalRepresentativeController {
     private final LegalRepresentativeService legalRepresentativeService;
@@ -27,18 +27,21 @@ public class LegalRepresentativeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(legalRepresentativeReadOnly);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> removeLegalRepresentative(@PathVariable Long beneficiaryId) {
-        legalRepresentativeService.removeLegalRepresentative(beneficiaryId);
+    @DeleteMapping("/{legalRepresentativeId}")
+    public ResponseEntity<Void> removeLegalRepresentative(
+            @PathVariable Long beneficiaryId,
+            @PathVariable Long legalRepresentativeId) {
+
+        legalRepresentativeService.removeLegalRepresentative(beneficiaryId, legalRepresentativeId);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping
+    @PatchMapping(("/{legalRepresentativeId}"))
     public ResponseEntity<LegalRepresentativeReadOnlyDTO> updateLegalRepresentative(
-            @PathVariable Long beneficiaryId,
+            @PathVariable Long legalRepresentativeId,
             @Validated(ValidationGroupSequence.class) @RequestBody LegalRepresentativeUpdateDTO dto) {
 
-        LegalRepresentativeReadOnlyDTO legal = legalRepresentativeService.updateLegalRepresentative(beneficiaryId, dto);
+        LegalRepresentativeReadOnlyDTO legal = legalRepresentativeService.updateLegalRepresentative(legalRepresentativeId, dto);
         return ResponseEntity.ok(legal);
     }
 
