@@ -12,6 +12,7 @@ public class LegalRepresentativeMapper {
         if (existing == null) return null;
 
         return LegalRepresentativeReadOnlyDTO.builder()
+                .id(existing.getId())
                 .type(existing.getType())
                 .firstName(existing.getFirstName())
                 .lastName(existing.getLastName())
@@ -26,6 +27,7 @@ public class LegalRepresentativeMapper {
         if (dto == null) return null;
 
         return LegalRepresentative.builder()
+                .afm(dto.afm())
                 .type(dto.type())
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())

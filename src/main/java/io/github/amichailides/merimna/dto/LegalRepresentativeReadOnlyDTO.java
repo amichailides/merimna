@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record LegalRepresentativeReadOnlyDTO(
+        Long id,
         LegalRepresentativeType type,
         String firstName,
         String lastName,

@@ -13,6 +13,9 @@ import lombok.Builder;
 @AtLeastOnePhonePresent(message = "{contact.missing}", groups = FirstOrder.class)
 @Builder
 public record LegalRepresentativeDTO(
+        @NotBlank(message = "{afm.required}", groups = FirstOrder.class)
+        String afm,
+
         @NotNull(message = "{legalRep.required}", groups = FirstOrder.class )
         LegalRepresentativeType type,
 

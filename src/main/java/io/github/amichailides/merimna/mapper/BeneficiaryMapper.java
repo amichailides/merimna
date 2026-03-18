@@ -30,11 +30,15 @@ public class BeneficiaryMapper {
                 .houseUnit(entity.getHouseUnit())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
-                .medications(entity.getMedications().stream()
+                .medications(entity.getMedications()
+                        .stream()
                         .map(medicationMapper::toDTO).toList())
                 .allergies(entity.getAllergies().stream()
-                        .map(allergyMapper::toDTO).toList())
-                .legalRepresentative(legalRepresentativeMapper.toReadOnlyDTO(entity.getLegalRepresentative()))
+                        .map(allergyMapper::toDTO)
+                        .toList())
+                .legalRepresentatives(entity.getLegalRepresentatives().stream()
+                        .map(legalRepresentativeMapper::toReadOnlyDTO)
+                        .toList())
                 .build();
     }
 
