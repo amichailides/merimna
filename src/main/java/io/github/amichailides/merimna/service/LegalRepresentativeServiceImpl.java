@@ -3,13 +3,12 @@ package io.github.amichailides.merimna.service;
 import io.github.amichailides.merimna.dto.LegalRepresentativeDTO;
 import io.github.amichailides.merimna.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
-import io.github.amichailides.merimna.exception.BeneficiaryAlreadyHasLegalRepresentativeException;
-import io.github.amichailides.merimna.exception.BeneficiaryHasNoLegalRepresentativeException;
-import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.exception.*;
 import io.github.amichailides.merimna.mapper.LegalRepresentativeMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
 import io.github.amichailides.merimna.model.LegalRepresentative;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.repository.LegalRepresentativeRepository;
 import io.github.amichailides.merimna.service.validation.LegalRepresentativeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,45 +20,66 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     private final BeneficiaryRepository beneficiaryRepository;
     private final LegalRepresentativeMapper legalRepresentativeMapper;
     private final LegalRepresentativeValidator legalRepresentativeValidator;
+    private final LegalRepresentativeRepository legalRepresentativeRepository;
 
     @Transactional
-    public LegalRepresentativeReadOnlyDTO addLegalRepresentative (Long beneficiaryId, LegalRepresentativeDTO dto) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-
-        // Can only be added once, use Patch to update
-        if (beneficiary.getLegalRepresentative() != null) {
-            throw new BeneficiaryAlreadyHasLegalRepresentativeException(beneficiaryId);
-        }
-        beneficiary.addLegalRepresentative(legalRepresentativeMapper.toEntity(dto));
-
-        return legalRepresentativeMapper.toReadOnlyDTO(beneficiary.getLegalRepresentative());
+    public LegalRepresentativeReadOnlyDTO createLegalRepresentative(LegalRepresentativeDTO dto) {
+        LegalRepresentative legal = legalRepresentativeMapper.toEntity(dto);
+        legalRepresentativeRepository.save(legal);
+        return legalRepresentativeMapper.toReadOnlyDTO(legal);
     }
 
     @Transactional
-    public void removeLegalRepresentative(Long beneficiaryId) {
+    public void assignLegalRepresentative(Long beneficiaryId, Long legalRepresentativeId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        beneficiary.removeLegalRepresentative();
+        LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
+
+        if (beneficiary.getLegalRepresentatives().contains(legal)) {
+            throw new LegalRepresentativeAlreadyAssignedException(legalRepresentativeId, beneficiaryId);
+        }
+
+        beneficiary.addLegalRepresentative(legal);
+    }
+
+    @Transactional
+    public void unassignLegalRepresentative(Long beneficiaryId, Long legalRepresentativeId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+        LegalRepresentative legalRepresentative = getLegalRepresentativeOrThrow(legalRepresentativeId, beneficiaryId);
+
+        beneficiary.removeLegalRepresentative(legalRepresentative);
     }
 
     @Transactional
     public LegalRepresentativeReadOnlyDTO updateLegalRepresentative(
-            Long beneficiaryId,
+            Long legalRepresentativeId,
             LegalRepresentativeUpdateDTO dto) {
-        Beneficiary existing = getBeneficiaryOrThrow(beneficiaryId);
 
-        if (existing.getLegalRepresentative() == null) {
-            throw new BeneficiaryHasNoLegalRepresentativeException(beneficiaryId);
-        }
+        LegalRepresentative existing = getLegalRepresentativeOrThrow(legalRepresentativeId);
+        legalRepresentativeValidator.validateForUpdate(existing, dto);
 
-        LegalRepresentative existingLegal = existing.getLegalRepresentative();
-        legalRepresentativeValidator.validateForUpdate(existingLegal, dto);
-
-        legalRepresentativeMapper.updateEntity(existingLegal, dto);
-        return legalRepresentativeMapper.toReadOnlyDTO(existingLegal);
+        legalRepresentativeMapper.updateEntity(existing, dto);
+        return legalRepresentativeMapper.toReadOnlyDTO(existing);
     }
 
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
         return  beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
+    }
+
+    // remove - legalId + beneficiaryId check
+    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId, Long beneficiaryId) {
+        return legalRepresentativeRepository.findByIdAndBeneficiariesId(legalRepresentativeId, beneficiaryId)
+                .orElseThrow(() -> {
+                    if (!legalRepresentativeRepository.existsById(legalRepresentativeId)) {
+                        return new LegalRepresentativeNotFoundByIdException(legalRepresentativeId);
+                    }
+                    return new LegalRepresentativeNotAssignedException(legalRepresentativeId, beneficiaryId);
+                });
+    }
+
+    // Update μόνο legalId
+    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId) {
+        return legalRepresentativeRepository.findById(legalRepresentativeId)
+                .orElseThrow(() -> new LegalRepresentativeNotFoundByIdException(legalRepresentativeId));
     }
 }

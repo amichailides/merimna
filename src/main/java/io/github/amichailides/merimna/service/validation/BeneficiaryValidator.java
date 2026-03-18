@@ -3,11 +3,8 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
-import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
-import io.github.amichailides.merimna.exception.BeneficiaryAlreadyExistsException;
-import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
+import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.LegalRepresentative;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +24,7 @@ import java.util.Map;
  * ΑΜΚΑ με την ημερομηνία γέννησης.
  * 3. Επιβολή σύνθετων κοινωνικών κανόνων (π.χ. Υποχρεωτικός κηδεμόνας για ανηλίκους).
  * * Αν εντοπιστούν σφάλματα, η κλάση συγκεντρώνει όλα τα μηνύματα σε ένα Map
- * και πετάει μια {@link BeneficiaryValidationException}, η οποία
+ * και πετάει μια {@link DomainValidationException}, η οποία
  * μεταφράζεται αυτόματα από τον GlobalExceptionHandler.
  */
 
@@ -57,7 +54,7 @@ public class BeneficiaryValidator {
 
 
         if (!errors.isEmpty()) {
-            throw new BeneficiaryValidationException(errors);
+            throw new DomainValidationException(errors);
         }
     }
 
@@ -67,7 +64,7 @@ public class BeneficiaryValidator {
         // π.χ. Να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
 
         if (!errors.isEmpty()) {
-            throw new BeneficiaryValidationException(errors);
+            throw new DomainValidationException(errors);
         }
     }
 
@@ -93,7 +90,7 @@ public class BeneficiaryValidator {
         }
 
         if (!errors.isEmpty()) {
-            throw new BeneficiaryValidationException(errors);
+            throw new DomainValidationException(errors);
         }
     }
 
