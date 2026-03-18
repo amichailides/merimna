@@ -23,9 +23,11 @@ public enum ErrorCode {
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", HttpStatus.CONFLICT, "beneficiary.amkaAlreadyExists"),
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "beneficiary.amkaDateMismatch"),
     BENEFICIARY_ALREADY_INACTIVE("BENEFICIARY_ALREADY_INACTIVE", HttpStatus.CONFLICT, "beneficiary.alreadyInactive"),
-    BENEFICIARY_VALIDATION_FAILED("BENEFICIARY_VALIDATION_FAILED", HttpStatus.BAD_REQUEST, "beneficiary.validation.failed"),
-    BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE("BENEFICIARY_ALREADY_HAS_LEGAL_REPRESENTATIVE", HttpStatus.CONFLICT, "error.beneficiary.legalRepresentative.alreadyExists"),
-    BENEFICIARY_HAS_NO_LEGAL_REPRESENTATIVE("BENEFICIARY_HAS_NO_LEGAL_REPRESENTATIVE", HttpStatus.NOT_FOUND, "error.beneficiary.legalRepresentative.notFound"),
+    LEGAL_REPRESENTATIVE_ALREADY_ASSIGNED("LEGAL_REPRESENTATIVE_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.alreadyAssigned"),
+
+    // LegalRepresentative
+    LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID("LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.legalRepresentative.notFound.id"),
+    LEGAL_REPRESENTATIVE_NOT_ASSIGNED("LEGAL_REPRESENTATIVE_NOT_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.notAssigned"),
 
     // Allergy
     ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", HttpStatus.NOT_FOUND, "allergy.notFound"),
