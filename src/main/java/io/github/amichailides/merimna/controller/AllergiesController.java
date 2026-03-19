@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.service.AllergiesService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-
+@Tag(name = "Allergies", description = "Operations related to allergies")
 @RestController
 @Validated
 @RequestMapping("/beneficiaries/{beneficiaryId}/allergies")

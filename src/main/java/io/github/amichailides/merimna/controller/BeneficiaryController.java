@@ -5,6 +5,12 @@ import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+@Tag(name = "Beneficiaries", description = "Operations related to beneficiaries")
 @RestController
 @Validated
 @RequestMapping("/beneficiaries")
@@ -29,6 +36,12 @@ public class BeneficiaryController {
     /**
      * Η επικύρωση ενεργοποιείται μέσω του {@link ValidationGroupSequence} για short-circuiting λογική.
      */
+    @Operation(summary = "Create beneficiary")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Beneficiary created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
+            @ApiResponse(responseCode = "409", description = "Conflict")
+    })
     @PostMapping
     public ResponseEntity<BeneficiaryReadOnlyDTO> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {

@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.service.MedicationService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Medications", description = "Operations related to medications")
 @RestController
 @Validated
 @RequestMapping("/beneficiaries/{beneficiaryId}/medications")
