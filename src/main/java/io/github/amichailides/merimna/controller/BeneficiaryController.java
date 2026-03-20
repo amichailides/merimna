@@ -1,5 +1,8 @@
 package io.github.amichailides.merimna.controller;
 
+import io.github.amichailides.merimna.common.ConflictErrorResponse;
+import io.github.amichailides.merimna.common.PageResponse;
+import io.github.amichailides.merimna.common.ValidationErrorResponse;
 import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
@@ -13,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,8 +43,22 @@ public class BeneficiaryController {
     @Operation(summary = "Create beneficiary")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Beneficiary created successfully"),
-            @ApiResponse(responseCode = "400", description = "Validation error"),
-            @ApiResponse(responseCode = "409", description = "Conflict")
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ConflictErrorResponse.class)
+                    )
+            )
     })
     @PostMapping
     public ResponseEntity<BeneficiaryReadOnlyDTO> create(
@@ -69,13 +87,11 @@ public class BeneficiaryController {
         return ResponseEntity.ok(beneficiary);
     }
 
-    @GetMapping(params = "amka")
+    @GetMapping("/by-amka/{amka}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
-            @RequestParam @ValidAmka String amka) {
+            @ValidAmka @PathVariable String amka) {
 
-        BeneficiaryReadOnlyDTO beneficiary = service.findByAmka(amka);
-
-        return ResponseEntity.ok(beneficiary);
+        return ResponseEntity.ok(service.findByAmka(amka));
     }
 
     /**
@@ -85,14 +101,26 @@ public class BeneficiaryController {
      * μετατροπή των Params σε BeneficiarySearchDTO.
      * 2. Προσθήκη επιπλέον κριτηρίων αναζήτησης (π.χ. ενεργοί/ανενεργοί ωφελούμενοι).
      */
+    @Operation(summary = "Get all beneficiaries")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            useReturnTypeSchema = true
+    )
     @GetMapping
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
+    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
             @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive,
             @RequestParam(name = "houseUnit", required = false) HouseUnit houseUnit, // Προαιρετικό φίλτρο
-            Pageable pageable) {
+            @ParameterObject Pageable pageable ) {
 
         Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, houseUnit, pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
     }
 
     @PostMapping("/{id}/discharge")
