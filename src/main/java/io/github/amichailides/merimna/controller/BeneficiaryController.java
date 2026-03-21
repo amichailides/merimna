@@ -144,12 +144,20 @@ public class BeneficiaryController {
      * <p>Η μελλοντική υλοποίηση θα βασίζεται σε Specification Builder για δυναμικά Predicates.</p>
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<BeneficiaryReadOnlyDTO>> search(
+    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> search(
             @RequestParam(required = false) String term,
             @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Page<BeneficiaryReadOnlyDTO> results = service.search(term, pageable);
-        return ResponseEntity.ok(results);
+        Page<BeneficiaryReadOnlyDTO> page  = service.search(term, pageable);
+
+        return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
     }
 
     private URI buildLocationUri(Object id) {
