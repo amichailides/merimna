@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.controller;
 
 import io.github.amichailides.merimna.common.ConflictErrorResponse;
+import io.github.amichailides.merimna.common.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.PageResponse;
 import io.github.amichailides.merimna.common.ValidationErrorResponse;
 import io.github.amichailides.merimna.dto.*;
@@ -70,6 +71,30 @@ public class BeneficiaryController {
                 .body(beneficiary);
     }
 
+    @Operation(summary = "Update Beneficiary")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Beneficiary updated successfully",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            )
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> updateBeneficiary(
             @PathVariable Long id,
@@ -79,6 +104,22 @@ public class BeneficiaryController {
         return ResponseEntity.ok(beneficiary);
     }
 
+    @Operation(summary = "Get beneficiary by ID")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Beneficiary found successfully",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            )
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> getById(
             @Positive @PathVariable Long id) {
@@ -87,6 +128,22 @@ public class BeneficiaryController {
         return ResponseEntity.ok(beneficiary);
     }
 
+    @Operation(summary = "Get beneficiary by AMKA")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Beneficiary found successfully",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            )
+    })
     @GetMapping("/by-amka/{amka}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
             @ValidAmka @PathVariable String amka) {
@@ -102,10 +159,12 @@ public class BeneficiaryController {
      * 2. Προσθήκη επιπλέον κριτηρίων αναζήτησης (π.χ. ενεργοί/ανενεργοί ωφελούμενοι).
      */
     @Operation(summary = "Get all beneficiaries")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-            responseCode = "200",
-            useReturnTypeSchema = true
-    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    useReturnTypeSchema = true
+            )
+    })
     @GetMapping
     public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
             @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive,
@@ -123,6 +182,30 @@ public class BeneficiaryController {
         );
     }
 
+    @Operation(summary = "Discharge beneficiary")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Beneficiary discharged successfully",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Beneficiary already inactive",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ConflictErrorResponse.class)
+                    )
+            )
+    })
     @PostMapping("/{id}/discharge")
     public ResponseEntity<BeneficiaryReadOnlyDTO> discharge(@PathVariable Long id) {
 
@@ -143,6 +226,14 @@ public class BeneficiaryController {
      * </ul>
      * <p>Η μελλοντική υλοποίηση θα βασίζεται σε Specification Builder για δυναμικά Predicates.</p>
      */
+    @Operation(summary = "Search beneficiaries")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Search completed successfully",
+                    useReturnTypeSchema = true
+            )
+    })
     @GetMapping("/search")
     public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> search(
             @RequestParam(required = false) String term,
