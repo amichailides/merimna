@@ -1,10 +1,20 @@
 package io.github.amichailides.merimna.specification;
 
 import io.github.amichailides.merimna.model.Beneficiary;
+import io.github.amichailides.merimna.model.HouseUnit;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
 
+/**
+ * Fuzzy αναζήτηση σε firstName, lastName και amka (partial match).
+ *
+ * <p>Υποστηρίζει ελληνικούς χαρακτήρες με χρήση {@code unaccent} (DB-side)
+ * και {@link #stripAccents} (Java-side) για ομοιόμορφη σύγκριση.</p>
+ *
+ * TODO: Η χρήση LIKE %...% με unaccent παρακάμπτει τα B-tree indexes.
+ *  Αν ο όγκος δεδομένων αυξηθεί σημαντικά, εξετάστε PostgreSQL trigram indexes.
+ */
 public class BeneficiarySpecifications {
     private BeneficiarySpecifications() {
     }
@@ -36,6 +46,24 @@ public class BeneficiarySpecifications {
                     cb.like(root.get("amka"), pattern)
             );
         };
+    }
+
+    public static Specification<Beneficiary> hasHouseUnit(HouseUnit houseUnit) {
+        return (root, query, cb) ->
+                houseUnit == null
+                        ? null
+                        : cb.equal(root.get("houseUnit"), houseUnit);
+    }
+
+    public static Specification<Beneficiary> hasAmka(String amka) {
+        return (root, query, cb) ->
+                (amka == null || amka.isBlank())
+                        ? null
+                        : cb.equal(root.get("amka"), amka);
+    }
+
+    public static Specification<Beneficiary> isActive() {
+        return (root, query, cb) -> cb.isTrue(root.get("isActive"));
     }
 
     /**

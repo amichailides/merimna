@@ -32,37 +32,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(
-            boolean includeInactive,
-            HouseUnit houseUnit,
-            Pageable pageable) {
-
-        Page<Beneficiary> beneficiariesPage;
-
-        if (houseUnit != null) {
-            beneficiariesPage = includeInactive
-                    ? beneficiaryRepository.findAllByHouseUnit(houseUnit, pageable)
-                    : beneficiaryRepository.findAllByHouseUnitAndIsActiveTrue(houseUnit, pageable);
-        } else {
-            beneficiariesPage = includeInactive
-                    ? beneficiaryRepository.findAll(pageable)
-                    : beneficiaryRepository.findAllByIsActiveTrue(pageable);
-        }
-
-
-        return beneficiariesPage.map(beneficiaryMapper::toReadOnlyDTO);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BeneficiaryReadOnlyDTO findByAmka(String amka) {
-        return beneficiaryRepository.findByAmka(amka)
-                .map(beneficiaryMapper::toReadOnlyDTO)
-                .orElseThrow(() -> new BeneficiaryNotFoundByAmkaException(amka));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public boolean existsByAmka(String amka) {
         return beneficiaryRepository.existsByAmka(amka);
     }
@@ -93,15 +62,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(beneficiary));
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable) {
-        Specification<Beneficiary> spec = BeneficiarySpecifications.globalSearch(term);
-
-        return beneficiaryRepository.findAll(spec, pageable)
-                .map(beneficiaryMapper::toReadOnlyDTO);
-    }
-
     @Transactional
     public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
         Beneficiary existing = getBeneficiaryOrThrow(id);
@@ -111,6 +71,46 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         beneficiaryMapper.updateEntity(existing, dto);
 
         return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(existing));
+    }
+
+    /**
+     * <p>Όλα τα κριτήρια συνδυάζονται με AND.
+     * Εξαίρεση: αν υπάρχει {@code amka}, το {@code q} αγνοείται.</p>
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BeneficiaryReadOnlyDTO> findBeneficiaries(
+            BeneficiarySearchDTO criteria,
+            Pageable pageable) {
+
+        Specification<Beneficiary> spec = (root, query, cb) -> cb.conjunction();
+
+        // Αν υπάρχει amka, αγνοούμε το q
+        if (hasText(criteria.getAmka())) {
+            spec = spec.and(BeneficiarySpecifications.hasAmka(criteria.getAmka()));
+        } else if (hasText(criteria.getQ())) {
+            spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
+        }
+
+        if (hasText(criteria.getQ())) {
+            spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
+        }
+
+        if (criteria.getHouseUnit() != null) {
+            spec = spec.and(BeneficiarySpecifications.hasHouseUnit(criteria.getHouseUnit()));
+        }
+
+        if (!Boolean.TRUE.equals(criteria.getIncludeInactive())) {
+            spec = spec.and(BeneficiarySpecifications.isActive());
+        }
+
+        return beneficiaryRepository.findAll(spec, pageable)
+                .map(beneficiaryMapper::toReadOnlyDTO);
+
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     private Beneficiary getBeneficiaryOrThrow(Long beneficiaryId) {

@@ -6,12 +6,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BeneficiaryService {
-    Page<BeneficiaryReadOnlyDTO> findAllBeneficiaries(boolean includeInactive, HouseUnit houseUnit, Pageable pageable);
-    BeneficiaryReadOnlyDTO findByAmka(String amka);
+
     boolean existsByAmka(String amka);
+
     BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto);
+
     BeneficiaryReadOnlyDTO findById(Long id);
+
     BeneficiaryReadOnlyDTO discharge(Long id);
-    Page<BeneficiaryReadOnlyDTO> search(String term, Pageable pageable);
+
     public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto);
+
+    Page<BeneficiaryReadOnlyDTO> findBeneficiaries(BeneficiarySearchDTO criteria, Pageable pageable);
+
 }

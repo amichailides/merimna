@@ -5,12 +5,11 @@ import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
+import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,6 +34,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+// TODO: Add tests for findBeneficiaries(BeneficiarySearchDTO, Pageable)
+// Scenarios: q only, amka only, amka+q precedence, includeInactive, houseUnit filter
 @ExtendWith(MockitoExtension.class)
 public class BeneficiaryServiceImplTest {
     @Mock
@@ -67,22 +68,6 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    //@DisplayName("Should throw exception when beneficiary with given AMKA does not exist")
-    void findByAmka_shouldThrowException_whenBeneficiaryMissing() {
-        // arrange
-        String amka = "12345678912";
-
-        when(beneficiaryRepository.findByAmka(amka))
-                .thenReturn(Optional.empty());
-
-        // act & assert
-        assertThrows(
-                BeneficiaryNotFoundByAmkaException.class,
-                () -> beneficiaryService.findByAmka(amka)
-        );
-    }
-
-    @Test
     //@DisplayName("Should not save beneficiary when validation fails")
     void save_shouldNotPersist_whenValidationFails() {
         // arrange
@@ -99,12 +84,12 @@ public class BeneficiaryServiceImplTest {
         );
 
         // act & assert
-        doThrow(new BeneficiaryValidationException(errors))
+        doThrow(new DomainValidationException(errors))
                 .when(validator)
                 .validateForSave(dto);
 
         assertThrows(
-                BeneficiaryValidationException.class,
+                DomainValidationException.class,
                 () -> beneficiaryService.save(dto)
         );
 
@@ -164,74 +149,6 @@ public class BeneficiaryServiceImplTest {
         verify(beneficiaryRepository, never()).save(any());
     }
 
-    @ParameterizedTest
-    @MethodSource("provideFilterCombinations")
-    //@DisplayName("Should call correct repository method based on filters")
-    void findAll_shouldUseCorrectRepositoryMethod(
-            boolean includeInactive,
-            HouseUnit houseUnit) {
-        // arrange
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Beneficiary> mockPage = new PageImpl<>(List.of(createDefaultBeneficiary(true)));
-
-        lenient().when(beneficiaryRepository.findAll(pageable)).thenReturn(mockPage);
-        lenient().when(beneficiaryRepository.findAllByIsActiveTrue(pageable)).thenReturn(mockPage);
-        lenient().when(beneficiaryRepository.findAllByHouseUnit(any(), any())).thenReturn(mockPage);
-        lenient().when(beneficiaryRepository.findAllByHouseUnitAndIsActiveTrue(any(), any())).thenReturn(mockPage);
-
-        // act
-        beneficiaryService.findAllBeneficiaries(includeInactive, houseUnit, pageable);
-
-        // assert
-        if (houseUnit != null) {
-            if (includeInactive) {
-                verify(beneficiaryRepository).findAllByHouseUnit(houseUnit, pageable);
-            } else {
-                verify(beneficiaryRepository).findAllByHouseUnitAndIsActiveTrue(houseUnit, pageable);
-            }
-        } else {
-            if (includeInactive) {
-                verify(beneficiaryRepository).findAll(pageable);
-            } else {
-                verify(beneficiaryRepository).findAllByIsActiveTrue(pageable);
-            }
-        }
-    }
-
-    @Test
-    //@DisplayName("Should return a mapped page of DTOs when searching")
-    void search_shouldReturnMappedPage_whenValidTermProvided() {
-        // arrange
-        String term = "Παπαδόπουλος";
-        Pageable pageable = PageRequest.of(0, 10);
-
-        Beneficiary beneficiary = createDefaultBeneficiary(true);
-        Page<Beneficiary> entityPage = new PageImpl<>(List.of(beneficiary));
-
-        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder().build();
-
-        when(beneficiaryRepository.findAll(
-                ArgumentMatchers.<Specification<Beneficiary>>any(),
-                eq(pageable)
-        )).thenReturn(entityPage);
-
-        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
-
-        // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.search(term, pageable);
-
-        // assert
-        assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals(expectedDto, result.getContent().getFirst());
-
-
-        verify(beneficiaryRepository)
-                .findAll(ArgumentMatchers.<Specification<Beneficiary>>any(), eq(pageable));
-        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
-
-    }
-
     @Test
     //@DisplayName("getBeneficiaryById: Should return DTO when beneficiary exists")
     void getBeneficiaryById_shouldReturnDto_whenIdExists(){
@@ -259,26 +176,6 @@ public class BeneficiaryServiceImplTest {
         verify(beneficiaryRepository).findById(beneficiaryId);
         verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
 
-    }
-
-    @Test
-    void getBeneficiaryByAmka_shouldReturnDto_whenAmkaExists() {
-        // arrange
-        String amka = "12345678912";
-        Beneficiary beneficiary = createDefaultBeneficiary(true);
-
-        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder().build();
-
-        when(beneficiaryRepository.findByAmka(amka)).thenReturn(Optional.of(beneficiary));
-        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
-
-        // act
-        BeneficiaryReadOnlyDTO result = beneficiaryService.findByAmka(amka);
-
-        // assert
-        assertEquals(expectedDto, result);
-        verify(beneficiaryRepository).findByAmka(amka);
-        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
     }
 
     @Test
@@ -362,27 +259,6 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    void search_shouldReturnEmptyPage_whenNoMatchesFound() {
-        // arrange
-        String term = "Παπαχαραλάμπους";
-        Pageable pageable = PageRequest.of(0, 10);
-
-        when(beneficiaryRepository.findAll(
-                ArgumentMatchers.<Specification<Beneficiary>>any(),
-                eq(pageable)
-        )).thenReturn(Page.empty());
-
-        // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.search(term, pageable);
-
-        // assert
-        assertTrue(result.isEmpty());
-        assertEquals(0, result.getTotalElements());
-        verifyNoInteractions(beneficiaryMapper);
-
-    }
-
-    @Test
     void update_shouldNotPersist_whenValidationFails() {
         // arrange
         Long beneficiaryId = 1L;
@@ -394,50 +270,18 @@ public class BeneficiaryServiceImplTest {
                 .build();
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
-        doThrow(new BeneficiaryValidationException(Map.of(
+        doThrow(new DomainValidationException(Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
         )))
                 .when(validator)
                 .validateForUpdate(existing, updateDto);
 
         // act & assert
-        assertThrows(BeneficiaryValidationException.class,
+        assertThrows(DomainValidationException.class,
                 () -> beneficiaryService.updateBeneficiary(beneficiaryId, updateDto));
 
         verify(beneficiaryRepository, never()).save(any());
         verify(beneficiaryMapper, never()).toReadOnlyDTO(existing);
-    }
-
-    @Test
-    void findAll_shouldReturnMappedPage_whenRepositoryReturnsEntities() {
-        // arrange
-        Pageable pageable = PageRequest.of(0, 10);
-        Beneficiary beneficiary = createDefaultBeneficiary(true);
-        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L, true);
-
-        when(beneficiaryRepository.findAllByIsActiveTrue(pageable))
-                .thenReturn(new PageImpl<>(List.of(beneficiary)));
-        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(expectedDto);
-
-        // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.findAllBeneficiaries(
-                false, null, pageable);
-
-        // assert
-        assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals(expectedDto, result.getContent().getFirst());
-        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
-    }
-
-
-    private static Stream<Arguments> provideFilterCombinations() {
-        return Stream.of(
-                Arguments.of(true, HouseUnit.UNIT_A),
-                Arguments.of(false, HouseUnit.UNIT_A),
-                Arguments.of(true, null),
-                Arguments.of(false, null)
-        );
     }
 
     private Beneficiary createDefaultBeneficiary(boolean isActive) {

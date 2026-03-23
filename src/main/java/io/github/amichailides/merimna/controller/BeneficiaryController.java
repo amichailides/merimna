@@ -5,9 +5,7 @@ import io.github.amichailides.merimna.common.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.PageResponse;
 import io.github.amichailides.merimna.common.ValidationErrorResponse;
 import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.service.BeneficiaryService;
-import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,9 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -128,60 +126,10 @@ public class BeneficiaryController {
         return ResponseEntity.ok(beneficiary);
     }
 
-    @Operation(summary = "Get beneficiary by AMKA")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Beneficiary found successfully",
-                    useReturnTypeSchema = true
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Beneficiary not found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = NotFoundErrorResponse.class)
-                    )
-            )
-    })
-    @GetMapping("/by-amka/{amka}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> getByAmka(
-            @ValidAmka @PathVariable String amka) {
-
-        return ResponseEntity.ok(service.findByAmka(amka));
-    }
-
-    /**
-     * * TODO: Future Refactoring
-     * -------------------------
-     * 1. Αν προστεθούν πολλά φίλτρα (π.χ. ημερομηνίες, ηλικίες),
-     * μετατροπή των Params σε BeneficiarySearchDTO.
-     * 2. Προσθήκη επιπλέον κριτηρίων αναζήτησης (π.χ. ενεργοί/ανενεργοί ωφελούμενοι).
-     */
-    @Operation(summary = "Get all beneficiaries")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    useReturnTypeSchema = true
-            )
-    })
-    @GetMapping
-    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getAllBeneficiaries(
-            @RequestParam(name = "includeInactive", defaultValue = "false") boolean includeInactive,
-            @RequestParam(name = "houseUnit", required = false) HouseUnit houseUnit, // Προαιρετικό φίλτρο
-            @ParameterObject Pageable pageable ) {
-
-        Page<BeneficiaryReadOnlyDTO> page = service.findAllBeneficiaries(includeInactive, houseUnit, pageable);
-        return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
-                .content(page.getContent())
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .build()
-        );
-    }
-
+    // TODO(#5): Revisit discharge API design.
+    // Current endpoint is kept as a pragmatic interim solution.
+    // Refactor to PATCH /beneficiaries/{beneficiaryId} if discharge remains a state change,
+    // or to POST /beneficiaries/{beneficiaryId}/discharges if it becomes a first-class business event.
     @Operation(summary = "Discharge beneficiary")
     @ApiResponses({
             @ApiResponse(
@@ -206,49 +154,28 @@ public class BeneficiaryController {
                     )
             )
     })
-    @PostMapping("/{id}/discharge")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge(@PathVariable Long id) {
+    @PostMapping("/{beneficiaryId}/discharge")
+    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge(@PathVariable Long beneficiaryId) {
 
-        BeneficiaryReadOnlyDTO updated = service.discharge(id);
+        BeneficiaryReadOnlyDTO updated = service.discharge(beneficiaryId);
         return ResponseEntity.ok(updated);
     }
 
-    /**
-     * Αναζήτηση ωφελουμένων με global search term.
-     * <p>Χρησιμοποιεί {@link BeneficiarySpecifications} για αναζήτηση σε πολλαπλά πεδία.</p>
-     * * <p><b>TODO: Scalability & Advanced Filtering</b><br>
-     * Η τρέχουσα υλοποίηση καλύπτει το 90% των αναγκών του MVP. Η μετάβαση σε
-     * {@code BeneficiarySearchDTO} θα πραγματοποιηθεί εάν:</p>
-     * <ul>
-     * <li>Απαιτηθούν σύνθετα φίλτρα (π.χ. "Στέγη Α' + Ηλικία > 70")</li>
-     * <li>Οι {@code @RequestParam} ξεπεράσουν τις 3 (Clean Code / YAGNI)</li>
-     * <li>Απαιτηθεί Advanced Reporting ή δυναμικό Export δεδομένων</li>
-     * </ul>
-     * <p>Η μελλοντική υλοποίηση θα βασίζεται σε Specification Builder για δυναμικά Predicates.</p>
-     */
-    @Operation(summary = "Search beneficiaries")
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Search completed successfully",
-                    useReturnTypeSchema = true
-            )
-    })
-    @GetMapping("/search")
-    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> search(
-            @RequestParam(required = false) String term,
+    @GetMapping
+    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getBeneficiaries(
+            @Valid @ModelAttribute BeneficiarySearchDTO criteria,
             @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Page<BeneficiaryReadOnlyDTO> page  = service.search(term, pageable);
+            Page<BeneficiaryReadOnlyDTO> page = service.findBeneficiaries(criteria, pageable);
 
-        return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
-                .content(page.getContent())
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .build()
-        );
+            return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
+                    .content(page.getContent())
+                    .page(page.getNumber())
+                    .size(page.getSize())
+                    .totalElements(page.getTotalElements())
+                    .totalPages(page.getTotalPages())
+                    .build()
+            );
     }
 
     private URI buildLocationUri(Object id) {
