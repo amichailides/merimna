@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,7 +24,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -161,10 +161,25 @@ public class BeneficiaryController {
         return ResponseEntity.ok(updated);
     }
 
+    @Operation(summary = "Get beneficiaries", description = "Returns a paginated list of beneficiaries. When amka is provided, q is ignored.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            )
+    })
     @GetMapping
     public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getBeneficiaries(
             @Valid @ModelAttribute BeneficiarySearchDTO criteria,
-            @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
             Page<BeneficiaryReadOnlyDTO> page = service.findBeneficiaries(criteria, pageable);
 

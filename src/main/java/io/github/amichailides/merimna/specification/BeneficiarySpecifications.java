@@ -12,8 +12,7 @@ import java.text.Normalizer;
  * <p>Υποστηρίζει ελληνικούς χαρακτήρες με χρήση {@code unaccent} (DB-side)
  * και {@link #stripAccents} (Java-side) για ομοιόμορφη σύγκριση.</p>
  *
- * TODO: Η χρήση LIKE %...% με unaccent παρακάμπτει τα B-tree indexes.
- *  Αν ο όγκος δεδομένων αυξηθεί σημαντικά, εξετάστε PostgreSQL trigram indexes.
+ * // TODO(#6): Replace LIKE-based globalSearch with pg_trgm-based indexing
  */
 public class BeneficiarySpecifications {
     private BeneficiarySpecifications() {
