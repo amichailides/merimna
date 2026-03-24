@@ -7,7 +7,6 @@ import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySearchDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
-import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
