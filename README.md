@@ -2,49 +2,49 @@
 
 ## Overview
 
-**Merimna** (Μέριμνα - Greek for "Care") is a Spring Boot REST API designed to manage supported living
-structures for people with disabilities.
+**Merimna** ("Care") is a Spring Boot REST API designed to support the management of supported living structures for
+people with disabilities.
 
-The system manages beneficiary lifecycles and includes search capabilities tailored for the Greek language.
-
-Currently, the project focuses on the back-end infrastructure, emphasizing clean code, layered architecture,
-and maintainability.
+The project is inspired by real supported living environments, where staff need clear records, reliable updates, and
+simple day-to-day workflows around care-related information. At this stage, the focus is on the backend and on keeping
+the structure understandable as the domain grows.
 
 ## Key Features & Architecture
 
-- **Greek-aware search:** A custom Specification-based search engine that handles Greek accents (e.g., ά/α),
-  case sensitivity, and character variations (e.g., σ/ς).
+- **Greek-aware search:** A custom Specification-based search approach handles Greek accents, case sensitivity, and
+  common character variations (e.g., σ/ς).
 
 - **Domain-driven validation:**
-    - **Composite Annotations:** Custom reusable constraints (e.g., `@ValidAmka`, `@ValidName`) combine standard checks
-      with domain-specific validation logic.
-    - **Waterfall Validation:** `@GroupSequence` is used to enforce hierarchical constraint execution (short-circuit
-      logic), preventing validation noise for the end user.
+    - **Composite Annotations:** Custom reusable constraints (for example `@ValidAmka`) combine standard checks with
+      domain-specific validation logic.
+    - **Validation sequencing:** `@GroupSequence` is used to control validation order and reduce noisy error output.
 
-- **Centralized error handling:** A Global `@RestControllerAdvice` translates exceptions into consistent API responses.
+- **Centralized error handling:** A global `@RestControllerAdvice` translates exceptions into consistent API responses.
 
-- **Rich domain model:** Important state transitions, such as discharge, are enforced in the domain model rather than
-  being handled only at the controller or service layer.
+- **Rich domain model:** Important state changes, such as discharge, are handled in the domain model instead of being
+  left only to controllers.
+
+- **Database versioning:** Schema changes are managed through Flyway migrations to keep database structure predictable
+  and controlled.
 
 ## Technical Stack
 
-- **Backend:** Java 21, Spring Boot 3.x
-- **Data Persistence:** Spring Data JPA, PostgreSQL
+- **Backend:** Java 21, Spring Boot 4.x
+- **Data Persistence:** Spring Data JPA, PostgreSQL, Flyway
 - **Build Tool:** Maven
 - **Utilities:** Lombok
-- **Validation Engine:** Hibernate Validator (Bean Validation 3.0)
+- **API Documentation:** Springdoc OpenAPI
+- **Validation Engine:** Jakarta Bean Validation (Hibernate Validator)
 
 ## API Endpoints
 
-| Method  | Endpoint                            | Description                                                |
-|---------|-------------------------------------|------------------------------------------------------------|
-| `POST`  | `/api/beneficiaries`                | Creates a new beneficiary with full validation.            |
-| `GET`   | `/api/beneficiaries/{id}`           | Retrieves a beneficiary by their unique ID.                |
-| `GET`   | `/api/beneficiaries/amka/{amka}`    | Retrieves a beneficiary by their AMKA.                     |
-| `GET`   | `/api/beneficiaries`                | Retrieves all beneficiaries with pagination/filters.       |
-| `PATCH` | `/api/beneficiaries/{id}`           | Updates beneficiary details (partial update).              |
-| `POST`  | `/api/beneficiaries/{id}/discharge` | Discharges a beneficiary from the structure.               |
-| `GET`   | `/api/beneficiaries/search`         | Performs a global search using the Greek-optimized engine. |
+| Method  | Endpoint                            | Description                                                    |
+|---------|-------------------------------------|----------------------------------------------------------------|
+| `POST`  | `/api/beneficiaries`                | Creates a beneficiary after request and domain validation.     |
+| `GET`   | `/api/beneficiaries/{id}`           | Returns a beneficiary by ID along with related information.    |
+| `GET`   | `/api/beneficiaries`                | Lists beneficiaries with pagination and basic filtering.       |
+| `PATCH` | `/api/beneficiaries/{id}`           | Applies partial updates while keeping validation rules intact. |
+| `POST`  | `/api/beneficiaries/{id}/discharge` | Marks a beneficiary as inactive through a domain action.       |
 
 ### Nested Resources
 
@@ -55,6 +55,17 @@ Related beneficiary data is managed through dedicated nested endpoints:
 - **Legal Representatives:** `/api/beneficiaries/{id}/legal-representatives`
 
 Each nested resource follows the same general REST pattern (create, retrieve, update, remove).
+
+## Design Considerations
+
+- Validation is split between DTO-level checks and domain/business rules.
+- API responses aim to stay consistent across resources and error cases.
+- Controllers, services, mappers, and entities keep separate responsibilities.
+
+## API Documentation
+
+- `/api/v3/api-docs` is the OpenAPI contract.
+- `/api/scalar` is the interactive UI.
 
 ## Development Setup
 
@@ -72,8 +83,8 @@ Each nested resource follows the same general REST pattern (create, retrieve, up
    cd merimna
    ```
 2. **Configure the database:**
-    * Open `src/main/resources/application.properties`.
-    * Update the `spring.datasource.url`, `spring.datasource.username`, and `spring.datasource.password` properties.
+    * Set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`.
+    * Flyway migrations run automatically on startup.
 3. **Run the application:**
    ```bash
    mvn spring-boot:run
@@ -81,9 +92,9 @@ Each nested resource follows the same general REST pattern (create, retrieve, up
 
 ## Future Vision
 
-- **Full-Stack Application:** Develop a front-end application for care professionals.
-- **Security:** Implement Role-Based Access Control (RBAC) using Spring Security.
-- **CI/CD:** Set up automated pipelines for testing and deployment.
+- Add role-based access control (RBAC) with Spring Security
+- Improve test coverage and introduce integration tests
+- Containerize the application with Docker
 
 ## Project Evolution
 
