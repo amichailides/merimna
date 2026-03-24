@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Beneficiaries", description = "Operations related to beneficiaries")
+@Tag(name = "Legal Representatives", description = "Operations related to legal representatives")
 @RestController
 @RequestMapping("/beneficiaries/{beneficiaryId}/legal-representatives")
 @RequiredArgsConstructor

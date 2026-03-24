@@ -8,6 +8,7 @@ import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +42,11 @@ public class BeneficiaryController {
      */
     @Operation(summary = "Create beneficiary")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Beneficiary created successfully"),
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Beneficiary created successfully",
+                    useReturnTypeSchema = true
+            ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Validation error",
@@ -95,7 +100,8 @@ public class BeneficiaryController {
     })
     @PatchMapping("/{id}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> updateBeneficiary(
-            @PathVariable Long id,
+            @Parameter(description = "Beneficiary unique identifier", example = "42")
+            @PathVariable @Positive Long id,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.updateBeneficiary(id, dto);
@@ -120,6 +126,7 @@ public class BeneficiaryController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<BeneficiaryReadOnlyDTO> getById(
+            @Parameter(description = "Beneficiary unique identifier", example = "42")
             @Positive @PathVariable Long id) {
 
         BeneficiaryReadOnlyDTO beneficiary = service.findById(id);
@@ -155,7 +162,10 @@ public class BeneficiaryController {
             )
     })
     @PostMapping("/{beneficiaryId}/discharge")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge(@PathVariable Long beneficiaryId) {
+    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge
+    (@Parameter(description = "Beneficiary unique identifier", example = "42")
+     @PathVariable @Positive Long beneficiaryId) {
+
 
         BeneficiaryReadOnlyDTO updated = service.discharge(beneficiaryId);
         return ResponseEntity.ok(updated);

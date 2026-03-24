@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.dto;
 
 import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -21,14 +22,18 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BeneficiarySearchDTO {
-    @Size(min = 2, max = 50, message = "{validation.beneficiary.q.size}")
-    private String q; // query term (global search)
 
+    @Schema(description = "Global search term (firstName, lastName, AMKA partial match). Ignored if amka is provided.", example = "Παπαδόπουλος")
+    @Size(min = 2, max = 50, message = "{validation.beneficiary.q.size}")
+    private String q;
+
+    @Schema(description = "Exact AMKA lookup. When present, q is ignored.", example = "12345678901")
     @ValidAmka
     private String amka;
 
+    @Schema(description = "Include inactive beneficiaries in results. Defaults to false.", example = "false")
     private Boolean includeInactive = false;
 
+    @Schema(description = "Filter by house unit", example = "UNIT_A")
     private HouseUnit houseUnit;
 }
-
