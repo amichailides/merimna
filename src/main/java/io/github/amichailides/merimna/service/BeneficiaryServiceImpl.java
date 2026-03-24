@@ -2,11 +2,9 @@ package io.github.amichailides.merimna.service;
 
 
 import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
 import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.HouseUnit;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
@@ -89,10 +87,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         if (hasText(criteria.getAmka())) {
             spec = spec.and(BeneficiarySpecifications.hasAmka(criteria.getAmka()));
         } else if (hasText(criteria.getQ())) {
-            spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
-        }
-
-        if (hasText(criteria.getQ())) {
             spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
         }
 
