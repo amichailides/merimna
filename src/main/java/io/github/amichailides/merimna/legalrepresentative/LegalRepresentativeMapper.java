@@ -1,8 +1,8 @@
-package io.github.amichailides.merimna.mapper;
+package io.github.amichailides.merimna.legalrepresentative;
 
-import io.github.amichailides.merimna.dto.LegalRepresentativeDTO;
-import io.github.amichailides.merimna.dto.LegalRepresentativeReadOnlyDTO;
-import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;
 

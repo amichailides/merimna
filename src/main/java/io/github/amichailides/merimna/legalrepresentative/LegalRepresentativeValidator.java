@@ -1,7 +1,7 @@
-package io.github.amichailides.merimna.service.validation;
+package io.github.amichailides.merimna.legalrepresentative;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;

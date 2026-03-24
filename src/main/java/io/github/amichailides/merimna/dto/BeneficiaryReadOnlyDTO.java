@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.dto;
 
 import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.domain.HouseUnit;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

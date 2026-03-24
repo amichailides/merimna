@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.controller;
 
-import io.github.amichailides.merimna.service.LegalRepresentativeService;
+import io.github.amichailides.merimna.legalrepresentative.LegalRepresentativeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

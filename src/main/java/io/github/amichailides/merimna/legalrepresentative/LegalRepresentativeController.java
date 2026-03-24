@@ -1,9 +1,8 @@
-package io.github.amichailides.merimna.controller;
+package io.github.amichailides.merimna.legalrepresentative;
 
-import io.github.amichailides.merimna.dto.LegalRepresentativeDTO;
-import io.github.amichailides.merimna.dto.LegalRepresentativeReadOnlyDTO;
-import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
-import io.github.amichailides.merimna.service.LegalRepresentativeService;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

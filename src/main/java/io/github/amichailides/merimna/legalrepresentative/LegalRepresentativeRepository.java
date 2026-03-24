@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.repository;
+package io.github.amichailides.merimna.legalrepresentative;
 
 import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.data.jpa.repository.JpaRepository;
