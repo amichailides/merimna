@@ -18,7 +18,7 @@ import java.util.List;
 @Validated
 @RequestMapping("/beneficiaries/{beneficiaryId}/allergies")
 @RequiredArgsConstructor
-public class AllergiesController {
+public class AllergyController {
     private final AllergyService allergyService;
 
     @PostMapping
