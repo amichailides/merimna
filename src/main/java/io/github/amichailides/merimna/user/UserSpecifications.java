@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.specification;
+package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.domain.User;
 import org.springframework.data.jpa.domain.Specification;

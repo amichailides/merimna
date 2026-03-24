@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.repository;
+package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.domain.Role;
 import io.github.amichailides.merimna.domain.User;
