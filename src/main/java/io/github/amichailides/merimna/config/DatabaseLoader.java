@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.config;
 
-import io.github.amichailides.merimna.model.Role;
-import io.github.amichailides.merimna.model.UserRole;
+import io.github.amichailides.merimna.domain.Role;
+import io.github.amichailides.merimna.domain.UserRole;
 import io.github.amichailides.merimna.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

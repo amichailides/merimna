@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.repository;
 
-import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

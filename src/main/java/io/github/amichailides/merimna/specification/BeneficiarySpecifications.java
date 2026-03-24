@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.specification;
 
-import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;

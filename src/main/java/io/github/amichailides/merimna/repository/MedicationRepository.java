@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.repository;
 
-import io.github.amichailides.merimna.model.Medication;
+import io.github.amichailides.merimna.domain.Medication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

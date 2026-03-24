@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.repository;
 
-import io.github.amichailides.merimna.model.Role;
-import io.github.amichailides.merimna.model.User;
+import io.github.amichailides.merimna.domain.Role;
+import io.github.amichailides.merimna.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

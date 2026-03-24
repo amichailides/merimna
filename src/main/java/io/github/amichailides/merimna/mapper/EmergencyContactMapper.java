@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.mapper;
 
 import io.github.amichailides.merimna.dto.EmergencyContactDTO;
 import io.github.amichailides.merimna.dto.EmergencyContactUpdateDTO;
-import io.github.amichailides.merimna.model.EmergencyContact;
+import io.github.amichailides.merimna.domain.EmergencyContact;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -4,7 +4,7 @@ package io.github.amichailides.merimna.service;
 import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
-import io.github.amichailides.merimna.model.Beneficiary;
+import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
 import io.github.amichailides.merimna.specification.BeneficiarySpecifications;
@@ -94,7 +94,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             spec = spec.and(BeneficiarySpecifications.hasHouseUnit(criteria.getHouseUnit()));
         }
 
-        if (!Boolean.TRUE.equals(criteria.getIncludeInactive())) {
+        if (!criteria.isIncludeInactive()) {
             spec = spec.and(BeneficiarySpecifications.isActive());
         }
 

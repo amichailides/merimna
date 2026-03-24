@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.model;
+package io.github.amichailides.merimna.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

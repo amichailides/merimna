@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.model;
+package io.github.amichailides.merimna.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,6 +40,8 @@ public class User {
     private String lastName;
 
     private String mobile;
+
+    @Builder.Default
     private boolean active = true;
 
     @Builder.Default

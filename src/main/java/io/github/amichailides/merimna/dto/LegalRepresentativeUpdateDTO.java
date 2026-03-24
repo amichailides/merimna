@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.LegalRepresentativeType;
+import io.github.amichailides.merimna.domain.LegalRepresentativeType;
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.Email;

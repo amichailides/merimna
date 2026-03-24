@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.RelationshipType;
+import io.github.amichailides.merimna.domain.RelationshipType;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLandline;
 import io.github.amichailides.merimna.validation.annotations.ValidLastName;

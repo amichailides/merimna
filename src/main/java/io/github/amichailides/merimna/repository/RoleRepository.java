@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.repository;
 
-import io.github.amichailides.merimna.model.Role;
-import io.github.amichailides.merimna.model.UserRole;
+import io.github.amichailides.merimna.domain.Role;
+import io.github.amichailides.merimna.domain.UserRole;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.stereotype.Repository;
 

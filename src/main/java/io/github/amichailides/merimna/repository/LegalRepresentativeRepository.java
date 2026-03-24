@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.repository;
 
-import io.github.amichailides.merimna.model.LegalRepresentative;
+import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

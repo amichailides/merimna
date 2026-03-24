@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.mapper;
 import io.github.amichailides.merimna.dto.LegalRepresentativeDTO;
 import io.github.amichailides.merimna.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
-import io.github.amichailides.merimna.model.LegalRepresentative;
+import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.model;
+package io.github.amichailides.merimna.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -7,8 +7,8 @@ import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException
 import io.github.amichailides.merimna.exception.MedicationNotFound;
 import io.github.amichailides.merimna.exception.MedicationNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.mapper.MedicationMapper;
-import io.github.amichailides.merimna.model.Beneficiary;
-import io.github.amichailides.merimna.model.Medication;
+import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.Medication;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import io.github.amichailides.merimna.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;

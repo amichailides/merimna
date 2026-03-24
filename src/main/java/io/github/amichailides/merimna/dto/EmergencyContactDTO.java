@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.RelationshipType;
+import io.github.amichailides.merimna.domain.RelationshipType;
 
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;

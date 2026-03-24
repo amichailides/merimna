@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.service;
 
 import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.model.HouseUnit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
@@ -31,8 +31,9 @@ public class BeneficiarySearchDTO {
     @ValidAmka
     private String amka;
 
+    // TODO(#7): Evaluate replacing includeInactive with tri-state active filter
     @Schema(description = "Include inactive beneficiaries in results. Defaults to false.", example = "false")
-    private Boolean includeInactive = false;
+    private boolean includeInactive;  // defaults to false
 
     @Schema(description = "Filter by house unit", example = "UNIT_A")
     private HouseUnit houseUnit;

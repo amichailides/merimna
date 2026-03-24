@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.specification;
 
-import io.github.amichailides.merimna.model.User;
+import io.github.amichailides.merimna.domain.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecifications {

@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.AllergySeverity;
+import io.github.amichailides.merimna.domain.AllergySeverity;
 import lombok.Builder;
 
 @Builder

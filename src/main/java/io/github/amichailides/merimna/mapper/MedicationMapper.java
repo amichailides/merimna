@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.mapper;
 import io.github.amichailides.merimna.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
-import io.github.amichailides.merimna.model.Medication;
+import io.github.amichailides.merimna.domain.Medication;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;

@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.HouseUnit;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.annotations.ValidDateOfBirth;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;

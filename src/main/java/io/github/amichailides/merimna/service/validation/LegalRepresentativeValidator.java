@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
-import io.github.amichailides.merimna.model.LegalRepresentative;
+import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;

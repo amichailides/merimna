@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.dto;
 
-import io.github.amichailides.merimna.model.LegalRepresentativeType;
+import io.github.amichailides.merimna.domain.LegalRepresentativeType;
 import lombok.Builder;
 
 @Builder

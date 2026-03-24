@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.mapper;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.model.Allergy;
+import io.github.amichailides.merimna.domain.Allergy;
 import org.springframework.stereotype.Component;
 
 @Component
