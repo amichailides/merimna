@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.repository;
+package io.github.amichailides.merimna.allergy;
 
 import io.github.amichailides.merimna.domain.Allergy;
 import org.springframework.data.jpa.repository.JpaRepository;

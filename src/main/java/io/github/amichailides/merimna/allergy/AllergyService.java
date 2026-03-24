@@ -1,8 +1,8 @@
-package io.github.amichailides.merimna.service;
+package io.github.amichailides.merimna.allergy;
 
-import io.github.amichailides.merimna.dto.AllergyCreateDTO;
-import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 
 import java.util.List;
 

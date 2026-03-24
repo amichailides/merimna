@@ -1,15 +1,13 @@
-package io.github.amichailides.merimna.service;
+package io.github.amichailides.merimna.allergy;
 
-import io.github.amichailides.merimna.dto.AllergyCreateDTO;
-import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.exception.AllergyNotFoundException;
-import io.github.amichailides.merimna.exception.AllergyNotOwnedByBeneficiaryException;
+import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.allergy.exception.AllergyNotFoundException;
+import io.github.amichailides.merimna.allergy.exception.AllergyNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.mapper.AllergyMapper;
 import io.github.amichailides.merimna.domain.Allergy;
 import io.github.amichailides.merimna.domain.Beneficiary;
-import io.github.amichailides.merimna.repository.AllergyRepository;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

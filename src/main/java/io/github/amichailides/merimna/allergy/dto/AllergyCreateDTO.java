@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.dto;
+package io.github.amichailides.merimna.allergy.dto;
 
 import io.github.amichailides.merimna.domain.AllergySeverity;
 import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;

@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.exception.AllergyAlreadyAssignedException;
+import io.github.amichailides.merimna.allergy.exception.AllergyAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
 

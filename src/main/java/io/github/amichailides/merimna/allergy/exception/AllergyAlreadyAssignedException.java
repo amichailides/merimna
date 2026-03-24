@@ -1,6 +1,7 @@
-package io.github.amichailides.merimna.exception;
+package io.github.amichailides.merimna.allergy.exception;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
+import io.github.amichailides.merimna.exception.BaseDomainException;
 import lombok.Getter;
 
 @Getter

@@ -1,8 +1,8 @@
-package io.github.amichailides.merimna.mapper;
+package io.github.amichailides.merimna.allergy;
 
-import io.github.amichailides.merimna.dto.AllergyCreateDTO;
-import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.domain.Allergy;
 import org.springframework.stereotype.Component;
 

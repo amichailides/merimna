@@ -1,9 +1,8 @@
-package io.github.amichailides.merimna.controller;
+package io.github.amichailides.merimna.allergy;
 
-import io.github.amichailides.merimna.dto.AllergyCreateDTO;
-import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.service.AllergyService;
+import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
