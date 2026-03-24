@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.common.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
-import io.github.amichailides.merimna.exception.BeneficiaryValidationException;
+import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +40,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmka(dto.amka())).thenReturn(true);
 
-        BeneficiaryValidationException ex = assertThrows(
-                BeneficiaryValidationException.class,
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
                 () -> validator.validateForSave(dto)
         );
 
@@ -61,8 +61,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmka(dto.amka())).thenReturn(false);
 
-        BeneficiaryValidationException ex = assertThrows(
-                BeneficiaryValidationException.class,
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
                 () -> validator.validateForSave(dto)
         );
 
@@ -94,8 +94,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(true);
 
-        BeneficiaryValidationException ex = assertThrows(
-                BeneficiaryValidationException.class,
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
                 () -> validator.validateForUpdate(existing, dto)
         );
 
@@ -117,8 +117,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(false);
 
-        BeneficiaryValidationException ex = assertThrows(
-                BeneficiaryValidationException.class,
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
                 () -> validator.validateForUpdate(existing, dto)
         );
 
@@ -137,8 +137,8 @@ public class BeneficiaryValidatorTest {
                 .build();
 
 
-        BeneficiaryValidationException ex = assertThrows(
-                BeneficiaryValidationException.class,
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
                 () -> validator.validateForUpdate(existing, dto)
         );
 
