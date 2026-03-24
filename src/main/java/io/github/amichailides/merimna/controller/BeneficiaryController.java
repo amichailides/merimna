@@ -1,9 +1,9 @@
 package io.github.amichailides.merimna.controller;
 
-import io.github.amichailides.merimna.common.ConflictErrorResponse;
-import io.github.amichailides.merimna.common.NotFoundErrorResponse;
+import io.github.amichailides.merimna.config.openapi.ConflictErrorResponse;
+import io.github.amichailides.merimna.config.openapi.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.response.PageResponse;
-import io.github.amichailides.merimna.common.ValidationErrorResponse;
+import io.github.amichailides.merimna.config.openapi.ValidationErrorResponse;
 import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
