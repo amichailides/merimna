@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.repository;
+package io.github.amichailides.merimna.medication;
 
 import io.github.amichailides.merimna.domain.Medication;
 import org.springframework.data.domain.Page;

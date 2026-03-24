@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.dto;
+package io.github.amichailides.merimna.medication.dto;
 
 public record MedicationReadOnlyDTO(
         Long id,

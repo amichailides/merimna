@@ -1,8 +1,8 @@
-package io.github.amichailides.merimna.service;
+package io.github.amichailides.merimna.medication;
 
-import io.github.amichailides.merimna.dto.MedicationCreateDTO;
-import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
-import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 
 import java.util.List;
 

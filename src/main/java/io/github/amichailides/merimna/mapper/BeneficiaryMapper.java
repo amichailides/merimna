@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.medication.MedicationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

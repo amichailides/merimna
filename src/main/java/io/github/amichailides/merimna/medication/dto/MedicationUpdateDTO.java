@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.dto;
+package io.github.amichailides.merimna.medication.dto;
 
 import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;

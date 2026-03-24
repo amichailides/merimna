@@ -1,16 +1,14 @@
-package io.github.amichailides.merimna.service;
+package io.github.amichailides.merimna.medication;
 
-import io.github.amichailides.merimna.dto.MedicationCreateDTO;
-import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
-import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.exception.MedicationNotFoundException;
-import io.github.amichailides.merimna.exception.MedicationNotOwnedByBeneficiaryException;
-import io.github.amichailides.merimna.mapper.MedicationMapper;
+import io.github.amichailides.merimna.medication.exception.MedicationNotFoundException;
+import io.github.amichailides.merimna.medication.exception.MedicationNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.Medication;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
-import io.github.amichailides.merimna.repository.MedicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

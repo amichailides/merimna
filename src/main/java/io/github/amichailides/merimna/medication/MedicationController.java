@@ -1,10 +1,9 @@
-package io.github.amichailides.merimna.controller;
+package io.github.amichailides.merimna.medication;
 
 
-import io.github.amichailides.merimna.dto.MedicationCreateDTO;
-import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
-import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
-import io.github.amichailides.merimna.service.MedicationService;
+import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

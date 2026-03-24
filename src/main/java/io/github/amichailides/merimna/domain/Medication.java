@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.exception.MedicationAlreadyAssignedException;
+import io.github.amichailides.merimna.medication.exception.MedicationAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
 
