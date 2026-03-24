@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.service;
 
+import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
@@ -7,7 +8,6 @@ import io.github.amichailides.merimna.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.exception.AllergyNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.mapper.AllergyMapper;
-import io.github.amichailides.merimna.model.*;
 import io.github.amichailides.merimna.repository.AllergyRepository;
 import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.junit.jupiter.api.Test;

@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.controller;
 import io.github.amichailides.merimna.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.service.AllergiesService;
+import io.github.amichailides.merimna.service.AllergyService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +20,14 @@ import java.util.List;
 @RequestMapping("/beneficiaries/{beneficiaryId}/allergies")
 @RequiredArgsConstructor
 public class AllergiesController {
-    private final AllergiesService allergiesService;
+    private final AllergyService allergyService;
 
     @PostMapping
     public ResponseEntity<AllergyReadOnlyDTO> addAllergy(
             @PathVariable Long beneficiaryId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyCreateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergiesService.addAllergy(beneficiaryId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.addAllergy(beneficiaryId, dto);
 
         return ResponseEntity
                 .created(buildLocationUri(allergy.id()))
@@ -40,7 +40,7 @@ public class AllergiesController {
             @PathVariable Long allergyId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyUpdateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergiesService.updateAllergy(beneficiaryId, allergyId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryId, allergyId, dto);
         return ResponseEntity.ok(allergy);
     }
 
@@ -49,14 +49,14 @@ public class AllergiesController {
             @PathVariable Long beneficiaryId,
             @PathVariable Long allergyId) {
 
-        allergiesService.deleteAllergy(beneficiaryId, allergyId);
+        allergyService.deleteAllergy(beneficiaryId, allergyId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergies (@PathVariable Long beneficiaryId) {
 
-        List<AllergyReadOnlyDTO> allergies = allergiesService.getAllergiesByBeneficiary(beneficiaryId);
+        List<AllergyReadOnlyDTO> allergies = allergyService.getAllergiesByBeneficiary(beneficiaryId);
 
         return ResponseEntity.ok(allergies);
     }
@@ -66,7 +66,7 @@ public class AllergiesController {
             @PathVariable Long beneficiaryId,
             @PathVariable Long allergyId) {
 
-        AllergyReadOnlyDTO allergy = allergiesService.getAllergy(beneficiaryId, allergyId);
+        AllergyReadOnlyDTO allergy = allergyService.getAllergy(beneficiaryId, allergyId);
         return ResponseEntity.ok(allergy);
 
     }

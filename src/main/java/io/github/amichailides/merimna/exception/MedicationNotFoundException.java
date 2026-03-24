@@ -2,8 +2,8 @@ package io.github.amichailides.merimna.exception;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
 
-public class MedicationNotFound extends BaseDomainException {
-    public MedicationNotFound(Long medicationId) {
+public class MedicationNotFoundException extends BaseDomainException {
+    public MedicationNotFoundException(Long medicationId) {
         super(ErrorCode.MEDICATION_NOT_FOUND, medicationId);
     }
 }

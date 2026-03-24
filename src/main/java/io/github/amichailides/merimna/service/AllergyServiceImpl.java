@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AllergiesServiceImpl implements AllergiesService{
+public class AllergyServiceImpl implements AllergyService {
     private final AllergyRepository allergyRepository;
     private final AllergyMapper allergyMapper;
     private final BeneficiaryRepository beneficiaryRepository;

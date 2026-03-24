@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.exception.MedicationNotFound;
+import io.github.amichailides.merimna.exception.MedicationNotFoundException;
 import io.github.amichailides.merimna.exception.MedicationNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.mapper.MedicationMapper;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -80,7 +80,7 @@ public class MedicationServiceImpl implements MedicationService{
         return  medicationRepository.findByIdAndBeneficiaryId(medicationId, beneficiaryId)
                 .orElseThrow(() -> {
                     if (!medicationRepository.existsById(medicationId)) {
-                        return new MedicationNotFound(medicationId);
+                        return new MedicationNotFoundException(medicationId);
                     }
                     return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryId);
                 });

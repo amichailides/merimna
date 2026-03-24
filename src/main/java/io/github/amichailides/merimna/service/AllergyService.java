@@ -6,7 +6,7 @@ import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
 
 import java.util.List;
 
-public interface AllergiesService {
+public interface AllergyService {
     AllergyReadOnlyDTO addAllergy(Long id, AllergyCreateDTO dto);
     AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto);
     void deleteAllergy(Long beneficiaryId, Long allergyId);
