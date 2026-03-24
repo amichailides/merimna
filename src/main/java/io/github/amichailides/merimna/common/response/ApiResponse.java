@@ -1,7 +1,8 @@
-package io.github.amichailides.merimna.common;
+package io.github.amichailides.merimna.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.github.amichailides.merimna.common.error.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;

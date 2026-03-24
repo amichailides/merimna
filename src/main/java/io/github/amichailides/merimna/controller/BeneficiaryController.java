@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.controller;
 
 import io.github.amichailides.merimna.common.ConflictErrorResponse;
 import io.github.amichailides.merimna.common.NotFoundErrorResponse;
-import io.github.amichailides.merimna.common.PageResponse;
+import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.common.ValidationErrorResponse;
 import io.github.amichailides.merimna.dto.*;
 import io.github.amichailides.merimna.service.BeneficiaryService;

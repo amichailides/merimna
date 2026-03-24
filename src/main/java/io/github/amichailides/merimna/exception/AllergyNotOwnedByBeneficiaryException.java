@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.exception;
 
-import io.github.amichailides.merimna.common.ErrorCode;
+import io.github.amichailides.merimna.common.error.ErrorCode;
 
 public class AllergyNotOwnedByBeneficiaryException extends BaseDomainException {
     public AllergyNotOwnedByBeneficiaryException(Long allergyId, Long beneficiaryId) {

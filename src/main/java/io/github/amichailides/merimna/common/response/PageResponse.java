@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.common;
+package io.github.amichailides.merimna.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

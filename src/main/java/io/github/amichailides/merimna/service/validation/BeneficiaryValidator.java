@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.service.validation;
 
-import io.github.amichailides.merimna.common.ErrorCode;
+import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;

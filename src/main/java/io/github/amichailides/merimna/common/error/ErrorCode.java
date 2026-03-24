@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.common;
+package io.github.amichailides.merimna.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
