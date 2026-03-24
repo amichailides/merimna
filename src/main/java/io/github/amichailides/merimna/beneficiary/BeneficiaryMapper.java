@@ -1,9 +1,9 @@
-package io.github.amichailides.merimna.mapper;
+package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.allergy.AllergyMapper;
-import io.github.amichailides.merimna.dto.BeneficiaryReadOnlyDTO;
-import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.legalrepresentative.LegalRepresentativeMapper;
 import io.github.amichailides.merimna.medication.MedicationMapper;

@@ -1,11 +1,13 @@
-package io.github.amichailides.merimna.controller;
+package io.github.amichailides.merimna.beneficiary;
 
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySearchDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.config.openapi.ConflictErrorResponse;
 import io.github.amichailides.merimna.config.openapi.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.config.openapi.ValidationErrorResponse;
-import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.service.BeneficiaryService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

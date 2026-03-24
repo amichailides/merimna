@@ -1,6 +1,9 @@
-package io.github.amichailides.merimna.service;
+package io.github.amichailides.merimna.beneficiary;
 
-import io.github.amichailides.merimna.dto.*;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySearchDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

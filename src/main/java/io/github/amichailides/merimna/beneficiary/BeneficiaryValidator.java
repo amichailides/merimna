@@ -1,11 +1,10 @@
-package io.github.amichailides.merimna.service.validation;
+package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.domain.Beneficiary;
-import io.github.amichailides.merimna.repository.BeneficiaryRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

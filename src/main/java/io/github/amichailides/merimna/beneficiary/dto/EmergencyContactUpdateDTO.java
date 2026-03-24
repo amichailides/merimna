@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.dto;
+package io.github.amichailides.merimna.beneficiary.dto;
 
 import io.github.amichailides.merimna.domain.RelationshipType;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;

@@ -1,15 +1,15 @@
 package io.github.amichailides.merimna.legalrepresentative;
 
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
-import io.github.amichailides.merimna.exception.*;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.LegalRepresentative;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeNotAssignedException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeNotFoundByIdException;
-import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

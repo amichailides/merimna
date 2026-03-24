@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.repository;
+package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;

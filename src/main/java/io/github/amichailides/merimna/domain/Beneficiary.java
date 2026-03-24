@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;

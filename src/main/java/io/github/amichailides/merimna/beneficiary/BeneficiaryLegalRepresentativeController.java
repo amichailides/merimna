@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.controller;
+package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.legalrepresentative.LegalRepresentativeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
