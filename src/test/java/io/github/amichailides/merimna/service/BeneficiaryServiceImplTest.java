@@ -134,24 +134,24 @@ public class BeneficiaryServiceImplTest {
         Long beneficiaryId = 1L;
         Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId, true);
 
-        BeneficiaryReadOnlyDTO expectedDto = BeneficiaryReadOnlyDTO.builder()
+        BeneficiaryDetailsDTO expectedDto = BeneficiaryDetailsDTO.builder()
                 .id(beneficiaryId)
                 .build();
 
         when(beneficiaryRepository.findById(beneficiaryId))
                 .thenReturn(Optional.of(beneficiary));
 
-        when(beneficiaryMapper.toReadOnlyDTO(beneficiary))
+        when(beneficiaryMapper.toDetailsDTO(beneficiary))
                 .thenReturn(expectedDto);
 
         // act
-        BeneficiaryReadOnlyDTO result = beneficiaryService.findById(beneficiaryId);
+        BeneficiaryDetailsDTO result = beneficiaryService.findById(beneficiaryId);
 
         // assert
         assertEquals(expectedDto, result);
 
         verify(beneficiaryRepository).findById(beneficiaryId);
-        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
+        verify(beneficiaryMapper).toDetailsDTO(beneficiary);
 
     }
 
@@ -162,14 +162,14 @@ public class BeneficiaryServiceImplTest {
         Beneficiary entityFromMapper = createDefaultBeneficiary(false);
         Beneficiary savedEntity = createDefaultBeneficiary(1L, true);
 
-        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(1L, true);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(1L, true);
 
         when(beneficiaryMapper.toEntity(saveDto)).thenReturn(entityFromMapper);
         when(beneficiaryRepository.save(entityFromMapper)).thenReturn(savedEntity);
-        when(beneficiaryMapper.toReadOnlyDTO(savedEntity)).thenReturn(expectedDto);
+        when(beneficiaryMapper.toDetailsDTO(savedEntity)).thenReturn(expectedDto);
 
         // act
-        BeneficiaryReadOnlyDTO result = beneficiaryService.save(saveDto);
+        BeneficiaryDetailsDTO result = beneficiaryService.save(saveDto);
 
         // assert
         assertNotNull(result);
@@ -177,7 +177,7 @@ public class BeneficiaryServiceImplTest {
 
         verify(beneficiaryRepository).save(entityFromMapper);
         verify(beneficiaryMapper).toEntity(saveDto);
-        verify(beneficiaryMapper).toReadOnlyDTO(savedEntity);
+        verify(beneficiaryMapper).toDetailsDTO(savedEntity);
         verify(validator).validateForSave(saveDto);
     }
 
@@ -191,14 +191,14 @@ public class BeneficiaryServiceImplTest {
                 .houseUnit(HouseUnit.UNIT_B)
                 .build();
 
-        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(beneficiaryId, true);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, true);
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
         when(beneficiaryRepository.save(existing)).thenReturn(existing);
-        when(beneficiaryMapper.toReadOnlyDTO(existing)).thenReturn(expectedDto);
+        when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
 
         // act
-        BeneficiaryReadOnlyDTO result = beneficiaryService.updateBeneficiary(beneficiaryId, updateDto);
+        BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(beneficiaryId, updateDto);
 
         // assert
         assertNotNull(result);
@@ -215,21 +215,21 @@ public class BeneficiaryServiceImplTest {
         Long beneficiaryId = 1L;
         Beneficiary existing = createDefaultBeneficiary(beneficiaryId, true);
 
-        BeneficiaryReadOnlyDTO expectedDto = createDefaultReadOnlyDTO(beneficiaryId, false);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, false);
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
         when(beneficiaryRepository.save(existing)).thenReturn(existing);
-        when(beneficiaryMapper.toReadOnlyDTO(existing)).thenReturn(expectedDto);
+        when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
 
         //act
-        BeneficiaryReadOnlyDTO result = beneficiaryService.discharge(beneficiaryId);
+        BeneficiaryDetailsDTO result = beneficiaryService.discharge(beneficiaryId);
 
         //assert
         assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
         assertEquals(expectedDto, result);
         verify(validator).validateForDischarge(existing);
         verify(beneficiaryRepository).save(existing);
-        verify(beneficiaryMapper).toReadOnlyDTO(existing);
+        verify(beneficiaryMapper).toDetailsDTO(existing);
     }
 
     @Test
@@ -259,7 +259,7 @@ public class BeneficiaryServiceImplTest {
 
         // fail-fast
         verify(beneficiaryMapper, never()).updateEntity(any(), any());
-        verify(beneficiaryMapper, never()).toReadOnlyDTO(any());
+        verify(beneficiaryMapper, never()).toDetailsDTO(any());
         verify(beneficiaryRepository, never()).save(any());
     }
 
@@ -279,7 +279,7 @@ public class BeneficiaryServiceImplTest {
         verify(beneficiaryRepository).findById(id);
         verify(validator, never()).validateForDischarge(any());
         verify(beneficiaryRepository, never()).save(any());
-        verify(beneficiaryMapper, never()).toReadOnlyDTO(any());
+        verify(beneficiaryMapper, never()).toDetailsDTO(any());
 
     }
 
@@ -290,7 +290,7 @@ public class BeneficiaryServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Beneficiary beneficiary = createDefaultBeneficiary(true);
-        BeneficiaryReadOnlyDTO dto = createDefaultReadOnlyDTO(1L, true);
+        BeneficiaryListDTO dto = createDefaultListDTO(1L, true);
 
         Page<Beneficiary> entityPage = new PageImpl<>(List.of(beneficiary));
 
@@ -298,10 +298,10 @@ public class BeneficiaryServiceImplTest {
                 ArgumentMatchers.<Specification<Beneficiary>>any(),
                 eq(pageable)))
                 .thenReturn(entityPage);
-        when(beneficiaryMapper.toReadOnlyDTO(beneficiary)).thenReturn(dto);
+        when(beneficiaryMapper.toListDTO(beneficiary)).thenReturn(dto);
 
         // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
+        Page<BeneficiaryListDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
 
         // assert
         assertEquals(1, result.getContent().size());
@@ -311,7 +311,7 @@ public class BeneficiaryServiceImplTest {
                 ArgumentMatchers.<Specification<Beneficiary>>any(),
                 eq(pageable)
         );
-        verify(beneficiaryMapper).toReadOnlyDTO(beneficiary);
+        verify(beneficiaryMapper).toListDTO(beneficiary);
     }
 
     @Test
@@ -329,8 +329,9 @@ public class BeneficiaryServiceImplTest {
                 ArgumentMatchers.<Specification<Beneficiary>>any(),
                 eq(pageable)))
                 .thenReturn(entityPage);
+
         // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
+        Page<BeneficiaryListDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
 
         // assert
         assertTrue(result.isEmpty());
@@ -357,7 +358,7 @@ public class BeneficiaryServiceImplTest {
                 .thenReturn(entityPage);
 
         // act
-        Page<BeneficiaryReadOnlyDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
+        Page<BeneficiaryListDTO> result = beneficiaryService.findBeneficiaries(criteria, pageable);
 
         // assert
         assertTrue(result.isEmpty());
@@ -433,8 +434,8 @@ public class BeneficiaryServiceImplTest {
                 .build();
     }
 
-    private BeneficiaryReadOnlyDTO createDefaultReadOnlyDTO(Long id, boolean isActive) {
-        return BeneficiaryReadOnlyDTO.builder()
+    private BeneficiaryDetailsDTO createDefaultDetailsDTO(Long id, boolean isActive) {
+        return BeneficiaryDetailsDTO.builder()
                 .id(id)
                 .firstName("Joe")
                 .lastName("Doe")
@@ -444,6 +445,16 @@ public class BeneficiaryServiceImplTest {
                 .isActive(isActive)
                 .permanentAddress(createDefaultAddressDTO())
                 .emergencyContact(createDefaultEmergencyContactDTO())
+                .build();
+    }
+
+    private BeneficiaryListDTO createDefaultListDTO(Long id, boolean isActive) {
+        return BeneficiaryListDTO.builder()
+                .id(id)
+                .firstName("Joe")
+                .lastName("Doe")
+                .houseUnit(HouseUnit.UNIT_A)
+                .isActive(isActive)
                 .build();
     }
 }

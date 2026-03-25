@@ -1,9 +1,6 @@
 package io.github.amichailides.merimna.beneficiary;
 
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySearchDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.common.openapi.ConflictErrorResponse;
 import io.github.amichailides.merimna.common.openapi.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.response.PageResponse;
@@ -67,10 +64,10 @@ public class BeneficiaryController {
             )
     })
     @PostMapping
-    public ResponseEntity<BeneficiaryReadOnlyDTO> create(
+    public ResponseEntity<BeneficiaryDetailsDTO> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
 
-        BeneficiaryReadOnlyDTO beneficiary = service.save(dto);
+        BeneficiaryDetailsDTO beneficiary = service.save(dto);
         return ResponseEntity
                 .created(buildLocationUri(beneficiary.id()))
                 .body(beneficiary);
@@ -101,12 +98,12 @@ public class BeneficiaryController {
             )
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> updateBeneficiary(
+    public ResponseEntity<BeneficiaryDetailsDTO> updateBeneficiary(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
             @PathVariable @Positive Long id,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
-        BeneficiaryReadOnlyDTO beneficiary = service.updateBeneficiary(id, dto);
+        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(id, dto);
         return ResponseEntity.ok(beneficiary);
     }
 
@@ -127,11 +124,11 @@ public class BeneficiaryController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> getById(
+    public ResponseEntity<BeneficiaryDetailsDTO> getById(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
             @Positive @PathVariable Long id) {
 
-        BeneficiaryReadOnlyDTO beneficiary = service.findById(id);
+        BeneficiaryDetailsDTO beneficiary = service.findById(id);
         return ResponseEntity.ok(beneficiary);
     }
 
@@ -164,12 +161,12 @@ public class BeneficiaryController {
             )
     })
     @PostMapping("/{beneficiaryId}/discharge")
-    public ResponseEntity<BeneficiaryReadOnlyDTO> discharge
+    public ResponseEntity<BeneficiaryDetailsDTO> discharge
     (@Parameter(description = "Beneficiary unique identifier", example = "42")
      @PathVariable @Positive Long beneficiaryId) {
 
 
-        BeneficiaryReadOnlyDTO updated = service.discharge(beneficiaryId);
+        BeneficiaryDetailsDTO updated = service.discharge(beneficiaryId);
         return ResponseEntity.ok(updated);
     }
 
@@ -189,20 +186,20 @@ public class BeneficiaryController {
             )
     })
     @GetMapping
-    public ResponseEntity<PageResponse<BeneficiaryReadOnlyDTO>> getBeneficiaries(
+    public ResponseEntity<PageResponse<BeneficiaryListDTO>> getBeneficiaries(
             @Valid @ModelAttribute BeneficiarySearchDTO criteria,
             @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
-            Page<BeneficiaryReadOnlyDTO> page = service.findBeneficiaries(criteria, pageable);
+        Page<BeneficiaryListDTO> page = service.findBeneficiaries(criteria, pageable);
 
-            return ResponseEntity.ok(PageResponse.<BeneficiaryReadOnlyDTO>builder()
-                    .content(page.getContent())
-                    .page(page.getNumber())
-                    .size(page.getSize())
-                    .totalElements(page.getTotalElements())
-                    .totalPages(page.getTotalPages())
-                    .build()
-            );
+        return ResponseEntity.ok(PageResponse.<BeneficiaryListDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
     }
 
     private URI buildLocationUri(Object id) {

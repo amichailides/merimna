@@ -1,10 +1,7 @@
 package io.github.amichailides.merimna.beneficiary;
 
 
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySearchDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import lombok.RequiredArgsConstructor;
@@ -33,41 +30,42 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryRepository.existsByAmka(amka);
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public BeneficiaryReadOnlyDTO findById(Long id) {
+    public BeneficiaryDetailsDTO findById(Long id) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(id);
-        return beneficiaryMapper.toReadOnlyDTO(beneficiary);
+        return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
     @Transactional
-    public BeneficiaryReadOnlyDTO save(BeneficiarySaveDTO dto) {
+    public BeneficiaryDetailsDTO save(BeneficiarySaveDTO dto) {
 
         validator.validateForSave(dto);
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
-        return beneficiaryMapper.toReadOnlyDTO(savedBeneficiary);
+        return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
     }
 
     @Transactional
-    public BeneficiaryReadOnlyDTO discharge(Long id) {
+    public BeneficiaryDetailsDTO discharge(Long id) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(id);
 
         beneficiary.discharge(); // state check
         validator.validateForDischarge(beneficiary); // business rules
 
-        return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(beneficiary));
+        return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
     }
 
     @Transactional
-    public BeneficiaryReadOnlyDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
+    public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
         Beneficiary existing = getBeneficiaryOrThrow(id);
 
         validator.validateForUpdate(existing, dto);
 
         beneficiaryMapper.updateEntity(existing, dto);
 
-        return beneficiaryMapper.toReadOnlyDTO(beneficiaryRepository.save(existing));
+        return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(existing));
     }
 
     /**
@@ -76,7 +74,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<BeneficiaryReadOnlyDTO> findBeneficiaries(
+    public Page<BeneficiaryListDTO> findBeneficiaries(
             BeneficiarySearchDTO criteria,
             Pageable pageable) {
 
@@ -98,7 +96,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         }
 
         return beneficiaryRepository.findAll(spec, pageable)
-                .map(beneficiaryMapper::toReadOnlyDTO);
+                .map(beneficiaryMapper::toListDTO);
 
     }
 

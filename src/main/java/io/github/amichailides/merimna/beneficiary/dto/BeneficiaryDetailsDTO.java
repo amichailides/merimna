@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Builder
-public record BeneficiaryReadOnlyDTO(
+public record BeneficiaryDetailsDTO(
         @Schema(description = "Unique identifier of the beneficiary", example = "42")
         Long id,
 

@@ -2,7 +2,8 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.allergy.AllergyMapper;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryDetailsDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryListDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -21,10 +22,10 @@ public class BeneficiaryMapper {
     private final MedicationMapper medicationMapper;
     private final LegalRepresentativeMapper legalRepresentativeMapper;
 
-    public BeneficiaryReadOnlyDTO toReadOnlyDTO(Beneficiary entity) {
+    public BeneficiaryDetailsDTO toDetailsDTO(Beneficiary entity) {
         if (entity == null) return null;
 
-        return BeneficiaryReadOnlyDTO.builder()
+        return BeneficiaryDetailsDTO.builder()
                 .id(entity.getId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
@@ -43,6 +44,18 @@ public class BeneficiaryMapper {
                 .legalRepresentatives(entity.getLegalRepresentatives().stream()
                         .map(legalRepresentativeMapper::toReadOnlyDTO)
                         .toList())
+                .build();
+    }
+
+    public BeneficiaryListDTO toListDTO(Beneficiary entity) {
+        if (entity == null) return null;
+
+        return BeneficiaryListDTO.builder()
+                .id(entity.getId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .isActive(entity.isActive())
+                .houseUnit(entity.getHouseUnit())
                 .build();
     }
 
