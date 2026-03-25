@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BeneficiaryValidatorTest {
@@ -88,7 +88,7 @@ public class BeneficiaryValidatorTest {
     void shouldThrowWhenAmkaAlreadyExistsOnUpdate () {
 
         // @NonNull στο Entity
-        Beneficiary existing = createDefaultBeneficiary(true);
+        Beneficiary existing = createDefaultBeneficiary(1L,true);
         BeneficiaryUpdateDTO dto =  BeneficiaryUpdateDTO.builder()
                 .amka("06046678912")
                 .build();
@@ -110,7 +110,7 @@ public class BeneficiaryValidatorTest {
     @Test
     void shouldThrowWhenAmkaChangedAndMismatchesDobOnUpdate () {
 
-        Beneficiary existing = createDefaultBeneficiary(true);
+        Beneficiary existing = createDefaultBeneficiary(1L, true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .amka("06045678912")
@@ -131,7 +131,7 @@ public class BeneficiaryValidatorTest {
 
     @Test
     void shouldThrowWhenDobChangedAndMismatchesAmkaOnUpdate () {
-        Beneficiary existing = createDefaultBeneficiary(true);
+        Beneficiary existing = createDefaultBeneficiary(1L,true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .dateOfBirth(LocalDate.of(1956,4, 6))
@@ -152,7 +152,7 @@ public class BeneficiaryValidatorTest {
 
     @Test
     void shouldNotThrowExceptionWhenDataIsValidOnUpdate() {
-        Beneficiary existing = createDefaultBeneficiary(true);
+        Beneficiary existing = createDefaultBeneficiary(1L,true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .amka("06048678913")
@@ -165,7 +165,7 @@ public class BeneficiaryValidatorTest {
 
     @Test
     void shouldNotThrowWhenNothingChangedOnUpdate() {
-        Beneficiary existing = createDefaultBeneficiary(true);
+        Beneficiary existing = createDefaultBeneficiary(1L, true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .houseUnit(HouseUnit.UNIT_B)
@@ -174,9 +174,57 @@ public class BeneficiaryValidatorTest {
         assertDoesNotThrow(() -> validator.validateForUpdate(existing, dto));
     }
 
+    @Test
+    void validateForUpdate_shouldNotCheckDuplicate_whenAmkaDidNotChange() {
+        // arrange
+        Beneficiary existing = createDefaultBeneficiary(1L,true);
+        BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
+                .firstName("Jonathan")
+                .build();
 
-    private Beneficiary createDefaultBeneficiary(boolean isActive) {
+        // act
+        assertDoesNotThrow(
+                () -> validator.validateForUpdate(existing, updateDto)
+        );
+
+        //assert
+        verify(repository, never()).existsByAmkaAndIdNot(any(), any());
+
+    }
+
+    @Test
+    void validateForUpdate_shouldNotCheckConsistency_whenDuplicateAmkaFound() {
+        // arrange
+        Beneficiary existing = createDefaultBeneficiary(1L, true);
+        Long id = existing.getId();
+        BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
+                .amka("06048612345")
+                .dateOfBirth(LocalDate.of(1950, 1, 1)) // deliberately inconsistent
+                .build();
+
+        when(repository.existsByAmkaAndIdNot(dto.amka(), id)).thenReturn(true);
+
+        // act
+        DomainValidationException ex = assertThrows(
+                DomainValidationException.class,
+                () -> validator.validateForUpdate(existing, dto)
+        );
+
+        // assert
+        assertEquals(
+                ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey(),
+                ex.getValidationErrors().get("amka").getFirst()
+        );
+
+        verify(repository).existsByAmkaAndIdNot(dto.amka(), existing.getId());
+        verifyNoMoreInteractions(repository);
+
+    }
+
+
+    private Beneficiary createDefaultBeneficiary(Long id, boolean isActive) {
         return Beneficiary.builder()
+                .id(id)
                 .firstName("Joe")
                 .lastName("Doe")
                 .amka(("12345678912"))

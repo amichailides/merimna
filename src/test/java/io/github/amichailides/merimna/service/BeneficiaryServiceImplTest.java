@@ -59,7 +59,7 @@ public class BeneficiaryServiceImplTest {
 
     @Test
     //@DisplayName("Should not save beneficiary when validation fails")
-    void save_shouldNotPersist_whenValidationFails() {
+    void save_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
         BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
                 .firstName("Joe")
@@ -83,6 +83,8 @@ public class BeneficiaryServiceImplTest {
                 () -> beneficiaryService.save(dto)
         );
 
+        verify(validator).validateForSave(dto);
+        verifyNoInteractions(beneficiaryMapper);
         verify(beneficiaryRepository, never()).save(any());
 
     }
@@ -249,7 +251,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    void update_shouldNotPersist_whenValidationFails() {
+    void update_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
         Long beneficiaryId = 1L;
         Beneficiary existing = createDefaultBeneficiary(true);
@@ -270,9 +272,17 @@ public class BeneficiaryServiceImplTest {
         assertThrows(DomainValidationException.class,
                 () -> beneficiaryService.updateBeneficiary(beneficiaryId, updateDto));
 
+        // verify flow
+        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(validator).validateForUpdate(existing, updateDto);
+
+        // fail-fast
+        verify(beneficiaryMapper, never()).updateEntity(any(), any());
+        verify(beneficiaryMapper, never()).toReadOnlyDTO(any());
         verify(beneficiaryRepository, never()).save(any());
-        verify(beneficiaryMapper, never()).toReadOnlyDTO(existing);
     }
+
+
 
     private Beneficiary createDefaultBeneficiary(boolean isActive) {
         return Beneficiary.builder()
