@@ -1,35 +1,25 @@
 package io.github.amichailides.merimna.service;
 
-import io.github.amichailides.merimna.common.ErrorCode;
-import io.github.amichailides.merimna.dto.*;
-import io.github.amichailides.merimna.exception.BeneficiaryAlreadyInactiveException;
-import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByAmkaException;
-import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryServiceImpl;
+import io.github.amichailides.merimna.beneficiary.dto.*;
+import io.github.amichailides.merimna.common.error.ErrorCode;
+import io.github.amichailides.merimna.domain.*;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.exception.DomainValidationException;
-import io.github.amichailides.merimna.mapper.BeneficiaryMapper;
-import io.github.amichailides.merimna.model.*;
-import io.github.amichailides.merimna.repository.BeneficiaryRepository;
-import io.github.amichailides.merimna.service.validation.BeneficiaryValidator;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryMapper;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

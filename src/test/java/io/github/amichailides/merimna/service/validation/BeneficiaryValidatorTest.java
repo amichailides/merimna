@@ -1,11 +1,12 @@
 package io.github.amichailides.merimna.service.validation;
 
-import io.github.amichailides.merimna.common.ErrorCode;
-import io.github.amichailides.merimna.dto.BeneficiarySaveDTO;
-import io.github.amichailides.merimna.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryValidator;
+import io.github.amichailides.merimna.common.error.ErrorCode;
+import io.github.amichailides.merimna.domain.*;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
-import io.github.amichailides.merimna.model.*;
-import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

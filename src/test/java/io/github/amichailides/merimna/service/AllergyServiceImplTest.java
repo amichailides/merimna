@@ -1,15 +1,16 @@
 package io.github.amichailides.merimna.service;
 
+import io.github.amichailides.merimna.allergy.AllergyServiceImpl;
 import io.github.amichailides.merimna.domain.*;
-import io.github.amichailides.merimna.dto.AllergyCreateDTO;
-import io.github.amichailides.merimna.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.dto.AllergyUpdateDTO;
-import io.github.amichailides.merimna.exception.AllergyNotFoundException;
-import io.github.amichailides.merimna.exception.AllergyNotOwnedByBeneficiaryException;
-import io.github.amichailides.merimna.exception.BeneficiaryNotFoundByIdException;
-import io.github.amichailides.merimna.mapper.AllergyMapper;
-import io.github.amichailides.merimna.repository.AllergyRepository;
-import io.github.amichailides.merimna.repository.BeneficiaryRepository;
+import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
+import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.allergy.exception.AllergyNotFoundException;
+import io.github.amichailides.merimna.allergy.exception.AllergyNotOwnedByBeneficiaryException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.allergy.AllergyMapper;
+import io.github.amichailides.merimna.allergy.AllergyRepository;
+import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AllergiesServiceImplTest {
+public class AllergyServiceImplTest {
 
     @Mock
     private AllergyRepository allergyRepository;
@@ -37,7 +38,7 @@ public class AllergiesServiceImplTest {
     private BeneficiaryRepository beneficiaryRepository;
 
     @InjectMocks
-    private AllergiesServiceImpl allergiesService;
+    private AllergyServiceImpl allergiesService;
 
     @Test
     void addAllergy_shouldPersistAndReturnDto_whenBeneficiaryExists() {
