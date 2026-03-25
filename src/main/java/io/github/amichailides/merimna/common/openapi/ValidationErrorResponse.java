@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.config.openapi;
+package io.github.amichailides.merimna.common.openapi;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
