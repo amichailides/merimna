@@ -53,7 +53,7 @@ public class Beneficiary {
     @Setter(AccessLevel.NONE)
     @Builder.Default
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    private boolean isActive = true;
 
     @NonNull
     @Column(nullable = false)

@@ -225,7 +225,7 @@ public class BeneficiaryServiceImplTest {
         BeneficiaryReadOnlyDTO result = beneficiaryService.discharge(beneficiaryId);
 
         //assert
-        assertFalse(existing.getIsActive());
+        assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
         assertEquals(expectedDto, result);
         verify(validator).validateForDischarge(existing);
         verify(beneficiaryRepository).save(existing);

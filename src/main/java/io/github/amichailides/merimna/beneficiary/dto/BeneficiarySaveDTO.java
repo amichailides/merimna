@@ -41,9 +41,6 @@ public record BeneficiarySaveDTO(
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
-        @Schema(description = "Whether the beneficiary is active. Defaults to true if omitted.", example = "true")
-        Boolean isActive,
-
         @Schema(description = "The house unit the beneficiary is assigned to", example = "UNIT_A")
         @NotNull(message = "{houseUnit.required}")
         HouseUnit houseUnit,
