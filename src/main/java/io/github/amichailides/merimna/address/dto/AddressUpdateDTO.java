@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.beneficiary.dto;
+package io.github.amichailides.merimna.address.dto;
 
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;

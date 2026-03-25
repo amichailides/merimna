@@ -1,7 +1,7 @@
-package io.github.amichailides.merimna.beneficiary;
+package io.github.amichailides.merimna.address;
 
-import io.github.amichailides.merimna.beneficiary.dto.AddressDTO;
-import io.github.amichailides.merimna.beneficiary.dto.AddressUpdateDTO;
+import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
 import io.github.amichailides.merimna.domain.Address;
 import org.springframework.stereotype.Component;
 

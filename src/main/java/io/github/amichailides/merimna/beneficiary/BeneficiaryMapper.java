@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary;
 
+import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.allergy.AllergyMapper;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryReadOnlyDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;

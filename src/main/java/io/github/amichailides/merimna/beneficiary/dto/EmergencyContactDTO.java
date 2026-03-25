@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
+import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.domain.RelationshipType;
 
 import io.github.amichailides.merimna.validation.annotations.*;

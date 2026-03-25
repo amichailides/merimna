@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary;
 
+import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.beneficiary.dto.EmergencyContactDTO;
 import io.github.amichailides.merimna.beneficiary.dto.EmergencyContactUpdateDTO;
 import io.github.amichailides.merimna.domain.EmergencyContact;

@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
+import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
 import io.github.amichailides.merimna.domain.RelationshipType;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLandline;

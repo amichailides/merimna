@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
+import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.annotations.ValidDateOfBirth;

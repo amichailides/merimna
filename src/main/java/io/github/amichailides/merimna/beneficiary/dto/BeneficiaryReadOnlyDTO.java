@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
+import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
