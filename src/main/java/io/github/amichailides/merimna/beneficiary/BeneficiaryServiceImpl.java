@@ -33,7 +33,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     @Transactional(readOnly = true)
     public BeneficiaryDetailsDTO findById(Long id) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
+        Beneficiary beneficiary = beneficiaryRepository.findWithDetailsById(id)
+                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
