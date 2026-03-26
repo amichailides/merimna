@@ -51,7 +51,7 @@ public class BeneficiaryServiceImplTest {
     void findById_shouldThrowException_whenBeneficiaryMissing() {
         // arrange
         Long beneficiaryId = 1L;
-        when(beneficiaryRepository.findById(beneficiaryId))
+        when(beneficiaryRepository.findWithDetailsById(beneficiaryId))
                 .thenReturn(Optional.empty());
 
         // act & assert
@@ -59,8 +59,8 @@ public class BeneficiaryServiceImplTest {
                 BeneficiaryNotFoundByIdException.class,
                 () -> beneficiaryService.findById(beneficiaryId)
         );
-        verify(beneficiaryRepository).findById(beneficiaryId);
-
+        verify(beneficiaryRepository).findWithDetailsById(beneficiaryId);
+        verifyNoInteractions(beneficiaryMapper);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    void getBeneficiaryById_shouldReturnDto_whenIdExists() {
+    void findById_shouldReturnDetailsDto_whenBeneficiaryExists() {
         // arrange
         Long beneficiaryId = 1L;
         Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId, true);
@@ -138,7 +138,7 @@ public class BeneficiaryServiceImplTest {
                 .id(beneficiaryId)
                 .build();
 
-        when(beneficiaryRepository.findById(beneficiaryId))
+        when(beneficiaryRepository.findWithDetailsById(beneficiaryId))
                 .thenReturn(Optional.of(beneficiary));
 
         when(beneficiaryMapper.toDetailsDTO(beneficiary))
@@ -150,7 +150,7 @@ public class BeneficiaryServiceImplTest {
         // assert
         assertEquals(expectedDto, result);
 
-        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(beneficiaryRepository).findWithDetailsById(beneficiaryId);
         verify(beneficiaryMapper).toDetailsDTO(beneficiary);
 
     }
