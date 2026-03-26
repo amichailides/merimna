@@ -37,7 +37,10 @@ public enum ErrorCode {
     // Medication
     MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", HttpStatus.NOT_FOUND, "medication.notFound"),
     MEDICATION_ALREADY_ASSIGNED("MEDICATION_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "medication.alreadyAssigned"),
-    MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", HttpStatus.CONFLICT, "medication.notOwnedByBeneficiary");
+    MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", HttpStatus.CONFLICT, "medication.notOwnedByBeneficiary"),
+
+    // employee
+    EMPLOYEE_ALREADY_INACTIVE("EMPLOYEE_ALREADY_INACTIVE", HttpStatus.CONFLICT, "employee.alreadyInactive");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
