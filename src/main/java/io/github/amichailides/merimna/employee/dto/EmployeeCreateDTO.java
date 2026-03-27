@@ -36,7 +36,7 @@ public record EmployeeCreateDTO(
         String email,
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
-        @NotBlank(message = "{validation.mobile.required}", groups = FirstOrder.class)
+        @NotBlank(message = "{mobile.required}", groups = FirstOrder.class)
         @ValidMobile(groups = SecondOrder.class)
         String mobileNumber,
 
@@ -46,7 +46,7 @@ public record EmployeeCreateDTO(
         AddressDTO address,
 
         @Schema(description = "Employee position", example = "CAREGIVER")
-        @NotNull(message = "{validation.employee.position.required}", groups = FirstOrder.class)
+        @NotNull(message = "{employee.position.required}", groups = FirstOrder.class)
         EmployeePosition position,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")

@@ -24,6 +24,6 @@ public record LegalRepresentativeUpdateDTO(
         @Email(message = "{email.invalid}", groups = SecondOrder.class)
         String email,
 
-        @ValidGreekLatinText(max =500, message = "{legalRep.notes.invalid}", groups = SecondOrder.class)
+        @ValidGreekLatinText(max =500, message = "{legalRepresentative.notes.invalid}", groups = SecondOrder.class)
         String notes
 ) {}

@@ -24,7 +24,7 @@ import lombok.*;
 public class BeneficiarySearchDTO {
 
     @Schema(description = "Global search term (firstName, lastName, AMKA partial match). Ignored if amka is provided.", example = "Παπαδόπουλος")
-    @Size(min = 2, max = 50, message = "{validation.beneficiary.q.size}")
+    @Size(min = 2, max = 50, message = "{beneficiary.searchTerm.size}")
     private String q;
 
     @Schema(description = "Exact AMKA lookup. When present, q is ignored.", example = "12345678901")

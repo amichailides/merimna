@@ -175,8 +175,11 @@ public class GlobalExceptionHandler {
 
         log.error("Type mismatch for parameter '{}': {}", propertyName, providedValue);
 
-        String detail = String.format("Η τιμή '%s' δεν είναι έγκυρη για την παράμετρο '%s'.",
-                providedValue, propertyName);
+        String detail = messageSource.getMessage(
+                "error.request.parameter.typeMismatch",
+                new Object[]{String.valueOf(providedValue), propertyName},
+                LocaleContextHolder.getLocale()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

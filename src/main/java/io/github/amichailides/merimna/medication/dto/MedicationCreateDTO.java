@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record MedicationCreateDTO(
         @NotBlank(message = "{medication.name.required}", groups = FirstOrder.class)
-        @ValidGreekLatinText(message = "{medication.name.size}", groups = SecondOrder.class)
+        @ValidGreekLatinText(message = "{medication.name.invalid}", groups = SecondOrder.class)
         String name,
 
         @NotBlank(message = "{medication.dosage.required}", groups = FirstOrder.class)

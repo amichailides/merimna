@@ -16,7 +16,7 @@ public record LegalRepresentativeDTO(
         @NotBlank(message = "{afm.required}", groups = FirstOrder.class)
         String afm,
 
-        @NotNull(message = "{legalRep.required}", groups = FirstOrder.class )
+        @NotNull(message = "{legalRepresentative.required}", groups = FirstOrder.class )
         LegalRepresentativeType type,
 
         @NotBlank(message = "{firstName.required}", groups = FirstOrder.class)
@@ -36,6 +36,6 @@ public record LegalRepresentativeDTO(
         @Email(message = "{email.invalid}", groups = SecondOrder.class)
         String email,
 
-        @ValidGreekLatinText(max =500, message = "{legalRep.notes.invalid}", groups = SecondOrder.class)
+        @ValidGreekLatinText(max =500, message = "{legalRepresentative.notes.invalid}", groups = SecondOrder.class)
         String notes
 ) implements HasPhoneFields {}
