@@ -40,7 +40,8 @@ public enum ErrorCode {
     MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", HttpStatus.CONFLICT, "medication.notOwnedByBeneficiary"),
 
     // employee
-    EMPLOYEE_ALREADY_INACTIVE("EMPLOYEE_ALREADY_INACTIVE", HttpStatus.CONFLICT, "employee.alreadyInactive");
+    EMPLOYEE_ALREADY_INACTIVE("EMPLOYEE_ALREADY_INACTIVE", HttpStatus.CONFLICT, "employee.alreadyInactive"),
+    SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer

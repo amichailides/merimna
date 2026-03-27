@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyInactiveException;
+import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -58,8 +59,12 @@ public class Employee {
         this.isActive = false;
     }
 
-    public void changePosition(EmployeePosition position) {
-        this.position = position;
+    public void changePosition(EmployeePosition newPosition) {
+        if (this.position == newPosition) {
+            throw new SameEmployeePositionException(this.position);
+        }
+
+        this.position = newPosition;
     }
 
 }
