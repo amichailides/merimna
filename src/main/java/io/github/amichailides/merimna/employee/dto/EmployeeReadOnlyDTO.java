@@ -1,7 +1,10 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.domain.EmployeePosition;
+import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -25,6 +28,9 @@ public record EmployeeReadOnlyDTO(
 
         @Schema(description = "Employee residential address")
         AddressDTO address,
+
+        @Schema(description = "Employee position", example = "CAREGIVER")
+        EmployeePosition position,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         LocalDate hireDate

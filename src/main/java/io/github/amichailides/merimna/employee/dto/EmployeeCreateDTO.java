@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLastName;
 import io.github.amichailides.merimna.validation.annotations.ValidMobile;
@@ -36,13 +37,17 @@ public record EmployeeCreateDTO(
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
         @NotBlank(message = "{validation.mobile.required}", groups = FirstOrder.class)
-        @ValidMobile(message = "{mobile.invalid}", groups = SecondOrder.class)
+        @ValidMobile(groups = SecondOrder.class)
         String mobileNumber,
 
         @Schema(description = "Employee residential address")
         @Valid
         @NotNull(message = "{address.required}")
         AddressDTO address,
+
+        @Schema(description = "Employee position", example = "CAREGIVER")
+        @NotNull(message = "{validation.employee.position.required}", groups = FirstOrder.class)
+        EmployeePosition position,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         @NotNull(message = "{employee.hireDate.required}", groups = FirstOrder.class)
