@@ -123,6 +123,7 @@ public class BeneficiaryController {
                     )
             )
     })
+    // TODO(#9): Replace {id} path variable with public identifier (UUID/ULID).
     @GetMapping("/{id}")
     public ResponseEntity<BeneficiaryDetailsDTO> getById(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
