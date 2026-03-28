@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.domain;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyInactiveException;
 import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "Employees")
+@Table(name = "employees")
 public class Employee {
 
     @Id
@@ -26,18 +27,14 @@ public class Employee {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String mobileNumber;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "street", column = @Column(name = "emp_street", nullable = false)),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "emp_number", nullable = false)),
-            @AttributeOverride(name = "city", column = @Column(name = "emp_city", nullable = false)),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "emp_zip", nullable = false))
-    })
+    @NotNull
     private Address address;
 
     @Column(nullable = false)
