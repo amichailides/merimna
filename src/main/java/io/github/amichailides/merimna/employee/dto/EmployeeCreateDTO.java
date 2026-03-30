@@ -9,13 +9,11 @@ import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder
 public record EmployeeCreateDTO(
@@ -44,6 +42,11 @@ public record EmployeeCreateDTO(
         @Valid
         @NotNull(message = "{address.required}")
         AddressDTO address,
+
+
+        @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
+        @NotEmpty(message = "{houseUnit.required}", groups = FirstOrder.class)
+        Set<String> houseUnitCodes,
 
         @Schema(description = "Employee position", example = "CAREGIVER")
         @NotNull(message = "{employee.position.required}", groups = FirstOrder.class)
