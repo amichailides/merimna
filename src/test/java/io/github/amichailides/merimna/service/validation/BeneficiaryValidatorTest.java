@@ -168,7 +168,6 @@ public class BeneficiaryValidatorTest {
         Beneficiary existing = createDefaultBeneficiary(1L, true);
 
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
-                .houseUnit(HouseUnit.UNIT_B)
                 .build();
 
         assertDoesNotThrow(() -> validator.validateForUpdate(existing, dto));
@@ -229,7 +228,7 @@ public class BeneficiaryValidatorTest {
                 .lastName("Doe")
                 .amka(("12345678912"))
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnit(createDefaultHouseUnit())
                 .permanentAddress( Address.builder()
                         .street("Αγίου Μελέτιου")
                         .streetNumber("32")
@@ -248,6 +247,15 @@ public class BeneficiaryValidatorTest {
                                 .build())
                         .build())
                 .isActive(isActive)
+                .build();
+    }
+
+    private HouseUnit createDefaultHouseUnit() {
+        return HouseUnit.builder()
+                .id(1L)
+                .code("UNIT_A")
+                .displayName("Στέγη Α")
+                .address("Ελπίδας 10, Μαρούσι")
                 .build();
     }
 }

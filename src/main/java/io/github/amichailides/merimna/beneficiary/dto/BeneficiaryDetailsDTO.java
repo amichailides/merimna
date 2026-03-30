@@ -2,7 +2,6 @@ package io.github.amichailides.merimna.beneficiary.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,8 +31,11 @@ public record BeneficiaryDetailsDTO(
         @Schema(description = "Whether the beneficiary is currently active", example = "true")
         Boolean isActive,
 
-        @Schema(description = "Assigned house unit", example = "UNIT_A")
-        HouseUnit houseUnit,
+        @Schema(description = "Assigned house unit code", example = "UNIT_A")
+        String houseUnitCode,
+
+        @Schema(description = "Assigned house unit display name", example = "ΣΥΔ 2")
+        String houseUnitDisplayName,
 
         @Schema(description = "Permanent residential address")
         AddressDTO permanentAddress,

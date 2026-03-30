@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.annotations.ValidDateOfBirth;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
@@ -31,7 +30,7 @@ public record BeneficiaryUpdateDTO(
         LocalDate dateOfBirth,
 
         @Schema(description = "Updated house unit assignment", example = "UNIT_B")
-        HouseUnit houseUnit,
+        String houseUnit,
 
         @Schema(description = "Updated permanent address. Only provided fields will be changed.")
         @Valid

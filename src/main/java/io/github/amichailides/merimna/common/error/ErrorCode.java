@@ -41,7 +41,13 @@ public enum ErrorCode {
 
     // employee
     EMPLOYEE_ALREADY_INACTIVE("EMPLOYEE_ALREADY_INACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyInactive"),
-    SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same");
+    SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same"),
+    EMPLOYEE_NOT_FOUND_BY_ID("EMPLOYEE_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employee.notFoundById"),
+
+
+    // houseUnit
+    HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
+    HOUSE_UNIT_ALREADY_EXISTS("HOUSE_UNIT_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.houseUnit.alreadyExists");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer

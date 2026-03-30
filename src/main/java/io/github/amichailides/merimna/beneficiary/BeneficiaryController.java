@@ -14,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -201,6 +203,16 @@ public class BeneficiaryController {
                 .totalPages(page.getTotalPages())
                 .build()
         );
+    }
+
+
+    @PatchMapping("/{id}/house-unit/{code}")
+    public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
+            @PathVariable @Positive Long id,
+            @PathVariable @NotBlank @Size(max = 20) String code) {
+
+        BeneficiaryListDTO updated = service.changeHouseUnit(id, code);
+        return ResponseEntity.ok(updated);
     }
 
     private URI buildLocationUri(Object id) {

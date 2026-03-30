@@ -345,7 +345,7 @@ public class AllergyServiceImplTest {
                 .lastName("Doe")
                 .amka(("06048678912"))
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnit(createDefaultHouseUnit())
                 .permanentAddress( Address.builder()
                         .street("Αγιου Μελετιου")
                         .streetNumber("32")
@@ -397,6 +397,15 @@ public class AllergyServiceImplTest {
                 .substance("Γύρη / Pollen")
                 .severity(AllergySeverity.MEDIUM)
                 .reaction("Δυσκολία στην αναπνοή και φτέρνισμα")
+                .build();
+    }
+
+    private HouseUnit createDefaultHouseUnit() {
+        return HouseUnit.builder()
+                .id(1L)
+                .code("UNIT_A")
+                .displayName("Στέγη Α")
+                .address("Ελπίδας 10, Μαρούσι")
                 .build();
     }
 }

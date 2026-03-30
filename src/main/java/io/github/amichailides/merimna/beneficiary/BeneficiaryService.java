@@ -17,4 +17,6 @@ public interface BeneficiaryService {
     public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto);
 
     Page<BeneficiaryListDTO> findBeneficiaries(BeneficiarySearchDTO criteria, Pageable pageable);
+
+    BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code);
 }

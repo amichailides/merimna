@@ -4,6 +4,9 @@ package io.github.amichailides.merimna.beneficiary;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
+import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final BeneficiaryMapper beneficiaryMapper;
     private final BeneficiaryValidator validator;
+    private final HouseUnitRepository houseUnitRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,7 +48,10 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         validator.validateForSave(dto);
 
-        Beneficiary beneficiary = beneficiaryMapper.toEntity(dto);
+        HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
+                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
+
+        Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
         return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
     }
@@ -53,8 +60,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryDetailsDTO discharge(Long id) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(id);
 
-        beneficiary.discharge(); // state check
         validator.validateForDischarge(beneficiary); // business rules
+        beneficiary.discharge(); // state check
 
         return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
     }
@@ -67,7 +74,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         beneficiaryMapper.updateEntity(existing, dto);
 
-        return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(existing));
+        return beneficiaryMapper.toDetailsDTO(existing);
     }
 
     /**
@@ -99,7 +106,19 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         return beneficiaryRepository.findAll(spec, pageable)
                 .map(beneficiaryMapper::toListDTO);
+    }
 
+    @Override
+    @Transactional
+    // TODO(#10): Add domain validation for houseUnit assignment
+    public BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+
+        HouseUnit houseUnit = houseUnitRepository.findByCode(code)
+                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
+
+        beneficiary.assignToHouseUnit(houseUnit);
+        return beneficiaryMapper.toListDTO(beneficiary);
     }
 
     private boolean hasText(String value) {

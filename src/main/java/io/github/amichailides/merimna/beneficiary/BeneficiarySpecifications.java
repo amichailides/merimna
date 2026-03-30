@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
@@ -47,11 +46,11 @@ public class BeneficiarySpecifications {
         };
     }
 
-    public static Specification<Beneficiary> hasHouseUnit(HouseUnit houseUnit) {
+    public static Specification<Beneficiary> hasHouseUnit(String code) {
         return (root, query, cb) ->
-                houseUnit == null
+                code == null
                         ? null
-                        : cb.equal(root.get("houseUnit"), houseUnit);
+                        : cb.equal(root.join("houseUnit").get("code"), code);
     }
 
     public static Specification<Beneficiary> hasAmka(String amka) {

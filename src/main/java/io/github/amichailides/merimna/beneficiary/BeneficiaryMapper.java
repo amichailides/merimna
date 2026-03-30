@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryListDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.legalrepresentative.LegalRepresentativeMapper;
 import io.github.amichailides.merimna.medication.MedicationMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,8 @@ public class BeneficiaryMapper {
                 .amka(entity.getAmka())
                 .dateOfBirth(entity.getDateOfBirth())
                 .isActive(entity.isActive())
-                .houseUnit(entity.getHouseUnit())
+                .houseUnitCode(entity.getHouseUnit().getCode())
+                .houseUnitDisplayName(entity.getHouseUnit().getDisplayName())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
                 .emergencyContact(emergencyMapper.toDTO(entity.getEmergencyContact()))
                 .medications(entity.getMedications()
@@ -55,11 +57,11 @@ public class BeneficiaryMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .isActive(entity.isActive())
-                .houseUnit(entity.getHouseUnit())
+                .houseUnit(entity.getHouseUnit().getCode())
                 .build();
     }
 
-    public Beneficiary toEntity(BeneficiarySaveDTO dto) {
+    public Beneficiary toEntity(BeneficiarySaveDTO dto, HouseUnit houseUnit) {
         if (dto == null) return null;
 
         return Beneficiary.builder()
@@ -67,7 +69,7 @@ public class BeneficiaryMapper {
                 .lastName(dto.lastName())
                 .amka(dto.amka())
                 .dateOfBirth(dto.dateOfBirth())
-                .houseUnit(dto.houseUnit())
+                .houseUnit(houseUnit)
                 .permanentAddress(addressMapper.toEntity(dto.permanentAddress()))
                 .emergencyContact(emergencyMapper.toEntity(dto.emergencyContact()))
                 .build();
@@ -81,7 +83,6 @@ public class BeneficiaryMapper {
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
         if (dto.amka() != null) existing.setAmka(dto.amka());
         if (dto.dateOfBirth() != null) existing.setDateOfBirth(dto.dateOfBirth());
-        if (dto.houseUnit() != null) existing.setHouseUnit(dto.houseUnit());
 
         if (dto.permanentAddress() != null) {
             addressMapper.updateEntity(existing.getPermanentAddress(), dto.permanentAddress());

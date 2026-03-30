@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.beneficiary.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.validation.annotations.ValidAmka;
 import io.github.amichailides.merimna.validation.annotations.ValidDateOfBirth;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
@@ -42,8 +41,8 @@ public record BeneficiarySaveDTO(
         LocalDate dateOfBirth,
 
         @Schema(description = "The house unit the beneficiary is assigned to", example = "UNIT_A")
-        @NotNull(message = "{houseUnit.required}")
-        HouseUnit houseUnit,
+        @NotBlank(message = "{houseUnit.required}")
+        String houseUnitCode,
 
         @Schema(description = "Permanent residential address of the beneficiary")
         @Valid

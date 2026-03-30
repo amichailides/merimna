@@ -11,6 +11,7 @@ import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryMapper;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryValidator;
+import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -44,6 +45,9 @@ public class BeneficiaryServiceImplTest {
     @Mock
     private BeneficiaryValidator validator;
 
+    @Mock
+    private HouseUnitRepository houseUnitRepository;
+
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
 
@@ -66,13 +70,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     void save_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
-        BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("12345678912")
-                .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
-                .build();
+        BeneficiarySaveDTO dto = createDefaultBeneficiarySaveDTO();
 
         Map<String, String> errors = Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
@@ -164,7 +162,10 @@ public class BeneficiaryServiceImplTest {
 
         BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(1L, true);
 
-        when(beneficiaryMapper.toEntity(saveDto)).thenReturn(entityFromMapper);
+        when(houseUnitRepository.findByCode(saveDto.houseUnitCode()))
+                .thenReturn(Optional.of(createDefaultHouseUnit()));
+        when(beneficiaryMapper.toEntity(eq(saveDto), any(HouseUnit.class)))
+                .thenReturn(entityFromMapper);
         when(beneficiaryRepository.save(entityFromMapper)).thenReturn(savedEntity);
         when(beneficiaryMapper.toDetailsDTO(savedEntity)).thenReturn(expectedDto);
 
@@ -176,7 +177,8 @@ public class BeneficiaryServiceImplTest {
         assertEquals(expectedDto, result);
 
         verify(beneficiaryRepository).save(entityFromMapper);
-        verify(beneficiaryMapper).toEntity(saveDto);
+        verify(beneficiaryMapper).toEntity(eq(saveDto), any(HouseUnit.class));
+        verify(houseUnitRepository).findByCode(saveDto.houseUnitCode());
         verify(beneficiaryMapper).toDetailsDTO(savedEntity);
         verify(validator).validateForSave(saveDto);
     }
@@ -188,7 +190,7 @@ public class BeneficiaryServiceImplTest {
         Beneficiary existing = createDefaultBeneficiary(beneficiaryId, true);
 
         BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
-                .houseUnit(HouseUnit.UNIT_B)
+                .firstName("UpdatedName")
                 .build();
 
         BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, true);
@@ -378,7 +380,7 @@ public class BeneficiaryServiceImplTest {
                 .lastName("Doe")
                 .amka("12345678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnit(createDefaultHouseUnit())
                 .permanentAddress(Address.builder()
                         .street("Αγίου Μελέτιου")
                         .streetNumber("32")
@@ -410,7 +412,7 @@ public class BeneficiaryServiceImplTest {
                 .lastName("Doe")
                 .amka("12345678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnitCode("UNIT_A")
                 .permanentAddress(createDefaultAddressDTO())
                 .emergencyContact(createDefaultEmergencyContactDTO())
                 .build();
@@ -441,7 +443,8 @@ public class BeneficiaryServiceImplTest {
                 .lastName("Doe")
                 .amka("12345678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnitCode("UNIT_A")
+                .houseUnitDisplayName("Στέγη Α")
                 .isActive(isActive)
                 .permanentAddress(createDefaultAddressDTO())
                 .emergencyContact(createDefaultEmergencyContactDTO())
@@ -453,8 +456,17 @@ public class BeneficiaryServiceImplTest {
                 .id(id)
                 .firstName("Joe")
                 .lastName("Doe")
-                .houseUnit(HouseUnit.UNIT_A)
+                .houseUnit("UNIT_A")
                 .isActive(isActive)
+                .build();
+    }
+
+    private HouseUnit createDefaultHouseUnit() {
+        return HouseUnit.builder()
+                .id(1L)
+                .code("UNIT_A")
+                .displayName("Στέγη Α")
+                .address("Ελπίδας 10, Μαρούσι")
                 .build();
     }
 }
