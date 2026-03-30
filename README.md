@@ -1,13 +1,17 @@
-# Merimna - Supported Living Management System
+# Merimna — Supported Living Management System
 
 ## Overview
 
-**Merimna** ("Care") is a Spring Boot REST API designed to support the management of supported living structures for
-people with disabilities.
+**Merimna** (meaning "care" in Greek) is a Spring Boot REST API designed to support the management of supported living
+structures for people with disabilities.
 
 The project is inspired by real supported living environments, where staff need clear records, reliable updates, and
-simple day-to-day workflows around care-related information. At this stage, the focus is on the backend and on keeping
-the structure understandable as the domain grows.
+simple day-to-day workflows around care-related information.
+
+This project focuses on modeling real-world care workflows, where data consistency, clear domain rules, and controlled
+state transitions are critical.
+
+At this stage, the focus is on the backend and on keeping the structure understandable as the domain grows.
 
 ## Key Features & Architecture
 
@@ -36,36 +40,41 @@ the structure understandable as the domain grows.
 - **API Documentation:** Springdoc OpenAPI
 - **Validation Engine:** Jakarta Bean Validation (Hibernate Validator)
 
-## API Endpoints
+## API Overview
 
-| Method  | Endpoint                            | Description                                                    |
-|---------|-------------------------------------|----------------------------------------------------------------|
-| `POST`  | `/api/beneficiaries`                | Creates a beneficiary after request and domain validation.     |
-| `GET`   | `/api/beneficiaries/{id}`           | Returns a beneficiary by ID along with related information.    |
-| `GET`   | `/api/beneficiaries`                | Lists beneficiaries with pagination and basic filtering.       |
-| `PATCH` | `/api/beneficiaries/{id}`           | Applies partial updates while keeping validation rules intact. |
-| `POST`  | `/api/beneficiaries/{id}/discharge` | Marks a beneficiary as inactive through a domain action.       |
+The API is centered around the `Beneficiary` aggregate and its related domain resources.
 
-### Nested Resources
+### Core endpoints
 
-Related beneficiary data is managed through dedicated nested endpoints:
+- `POST /api/beneficiaries`
+- `GET /api/beneficiaries`
+- `GET /api/beneficiaries/{id}`
+- `PATCH /api/beneficiaries/{id}`
+- `POST /api/beneficiaries/{id}/discharge`
+- `PATCH /api/beneficiaries/{id}/house-unit/{code}`
 
-- **Allergies:** `/api/beneficiaries/{id}/allergies`
-- **Medications:** `/api/beneficiaries/{id}/medications`
-- **Legal Representatives:** `/api/beneficiaries/{id}/legal-representatives`
+### Related resources
 
-Each nested resource follows the same general REST pattern (create, retrieve, update, remove).
+- `/api/beneficiaries/{beneficiaryId}/allergies`
+- `/api/beneficiaries/{beneficiaryId}/medications`
+- `/api/beneficiaries/{beneficiaryId}/legal-representatives/{legalRepresentativeId}`
+
+### Additional resources
+
+- `/api/legal-representatives`
+- `/api/house-units`
+- `/api/employees`
+
+## API Documentation
+
+- `/api/v3/api-docs` — OpenAPI specification
+- `/api/scalar` — interactive API UI
 
 ## Design Considerations
 
 - Validation is split between DTO-level checks and domain/business rules.
 - API responses aim to stay consistent across resources and error cases.
 - Controllers, services, mappers, and entities keep separate responsibilities.
-
-## API Documentation
-
-- `/api/v3/api-docs` is the OpenAPI contract.
-- `/api/scalar` is the interactive UI.
 
 ## Development Setup
 
