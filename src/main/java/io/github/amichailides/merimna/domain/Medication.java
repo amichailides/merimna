@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "medications")
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

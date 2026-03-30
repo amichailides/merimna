@@ -31,9 +31,9 @@ public class EmergencyContact {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "emergency_street",nullable = false)),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_number")),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "emergency_street_number")),
             @AttributeOverride(name = "city", column = @Column(name = "emergency_city",nullable = false)),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip", nullable = false))
+            @AttributeOverride(name = "zipCode", column = @Column(name = "emergency_zip_code", nullable = false))
     })
     private Address address;
 

@@ -1,16 +1,29 @@
 package io.github.amichailides.merimna.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.Set;
+
+@Entity
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public enum HouseUnit {
-    UNIT_A("Στέγη Α", "Ελπίδας 10, Μαρούσι"),
-    UNIT_B("Στέγη Β", "Μέγα Αλέξανδρου 2, Μαρούσι"),
-    UNIT_C("Στέγη Γ", "Αγίου Μελετίου 22, Πατήσια");
+@Builder
+@Table(name = "house_units")
+public class HouseUnit {
 
-    private final String displayName;
-    private final String address;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(nullable = false, unique = true, length = 20)
+    private String code; // "UNIT_A", "UNIT_B", "UNIT_C"
+
+    @Column(nullable = false)
+    private String displayName;
+
+    @Column(nullable = false)
+    private String address;
 }

@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -14,11 +16,14 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
 @Table(name = "employees")
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    // TODO(#9): Use publicId as immutable identifier for equals/hashCode (avoid mutable field issues)
     private Long id;
 
     @Column(nullable = false)
@@ -48,6 +53,15 @@ public class Employee {
     @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "employee_house_units",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "house_unit_id")
+    )
+    private Set<HouseUnit> houseUnits = new HashSet<>();
 
 
 

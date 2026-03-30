@@ -32,6 +32,7 @@ public class Beneficiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    // TODO(#9): Use publicId as immutable identifier for equals/hashCode (avoid mutable field issues)
     private Long id;
 
     @NonNull
@@ -56,8 +57,8 @@ public class Beneficiary {
     private boolean isActive = true;
 
     @NonNull
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "house_unit_id", nullable = false)
     private HouseUnit houseUnit;
 
     /*
@@ -68,9 +69,9 @@ public class Beneficiary {
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "street", column = @Column(name = "perm_street", nullable = false)),
-            @AttributeOverride(name = "streetNumber", column = @Column(name = "perm_number", nullable = false)),
+            @AttributeOverride(name = "streetNumber", column = @Column(name = "perm_street_number", nullable = false)),
             @AttributeOverride(name = "city", column = @Column(name = "perm_city", nullable = false)),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "perm_zip", nullable = false))
+            @AttributeOverride(name = "zipCode", column = @Column(name = "perm_zip_code", nullable = false))
     })
     private Address permanentAddress;
 
@@ -160,6 +161,11 @@ public class Beneficiary {
 
         this.isActive = false;
         // TODO: add exitReason, exitDate, approvedBy fields when DischargeDTO is implemented
+    }
+
+    // TODO(#10): Add domain validation for houseUnit assignment
+    public void assignToHouseUnit(@NonNull HouseUnit houseUnit) {
+        this.houseUnit = houseUnit;
     }
 
 }
