@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.exception.BaseDomainException;
 
 public class HouseUnitAlreadyExistsException extends BaseDomainException {
     public HouseUnitAlreadyExistsException(String code) {
+
         super(ErrorCode.HOUSE_UNIT_ALREADY_EXISTS, code);
     }
 }

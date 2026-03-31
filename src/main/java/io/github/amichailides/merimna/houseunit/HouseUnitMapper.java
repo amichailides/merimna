@@ -3,7 +3,10 @@ package io.github.amichailides.merimna.houseunit;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
+import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 public class HouseUnitMapper {
@@ -27,5 +30,14 @@ public class HouseUnitMapper {
                 .displayName(dto.displayName())
                 .address(dto.address())
                 .build();
+    }
+
+    public void updateEntity(HouseUnit existing, HouseUnitUpdateDTO dto) {
+        Objects.requireNonNull(existing, "HouseUnit must not be null");
+        Objects.requireNonNull(dto, "HouseUnitUpdateDTO must not be null");
+
+        if (dto.code() != null) existing.setCode(dto.code());
+        if (dto.displayName() != null) existing.setDisplayName(dto.displayName());
+        if (dto.address() != null) existing.setAddress(dto.address());
     }
 }

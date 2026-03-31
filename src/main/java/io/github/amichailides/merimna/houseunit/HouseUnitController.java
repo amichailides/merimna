@@ -2,7 +2,10 @@ package io.github.amichailides.merimna.houseunit;
 
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
+import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
+import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +38,17 @@ public class HouseUnitController {
         return ResponseEntity
                 .created(buildLocationUri(houseUnit.id()))
                 .body(houseUnit);
+    }
+
+    @PatchMapping("/{houseUnitCode}")
+    public ResponseEntity<HouseUnitReadOnlyDTO> updateHouseUnit(
+            @PathVariable
+            @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE, message = "{houseUnit.code.invalid}")
+            String houseUnitCode,
+            @Validated(ValidationGroupSequence.class) @RequestBody HouseUnitUpdateDTO dto) {
+
+        HouseUnitReadOnlyDTO updated = houseUnitService.updateHouseUnit(houseUnitCode, dto);
+        return ResponseEntity.ok(updated);
     }
 
     private URI buildLocationUri(Object id) {

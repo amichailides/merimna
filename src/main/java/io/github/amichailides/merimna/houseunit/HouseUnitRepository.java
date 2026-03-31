@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface HouseUnitRepository extends JpaRepository<HouseUnit, Long> {
     Optional<HouseUnit> findByCode(String code);
     boolean existsByCode(String code);
-
+    boolean existsByCodeAndIdNot(String code, Long houseUnitId);
 }
