@@ -116,6 +116,13 @@ Some changes that shaped the current codebase include:
 - Making validation and domain rules more explicit and isolated by responsibility.
 - Centralizing error handling so API responses remain consistent.
 
+## Non-functional Concerns
+
+### Security
+Dependencies are periodically reviewed and updated to address known vulnerabilities (CVEs) during development.
+
+### Documentation
 Architectural decisions are documented in the [ADR section](docs/adr).
 
+### Project Tracking
 Ongoing improvements are tracked through [Issues](https://github.com/amichailides/merimna/issues).
