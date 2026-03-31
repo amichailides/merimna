@@ -24,7 +24,7 @@ public enum ErrorCode {
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "error.beneficiary.amkaDateMismatch"),
     BENEFICIARY_ALREADY_INACTIVE("BENEFICIARY_ALREADY_INACTIVE", HttpStatus.CONFLICT, "error.beneficiary.alreadyInactive"),
     LEGAL_REPRESENTATIVE_ALREADY_ASSIGNED("LEGAL_REPRESENTATIVE_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.alreadyAssigned"),
-
+    BENEFICIARY_ALREADY_IN_HOUSE_UNIT("BENEFICIARY_ALREADY_IN_HOUSE_UNIT", HttpStatus.CONFLICT, "error.beneficiary.alreadyInHouseUnit"),
     // LegalRepresentative
     LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID("LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.legalRepresentative.notFoundById"),
     LEGAL_REPRESENTATIVE_NOT_ASSIGNED("LEGAL_REPRESENTATIVE_NOT_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.notAssigned"),

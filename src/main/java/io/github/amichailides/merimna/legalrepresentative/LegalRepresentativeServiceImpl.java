@@ -30,13 +30,9 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     }
 
     @Transactional
-    public void assignLegalRepresentative(Long beneficiaryId, Long legalRepresentativeId) {
+    public void assignToBeneficiary(Long beneficiaryId, Long legalRepresentativeId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
         LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
-
-        if (beneficiary.getLegalRepresentatives().contains(legal)) {
-            throw new LegalRepresentativeAlreadyAssignedException(legalRepresentativeId, beneficiaryId);
-        }
 
         beneficiary.addLegalRepresentative(legal);
     }

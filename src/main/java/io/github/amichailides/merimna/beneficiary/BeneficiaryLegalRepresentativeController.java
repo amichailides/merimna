@@ -18,7 +18,7 @@ public class BeneficiaryLegalRepresentativeController {
             @PathVariable Long beneficiaryId,
             @PathVariable Long legalRepresentativeId) {
 
-        legalRepresentativeService.assignLegalRepresentative(beneficiaryId, legalRepresentativeId);
+        legalRepresentativeService.assignToBeneficiary(beneficiaryId, legalRepresentativeId);
         return ResponseEntity.noContent().build();
     }
 

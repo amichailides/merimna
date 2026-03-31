@@ -117,7 +117,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         HouseUnit houseUnit = houseUnitRepository.findByCode(code)
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
 
-        beneficiary.assignToHouseUnit(houseUnit);
+        beneficiary.changeHouseUnit(houseUnit);
         return beneficiaryMapper.toListDTO(beneficiary);
     }
 

@@ -1,6 +1,8 @@
 package io.github.amichailides.merimna.domain;
 
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
+import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -144,13 +146,21 @@ public class Beneficiary {
     }
 
     public void addLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
+        if (this.legalRepresentatives.contains(legalRepresentative)) {
+            throw new LegalRepresentativeAlreadyAssignedException(
+                    legalRepresentative.getId(),
+                    this.getId()
+            );
+        }
+
         this.legalRepresentatives.add(legalRepresentative);
         legalRepresentative.getBeneficiaries().add(this);
+
     }
 
     public void removeLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
         this.legalRepresentatives.remove(legalRepresentative);
-        legalRepresentative.removeBeneficiary(this);
+        legalRepresentative.getBeneficiaries().remove(this);
     }
 
     public void discharge() {
@@ -164,8 +174,14 @@ public class Beneficiary {
     }
 
     // TODO(#10): Add domain validation for houseUnit assignment
-    public void assignToHouseUnit(@NonNull HouseUnit houseUnit) {
-        this.houseUnit = houseUnit;
+    public void changeHouseUnit(@NonNull HouseUnit newHouseUnit) {
+
+        // Objects.equals => no NullPointerException
+        if (Objects.equals(this.houseUnit, newHouseUnit)){
+            throw new BeneficiaryAlreadyInHouseUnitException(this.getId(), houseUnit.getCode());
+        }
+
+        this.houseUnit = newHouseUnit;
     }
 
 }

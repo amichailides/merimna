@@ -43,13 +43,4 @@ public class LegalRepresentative {
     @Builder.Default
     private Set<Beneficiary> beneficiaries = new HashSet<>();
 
-    public void addBeneficiary(@NonNull Beneficiary beneficiary) {
-        this.beneficiaries.add(beneficiary);
-        beneficiary.getLegalRepresentatives().add(this);
-    }
-
-    public void removeBeneficiary(Beneficiary beneficiary) {
-        this.beneficiaries.remove(beneficiary);
-        beneficiary.getLegalRepresentatives().remove(this);
-    }
 }
