@@ -36,7 +36,7 @@ public class HouseUnitController {
 
         HouseUnitReadOnlyDTO houseUnit = houseUnitService.createHouseUnit(dto);
         return ResponseEntity
-                .created(buildLocationUri(houseUnit.id()))
+                .created(buildLocationUri(houseUnit.code()))
                 .body(houseUnit);
     }
 
@@ -51,11 +51,16 @@ public class HouseUnitController {
         return ResponseEntity.ok(updated);
     }
 
-    private URI buildLocationUri(Object id) {
+    @GetMapping("/{code}")
+    public ResponseEntity<HouseUnitReadOnlyDTO> getHouseUnitByCode(@PathVariable String code) {
+        return ResponseEntity.ok(houseUnitService.getHouseUnitByCode(code));
+    }
+
+    private URI buildLocationUri(String code) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{code}")
+                .buildAndExpand(code)
                 .toUri();
     }
 }

@@ -4,7 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record HouseUnitReadOnlyDTO(
-        Long id,
         String code,
         String displayName,
         String address

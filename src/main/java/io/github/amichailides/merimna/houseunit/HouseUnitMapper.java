@@ -15,7 +15,6 @@ public class HouseUnitMapper {
         if (entity == null) return null;
 
         return HouseUnitReadOnlyDTO.builder()
-                .id(entity.getId())
                 .code(entity.getCode())
                 .displayName(entity.getDisplayName())
                 .address(entity.getAddress())

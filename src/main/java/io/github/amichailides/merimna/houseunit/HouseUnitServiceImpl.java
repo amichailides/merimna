@@ -37,6 +37,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
             throw new HouseUnitAlreadyExistsException(dto.code());
         }
 
+        System.out.println("POST createHouseUnit hit");
         HouseUnit houseUnit = houseUnitMapper.toEntity(dto);
         HouseUnit saved = houseUnitRepository.save(houseUnit);
         return houseUnitMapper.toDTO(saved);
@@ -55,6 +56,15 @@ public class HouseUnitServiceImpl implements HouseUnitService{
 
         houseUnitMapper.updateEntity(existing, dto);
         return houseUnitMapper.toDTO(existing);
+    }
+
+    @Transactional
+    @Override
+    public HouseUnitReadOnlyDTO getHouseUnitByCode(String code) {
+        HouseUnit houseUnit = houseUnitRepository.findByCode(code)
+                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
+
+        return houseUnitMapper.toDTO(houseUnit);
     }
 
 

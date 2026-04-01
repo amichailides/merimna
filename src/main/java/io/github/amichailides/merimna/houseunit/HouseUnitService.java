@@ -11,5 +11,7 @@ public interface HouseUnitService {
 
     HouseUnitReadOnlyDTO createHouseUnit(HouseUnitCreateDTO dto);
 
-    public HouseUnitReadOnlyDTO updateHouseUnit(String houseUnitCode, HouseUnitUpdateDTO dto);
+    HouseUnitReadOnlyDTO updateHouseUnit(String houseUnitCode, HouseUnitUpdateDTO dto);
+
+    HouseUnitReadOnlyDTO getHouseUnitByCode(String code);
 }
