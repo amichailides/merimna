@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,11 +23,11 @@ public class AllergyController {
     private final AllergyService allergyService;
 
     @PostMapping
-    public ResponseEntity<AllergyReadOnlyDTO> addAllergy(
-            @PathVariable Long beneficiaryId,
+    public ResponseEntity<AllergyReadOnlyDTO> createAllergy(
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyCreateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergyService.addAllergy(beneficiaryId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.createAllergy(beneficiaryId, dto);
 
         return ResponseEntity
                 .created(buildLocationUri(allergy.id()))
@@ -35,8 +36,8 @@ public class AllergyController {
 
     @PatchMapping("/{allergyId}")
     public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
-            @PathVariable Long beneficiaryId,
-            @PathVariable Long allergyId,
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyUpdateDTO dto) {
 
         AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryId, allergyId, dto);
@@ -45,15 +46,16 @@ public class AllergyController {
 
     @DeleteMapping("/{allergyId}")
     public ResponseEntity<Void> deleteAllergy(
-            @PathVariable Long beneficiaryId,
-            @PathVariable Long allergyId) {
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
 
         allergyService.deleteAllergy(beneficiaryId, allergyId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergies (@PathVariable Long beneficiaryId) {
+    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergiesByBeneficiary(
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId) {
 
         List<AllergyReadOnlyDTO> allergies = allergyService.getAllergiesByBeneficiary(beneficiaryId);
 
@@ -61,16 +63,15 @@ public class AllergyController {
     }
 
     @GetMapping("/{allergyId}")
-    public ResponseEntity<AllergyReadOnlyDTO> getAllergy (
-            @PathVariable Long beneficiaryId,
-            @PathVariable Long allergyId) {
+    public ResponseEntity<AllergyReadOnlyDTO> getAllergyById(
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
 
-        AllergyReadOnlyDTO allergy = allergyService.getAllergy(beneficiaryId, allergyId);
+        AllergyReadOnlyDTO allergy = allergyService.getAllergyById(beneficiaryId, allergyId);
         return ResponseEntity.ok(allergy);
-
     }
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(Long id) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

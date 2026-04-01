@@ -24,7 +24,11 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO addAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
+    public AllergyReadOnlyDTO createAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
+
+        // TODO: Add AllergyValidator for business rules:
+        // - prevent duplicate allergies per beneficiary
+        // - validate allergy severity against active medications (cross-check with Medication)
 
         Beneficiary existing = getBeneficiaryOrThrow(beneficiaryId);
 
@@ -39,10 +43,12 @@ public class AllergyServiceImpl implements AllergyService {
     @Transactional
     public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
 
+        // TODO: Add AllergyValidator for allergy business rules on update
+
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
         allergyMapper.updateEntity(dto, allergy);
-        // dirty checking  αυτόματο UPDATE στο commit
+
         return allergyMapper.toDTO(allergy);
     }
 
@@ -51,17 +57,14 @@ public class AllergyServiceImpl implements AllergyService {
     public void deleteAllergy(Long beneficiaryId, Long allergyId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
-        // TODO: AllergyValidator. business rules πχ duplicate allergy check,
-        //  σοβαρότητα αλλεργίας σε συνδυασμό με ενεργά φάρμακα (cross-check με Medication)
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
-        // orphanRemoval=true  Hibernate τη σβήνει αυτόματα
         beneficiary.removeAllergy(allergy);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(Long beneficiaryId) {
-
         if (!beneficiaryRepository.existsById(beneficiaryId)) {
             throw new BeneficiaryNotFoundByIdException(beneficiaryId);
         }
@@ -72,19 +75,19 @@ public class AllergyServiceImpl implements AllergyService {
                 .toList();
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public AllergyReadOnlyDTO getAllergy(Long beneficiaryId, Long allergyId) {
+    public AllergyReadOnlyDTO getAllergyById(Long beneficiaryId, Long allergyId) {
         return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryId));
     }
 
-    private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
-
-        return  beneficiaryRepository.findById(beneficiaryId)
+    private Beneficiary getBeneficiaryOrThrow(Long beneficiaryId) {
+        return beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
     }
 
-    private Allergy getAllergyOrThrow (Long allergyId, Long beneficiaryId) {
-        return  allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)
+    private Allergy getAllergyOrThrow(Long allergyId, Long beneficiaryId) {
+        return allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)
                 .orElseThrow(() -> {
                     if (!allergyRepository.existsById(allergyId)) {
                         return new AllergyNotFoundException(allergyId);

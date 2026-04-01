@@ -41,7 +41,7 @@ public class AllergyServiceImplTest {
     private AllergyServiceImpl allergiesService;
 
     @Test
-    void addAllergy_shouldPersistAndReturnDto_whenBeneficiaryExists() {
+    void createAllergy_shouldPersistAndReturnDto_whenBeneficiaryExists() {
         // arrange
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
@@ -55,11 +55,11 @@ public class AllergyServiceImplTest {
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(beneficiary));
         when(allergyMapper.toEntity(createDTO)).thenReturn(entityFromMapper);
-        when(allergyRepository.save(any(Allergy.class))).thenReturn(savedAllergy); // any() γιατί το object αλλάζει state μετά το addAllergy()
+        when(allergyRepository.save(any(Allergy.class))).thenReturn(savedAllergy); // any() γιατί το object αλλάζει state μετά το createAllergy()
         when(allergyMapper.toDTO(savedAllergy)).thenReturn(expectedDto);
 
         // act
-        AllergyReadOnlyDTO result = allergiesService.addAllergy(beneficiaryId, createDTO);
+        AllergyReadOnlyDTO result = allergiesService.createAllergy(beneficiaryId, createDTO);
 
         // assert
         assertNotNull(result);
@@ -94,7 +94,7 @@ public class AllergyServiceImplTest {
     }
 
     @Test
-    void getAllergy_shouldReturnDto_whenBeneficiaryAndAllergyExist() {
+    void getAllergy_shouldReturnDto_whenBeneficiaryAndAllergyByIdExist() {
         // arrange
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
@@ -106,7 +106,7 @@ public class AllergyServiceImplTest {
         when(allergyMapper.toDTO(allergy)).thenReturn(expectedDto);
 
         // act
-        AllergyReadOnlyDTO result = allergiesService.getAllergy(beneficiaryId, allergyId);
+        AllergyReadOnlyDTO result = allergiesService.getAllergyById(beneficiaryId, allergyId);
 
         // assert
         assertEquals(expectedDto, result);
@@ -142,7 +142,7 @@ public class AllergyServiceImplTest {
     }
 
     @Test
-    void addAllergy_shouldThrowException_WhenBeneficiaryMissing() {
+    void createAllergy_shouldThrowException_WhenBeneficiaryMissing() {
         // arrange
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
@@ -152,7 +152,7 @@ public class AllergyServiceImplTest {
         // act & assert
         assertThrows(
                 BeneficiaryNotFoundByIdException.class,
-                () -> allergiesService.addAllergy(beneficiaryId, dto)
+                () -> allergiesService.createAllergy(beneficiaryId, dto)
         );
 
         verify(allergyRepository, never()).save(any());
@@ -300,7 +300,7 @@ public class AllergyServiceImplTest {
     }
 
     @Test
-    void getAllergy_shouldThrowException_whenAllergyNotFound() {
+    void getAllergy_shouldThrowException_whenAllergyByIdNotFound() {
         // arrange
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
@@ -311,14 +311,14 @@ public class AllergyServiceImplTest {
         // act & assert
         assertThrows(
                 AllergyNotFoundException.class,
-                () -> allergiesService.getAllergy(beneficiaryId, allergyId)
+                () -> allergiesService.getAllergyById(beneficiaryId, allergyId)
         );
 
         verify(allergyMapper, never()).toDTO(any());
     }
 
     @Test
-    void getAllergy_shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
+    void getAllergy_shouldThrowException_whenAllergyByIdNotOwnedByBeneficiary() {
         // arrange
         Long beneficiaryId = 1L;
         Long allergyId = 1L;
@@ -329,7 +329,7 @@ public class AllergyServiceImplTest {
         // act & assert
         assertThrows(
                 AllergyNotOwnedByBeneficiaryException.class,
-                () -> allergiesService.getAllergy(beneficiaryId, allergyId)
+                () -> allergiesService.getAllergyById(beneficiaryId, allergyId)
         );
 
         verify(allergyMapper, never()).toDTO(any());
