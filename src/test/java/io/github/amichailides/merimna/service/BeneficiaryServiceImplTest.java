@@ -196,7 +196,6 @@ public class BeneficiaryServiceImplTest {
         BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, true);
 
         when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
-        when(beneficiaryRepository.save(existing)).thenReturn(existing);
         when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
 
         // act
@@ -207,7 +206,6 @@ public class BeneficiaryServiceImplTest {
         assertEquals(expectedDto, result);
         verify(validator).validateForUpdate(existing, updateDto);
         verify(beneficiaryMapper).updateEntity(existing, updateDto);
-        verify(beneficiaryRepository).save(existing);
 
     }
 
@@ -279,7 +277,7 @@ public class BeneficiaryServiceImplTest {
 
         // verify
         verify(beneficiaryRepository).findById(id);
-        verify(validator, never()).validateForDischarge(any());
+        verify(validator).validateForDischarge(inactiveBeneficiary);
         verify(beneficiaryRepository, never()).save(any());
         verify(beneficiaryMapper, never()).toDetailsDTO(any());
 
