@@ -7,7 +7,7 @@ import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import java.util.List;
 
 public interface HouseUnitService {
-    List<HouseUnitReadOnlyDTO> findAll();
+    List<HouseUnitReadOnlyDTO> getAllHouseUnits();
 
     HouseUnitReadOnlyDTO createHouseUnit(HouseUnitCreateDTO dto);
 

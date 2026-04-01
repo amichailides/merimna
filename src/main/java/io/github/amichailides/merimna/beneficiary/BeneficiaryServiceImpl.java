@@ -51,6 +51,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
 
+        // TODO(#12): Add domain validation for HouseUnit assignment during beneficiary creation
+
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
         return beneficiaryMapper.toDetailsDTO(savedBeneficiary);

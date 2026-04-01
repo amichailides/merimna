@@ -21,7 +21,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<HouseUnitReadOnlyDTO> findAll() {
+    public List<HouseUnitReadOnlyDTO> getAllHouseUnits() {
         return houseUnitRepository.findAll()
                 .stream()
                 .map(houseUnitMapper::toDTO)

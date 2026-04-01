@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,8 @@ public class HouseUnitController {
     private final HouseUnitService houseUnitService;
 
     @GetMapping
-    public ResponseEntity<List<HouseUnitReadOnlyDTO>> getAll() {
-        List<HouseUnitReadOnlyDTO> houseUnits = houseUnitService.findAll();
+    public ResponseEntity<List<HouseUnitReadOnlyDTO>> getAllHouseUnits() {
+        List<HouseUnitReadOnlyDTO> houseUnits = houseUnitService.getAllHouseUnits();
 
         return ResponseEntity.ok(houseUnits);
     }
