@@ -35,5 +35,8 @@ public record EmployeeDetailsDTO(
         LocalDate hireDate,
 
         @Schema(description = "Employee residential address")
-        AddressDTO address
+        AddressDTO address,
+
+        @Schema(description = "Indicates whether the employee is active", example = "true")
+        boolean active
 ) {}

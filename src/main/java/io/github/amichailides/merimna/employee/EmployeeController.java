@@ -1,15 +1,21 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
+import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
+import io.github.amichailides.merimna.employee.dto.EmployeeSearchDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -29,6 +35,23 @@ public class EmployeeController {
         return ResponseEntity
                 .created(buildLocationUri(employee.id()))
                 .body(employee);
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<EmployeeListDTO>> getAllEmployees(
+            @Valid @ModelAttribute EmployeeSearchDTO criteria,
+            @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<EmployeeListDTO> page = employeeService.getAllEmployees(criteria, pageable);
+
+        return ResponseEntity.ok(PageResponse.<EmployeeListDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
     }
 
     private URI buildLocationUri(Object id) {

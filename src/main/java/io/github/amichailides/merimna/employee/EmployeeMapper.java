@@ -5,9 +5,12 @@ import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
+import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
 public class EmployeeMapper {
     private final AddressMapper addressMapper;
 
-    public EmployeeDetailsDTO toDTO(Employee entity) {
+    public EmployeeDetailsDTO toDetailsDTO(Employee entity) {
         if (entity == null) return null;
 
         return EmployeeDetailsDTO.builder()
@@ -29,12 +32,28 @@ public class EmployeeMapper {
                 .position(entity.getPosition())
                 .hireDate(entity.getHireDate())
                 .houseUnitCodes(
-                        entity.getHouseUnits() == null
-                                ? Set.of()
-                                :entity.getHouseUnits().stream()
+                        entity.getHouseUnits().stream()
                                 .map(HouseUnit::getCode)
                                 .collect(Collectors.toSet())
                 )
+                .active(entity.isActive())
+                .build();
+    }
+
+    public EmployeeListDTO toListDTO(Employee entity) {
+        if (entity == null) return null;
+
+        return EmployeeListDTO.builder()
+                .id(entity.getId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .position(entity.getPosition())
+                .houseUnitCodes(
+                        entity.getHouseUnits().stream()
+                                .map(HouseUnit::getCode)
+                                .collect(Collectors.toSet())
+                )
+                .active(entity.isActive())
                 .build();
     }
 
