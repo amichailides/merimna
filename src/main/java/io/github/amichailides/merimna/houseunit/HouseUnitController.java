@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,11 @@ public class HouseUnitController {
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity<HouseUnitReadOnlyDTO> getHouseUnitByCode(@PathVariable String code) {
+    public ResponseEntity<HouseUnitReadOnlyDTO> getHouseUnitByCode(
+            @PathVariable
+            @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE, message = "{houseUnit.code.invalid}")
+            String code) {
+
         return ResponseEntity.ok(houseUnitService.getHouseUnitByCode(code));
     }
 

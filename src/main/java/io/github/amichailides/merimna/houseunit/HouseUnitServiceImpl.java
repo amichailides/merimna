@@ -58,7 +58,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
         return houseUnitMapper.toDTO(existing);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public HouseUnitReadOnlyDTO getHouseUnitByCode(String code) {
         HouseUnit houseUnit = houseUnitRepository.findByCode(code)
