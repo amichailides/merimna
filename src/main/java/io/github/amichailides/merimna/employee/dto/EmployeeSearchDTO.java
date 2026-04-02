@@ -14,7 +14,7 @@ public record EmployeeSearchDTO(
         @Schema(description = "Employee position", example = "CAREGIVER")
         EmployeePosition position,
 
-        @Schema(description = "House unit code", example = "UNIT_A")
+        @Schema(description = "Filter by assigned house unit code", example = "UNIT_A")
         @Pattern(
                 regexp = ValidationPatterns.HOUSE_UNIT_CODE,
                 message = "{employee.houseUnitCode.invalid}"

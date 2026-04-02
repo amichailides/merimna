@@ -77,7 +77,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(readOnly = true)
     public EmployeeDetailsDTO getEmployeeById(Long id) {
-        Employee employee = getEmployeeOrThrow(id);
+        Employee employee = employeeRepository.findWithDetailsById(id)
+                .orElseThrow(() -> new EmployeeNotFoundByIdException(id));
 
         return employeeMapper.toDetailsDTO(employee);
     }

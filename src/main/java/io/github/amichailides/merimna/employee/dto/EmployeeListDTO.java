@@ -20,7 +20,7 @@ public record EmployeeListDTO(
         @Schema(description = "Employee position", example = "CAREGIVER")
         EmployeePosition position,
 
-        @Schema(description = "House unit code", example = "UNIT_A")
+        @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
         Set<String> houseUnitCodes,
 
         @Schema(description = "Indicates whether the employee is active", example = "true")
