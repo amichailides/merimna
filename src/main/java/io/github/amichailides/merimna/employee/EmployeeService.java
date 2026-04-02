@@ -15,4 +15,6 @@ public interface EmployeeService {
     Page<EmployeeListDTO> getAllEmployees(
             EmployeeSearchDTO criteria,
             Pageable pageable);
+
+    EmployeeDetailsDTO getEmployeeById(Long id);
 }

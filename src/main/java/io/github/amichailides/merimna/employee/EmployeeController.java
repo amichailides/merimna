@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeSearchDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,16 @@ public class EmployeeController {
                 .totalPages(page.getTotalPages())
                 .build()
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDetailsDTO> getEmployeeById(
+            @PathVariable
+            @Positive(message = "{employee.id.positive}")
+            Long id) {
+        EmployeeDetailsDTO employee = employeeService.getEmployeeById(id);
+
+        return ResponseEntity.ok(employee);
     }
 
     private URI buildLocationUri(Object id) {
