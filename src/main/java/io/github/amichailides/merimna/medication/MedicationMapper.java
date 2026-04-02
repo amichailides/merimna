@@ -42,7 +42,7 @@ public class MedicationMapper {
         updateIfNotNull(dto.dosage(), existing::setDosage);
         updateIfNotNull(dto.frequency(), existing::setFrequency);
         updateIfNotNull(dto.administrationTimes(), existing::setAdministrationTimes);
-        // Αφήνουμε blank στο instructions (αν Θέλει να τη σβήσει)
+        // Allow clearing instructions (empty value is valid if explicitly provided)
         if (dto.instructions() != null) existing.setInstructions(dto.instructions());
     }
 

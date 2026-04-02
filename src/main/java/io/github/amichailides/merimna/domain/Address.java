@@ -11,16 +11,11 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Address {
-    /*
-     * Logic: Μια διεύθυνση θεωρείται έγκυρη μόνο αν είναι πλήρης.
-     * Επιβάλλουμε NonNull στα βασικά πεδία για να αποτρέψουμε "μισές" διευθύνσεις
-     * (π.χ. οδός χωρίς πόλη) οπουδήποτε χρησιμοποιείται η κλάση Address.
-     */
     @NonNull
     @Column(nullable = false)
     private String street;
 
-    private String streetNumber; // Optional (μπορεί κάποιο σπίτι να είναι χωρίς νούμερο)
+    private String streetNumber;
 
     @NonNull
     @Column(nullable = false)

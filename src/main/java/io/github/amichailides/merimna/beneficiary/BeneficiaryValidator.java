@@ -49,7 +49,7 @@ public class BeneficiaryValidator {
             errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
         }
 
-        // άλλα business checks εδώ...
+        // Additional business rules can be added here
 
 
         if (!errors.isEmpty()) {
@@ -59,19 +59,17 @@ public class BeneficiaryValidator {
 
     public void validateForDischarge(Beneficiary beneficiary) {
         Map<String, String> errors = new LinkedHashMap<>();
-        // Εδώ μελλοντικά προσθέτουμε και άλλους κανόνες,
-        // π.χ. Να μην απενεργοποιείται αν έχει εκκρεμείς αιτήσεις.
+
+        // Future rules:
+        // e.g. prevent discharge if there are pending requests or active obligations
 
         if (!errors.isEmpty()) {
             throw new DomainValidationException(errors);
         }
     }
 
-    // Ελέγχουμε αν το AMKA υπάρχει ήδη σε άλλον ωφελούμενο (μόνο αν άλλαξε).
-    // Αν ναι, fast-fail — δεν έχει νόημα να συνεχίσουμε.
-    // Αλλιώς, αν άλλαξε AMKA ή DOB, ελέγχουμε consistency μεταξύ τους,
-    // γιατί ακόμα και PATCH μόνο του DOB μπορεί να οδηγήσει σε data corruption
-    // (π.χ. AMKA 150580... με DOB 1992-11-20).
+    // On update, validate the final AMKA/DOB state, not only the patched field,
+    // so partial updates cannot introduce inconsistent data.
     public void validateForUpdate(Beneficiary existing, BeneficiaryUpdateDTO dto) {
         Map<String, String> errors = new LinkedHashMap<>();
         Long id = existing.getId();
@@ -93,14 +91,14 @@ public class BeneficiaryValidator {
         }
     }
 
-    // Helper για να πάρει τα πρώτα 6 ψηφία του ΑΜΚΑ από το Date
+
     private String formatToAmkaDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
         return date.format(formatter);
     }
 
     /**
-     * Ελέγχει αν τα πρώτα 6 ψηφία του ΑΜΚΑ ταυτίζονται με την ημερομηνία γέννησης.
+     * AMKA rule: first 6 digits must match date of birth (ddMMyy).
      */
     private boolean isAmkaConsistentWithDob(String amka, LocalDate dateOfBirth) {
         if (amka == null || dateOfBirth == null) return true;

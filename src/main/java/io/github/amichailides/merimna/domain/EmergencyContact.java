@@ -21,7 +21,7 @@ public class EmergencyContact {
     @NonNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RelationshipType relationshipType; // γονέας, δικαστικός συμπαραστάτης κλπ
+    private RelationshipType relationshipType;
 
     private String landlinePhone;
     private String mobileNumber;

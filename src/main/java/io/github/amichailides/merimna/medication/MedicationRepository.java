@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface MedicationRepository extends JpaRepository<Medication, Long> {
     Page<Medication> findAllByBeneficiaryId(Long beneficiaryId, Pageable pageable);
+
     Optional<Medication> findByIdAndBeneficiaryId(Long medicationId, Long beneficiaryId);
 
 }

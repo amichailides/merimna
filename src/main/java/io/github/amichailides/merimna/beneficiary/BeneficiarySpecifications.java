@@ -21,15 +21,10 @@ public class BeneficiarySpecifications {
         return (root, query, cb) -> {
             if (searchTerm == null || searchTerm.isEmpty()) return null;
 
-            // Καθαρίζουμε τους τόνους από το search term (Java side)
             String cleanSearchTerm = stripAccents(searchTerm.toLowerCase());
-
-            // Χρήση 'Containing' για μέγιστη ευελιξία στην αναζήτηση.
-            // Λόγω μικρού όγκου δεδομένων, η χρήση Like %...% δεν επηρεάζει την απόδοση.
             String pattern = "%" + cleanSearchTerm + "%";
 
-
-            // Χρησιμοποιούμε την unaccent της Postgres (DB side)
+            // Normalize final sigma (ς) to σ for more consistent Greek text matching.
             return cb.or(
                     cb.like(
                             cb.function("replace", String.class,

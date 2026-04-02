@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface AllergyRepository extends JpaRepository<Allergy, Long> {
-
     Optional<Allergy> findByIdAndBeneficiaryId(Long allergyId, Long beneficiaryId);
+
     List<Allergy> findAllByBeneficiaryId(Long beneficiaryId);
 }

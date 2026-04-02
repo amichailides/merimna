@@ -29,8 +29,7 @@ public class MedicationController {
 
         MedicationReadOnlyDTO medication = medicationService.addMedication(beneficiaryId, dto);
 
-        // TODO: Όταν συνδεθεί το Front-end, πρέπει να γίνει expose το "Location" header στο CORS config
-
+        // TODO: When the frontend is integrated, expose the "Location" header in the CORS configuration
 
         return ResponseEntity
                 .created(buildLocationUri(medication.id()))

@@ -21,7 +21,7 @@ public class Allergy {
 
     @NonNull
     @Column(nullable = false)
-    private String substance; // πενικιλη, φιστικια κλπ
+    private String substance;
 
     @NonNull
     @Column(nullable = false)
@@ -30,7 +30,7 @@ public class Allergy {
 
     @NonNull
     @Column(nullable = false)
-    private String reaction; // εξανθημα, δυσποινα κλπ
+    private String reaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiary_id", nullable = false)

@@ -15,5 +15,5 @@ public interface MedicationService {
 
     List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(Long beneficiaryId);
 
-    public MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId);
+    MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId);
 }
