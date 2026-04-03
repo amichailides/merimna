@@ -16,4 +16,6 @@ public interface EmployeeService {
     EmployeeDetailsDTO getEmployeeById(Long id);
 
     EmployeeDetailsDTO updateEmployee(Long id, EmployeeUpdateDTO dto);
+
+    EmployeeDetailsDTO reactivate(Long employeeId);
 }

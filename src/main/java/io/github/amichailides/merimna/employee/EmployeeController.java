@@ -57,9 +57,9 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> getEmployeeById(
             @PathVariable @Positive(message = "{employee.id.positive}")
             Long id) {
-        EmployeeDetailsDTO employee = employeeService.getEmployeeById(id);
+        EmployeeDetailsDTO result = employeeService.getEmployeeById(id);
 
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/{id}")
@@ -68,9 +68,31 @@ public class EmployeeController {
             Long id,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeUpdateDTO dto) {
 
-        EmployeeDetailsDTO updatedEmployee = employeeService.updateEmployee(id, dto);
+        EmployeeDetailsDTO result = employeeService.updateEmployee(id, dto);
 
-        return ResponseEntity.ok(updatedEmployee);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/terminate")
+    public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
+            @PathVariable
+            @Positive (message = "{employee.id.positive}")
+            Long id) {
+
+        EmployeeDetailsDTO result = employeeService.terminate(id);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/reactivate")
+    public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
+            @PathVariable
+            @Positive (message = "{employee.id.positive}")
+            Long id) {
+
+        EmployeeDetailsDTO result = employeeService.reactivate(id);
+
+        return ResponseEntity.ok(result);
     }
 
     private URI buildLocationUri(Object id) {

@@ -26,9 +26,7 @@ public class AllergyServiceImpl implements AllergyService {
     @Transactional
     public AllergyReadOnlyDTO createAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
 
-        // TODO: Add AllergyValidator for business rules:
-        // - prevent duplicate allergies per beneficiary
-        // - validate allergy severity against active medications (cross-check with Medication)
+        // TODO(#12): Add AllergyValidator rules (duplicates, severity checks)
 
         Beneficiary existing = getBeneficiaryOrThrow(beneficiaryId);
 

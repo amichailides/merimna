@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyInactiveException;
+import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyActiveException;
+import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyTerminatedException;
 import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -65,11 +66,18 @@ public class Employee {
 
 
 
-    public void deactivate() {
+    public void terminate() {
         if (!isActive) {
-            throw new EmployeeAlreadyInactiveException();
+            throw new EmployeeAlreadyTerminatedException(id);
         }
         this.isActive = false;
+    }
+
+    public void reactivate() {
+        if (isActive) {
+            throw new EmployeeAlreadyActiveException();
+        }
+        this.isActive = true;
     }
 
     public void changePosition(EmployeePosition newPosition) {
