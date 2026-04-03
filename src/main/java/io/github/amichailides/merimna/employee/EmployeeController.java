@@ -1,11 +1,9 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
-import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeSearchDTO;
+import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -57,12 +55,22 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDetailsDTO> getEmployeeById(
-            @PathVariable
-            @Positive(message = "{employee.id.positive}")
+            @PathVariable @Positive(message = "{employee.id.positive}")
             Long id) {
         EmployeeDetailsDTO employee = employeeService.getEmployeeById(id);
 
         return ResponseEntity.ok(employee);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
+            @PathVariable @Positive(message = "{employee.id.positive}")
+            Long id,
+            @Validated(ValidationGroupSequence.class) @RequestBody EmployeeUpdateDTO dto) {
+
+        EmployeeDetailsDTO updatedEmployee = employeeService.updateEmployee(id, dto);
+
+        return ResponseEntity.ok(updatedEmployee);
     }
 
     private URI buildLocationUri(Object id) {

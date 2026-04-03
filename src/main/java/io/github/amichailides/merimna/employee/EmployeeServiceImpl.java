@@ -2,12 +2,10 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
-import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeSearchDTO;
+import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.HouseUnitResolver;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +24,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeeMapper employeeMapper;
     private final EmployeeValidator employeeValidator;
+    private final HouseUnitResolver houseUnitResolver;
 
     @Override
     @Transactional
@@ -72,6 +71,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeRepository.findAll(spec, pageable)
                 .map(employeeMapper::toListDTO);
+    }
+
+    @Override
+    @Transactional
+    public EmployeeDetailsDTO updateEmployee(Long id, EmployeeUpdateDTO dto) {
+        // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
+        // Currently null = no update
+
+        Employee employee = getEmployeeOrThrow(id);
+        employeeValidator.validateForUpdate(employee, dto);
+        Set<HouseUnit> houseUnits = houseUnitResolver.resolveForEmployeeUpdate(dto.houseUnitCodes());
+
+        employeeMapper.updateEntity(employee, dto, houseUnits);
+
+        return employeeMapper.toDetailsDTO(employee);
     }
 
     @Override

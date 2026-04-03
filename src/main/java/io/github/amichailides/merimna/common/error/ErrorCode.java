@@ -43,7 +43,8 @@ public enum ErrorCode {
     EMPLOYEE_ALREADY_INACTIVE("EMPLOYEE_ALREADY_INACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyInactive"),
     SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same"),
     EMPLOYEE_NOT_FOUND_BY_ID("EMPLOYEE_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employee.notFoundById"),
-
+    EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
+    EMPLOYEE_EMAIL_ALREADY_EXISTS("EMPLOYEE_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employee.email.alreadyExists"),
 
     // houseUnit
     HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),

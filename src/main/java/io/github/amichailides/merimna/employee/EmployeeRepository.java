@@ -20,4 +20,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>,
     @NonNull
     @EntityGraph(attributePaths = {"houseUnits"})
     Page<Employee> findAll(@NonNull Specification<Employee> spec, @NonNull Pageable pageable);
+
+    boolean existsByEmailIgnoreCase(String email);
 }

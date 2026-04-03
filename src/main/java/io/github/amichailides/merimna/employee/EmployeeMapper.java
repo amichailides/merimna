@@ -6,11 +6,10 @@ import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
+import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,5 +69,18 @@ public class EmployeeMapper {
                 .hireDate(dto.hireDate())
                 .houseUnits(houseUnits)
                 .build();
+    }
+
+    public void updateEntity(Employee existing, EmployeeUpdateDTO dto, Set<HouseUnit> houseUnits) {
+        if (dto == null || existing == null) return;
+
+        if (dto.firstName() != null) existing.setFirstName(dto.firstName());
+        if (dto.lastName() != null) existing.setLastName(dto.lastName());
+        if (dto.email() != null) existing.setEmail(dto.email());
+        if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
+        if (dto.position() != null) existing.setPosition(dto.position());
+        if (houseUnits != null) existing.setHouseUnits(houseUnits);
+        if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
+        if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());
     }
 }

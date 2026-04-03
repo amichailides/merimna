@@ -1,9 +1,6 @@
 package io.github.amichailides.merimna.employee;
 
-import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeSearchDTO;
+import io.github.amichailides.merimna.employee.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +14,6 @@ public interface EmployeeService {
             Pageable pageable);
 
     EmployeeDetailsDTO getEmployeeById(Long id);
+
+    EmployeeDetailsDTO updateEmployee(Long id, EmployeeUpdateDTO dto);
 }
