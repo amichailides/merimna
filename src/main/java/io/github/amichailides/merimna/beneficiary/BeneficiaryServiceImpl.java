@@ -70,13 +70,16 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Transactional
     public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
-        Beneficiary existing = getBeneficiaryOrThrow(id);
+        // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
+        // Currently null = no update
 
-        validator.validateForUpdate(existing, dto);
+        Beneficiary employee = getBeneficiaryOrThrow(id);
 
-        beneficiaryMapper.updateEntity(existing, dto);
+        validator.validateForUpdate(employee, dto);
 
-        return beneficiaryMapper.toDetailsDTO(existing);
+        beneficiaryMapper.updateEntity(employee, dto);
+
+        return beneficiaryMapper.toDetailsDTO(employee);
     }
 
     /**
