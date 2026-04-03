@@ -111,5 +111,12 @@ String firstName,
 
 ## Future (Phase 2)
 
-When the API stabilizes, the introduction of `JsonNullable` is considered for explicit separation
-between `null` = "not sent" and `null` = "delete value".
+When the API stabilizes, `JsonNullable` may be introduced in PATCH/Update DTOs
+to explicitly distinguish between:
+- field not sent
+- field sent with null (clear value)
+- field sent with value (update)
+
+Deferred to Phase 2 as no current use case requires explicit null semantics.
+Introducing JsonNullable now would add complexity (wrapper types, 
+MapStruct config, OpenAPI schema changes) without sufficient benefit.
