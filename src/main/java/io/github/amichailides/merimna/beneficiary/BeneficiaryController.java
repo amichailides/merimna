@@ -205,10 +205,35 @@ public class BeneficiaryController {
         );
     }
 
-
+    @Operation(summary = "Change beneficiary house unit")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary or house unit not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            )
+    })
     @PatchMapping("/{id}/house-unit/{code}")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
-            @PathVariable @Positive Long id,
+            @Parameter(description = "Beneficiary ID", example = "1")
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long id,
+
+            @Parameter(description = "House unit code", example = "UNIT_A")
             @PathVariable @NotBlank @Size(max = 20) String code) {
 
         BeneficiaryListDTO updated = service.changeHouseUnit(id, code);

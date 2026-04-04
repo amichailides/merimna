@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "employees")
 public class Employee {
 
@@ -56,6 +56,9 @@ public class Employee {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    // TODO(#15): Replace ManyToMany with explicit EmployeeHouseUnitAssignment entity.
+    // Current model does not support primary vs temporary assignments, time boundaries, or access scope.
+    // See issue for details.
     @Builder.Default
     @ManyToMany
     @JoinTable(
@@ -64,7 +67,6 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "house_unit_id")
     )
     private Set<HouseUnit> houseUnits = new HashSet<>();
-
 
 
     public void terminate() {
@@ -88,5 +90,4 @@ public class Employee {
 
         this.position = newPosition;
     }
-
 }
