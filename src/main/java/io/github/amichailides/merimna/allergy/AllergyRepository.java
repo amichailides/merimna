@@ -12,4 +12,10 @@ public interface AllergyRepository extends JpaRepository<Allergy, Long> {
     Optional<Allergy> findByIdAndBeneficiaryId(Long allergyId, Long beneficiaryId);
 
     List<Allergy> findAllByBeneficiaryId(Long beneficiaryId);
+
+    boolean existsByBeneficiaryIdAndSubstanceIgnoreCaseAndIdNot(
+            Long beneficiaryId,
+            String substance,
+            Long id
+    );
 }

@@ -47,4 +47,9 @@ public class Allergy {
     public void clearBeneficiary() {
         this.beneficiary = null;
     }
+
+    public boolean belongsTo(Long beneficiaryId) {
+        return beneficiaryId != null &&
+                beneficiaryId.equals(this.beneficiary.getId());
+    }
 }

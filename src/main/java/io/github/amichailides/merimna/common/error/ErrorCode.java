@@ -28,12 +28,13 @@ public enum ErrorCode {
     // LegalRepresentative
     LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID("LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.legalRepresentative.notFoundById"),
     LEGAL_REPRESENTATIVE_NOT_ASSIGNED("LEGAL_REPRESENTATIVE_NOT_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.notAssigned"),
+    BENEFICIARY_INACTIVE("BENEFICIARY_INACTIVE", HttpStatus.CONFLICT, "error.beneficiary.inactive"),
 
     // Allergy
     ALLERGY_NOT_FOUND("ALLERGY_NOT_FOUND", HttpStatus.NOT_FOUND, "error.allergy.notFound"),
     ALLERGY_ALREADY_ASSIGNED("ALLERGY_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "error.allergy.alreadyAssigned"),
     ALLERGY_NOT_OWNED_BY_BENEFICIARY("ALLERGY_NOT_OWNED_BY_BENEFICIARY", HttpStatus.CONFLICT, "error.allergy.notOwnedByBeneficiary"),
-
+    ALLERGY_DUPLICATE_SUBSTANCE("ALLERGY_DUPLICATE_SUBSTANCE", HttpStatus.CONFLICT, "error.allergy.duplicateSubstance"),
     // Medication
     MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", HttpStatus.NOT_FOUND, "error.medication.notFound"),
     MEDICATION_ALREADY_ASSIGNED("MEDICATION_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "error.medication.alreadyAssigned"),

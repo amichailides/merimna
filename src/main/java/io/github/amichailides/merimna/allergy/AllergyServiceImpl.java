@@ -21,6 +21,7 @@ public class AllergyServiceImpl implements AllergyService {
     private final AllergyRepository allergyRepository;
     private final AllergyMapper allergyMapper;
     private final BeneficiaryRepository beneficiaryRepository;
+    private final AllergyValidator allergyValidator;
 
     @Override
     @Transactional
@@ -40,11 +41,9 @@ public class AllergyServiceImpl implements AllergyService {
     @Override
     @Transactional
     public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
-
-        // TODO: Add AllergyValidator for allergy business rules on update
-
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
+        allergyValidator.validateForUpdate(allergy, dto);
         allergyMapper.updateEntity(allergy, dto);
 
         return allergyMapper.toDTO(allergy);
@@ -85,12 +84,13 @@ public class AllergyServiceImpl implements AllergyService {
     }
 
     private Allergy getAllergyOrThrow(Long allergyId, Long beneficiaryId) {
-        return allergyRepository.findByIdAndBeneficiaryId(allergyId, beneficiaryId)
-                .orElseThrow(() -> {
-                    if (!allergyRepository.existsById(allergyId)) {
-                        return new AllergyNotFoundException(allergyId);
-                    }
-                    return new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryId);
-                });
+        Allergy allergy = allergyRepository.findById(allergyId)
+                .orElseThrow(() -> new AllergyNotFoundException(allergyId));
+
+        if (!allergy.belongsTo(beneficiaryId)) {
+            throw new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryId);
+        }
+
+        return allergy;
     }
 }

@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryInactiveException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -182,6 +183,12 @@ public class Beneficiary {
         }
 
         this.houseUnit = newHouseUnit;
+    }
+
+    public void ensureActive() {
+        if (!this.isActive) {
+            throw new BeneficiaryInactiveException(id);
+        }
     }
 
 }
