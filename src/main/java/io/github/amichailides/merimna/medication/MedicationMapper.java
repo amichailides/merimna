@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.domain.Medication;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Component
@@ -37,12 +38,15 @@ public class MedicationMapper {
     }
 
     public void updateEntity(Medication existing, MedicationUpdateDTO dto) {
+        Objects.requireNonNull(existing, "existing medication must not be null");
+        Objects.requireNonNull(dto, "medication update dto must not be null");
 
         updateIfNotNull(dto.name(), existing::setName);
         updateIfNotNull(dto.dosage(), existing::setDosage);
         updateIfNotNull(dto.frequency(), existing::setFrequency);
         updateIfNotNull(dto.administrationTimes(), existing::setAdministrationTimes);
-        // Allow clearing instructions (empty value is valid if explicitly provided)
+
+        // Allow clearing instructions (empty string explicitly clears value)
         if (dto.instructions() != null) existing.setInstructions(dto.instructions());
     }
 
@@ -50,6 +54,5 @@ public class MedicationMapper {
         if (newValue != null && !newValue.isBlank()) {
             setter.accept(newValue);
         }
-
     }
 }

@@ -6,6 +6,8 @@ import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativ
 import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class LegalRepresentativeMapper {
     public LegalRepresentativeReadOnlyDTO toReadOnlyDTO(LegalRepresentative existing) {
@@ -39,7 +41,8 @@ public class LegalRepresentativeMapper {
     }
 
     public void updateEntity(LegalRepresentative existing, LegalRepresentativeUpdateDTO dto) {
-        if (dto == null || existing == null) return;
+        Objects.requireNonNull(existing, "existing legal representative must not be null");
+        Objects.requireNonNull(dto, "legal representative update dto must not be null");
 
         if (dto.type() != null) existing.setType(dto.type());
         if (dto.firstName() != null) existing.setFirstName(dto.firstName());

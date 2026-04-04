@@ -13,6 +13,8 @@ import io.github.amichailides.merimna.medication.MedicationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Component
 @RequiredArgsConstructor
@@ -76,8 +78,8 @@ public class BeneficiaryMapper {
     }
 
     public void updateEntity(Beneficiary existing, BeneficiaryUpdateDTO dto) {
-        if (dto == null || existing == null) return;
-
+        Objects.requireNonNull(existing, "existing beneficiary must not be null");
+        Objects.requireNonNull(dto, "beneficiary update dto must not be null");
 
         if (dto.firstName() != null) existing.setFirstName(dto.firstName());
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
@@ -91,7 +93,5 @@ public class BeneficiaryMapper {
         if (dto.emergencyContact() != null) {
             emergencyMapper.updateEntity(existing.getEmergencyContact(), dto.emergencyContact());
         }
-
     }
-
 }
