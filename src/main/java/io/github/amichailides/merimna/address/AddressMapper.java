@@ -5,6 +5,9 @@ import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
 import io.github.amichailides.merimna.domain.Address;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 @Component
 public class AddressMapper {
 
@@ -31,12 +34,19 @@ public class AddressMapper {
     }
 
     public void updateEntity(Address existing, AddressUpdateDTO dto) {
-        if (dto == null || existing == null) return;
+        Objects.requireNonNull(existing, "existing address must not be null");
+        Objects.requireNonNull(dto, "address update dto must not be null");
 
-        if (dto.street() != null) existing.setStreet(dto.street());
-        if (dto.streetNumber() != null) existing.setStreetNumber(dto.streetNumber());
-        if (dto.city() != null) existing.setCity(dto.city());
-        if (dto.zipCode() != null) existing.setZipCode(dto.zipCode());
+        updateIfNotBlank(dto.street(), existing::setStreet);
+        updateIfNotBlank(dto.streetNumber(), existing::setStreetNumber);
+        updateIfNotBlank(dto.city(), existing::setCity);
+        updateIfNotBlank(dto.zipCode(), existing::setZipCode);
+    }
+
+    private void updateIfNotBlank(String newValue, Consumer<String> setter) {
+        if (newValue != null && !newValue.isBlank()) {
+            setter.accept(newValue);
+        }
     }
 }
 

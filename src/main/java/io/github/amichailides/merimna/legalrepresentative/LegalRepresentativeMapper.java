@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.domain.LegalRepresentative;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Component
 public class LegalRepresentativeMapper {
@@ -44,14 +45,31 @@ public class LegalRepresentativeMapper {
         Objects.requireNonNull(existing, "existing legal representative must not be null");
         Objects.requireNonNull(dto, "legal representative update dto must not be null");
 
-        if (dto.type() != null) existing.setType(dto.type());
-        if (dto.firstName() != null) existing.setFirstName(dto.firstName());
-        if (dto.lastName() != null) existing.setLastName(dto.lastName());
-        if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
-        if (dto.landlinePhone() != null) existing.setLandlinePhone(dto.landlinePhone());
-        if (dto.email() != null) existing.setEmail(dto.email());
-        if (dto.notes() != null) existing.setNotes(dto.notes());
+        updateIfNotNull(dto.type(), existing::setType);
 
+        updateIfNotBlank(dto.firstName(), existing::setFirstName);
+        updateIfNotBlank(dto.lastName(), existing::setLastName);
+        updateIfNotBlank(dto.mobileNumber(), existing::setMobileNumber);
+        updateIfNotBlank(dto.email(), existing::setEmail);
+
+        // allow clearing landline phone
+        if (dto.landlinePhone() != null) {
+            existing.setLandlinePhone(dto.landlinePhone());
+        }
+
+        updateIfNotNull(dto.notes(), existing::setNotes);
+    }
+
+    private void updateIfNotBlank(String newValue, Consumer<String> setter) {
+        if (newValue != null && !newValue.isBlank()) {
+            setter.accept(newValue);
+        }
+    }
+
+    private <T> void updateIfNotNull(T newValue, Consumer<T> setter) {
+        if (newValue != null) {
+            setter.accept(newValue);
+        }
     }
 
 }

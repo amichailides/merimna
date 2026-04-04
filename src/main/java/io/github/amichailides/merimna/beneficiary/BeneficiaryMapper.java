@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 
 @Component
@@ -81,17 +82,31 @@ public class BeneficiaryMapper {
         Objects.requireNonNull(existing, "existing beneficiary must not be null");
         Objects.requireNonNull(dto, "beneficiary update dto must not be null");
 
-        if (dto.firstName() != null) existing.setFirstName(dto.firstName());
-        if (dto.lastName() != null) existing.setLastName(dto.lastName());
-        if (dto.amka() != null) existing.setAmka(dto.amka());
-        if (dto.dateOfBirth() != null) existing.setDateOfBirth(dto.dateOfBirth());
+        updateIfNotBlank(dto.firstName(), existing::setFirstName);
+        updateIfNotBlank(dto.lastName(), existing::setLastName);
+        updateIfNotBlank(dto.amka(), existing::setAmka);
+        updateIfNotNull(dto.dateOfBirth(), existing::setDateOfBirth);
 
-        if (dto.permanentAddress() != null) {
-            addressMapper.updateEntity(existing.getPermanentAddress(), dto.permanentAddress());
+        updateIfNotNull(
+                dto.permanentAddress(),
+                addr -> addressMapper.updateEntity(existing.getPermanentAddress(), addr)
+        );
+
+        updateIfNotNull(
+                dto.emergencyContact(),
+                ec -> emergencyMapper.updateEntity(existing.getEmergencyContact(), ec)
+        );
+    }
+
+    private void updateIfNotBlank(String newValue, Consumer<String> setter) {
+        if (newValue != null && !newValue.isBlank()) {
+            setter.accept(newValue);
         }
+    }
 
-        if (dto.emergencyContact() != null) {
-            emergencyMapper.updateEntity(existing.getEmergencyContact(), dto.emergencyContact());
+    private <T> void updateIfNotNull(T newValue, Consumer<T> setter) {
+        if (newValue != null) {
+            setter.accept(newValue);
         }
     }
 }

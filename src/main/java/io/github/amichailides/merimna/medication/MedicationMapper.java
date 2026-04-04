@@ -41,16 +41,16 @@ public class MedicationMapper {
         Objects.requireNonNull(existing, "existing medication must not be null");
         Objects.requireNonNull(dto, "medication update dto must not be null");
 
-        updateIfNotNull(dto.name(), existing::setName);
-        updateIfNotNull(dto.dosage(), existing::setDosage);
-        updateIfNotNull(dto.frequency(), existing::setFrequency);
-        updateIfNotNull(dto.administrationTimes(), existing::setAdministrationTimes);
+        updateIfNotBlank(dto.name(), existing::setName);
+        updateIfNotBlank(dto.dosage(), existing::setDosage);
+        updateIfNotBlank(dto.frequency(), existing::setFrequency);
+        updateIfNotBlank(dto.administrationTimes(), existing::setAdministrationTimes);
 
         // Allow clearing instructions (empty string explicitly clears value)
         if (dto.instructions() != null) existing.setInstructions(dto.instructions());
     }
 
-    private void updateIfNotNull (String newValue, Consumer<String> setter) {
+    private void updateIfNotBlank(String newValue, Consumer<String> setter) {
         if (newValue != null && !newValue.isBlank()) {
             setter.accept(newValue);
         }

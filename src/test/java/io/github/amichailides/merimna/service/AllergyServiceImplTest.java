@@ -235,7 +235,7 @@ public class AllergyServiceImplTest {
         // assert
         assertEquals(expectedDto, result);
         verify(allergyRepository).findByIdAndBeneficiaryId(allergyId, beneficiaryId);
-        verify(allergyMapper).updateEntity(updateDto, existed);
+        verify(allergyMapper).updateEntity(existed, updateDto);
         verify(allergyMapper).toDTO(existed);
 
     }
