@@ -10,6 +10,7 @@ import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,13 +73,14 @@ public class EmployeeMapper {
     }
 
     public void updateEntity(Employee existing, EmployeeUpdateDTO dto, Set<HouseUnit> houseUnits) {
-        if (dto == null || existing == null) return;
+        Objects.requireNonNull(existing, "existing employee must not be null");
+        Objects.requireNonNull(dto, "employee update dto must not be null");
 
         if (dto.firstName() != null) existing.setFirstName(dto.firstName());
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
         if (dto.email() != null) existing.setEmail(dto.email());
         if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
-        if (dto.position() != null) existing.setPosition(dto.position());
+        if (dto.position() != null) existing.changePosition(dto.position());
         if (houseUnits != null) existing.setHouseUnits(houseUnits);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
         if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());

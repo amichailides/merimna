@@ -45,6 +45,7 @@ public class Employee {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Setter(AccessLevel.NONE)
     private EmployeePosition position;
 
     @Column(nullable = false)
