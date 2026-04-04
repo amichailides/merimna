@@ -6,6 +6,9 @@ import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.domain.Allergy;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 @Component
 public class AllergyMapper {
 
@@ -35,10 +38,25 @@ public class AllergyMapper {
         );
     }
 
-    public void updateEntity(AllergyUpdateDTO dto, Allergy existing) {
-        existing.setSubstance(dto.substance());
-        existing.setSeverity(dto.severity());
-        existing.setReaction(dto.reaction());
+    public void updateEntity(Allergy existing, AllergyUpdateDTO dto) {
+        Objects.requireNonNull(existing, "existing allergy must not be null");
+        Objects.requireNonNull(dto, "allergy update dto must not be null");
+
+        updateIfNotBlank(dto.substance(), existing::setSubstance);
+        updateIfNotBlank(dto.reaction(), existing::setReaction);
+        updateIfNotNull(dto.severity(), existing::setSeverity);
+    }
+
+    private <T> void updateIfNotNull(T newValue, Consumer<T> setter) {
+        if (newValue != null) {
+            setter.accept(newValue);
+        }
+    }
+
+    private void updateIfNotBlank(String newValue, Consumer<String> setter) {
+        if (newValue != null && !newValue.isBlank()) {
+            setter.accept(newValue);
+        }
     }
 
 

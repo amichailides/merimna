@@ -45,7 +45,7 @@ public class AllergyServiceImpl implements AllergyService {
 
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
 
-        allergyMapper.updateEntity(dto, allergy);
+        allergyMapper.updateEntity(allergy, dto);
 
         return allergyMapper.toDTO(allergy);
     }
