@@ -22,7 +22,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    // TODO: Use BCryptPasswordEncoder.encode() στο Service πριν save (αποθήκευση hashed password)
+    // TODO: Use BCryptPasswordEncoder.encode() στο Service πριν create (αποθήκευση hashed password)
     @Setter(AccessLevel.NONE)
     @Column(nullable = false)
     private String password;

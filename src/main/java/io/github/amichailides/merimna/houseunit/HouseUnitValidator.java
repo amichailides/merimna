@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.houseunit;
 
-import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
+
+import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,11 @@ public class HouseUnitValidator {
         validateCodeUniqueness(code);
     }
 
+    public void validateAssignmentForBeneficiary(HouseUnit houseUnit) {
+        // Future domain rules:
+        // - capacity (max occupants per house unit)
+        // - active/inactive house unit
+    }
     private void validateCodeUniqueness(String code) {
         if (houseUnitRepository.existsByCode(code)) {
             throw new HouseUnitAlreadyExistsException(code);

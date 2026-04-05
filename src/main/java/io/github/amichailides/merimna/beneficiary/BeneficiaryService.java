@@ -8,7 +8,7 @@ public interface BeneficiaryService {
 
     boolean existsByAmka(String amka);
 
-    BeneficiaryDetailsDTO save(BeneficiarySaveDTO dto);
+    BeneficiaryDetailsDTO create(BeneficiarySaveDTO dto);
 
     BeneficiaryDetailsDTO findById(Long id);
 

@@ -68,9 +68,9 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    void save_shouldNotMapOrPersist_whenValidationFails() {
+    void create_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
-        BeneficiarySaveDTO dto = createDefaultBeneficiarySaveDTO();
+        BeneficiarySaveDTO dto = createDefaultBeneficiaryCreateDTO();
 
         Map<String, String> errors = Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
@@ -83,7 +83,7 @@ public class BeneficiaryServiceImplTest {
 
         assertThrows(
                 DomainValidationException.class,
-                () -> beneficiaryService.save(dto)
+                () -> beneficiaryService.create(dto)
         );
 
         verify(validator).validateForSave(dto);
@@ -154,9 +154,9 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
-    void save_shouldPersistAndReturnDto_whenValidInputProvided() {
+    void create_shouldPersistAndReturnDto_whenValidInputProvided() {
         // arrange
-        BeneficiarySaveDTO saveDto = createDefaultBeneficiarySaveDTO();
+        BeneficiarySaveDTO saveDto = createDefaultBeneficiaryCreateDTO();
         Beneficiary entityFromMapper = createDefaultBeneficiary(false);
         Beneficiary savedEntity = createDefaultBeneficiary(1L, true);
 
@@ -170,7 +170,7 @@ public class BeneficiaryServiceImplTest {
         when(beneficiaryMapper.toDetailsDTO(savedEntity)).thenReturn(expectedDto);
 
         // act
-        BeneficiaryDetailsDTO result = beneficiaryService.save(saveDto);
+        BeneficiaryDetailsDTO result = beneficiaryService.create(saveDto);
 
         // assert
         assertNotNull(result);
@@ -404,7 +404,7 @@ public class BeneficiaryServiceImplTest {
         return createDefaultBeneficiary(1L, isActive);
     }
 
-    private BeneficiarySaveDTO createDefaultBeneficiarySaveDTO() {
+    private BeneficiarySaveDTO createDefaultBeneficiaryCreateDTO() {
         return BeneficiarySaveDTO.builder()
                 .firstName("Joe")
                 .lastName("Doe")

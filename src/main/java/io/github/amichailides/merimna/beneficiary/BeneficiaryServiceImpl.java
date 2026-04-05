@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundB
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,8 +26,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     private final BeneficiaryRepository beneficiaryRepository;
     private final BeneficiaryMapper beneficiaryMapper;
-    private final BeneficiaryValidator validator;
+    private final BeneficiaryValidator beneficiaryValidator;
     private final HouseUnitRepository houseUnitRepository;
+    private final HouseUnitValidator houseUnitValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,14 +46,13 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Transactional
-    public BeneficiaryDetailsDTO save(BeneficiarySaveDTO dto) {
-
-        validator.validateForSave(dto);
+    public BeneficiaryDetailsDTO create(BeneficiarySaveDTO dto) {
+        beneficiaryValidator.validateForSave(dto);
 
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
 
-        // TODO(#12): Add domain validation for HouseUnit assignment during beneficiary creation
+        houseUnitValidator.validateAssignmentForBeneficiary(houseUnit);
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
@@ -62,7 +63,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryDetailsDTO discharge(Long id) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(id);
 
-        validator.validateForDischarge(beneficiary); // business rules
+        beneficiaryValidator.validateForDischarge(beneficiary); // business rules
         beneficiary.discharge(); // state check
 
         return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
@@ -75,7 +76,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         Beneficiary employee = getBeneficiaryOrThrow(id);
 
-        validator.validateForUpdate(employee, dto);
+        beneficiaryValidator.validateForUpdate(employee, dto);
 
         beneficiaryMapper.updateEntity(employee, dto);
 

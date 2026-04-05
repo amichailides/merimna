@@ -69,7 +69,7 @@ public class BeneficiaryController {
     public ResponseEntity<BeneficiaryDetailsDTO> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
 
-        BeneficiaryDetailsDTO beneficiary = service.save(dto);
+        BeneficiaryDetailsDTO beneficiary = service.create(dto);
         return ResponseEntity
                 .created(buildLocationUri(beneficiary.id()))
                 .body(beneficiary);
