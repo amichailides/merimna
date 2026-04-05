@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -23,5 +24,7 @@ public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Long>,
             "legalRepresentatives"
     })
     Optional<Beneficiary> findWithDetailsById(Long id);
+
+    long countByHouseUnitAndIsActiveTrue(HouseUnit houseUnit);
 
 }

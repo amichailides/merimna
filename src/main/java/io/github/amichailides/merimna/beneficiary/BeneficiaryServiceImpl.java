@@ -120,10 +120,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
-        HouseUnit houseUnit = houseUnitRepository.findByCode(code)
+        HouseUnit targetHouseUnit  = houseUnitRepository.findByCode(code)
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
 
-        beneficiary.changeHouseUnit(houseUnit);
+        if (!beneficiary.getHouseUnit().getCode().equals(targetHouseUnit.getCode())) {
+            houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
+        }
+
+        beneficiary.changeHouseUnit(targetHouseUnit );
         return beneficiaryMapper.toListDTO(beneficiary);
     }
 

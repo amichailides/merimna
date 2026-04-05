@@ -6,5 +6,6 @@ import lombok.Builder;
 public record HouseUnitReadOnlyDTO(
         String code,
         String displayName,
-        String address
+        String address,
+        Integer maxCapacity
 ) {}

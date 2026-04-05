@@ -11,4 +11,6 @@ public interface HouseUnitRepository extends JpaRepository<HouseUnit, Long> {
     boolean existsByCode(String code);
 
     boolean existsByCodeAndIdNot(String code, Long houseUnitId);
+
+
 }

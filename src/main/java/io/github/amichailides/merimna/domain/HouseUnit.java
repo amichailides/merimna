@@ -3,8 +3,6 @@ package io.github.amichailides.merimna.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @Entity
 @Getter
 @Setter
@@ -26,4 +24,13 @@ public class HouseUnit {
 
     @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
+    private int maxCapacity;
+
+    public boolean isFull(long beneficiaryCount) {
+        return beneficiaryCount >= maxCapacity;
+    }
 }
+
+

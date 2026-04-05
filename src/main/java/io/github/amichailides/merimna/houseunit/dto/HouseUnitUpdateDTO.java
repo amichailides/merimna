@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.houseunit.dto;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -16,5 +17,8 @@ public record HouseUnitUpdateDTO(
         String displayName,
 
         @Size(max = 255, message = "{houseUnit.address.size}", groups = SecondOrder.class)
-        String address
+        String address,
+
+        @Positive(message = "{houseUnit.maxCapacity.positive}")
+        Integer maxCapacity
 ) {}

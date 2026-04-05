@@ -18,6 +18,7 @@ public class HouseUnitMapper {
                 .code(entity.getCode())
                 .displayName(entity.getDisplayName())
                 .address(entity.getAddress())
+                .maxCapacity(entity.getMaxCapacity())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class HouseUnitMapper {
                 .code(code)
                 .displayName(dto.displayName())
                 .address(dto.address())
+                .maxCapacity(dto.maxCapacity())
                 .build();
     }
 
