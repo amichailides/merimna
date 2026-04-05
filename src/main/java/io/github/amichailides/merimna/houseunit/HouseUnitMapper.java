@@ -21,11 +21,11 @@ public class HouseUnitMapper {
                 .build();
     }
 
-    public HouseUnit toEntity(HouseUnitCreateDTO dto) {
+    public HouseUnit toEntity(HouseUnitCreateDTO dto, String code) {
         if (dto == null) return null;
 
         return HouseUnit.builder()
-                .code(dto.code())
+                .code(code)
                 .displayName(dto.displayName())
                 .address(dto.address())
                 .build();

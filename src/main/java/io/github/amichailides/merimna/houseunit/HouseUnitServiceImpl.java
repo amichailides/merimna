@@ -18,6 +18,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
 
     private final HouseUnitRepository houseUnitRepository;
     private final HouseUnitMapper houseUnitMapper;
+    private final HouseUnitValidator houseUnitValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -31,14 +32,11 @@ public class HouseUnitServiceImpl implements HouseUnitService{
     @Override
     @Transactional
     public HouseUnitReadOnlyDTO createHouseUnit(HouseUnitCreateDTO dto) {
-        //TODO consider validator implementation
+        String code = normalizeCode(dto.code());
 
-        if (houseUnitRepository.existsByCode(dto.code())) {
-            throw new HouseUnitAlreadyExistsException(dto.code());
-        }
+        houseUnitValidator.validateForCreate(code);
 
-        System.out.println("POST createHouseUnit hit");
-        HouseUnit houseUnit = houseUnitMapper.toEntity(dto);
+        HouseUnit houseUnit = houseUnitMapper.toEntity(dto, code);
         HouseUnit saved = houseUnitRepository.save(houseUnit);
         return houseUnitMapper.toDTO(saved);
     }
@@ -67,5 +65,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
         return houseUnitMapper.toDTO(houseUnit);
     }
 
-
+    private String normalizeCode(String code) {
+        return code.trim().toUpperCase();
+    }
 }

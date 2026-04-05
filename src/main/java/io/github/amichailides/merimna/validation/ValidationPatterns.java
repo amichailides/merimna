@@ -22,7 +22,7 @@ public final class ValidationPatterns {
     public static final String AMKA = "^\\d+$";
 
     // (Κεφαλαία λατινικά γράμματα, αριθμοί, παύλα ή κάτω παύλα, 2–20 χαρακτήρες, χωρίς κενά)
-    public static final String HOUSE_UNIT_CODE = "^[A-Z0-9_-]{2,20}$";
+    public static final String HOUSE_UNIT_CODE = "^[A-Za-z0-9_-]{2,20}$";
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }
