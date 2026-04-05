@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -36,7 +36,7 @@ public class BeneficiaryValidator {
         this.repository = repository;
     }
 
-    public void validateForSave(BeneficiarySaveDTO dto) {
+    public void validateForSave(BeneficiaryCreateDTO dto) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         String amka = dto.amka();

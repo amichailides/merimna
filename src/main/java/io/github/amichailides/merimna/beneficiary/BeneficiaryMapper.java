@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.allergy.AllergyMapper;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryDetailsDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryListDTO;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -64,7 +64,7 @@ public class BeneficiaryMapper {
                 .build();
     }
 
-    public Beneficiary toEntity(BeneficiarySaveDTO dto, HouseUnit houseUnit) {
+    public Beneficiary toEntity(BeneficiaryCreateDTO dto, HouseUnit houseUnit) {
         if (dto == null) return null;
 
         return Beneficiary.builder()

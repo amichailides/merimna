@@ -18,7 +18,7 @@ import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
  * Η επικύρωση ακολουθεί το {@link ValidationGroupSequence} για σταδιακό έλεγχο σφαλμάτων.
  */
 @Builder
-public record BeneficiarySaveDTO(
+public record BeneficiaryCreateDTO(
         @Schema(description = "First name of the beneficiary", example = "Γεώργιος")
         @NotBlank(message = "{firstName.required}", groups = FirstOrder.class)
         @ValidFirstName(groups = SecondOrder.class)

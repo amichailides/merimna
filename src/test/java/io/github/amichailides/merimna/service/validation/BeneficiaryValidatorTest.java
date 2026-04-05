@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.service.validation;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryValidator;
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.domain.*;
-import io.github.amichailides.merimna.beneficiary.dto.BeneficiarySaveDTO;
+import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
@@ -34,7 +34,7 @@ public class BeneficiaryValidatorTest {
     @Test
     void shouldThrowExceptionWhenAmkaAlreadyExistsOnSave() {
 
-        BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
+        BeneficiaryCreateDTO dto = BeneficiaryCreateDTO.builder()
                 .amka("06046678912")
                 .dateOfBirth(LocalDate.of(1966, 4, 6))
                 .build();
@@ -55,7 +55,7 @@ public class BeneficiaryValidatorTest {
 
     @Test
     void shouldThrowExceptionWhenAmkaNotConsistentWithDobOnSave() {
-        BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
+        BeneficiaryCreateDTO dto = BeneficiaryCreateDTO.builder()
                 .amka("06045678912")
                 .dateOfBirth(LocalDate.of(1966, 4, 6))
                 .build();
@@ -73,7 +73,7 @@ public class BeneficiaryValidatorTest {
 
     @Test
     void shouldNotThrowExceptionWhenDataIsValidOnSave() {
-        BeneficiarySaveDTO dto = BeneficiarySaveDTO.builder()
+        BeneficiaryCreateDTO dto = BeneficiaryCreateDTO.builder()
                 .amka("06046678912")
                 .dateOfBirth(LocalDate.of(1966, 4, 6))
                 .build();

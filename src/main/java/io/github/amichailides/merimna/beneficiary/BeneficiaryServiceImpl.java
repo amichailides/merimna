@@ -46,7 +46,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     }
 
     @Transactional
-    public BeneficiaryDetailsDTO create(BeneficiarySaveDTO dto) {
+    public BeneficiaryDetailsDTO create(BeneficiaryCreateDTO dto) {
         beneficiaryValidator.validateForSave(dto);
 
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())

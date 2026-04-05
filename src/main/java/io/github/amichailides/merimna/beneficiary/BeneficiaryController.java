@@ -67,7 +67,7 @@ public class BeneficiaryController {
     })
     @PostMapping
     public ResponseEntity<BeneficiaryDetailsDTO> create(
-            @Validated(ValidationGroupSequence.class) @RequestBody BeneficiarySaveDTO dto) {
+            @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryCreateDTO dto) {
 
         BeneficiaryDetailsDTO beneficiary = service.create(dto);
         return ResponseEntity

@@ -70,7 +70,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     void create_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
-        BeneficiarySaveDTO dto = createDefaultBeneficiaryCreateDTO();
+        BeneficiaryCreateDTO dto = createDefaultBeneficiaryCreateDTO();
 
         Map<String, String> errors = Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
@@ -156,7 +156,7 @@ public class BeneficiaryServiceImplTest {
     @Test
     void create_shouldPersistAndReturnDto_whenValidInputProvided() {
         // arrange
-        BeneficiarySaveDTO saveDto = createDefaultBeneficiaryCreateDTO();
+        BeneficiaryCreateDTO saveDto = createDefaultBeneficiaryCreateDTO();
         Beneficiary entityFromMapper = createDefaultBeneficiary(false);
         Beneficiary savedEntity = createDefaultBeneficiary(1L, true);
 
@@ -404,8 +404,8 @@ public class BeneficiaryServiceImplTest {
         return createDefaultBeneficiary(1L, isActive);
     }
 
-    private BeneficiarySaveDTO createDefaultBeneficiaryCreateDTO() {
-        return BeneficiarySaveDTO.builder()
+    private BeneficiaryCreateDTO createDefaultBeneficiaryCreateDTO() {
+        return BeneficiaryCreateDTO.builder()
                 .firstName("Joe")
                 .lastName("Doe")
                 .amka("12345678912")
