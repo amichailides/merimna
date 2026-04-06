@@ -129,7 +129,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    // TODO(#10): Add domain validation for houseUnit assignment
     public BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 

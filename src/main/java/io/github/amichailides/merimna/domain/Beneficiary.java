@@ -165,7 +165,6 @@ public class Beneficiary {
         // TODO: add exitReason, exitDate, approvedBy fields when DischargeDTO is implemented
     }
 
-    // TODO(#10): Add domain validation for houseUnit assignment
     public void changeHouseUnit(@NonNull HouseUnit newHouseUnit) {
 
         // Objects.equals => no NullPointerException
