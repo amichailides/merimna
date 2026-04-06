@@ -10,13 +10,15 @@ import lombok.*;
 @Entity
 @Table(name = "roles")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true, nullable = false)
-    private UserRole name;
-    private String description;
+    @Column(name = "code", nullable = false, length = 50, unique = true)
+    private String code;
+
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 }
