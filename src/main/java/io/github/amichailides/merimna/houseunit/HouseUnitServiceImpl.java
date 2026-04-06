@@ -48,9 +48,7 @@ public class HouseUnitServiceImpl implements HouseUnitService{
         HouseUnit existing = houseUnitRepository.findByCode(houseUnitCode)
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(houseUnitCode));
 
-        if (dto.code() != null && houseUnitRepository.existsByCodeAndIdNot(dto.code(), existing.getId())) {
-            throw new HouseUnitAlreadyExistsException(dto.code());
-        }
+        houseUnitValidator.validateForUpdate(existing, dto);
 
         houseUnitMapper.updateEntity(existing, dto);
         return houseUnitMapper.toDTO(existing);

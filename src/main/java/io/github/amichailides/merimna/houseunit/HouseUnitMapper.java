@@ -40,5 +40,6 @@ public class HouseUnitMapper {
         if (dto.code() != null) existing.setCode(dto.code());
         if (dto.displayName() != null) existing.setDisplayName(dto.displayName());
         if (dto.address() != null) existing.setAddress(dto.address());
+        if (dto.maxCapacity() != null) existing.setMaxCapacity(dto.maxCapacity());
     }
 }

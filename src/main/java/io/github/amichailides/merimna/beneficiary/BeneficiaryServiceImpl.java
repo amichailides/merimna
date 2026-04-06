@@ -45,6 +45,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
+    @Override
     @Transactional
     public BeneficiaryDetailsDTO create(BeneficiaryCreateDTO dto) {
         beneficiaryValidator.validateForSave(dto);
@@ -59,6 +60,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
     }
 
+    @Override
     @Transactional
     public BeneficiaryDetailsDTO discharge(Long id) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(id);
@@ -69,18 +71,29 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
     }
 
+    @Override
     @Transactional
     public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
-        Beneficiary employee = getBeneficiaryOrThrow(id);
+        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
 
-        beneficiaryValidator.validateForUpdate(employee, dto);
+        beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
-        beneficiaryMapper.updateEntity(employee, dto);
+        if (dto.houseUnit() != null) {
+            HouseUnit targetHouseUnit = houseUnitRepository.findByCode(dto.houseUnit())
+                    .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnit()));
 
-        return beneficiaryMapper.toDetailsDTO(employee);
+            if (!beneficiary.isAssignedTo(targetHouseUnit)) {
+                houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
+                beneficiary.changeHouseUnit(targetHouseUnit);
+            }
+        }
+
+        beneficiaryMapper.updateEntity(beneficiary, dto);
+
+        return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
     /**

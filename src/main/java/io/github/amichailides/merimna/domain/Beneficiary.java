@@ -11,15 +11,6 @@ import java.util.*;
 
 import static java.util.Collections.unmodifiableSet;
 
-/**
- * * <p><b>TODO (Database Strategy):</b>
- * <ul>
- * <li>Μεταφορά του Schema Management (Indexes, Constraints) σε <b>Liquibase changelogs</b>.</li>
- * <li>Υλοποίηση Partial Index στην PostgreSQL για το {@code is_active = true} (Performance optimization).</li>
- * <li>Μετάβαση σε {@code ddl-auto=validate} για Docker-ready deployment.</li>
- * </ul>
- * </p>
- */
 @Entity
 @Getter
 @Setter
@@ -191,4 +182,7 @@ public class Beneficiary {
         }
     }
 
+    public boolean isAssignedTo(HouseUnit houseUnit) {
+        return this.houseUnit.getCode().equals(houseUnit.getCode());
+    }
 }

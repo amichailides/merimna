@@ -51,7 +51,9 @@ public enum ErrorCode {
     // houseUnit
     HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
     HOUSE_UNIT_ALREADY_EXISTS("HOUSE_UNIT_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.houseUnit.alreadyExists"),
-    HOUSE_UNIT_CAPACITY_EXCEEDED("HOUSE_UNIT_CAPACITY_EXCEEDED", HttpStatus.BAD_REQUEST, "error.houseUnit.capacityExceeded");
+    HOUSE_UNIT_CAPACITY_EXCEEDED("HOUSE_UNIT_CAPACITY_EXCEEDED", HttpStatus.BAD_REQUEST, "error.houseUnit.capacityExceeded"),
+    HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full");
+
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
     private final String messageKey;     // για i18n / frontend

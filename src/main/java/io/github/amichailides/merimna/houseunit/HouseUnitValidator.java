@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitAlreadyExistsException;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitCapacityExceededException;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitFullException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +24,15 @@ public class HouseUnitValidator {
         long count = beneficiaryRepository.countByHouseUnitAndIsActiveTrue(houseUnit);
 
         if (houseUnit.isFull(count)) {
-            throw new HouseUnitCapacityExceededException(houseUnit.getCode());
+            throw new HouseUnitFullException(houseUnit.getCode(), count);
         }
     }
 
     public void validateForUpdate(HouseUnit existing, HouseUnitUpdateDTO dto) {
-
         validateCodeUniquenessForUpdate(existing, dto.code());
         validateMaxCapacity(existing, dto.maxCapacity());
     }
+
     private void validateCodeUniqueness(String code) {
         if (houseUnitRepository.existsByCode(code)) {
             throw new HouseUnitAlreadyExistsException(code);
@@ -52,7 +53,7 @@ public class HouseUnitValidator {
         long count = beneficiaryRepository.countByHouseUnitAndIsActiveTrue(existing);
 
         if (newMaxCapacity < count) {
-            throw new HouseUnitCapacityExceededException(existing.getCode());
+            throw new HouseUnitCapacityExceededException(existing.getCode(), count);
         }
     }
 }
