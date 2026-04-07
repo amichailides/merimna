@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @ValidAssignmentDateRange(groups = SecondOrder.class)
-public record EmployeeHouseUnitAssignmentCreateDTO(
+public record EmployeeAssignmentCreateDTO(
         @NotBlank(message = "{houseUnit.code.required}", groups = FirstOrder.class)
         @Pattern(
                 regexp = ValidationPatterns.HOUSE_UNIT_CODE,

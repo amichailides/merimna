@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -29,7 +30,7 @@ public record EmployeeDetailsDTO(
         EmployeePosition position,
 
         @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
-        Set<String> houseUnitCodes,
+        Set<EmployeeAssignmentReadOnlyDTO> assignments,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         LocalDate hireDate,

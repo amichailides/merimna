@@ -1,10 +1,12 @@
 package io.github.amichailides.merimna.assignment.dto;
 
 import io.github.amichailides.merimna.assignment.AssignmentType;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record EmployeeHouseUnitAssignmentReadOnlyDTO(
+@Builder
+public record EmployeeAssignmentReadOnlyDTO(
         Long id,
         String houseUnitCode,
         String houseUnitDisplayName,

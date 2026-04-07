@@ -33,22 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto) {
         //TODO validator εδω...
 
-        Set<HouseUnit> houseUnits = dto.houseUnitCodes().stream()
-                .map(code -> houseUnitRepository.findByCode(code)
-                        .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code)))
-                .collect(Collectors.toSet());
-
-
         Employee employee = employeeMapper.toEntity(dto);
-
-        for (HouseUnit houseUnit : houseUnits) {
-            employee.assignToHouseUnit(
-                    houseUnit,
-                    AssignmentType.PRIMARY,
-                    LocalDate.now(),
-                    null
-            );
-        }
 
         Employee saved = employeeRepository.save(employee);
 

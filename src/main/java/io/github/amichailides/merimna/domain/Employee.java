@@ -60,6 +60,7 @@ public class Employee {
     // TODO(#15): Replace ManyToMany with explicit EmployeeHouseUnitAssignment entity.
     // Current model does not support primary vs temporary assignments, time boundaries, or access scope.
     // See issue for details.
+    @Builder.Default
     @OneToMany(
             mappedBy = "employee",
             cascade = CascadeType.ALL,
@@ -90,24 +91,16 @@ public class Employee {
         this.position = newPosition;
     }
 
-    public void assignToHouseUnit(
+    public EmployeeHouseUnitAssignment assignToHouseUnit(
             HouseUnit houseUnit,
             AssignmentType assignmentType,
             LocalDate startDate,
             LocalDate endDate
     ) {
-        if (assignmentType == AssignmentType.PRIMARY) {
-            boolean hasActivePrimary = assignments.stream()
-                    .filter(a -> a.getAssignmentType() == AssignmentType.PRIMARY)
-                    .anyMatch(a -> a.isActiveOn(startDate));
-            if (hasActivePrimary) {
-                throw new IllegalStateException("Employee already has an active PRIMARY assignment");
-            }
-        }
-
         EmployeeHouseUnitAssignment assignment =
                 EmployeeHouseUnitAssignment.create(this, houseUnit, assignmentType, startDate, endDate);
 
         this.assignments.add(assignment);
+        return assignment;
     }
 }

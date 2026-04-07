@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.address.AddressMapper;
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentMapper;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeMapper {
     private final AddressMapper addressMapper;
+    private final EmployeeAssignmentMapper assignmentMapper;
 
     public EmployeeDetailsDTO toDetailsDTO(Employee entity) {
         if (entity == null) return null;
@@ -32,9 +34,9 @@ public class EmployeeMapper {
                 .address(addressMapper.toDTO(entity.getAddress()))
                 .position(entity.getPosition())
                 .hireDate(entity.getHireDate())
-                .houseUnitCodes(
+                .assignments(
                         entity.getAssignments().stream()
-                                .map(assignment -> assignment.getHouseUnit().getCode())
+                                .map(assignmentMapper::toDTO)
                                 .collect(Collectors.toSet())
                 )
                 .active(entity.isActive())

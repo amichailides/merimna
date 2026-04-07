@@ -43,11 +43,6 @@ public record EmployeeCreateDTO(
         @NotNull(message = "{address.required}")
         AddressDTO address,
 
-
-        @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
-        @NotEmpty(message = "{houseUnit.required}", groups = FirstOrder.class)
-        Set<String> houseUnitCodes,
-
         @Schema(description = "Employee position", example = "CAREGIVER")
         @NotNull(message = "{employee.position.required}", groups = FirstOrder.class)
         //TODO @Pattern
