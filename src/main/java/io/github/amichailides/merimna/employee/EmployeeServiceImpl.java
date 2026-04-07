@@ -71,11 +71,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         boolean includeInactive = Boolean.TRUE.equals(criteria.includeInactive());
 
-        Specification<Employee> spec = Specification
-                .where(EmployeeSpecifications.globalSearch(criteria.q()))
+        Specification<Employee> spec = Specification.where(
+                        EmployeeSpecifications.globalSearch(criteria.q()))
                 .and(EmployeeSpecifications.hasPosition(criteria.position()))
-                .and(EmployeeSpecifications.belongsToHouseUnit(criteria.houseUnit()))
                 .and(EmployeeSpecifications.isActive(includeInactive ? null : true));
+
+        if (criteria.houseUnit() != null && !criteria.houseUnit().isBlank()) {
+            spec = spec.and(EmployeeSpecifications.belongsToHouseUnit(criteria.houseUnit()));
+        }
 
         return employeeRepository.findAll(spec, pageable)
                 .map(employeeMapper::toListDTO);

@@ -41,7 +41,13 @@ public class EmployeeSpecifications {
                 return null;
             }
             query.distinct(true);
-            return cb.equal(root.joinSet("houseUnits").get("code"), houseUnitCode);
+
+            return cb.equal(
+                    root.joinSet("assignments")
+                            .join("houseUnit")
+                            .get("code"),
+                    houseUnitCode
+            );
         };
     }
 

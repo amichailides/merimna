@@ -51,12 +51,6 @@ public class EmployeeMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .position(entity.getPosition())
-                .houseUnitCodes(
-                        entity.getAssignments().stream()
-                                .filter(assignment -> assignment.isActiveOn(LocalDate.now()))
-                                .map(assignment -> assignment.getHouseUnit().getCode())
-                                .collect(Collectors.toSet())
-                )
                 .active(entity.isActive())
                 .build();
     }
