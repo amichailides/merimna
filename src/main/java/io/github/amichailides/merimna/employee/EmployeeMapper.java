@@ -10,6 +10,7 @@ import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,8 +33,8 @@ public class EmployeeMapper {
                 .position(entity.getPosition())
                 .hireDate(entity.getHireDate())
                 .houseUnitCodes(
-                        entity.getHouseUnits().stream()
-                                .map(HouseUnit::getCode)
+                        entity.getAssignments().stream()
+                                .map(assignment -> assignment.getHouseUnit().getCode())
                                 .collect(Collectors.toSet())
                 )
                 .active(entity.isActive())
@@ -49,15 +50,16 @@ public class EmployeeMapper {
                 .lastName(entity.getLastName())
                 .position(entity.getPosition())
                 .houseUnitCodes(
-                        entity.getHouseUnits().stream()
-                                .map(HouseUnit::getCode)
+                        entity.getAssignments().stream()
+                                .filter(assignment -> assignment.isActiveOn(LocalDate.now()))
+                                .map(assignment -> assignment.getHouseUnit().getCode())
                                 .collect(Collectors.toSet())
                 )
                 .active(entity.isActive())
                 .build();
     }
 
-    public Employee toEntity(EmployeeCreateDTO dto, Set<HouseUnit> houseUnits) {
+    public Employee toEntity(EmployeeCreateDTO dto) {
         if (dto == null) return null;
 
         return Employee.builder()
@@ -68,11 +70,10 @@ public class EmployeeMapper {
                 .address(addressMapper.toEntity(dto.address()))
                 .position(dto.position())
                 .hireDate(dto.hireDate())
-                .houseUnits(houseUnits)
                 .build();
     }
 
-    public void updateEntity(Employee existing, EmployeeUpdateDTO dto, Set<HouseUnit> houseUnits) {
+    public void updateEntity(Employee existing, EmployeeUpdateDTO dto) {
         Objects.requireNonNull(existing, "existing employee must not be null");
         Objects.requireNonNull(dto, "employee update dto must not be null");
 
@@ -81,7 +82,6 @@ public class EmployeeMapper {
         if (dto.email() != null) existing.setEmail(dto.email());
         if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
         if (dto.position() != null) existing.changePosition(dto.position());
-        if (houseUnits != null) existing.setHouseUnits(houseUnits);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
         if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());
     }

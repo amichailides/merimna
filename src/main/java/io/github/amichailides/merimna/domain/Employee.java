@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.domain;
 
+import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyActiveException;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyTerminatedException;
 import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
@@ -59,14 +60,12 @@ public class Employee {
     // TODO(#15): Replace ManyToMany with explicit EmployeeHouseUnitAssignment entity.
     // Current model does not support primary vs temporary assignments, time boundaries, or access scope.
     // See issue for details.
-    @Builder.Default
-    @ManyToMany
-    @JoinTable(
-            name = "employee_house_units",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "house_unit_id")
+    @OneToMany(
+            mappedBy = "employee",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private Set<HouseUnit> houseUnits = new HashSet<>();
+    private Set<EmployeeHouseUnitAssignment> assignments = new HashSet<>();
 
 
     public void terminate() {
@@ -89,5 +88,26 @@ public class Employee {
         }
 
         this.position = newPosition;
+    }
+
+    public void assignToHouseUnit(
+            HouseUnit houseUnit,
+            AssignmentType assignmentType,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (assignmentType == AssignmentType.PRIMARY) {
+            boolean hasActivePrimary = assignments.stream()
+                    .filter(a -> a.getAssignmentType() == AssignmentType.PRIMARY)
+                    .anyMatch(a -> a.isActiveOn(startDate));
+            if (hasActivePrimary) {
+                throw new IllegalStateException("Employee already has an active PRIMARY assignment");
+            }
+        }
+
+        EmployeeHouseUnitAssignment assignment =
+                EmployeeHouseUnitAssignment.create(this, houseUnit, assignmentType, startDate, endDate);
+
+        this.assignments.add(assignment);
     }
 }

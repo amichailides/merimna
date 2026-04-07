@@ -3,6 +3,9 @@ package io.github.amichailides.merimna.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -24,6 +27,9 @@ public class HouseUnit {
 
     @Column(nullable = false)
     private String address;
+
+    @OneToMany(mappedBy = "houseUnit")
+    private Set<EmployeeHouseUnitAssignment> assignments = new HashSet<>();
 
     @Column(nullable = false)
     private int maxCapacity;

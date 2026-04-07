@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.*;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,13 +33,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto) {
         //TODO validator εδω...
 
-        Set<HouseUnit> houseUnit = dto.houseUnitCodes().stream()
+        Set<HouseUnit> houseUnits = dto.houseUnitCodes().stream()
                 .map(code -> houseUnitRepository.findByCode(code)
                         .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code)))
                 .collect(Collectors.toSet());
 
 
-        Employee employee = employeeMapper.toEntity(dto, houseUnit);
+        Employee employee = employeeMapper.toEntity(dto);
+
+        for (HouseUnit houseUnit : houseUnits) {
+            employee.assignToHouseUnit(
+                    houseUnit,
+                    AssignmentType.PRIMARY,
+                    LocalDate.now(),
+                    null
+            );
+        }
+
         Employee saved = employeeRepository.save(employee);
 
         return employeeMapper.toDetailsDTO(saved);
@@ -92,9 +104,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = getEmployeeOrThrow(id);
         employeeValidator.validateForUpdate(employee, dto);
-        Set<HouseUnit> houseUnits = houseUnitResolver.resolveForEmployeeUpdate(dto.houseUnitCodes());
 
-        employeeMapper.updateEntity(employee, dto, houseUnits);
+        employeeMapper.updateEntity(employee, dto);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -106,6 +117,23 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(id));
 
         return employeeMapper.toDetailsDTO(employee);
+    }
+
+    @Transactional
+    public void assignEmployeeToHouseUnit(
+            Long employeeId,
+            String houseUnitCode,
+            AssignmentType assignmentType,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
+        HouseUnit houseUnit = houseUnitRepository.findByCode(houseUnitCode)
+                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(houseUnitCode));
+
+        employee.assignToHouseUnit(houseUnit, assignmentType, startDate, endDate);
+        employeeRepository.save(employee);
     }
 
     private Employee getEmployeeOrThrow(Long employeeId) {

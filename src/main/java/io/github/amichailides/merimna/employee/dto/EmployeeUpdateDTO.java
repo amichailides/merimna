@@ -39,15 +39,6 @@ public record EmployeeUpdateDTO(
         @Schema(description = "Employee position", example = "CAREGIVER")
         EmployeePosition position,
 
-        @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
-        Set<
-                @Pattern(
-                        regexp = ValidationPatterns.HOUSE_UNIT_CODE,
-                        message = "{employee.houseUnitCode.invalid}",
-                        groups = SecondOrder.class
-                )
-                        String> houseUnitCodes,
-
         @Schema(description = "Employee hire date", example = "2026-02-23")
         @PastOrPresent(message = "{employee.hireDate.pastOrPresent}", groups = SecondOrder.class)
         LocalDate hireDate,
