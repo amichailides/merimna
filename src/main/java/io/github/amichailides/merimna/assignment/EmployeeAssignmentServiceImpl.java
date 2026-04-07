@@ -29,6 +29,8 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
 
+        // TODO(#18): Enforce role-based PRIMARY assignment constraints and revisit assignment type semantics.
+
         EmployeeHouseUnitAssignment assignment = employee.assignToHouseUnit(
                 houseUnit,
                 dto.assignmentType(),
