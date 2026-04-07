@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -29,8 +30,10 @@ public record EmployeeDetailsDTO(
         @Schema(description = "Employee position", example = "CAREGIVER")
         EmployeePosition position,
 
-        @Schema(description = "Assigned house unit codes", example = "[\"UNIT_A\", \"UNIT_B\"]")
-        Set<EmployeeAssignmentReadOnlyDTO> assignments,
+        @Schema(
+                description = "House unit assignments for this employee",
+                example = "[{ \"houseUnitCode\": \"UNIT_A\", \"assignmentType\": \"PRIMARY\" }]")
+        List<EmployeeAssignmentReadOnlyDTO> assignments,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         LocalDate hireDate,

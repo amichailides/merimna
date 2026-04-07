@@ -6,7 +6,6 @@ import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
-import io.github.amichailides.merimna.houseunit.HouseUnitResolver;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeeMapper employeeMapper;
     private final EmployeeValidator employeeValidator;
-    private final HouseUnitResolver houseUnitResolver;
 
     @Override
     @Transactional

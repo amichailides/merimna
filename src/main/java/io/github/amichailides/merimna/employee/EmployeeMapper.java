@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.employee;
 import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentMapper;
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,8 +38,10 @@ public class EmployeeMapper {
                 .hireDate(entity.getHireDate())
                 .assignments(
                         entity.getAssignments().stream()
+                                .sorted(Comparator.comparing(EmployeeHouseUnitAssignment::getStartDate,
+                                        Comparator.nullsLast(Comparator.naturalOrder())))
                                 .map(assignmentMapper::toDTO)
-                                .collect(Collectors.toSet())
+                                .toList()
                 )
                 .active(entity.isActive())
                 .build();
