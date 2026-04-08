@@ -44,9 +44,8 @@ public class Employee {
     @NotNull
     private Address address;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Setter(AccessLevel.NONE)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "position_id", nullable = false)
     private EmployeePosition position;
 
     @Column(nullable = false)
@@ -84,8 +83,9 @@ public class Employee {
     }
 
     public void changePosition(EmployeePosition newPosition) {
-        if (this.position == newPosition) {
-            throw new SameEmployeePositionException(this.position);
+        if (this.position != null
+                && this.position.getCode().equals(newPosition.getCode())) {
+            throw new SameEmployeePositionException(newPosition.getCode().getValue());
         }
 
         this.position = newPosition;

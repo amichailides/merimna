@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
@@ -28,11 +27,11 @@ public class EmployeeSpecifications {
         };
     }
 
-    public static Specification<Employee> hasPosition(EmployeePosition position) {
+    public static Specification<Employee> hasPositionCode(String positionCode) {
         return (root, query, cb) ->
-                position == null
+                positionCode == null
                         ? null
-                        : cb.equal(root.get("position"), position);
+                        : cb.equal(root.get("position").get("code"), positionCode);
     }
 
     public static Specification<Employee> belongsToHouseUnit(String houseUnitCode) {

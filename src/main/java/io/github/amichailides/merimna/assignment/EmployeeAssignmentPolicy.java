@@ -29,10 +29,7 @@ public class EmployeeAssignmentPolicy {
     }
 
     private boolean requiresExclusivePlacement(Employee employee) {
-        return switch (employee.getPosition()) {
-            case CAREGIVER, HOUSE_MANAGER, EDUCATOR -> true;
-            default -> false;
-        };
+        return employee.getPosition().isRequiresExclusivePlacement();
     }
 
     private boolean hasOverlappingAssignment(

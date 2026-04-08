@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLastName;
 import io.github.amichailides.merimna.validation.annotations.ValidMobile;
@@ -13,7 +12,6 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Builder
 public record EmployeeCreateDTO(
@@ -43,10 +41,10 @@ public record EmployeeCreateDTO(
         @NotNull(message = "{address.required}")
         AddressDTO address,
 
-        @Schema(description = "Employee position", example = "CAREGIVER")
+        @Schema(description = "Employee position code", example = "CAREGIVER")
         @NotNull(message = "{employee.position.required}", groups = FirstOrder.class)
         //TODO @Pattern
-        EmployeePosition position,
+        String positionCode,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         @NotNull(message = "{employee.hireDate.required}", groups = FirstOrder.class)

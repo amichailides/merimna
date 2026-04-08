@@ -23,6 +23,9 @@ public final class ValidationPatterns {
 
     // (Κεφαλαία λατινικά γράμματα, αριθμοί, παύλα ή κάτω παύλα, 2–20 χαρακτήρες, χωρίς κενά)
     public static final String HOUSE_UNIT_CODE = "^[A-Za-z0-9_-]{2,20}$";
+
+    // Λατινικά γράμματα, αριθμοί, κενά, παύλα ή underscore, 2–50 χαρακτήρες
+    public static final String EMPLOYEE_POSITION_CODE = "^[a-zA-Z0-9_\\s-]{2,50}$";
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }

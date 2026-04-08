@@ -21,6 +21,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeeHouseUnitAssignmentRepository assignmentRepository;
     private final EmployeeAssignmentMapper mapper;
+    private final EmployeeAssignmentPolicy assignmentPolicy;
 
     @Override
     @Transactional
@@ -30,6 +31,13 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
 
         // TODO(#18): Enforce role-based PRIMARY assignment constraints and revisit assignment type semantics.
+
+        assignmentPolicy.validateForCreate(
+                employee,
+                dto.assignmentType(),
+                dto.startDate(),
+                dto.endDate()
+        );
 
         EmployeeHouseUnitAssignment assignment = employee.assignToHouseUnit(
                 houseUnit,

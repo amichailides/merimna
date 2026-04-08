@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.employee.dto;
 
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
@@ -11,8 +10,8 @@ public record EmployeeSearchDTO(
         @Size(min = 2, max = 100, message = "{employee.searchTerm.size}")
         String q,
 
-        @Schema(description = "Employee position", example = "CAREGIVER")
-        EmployeePosition position,
+        @Schema(description = "Employee position code", example = "CAREGIVER")
+        String positionCode,
 
         @Schema(description = "Filter by assigned house unit code", example = "UNIT_A")
         @Pattern(

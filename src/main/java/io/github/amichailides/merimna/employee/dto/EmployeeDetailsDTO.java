@@ -2,13 +2,11 @@ package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 public record EmployeeDetailsDTO(
@@ -27,8 +25,11 @@ public record EmployeeDetailsDTO(
         @Schema(description = "Employee mobile number", example = "+306942318223")
         String mobileNumber,
 
-        @Schema(description = "Employee position", example = "CAREGIVER")
-        EmployeePosition position,
+        @Schema(description = "Employee position code", example = "CAREGIVER")
+        String positionCode,
+
+        @Schema(description = "Employee position display name", example = "Caregiver")
+        String positionDisplayName,
 
         @Schema(
                 description = "House unit assignments for this employee",

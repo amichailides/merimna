@@ -2,9 +2,13 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.EmployeePosition;
+import io.github.amichailides.merimna.domain.EmployeePositionCode;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
+import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
+import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +27,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeeMapper employeeMapper;
     private final EmployeeValidator employeeValidator;
+    private final EmployeePositionRepository employeePositionRepository;
 
     @Override
     @Transactional
     public EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto) {
         //TODO validator εδω...
 
-        Employee employee = employeeMapper.toEntity(dto);
+        EmployeePositionCode code = EmployeePositionCode.of(dto.positionCode());
+
+        EmployeePosition position = resolvePositionOrThrow(code);
+        Employee employee = employeeMapper.toEntity(dto, position);
 
         Employee saved = employeeRepository.save(employee);
 
@@ -69,7 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Specification<Employee> spec = Specification.where(
                         EmployeeSpecifications.globalSearch(criteria.q()))
-                .and(EmployeeSpecifications.hasPosition(criteria.position()))
+                .and(EmployeeSpecifications.hasPositionCode(criteria.positionCode()))
                 .and(EmployeeSpecifications.isActive(includeInactive ? null : true));
 
         if (criteria.houseUnit() != null && !criteria.houseUnit().isBlank()) {
@@ -86,10 +94,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
+        EmployeePosition position = dto.positionCode() != null
+                ? resolvePositionOrThrow(EmployeePositionCode.of(dto.positionCode()))
+                : null;
+
         Employee employee = getEmployeeOrThrow(id);
         employeeValidator.validateForUpdate(employee, dto);
 
-        employeeMapper.updateEntity(employee, dto);
+        employeeMapper.updateEntity(employee, dto, position);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -123,5 +135,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private Employee getEmployeeOrThrow(Long employeeId) {
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
+    }
+
+    private EmployeePosition resolvePositionOrThrow(EmployeePositionCode code) {
+        return employeePositionRepository.findByCode(code)
+                .orElseThrow(() -> new EmployeePositionNotFoundByCodeException(code.getValue()));
     }
 }

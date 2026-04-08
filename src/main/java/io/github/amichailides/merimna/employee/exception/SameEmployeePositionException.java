@@ -5,8 +5,8 @@ import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
 public class SameEmployeePositionException extends BaseDomainException {
-    public SameEmployeePositionException(EmployeePosition currentPosition) {
+    public SameEmployeePositionException(String code) {
 
-        super(ErrorCode.SAME_EMPLOYEE_POSITION, currentPosition);
+        super(ErrorCode.SAME_EMPLOYEE_POSITION, code);
     }
 }

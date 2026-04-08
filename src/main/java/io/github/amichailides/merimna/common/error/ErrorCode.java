@@ -55,7 +55,12 @@ public enum ErrorCode {
     HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full"),
 
     // Employee assignment
-    ASSIGNMENT_POLICY_VIOLATION("ASSIGNMENT_POLICY_VIOLATION",HttpStatus.BAD_REQUEST,"error.assignment.policyViolation");
+    ASSIGNMENT_POLICY_VIOLATION("ASSIGNMENT_POLICY_VIOLATION",HttpStatus.BAD_REQUEST,"error.assignment.policyViolation"),
+
+    // Employee position
+    EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),
+    EMPLOYEE_POSITION_ALREADY_EXISTS("EMPLOYEE_POSITION_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employeePosition.alreadyExists"),
+    INVALID_EMPLOYEE_POSITION_CODE("INVALID_EMPLOYEE_POSITION_CODE", HttpStatus.BAD_REQUEST, "error.employeePosition.invalidCode");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer

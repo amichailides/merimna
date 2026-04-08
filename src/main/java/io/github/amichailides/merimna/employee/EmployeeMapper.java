@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentMapper;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
+import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
@@ -34,7 +35,8 @@ public class EmployeeMapper {
                 .email(entity.getEmail())
                 .mobileNumber(entity.getMobileNumber())
                 .address(addressMapper.toDTO(entity.getAddress()))
-                .position(entity.getPosition())
+                .positionCode(entity.getPosition().getCode().getValue())
+                .positionDisplayName(entity.getPosition().getDisplayName())
                 .hireDate(entity.getHireDate())
                 .assignments(
                         entity.getAssignments().stream()
@@ -54,12 +56,12 @@ public class EmployeeMapper {
                 .id(entity.getId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
-                .position(entity.getPosition())
+                .positionCode(entity.getPosition().getCode().getValue())
                 .active(entity.isActive())
                 .build();
     }
 
-    public Employee toEntity(EmployeeCreateDTO dto) {
+    public Employee toEntity(EmployeeCreateDTO dto, EmployeePosition position) {
         if (dto == null) return null;
 
         return Employee.builder()
@@ -68,12 +70,12 @@ public class EmployeeMapper {
                 .email(dto.email())
                 .mobileNumber(dto.mobileNumber())
                 .address(addressMapper.toEntity(dto.address()))
-                .position(dto.position())
+                .position(position)
                 .hireDate(dto.hireDate())
                 .build();
     }
 
-    public void updateEntity(Employee existing, EmployeeUpdateDTO dto) {
+    public void updateEntity(Employee existing, EmployeeUpdateDTO dto, EmployeePosition position) {
         Objects.requireNonNull(existing, "existing employee must not be null");
         Objects.requireNonNull(dto, "employee update dto must not be null");
 
@@ -81,7 +83,7 @@ public class EmployeeMapper {
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
         if (dto.email() != null) existing.setEmail(dto.email());
         if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
-        if (dto.position() != null) existing.changePosition(dto.position());
+        if (position != null) existing.changePosition(position);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
         if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());
     }

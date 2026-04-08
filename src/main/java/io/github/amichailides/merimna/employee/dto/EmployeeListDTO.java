@@ -1,10 +1,7 @@
 package io.github.amichailides.merimna.employee.dto;
 
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-
-import java.util.Set;
 
 @Builder
 public record EmployeeListDTO(
@@ -17,8 +14,8 @@ public record EmployeeListDTO(
         @Schema(description = "Last name", example = "Papadopoulos")
         String lastName,
 
-        @Schema(description = "Employee position", example = "CAREGIVER")
-        EmployeePosition position,
+        @Schema(description = "Employee position code", example = "CAREGIVER")
+        String positionCode,
 
         @Schema(description = "Indicates whether the employee is active", example = "true")
         boolean active
