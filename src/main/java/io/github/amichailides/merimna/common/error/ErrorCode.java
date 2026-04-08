@@ -52,7 +52,10 @@ public enum ErrorCode {
     HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
     HOUSE_UNIT_ALREADY_EXISTS("HOUSE_UNIT_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.houseUnit.alreadyExists"),
     HOUSE_UNIT_CAPACITY_EXCEEDED("HOUSE_UNIT_CAPACITY_EXCEEDED", HttpStatus.BAD_REQUEST, "error.houseUnit.capacityExceeded"),
-    HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full");
+    HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full"),
+
+    // Employee assignment
+    ASSIGNMENT_POLICY_VIOLATION("ASSIGNMENT_POLICY_VIOLATION",HttpStatus.BAD_REQUEST,"error.assignment.policyViolation");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer

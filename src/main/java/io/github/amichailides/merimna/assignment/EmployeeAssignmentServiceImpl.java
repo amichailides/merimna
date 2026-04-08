@@ -38,9 +38,8 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
                 dto.endDate()
         );
 
-        EmployeeHouseUnitAssignment saved = assignmentRepository.save(assignment);
-
-        return mapper.toDTO(saved);
+        assignmentRepository.saveAndFlush(assignment);
+        return mapper.toDTO(assignment);
     }
 
     private Employee getEmployeeOrThrow(Long employeeId) {
