@@ -56,6 +56,8 @@ public enum ErrorCode {
 
     // Employee assignment
     ASSIGNMENT_POLICY_VIOLATION("ASSIGNMENT_POLICY_VIOLATION",HttpStatus.BAD_REQUEST,"error.assignment.policyViolation"),
+    ASSIGNMENT_ALREADY_CANCELLED("ASSIGNMENT_ALREADY_CANCELLED", HttpStatus.CONFLICT, "error.assignment.alreadyCancelled"),
+    ASSIGNMENT_NOT_FOUND("ASSIGNMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.assignment.notFound"),
 
     // Employee position
     EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),

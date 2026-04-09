@@ -5,4 +5,6 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 
 public interface EmployeeAssignmentService {
     EmployeeAssignmentReadOnlyDTO create(Long employeeId, EmployeeAssignmentCreateDTO dto);
+
+    void cancel(Long employeeId, Long assignmentId);
 }

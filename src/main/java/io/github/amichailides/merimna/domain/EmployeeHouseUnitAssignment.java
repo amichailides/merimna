@@ -1,6 +1,8 @@
 package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.assignment.AssignmentType;
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
+import io.github.amichailides.merimna.assignment.exception.AssignmentAlreadyCancelledException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,22 +18,22 @@ public class EmployeeHouseUnitAssignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "house_unit_id", nullable = false)
     private HouseUnit houseUnit;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AssignmentType assignmentType;
 
-    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EmployeeAssignmentStatus status;
+
     @Column(nullable = false)
     private LocalDate startDate;
 
@@ -57,6 +59,7 @@ public class EmployeeHouseUnitAssignment {
         a.employee = employee;
         a.houseUnit = houseUnit;
         a.assignmentType = assignmentType;
+        a.status = EmployeeAssignmentStatus.ACTIVE;
         a.startDate = startDate;
         a.endDate = endDate;
         return a;
@@ -91,5 +94,13 @@ public class EmployeeHouseUnitAssignment {
 
         return !thisStart.isAfter(otherEnd)
                 && !otherStartDate.isAfter(thisEnd);
+    }
+
+    public void cancel() {
+        if (this.status == EmployeeAssignmentStatus.CANCELLED) {
+            throw new AssignmentAlreadyCancelledException(id);
+        }
+        this.endDate = LocalDate.now();
+        this.status = EmployeeAssignmentStatus.CANCELLED;
     }
 }

@@ -217,6 +217,7 @@ create table employee_house_unit_assignments
     employee_id     bigint      not null,
     house_unit_id   bigint      not null,
     assignment_type varchar(50) not null,
+    status          varchar(20) not null,
     start_date      date        not null,
     end_date        date,
 
@@ -231,6 +232,13 @@ create table employee_house_unit_assignments
                ((array [
                    'PRIMARY'::character varying,
                    'TEMPORARY_COVERAGE'::character varying
+                   ])::text[])),
+
+    constraint chk_employee_house_unit_assignments_status
+        check ((status)::text = any
+               ((array [
+                   'ACTIVE'::character varying,
+                   'CANCELLED'::character varying
                    ])::text[])),
 
     constraint chk_employee_house_unit_assignments_date_range

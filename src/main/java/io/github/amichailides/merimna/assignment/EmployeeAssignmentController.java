@@ -24,4 +24,13 @@ public class EmployeeAssignmentController {
         EmployeeAssignmentReadOnlyDTO result = service.create(employeeId, dto);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/{assignmentId}/cancel")
+    public ResponseEntity<Void> cancelAssignment(
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
+            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
+    ) {
+        service.cancel(employeeId, assignmentId);
+        return ResponseEntity.noContent().build();
+    }
 }

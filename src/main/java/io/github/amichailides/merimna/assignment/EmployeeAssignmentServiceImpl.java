@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.assignment;
 
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
+import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -50,8 +51,21 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         return mapper.toDTO(assignment);
     }
 
+    @Override
+    @Transactional
+    public void cancel(Long employeeId, Long assignmentId) {
+        EmployeeHouseUnitAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+        assignment.cancel();
+    }
+
     private Employee getEmployeeOrThrow(Long employeeId) {
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
     }
+
+    private EmployeeHouseUnitAssignment getAssignmentOrThrow (Long assignmentId, Long employeeId) {
+        return assignmentRepository.findByIdAndEmployeeId(assignmentId, employeeId)
+                .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
+    }
+
 }

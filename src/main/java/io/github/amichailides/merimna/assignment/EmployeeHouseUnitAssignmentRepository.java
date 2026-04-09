@@ -45,5 +45,7 @@ public interface EmployeeHouseUnitAssignmentRepository
             @Param("type") AssignmentType type,
             @Param("date") LocalDate date
     );
+
+    Optional<EmployeeHouseUnitAssignment> findByIdAndEmployeeId(Long id, Long employeeId);
 }
 
