@@ -66,6 +66,7 @@ public class AllergyServiceImpl implements AllergyService {
             throw new BeneficiaryNotFoundByIdException(beneficiaryId);
         }
 
+        // TODO(#19): Consider projection-based query to avoid loading full Allergy entities for read operations
         return allergyRepository.findAllByBeneficiaryId(beneficiaryId)
                 .stream()
                 .map(allergyMapper::toDTO)
