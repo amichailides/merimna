@@ -1,6 +1,9 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentService;
+import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.common.response.PageResponse;
+import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.GroupSequence;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/employees")
@@ -25,6 +29,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final EmployeeAssignmentService assignmentService;
 
     @PostMapping
     public ResponseEntity<EmployeeDetailsDTO> createEmployee(
@@ -93,6 +98,13 @@ public class EmployeeController {
         EmployeeDetailsDTO result = employeeService.reactivate(id);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/assignments")
+    public List<EmployeeAssignmentReadOnlyDTO> getAssignments (
+            @PathVariable @Positive(message = "{employee.id.positive}") Long id) {
+
+        return assignmentService.getAssignments(id);
     }
 
     private URI buildLocationUri(Object id) {

@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +60,14 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         assignment.cancel();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId) {
+        getEmployeeOrThrow(employeeId);
+
+        return assignmentRepository.findAssignmentsByEmployeeId(employeeId);
+    }
+
     private Employee getEmployeeOrThrow(Long employeeId) {
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
@@ -67,5 +77,4 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         return assignmentRepository.findByIdAndEmployeeId(assignmentId, employeeId)
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
     }
-
 }

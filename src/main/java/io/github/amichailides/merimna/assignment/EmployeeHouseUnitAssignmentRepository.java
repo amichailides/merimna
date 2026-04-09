@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.assignment;
 
+import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -47,5 +48,20 @@ public interface EmployeeHouseUnitAssignmentRepository
     );
 
     Optional<EmployeeHouseUnitAssignment> findByIdAndEmployeeId(Long id, Long employeeId);
-}
+
+    @Query("""
+    select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
+        a.id,
+        hu.code,
+        hu.displayName,
+        a.assignmentType,
+        a.startDate,
+        a.endDate
+    )
+    from EmployeeHouseUnitAssignment a
+    join a.houseUnit hu
+    where a.employee.id = :employeeId
+    order by a.startDate desc
+    """)
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeeId(Long employeeId);}
 
