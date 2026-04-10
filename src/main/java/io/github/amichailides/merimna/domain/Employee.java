@@ -55,9 +55,6 @@ public class Employee {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    // TODO(#15): Replace ManyToMany with explicit EmployeeAssignment entity.
-    // Current model does not support primary vs temporary assignments, time boundaries, or access scope.
-    // See issue for details.
     @Builder.Default
     @OneToMany(
             mappedBy = "employee",
