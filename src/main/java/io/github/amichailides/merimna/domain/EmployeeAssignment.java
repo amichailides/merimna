@@ -2,6 +2,8 @@ package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import io.github.amichailides.merimna.assignment.exception.AssignmentAlreadyCancelledException;
+import io.github.amichailides.merimna.assignment.exception.AssignmentNotActiveException;
+import io.github.amichailides.merimna.assignment.exception.InvalidAssignmentDateRangeException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,14 +52,14 @@ public class EmployeeAssignment {
         a.endDate = endDate;
         a.status = EmployeeAssignmentStatus.ACTIVE;
 
-        a.validateDateRange();
+        a.validateDateRange(endDate);
 
         return a;
     }
 
     public void complete(LocalDate endDate) {
         requireActive();
-        validateEndDate(endDate);
+        validateDateRange(endDate);
 
         this.endDate = endDate;
         this.status = EmployeeAssignmentStatus.COMPLETED;
@@ -65,7 +67,7 @@ public class EmployeeAssignment {
 
     public void terminate(LocalDate endDate) {
         requireActive();
-        validateEndDate(endDate);
+        validateDateRange(endDate);
 
         this.endDate = endDate;
         this.status = EmployeeAssignmentStatus.TERMINATED;
@@ -73,20 +75,13 @@ public class EmployeeAssignment {
 
     private void requireActive() {
         if (this.status != EmployeeAssignmentStatus.ACTIVE) {
-            throw new IllegalStateException("Assignment is not active");
+            throw new AssignmentNotActiveException();
         }
     }
 
-    private void validateDateRange() {
+    private void validateDateRange(LocalDate endDate) {
         if (endDate != null && endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("End date before start date");
-        }
-    }
-
-    private void validateEndDate(LocalDate endDate) {
-        Objects.requireNonNull(endDate);
-        if (endDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("End date before start date");
+            throw new InvalidAssignmentDateRangeException();
         }
     }
 

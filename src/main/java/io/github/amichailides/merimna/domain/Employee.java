@@ -62,16 +62,21 @@ public class Employee {
     @OneToMany(
             mappedBy = "employee",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private Set<EmployeeAssignment> assignments = new HashSet<>();
 
 
-    public void terminate() {
+    public void terminate(LocalDate terminationDate) {
         if (!isActive) {
             throw new EmployeeAlreadyTerminatedException(id);
         }
         this.isActive = false;
+
+        assignments.stream()
+                .filter(EmployeeAssignment::isActive)
+                .forEach(a -> a.terminate(terminationDate));
     }
 
     public void reactivate() {

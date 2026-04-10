@@ -48,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = getEmployeeOrThrow(employeeId);
 
         // TODO(#12): Add business validation for termination
-        employee.terminate();
+        employee.terminate(LocalDate.now());
 
         return employeeMapper.toDetailsDTO(employee);
     }
