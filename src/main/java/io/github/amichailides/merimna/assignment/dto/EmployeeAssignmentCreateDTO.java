@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.assignment.dto;
 
-import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.annotations.ValidAssignmentDateRange;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
@@ -21,9 +20,6 @@ public record EmployeeAssignmentCreateDTO(
                 groups = SecondOrder.class
         )
         String houseUnitCode,
-
-        @NotNull(message = "{assignment.type.required}", groups = FirstOrder.class)
-        AssignmentType assignmentType,
 
         @NotNull(message = "{assignment.startDate.required}", groups = FirstOrder.class)
         @FutureOrPresent(message = "{assignment.startDate.futureOrPresent}", groups = SecondOrder.class)

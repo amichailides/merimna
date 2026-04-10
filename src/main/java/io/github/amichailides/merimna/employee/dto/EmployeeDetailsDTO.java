@@ -33,7 +33,7 @@ public record EmployeeDetailsDTO(
 
         @Schema(
                 description = "House unit assignments for this employee",
-                example = "[{ \"houseUnitCode\": \"UNIT_A\", \"assignmentType\": \"PRIMARY\" }]")
+                example = "[{ \"houseUnitCode\": \"UNIT_A\", \"status\": \"ACTIVE\" }]")
         List<EmployeeAssignmentReadOnlyDTO> assignments,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")

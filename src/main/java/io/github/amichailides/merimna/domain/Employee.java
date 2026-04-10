@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyActiveException;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyTerminatedException;
 import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
@@ -56,7 +55,7 @@ public class Employee {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    // TODO(#15): Replace ManyToMany with explicit EmployeeHouseUnitAssignment entity.
+    // TODO(#15): Replace ManyToMany with explicit EmployeeAssignment entity.
     // Current model does not support primary vs temporary assignments, time boundaries, or access scope.
     // See issue for details.
     @Builder.Default
@@ -65,7 +64,7 @@ public class Employee {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<EmployeeHouseUnitAssignment> assignments = new HashSet<>();
+    private Set<EmployeeAssignment> assignments = new HashSet<>();
 
 
     public void terminate() {
@@ -91,14 +90,13 @@ public class Employee {
         this.position = newPosition;
     }
 
-    public EmployeeHouseUnitAssignment assignToHouseUnit(
+    public EmployeeAssignment assignToHouseUnit(
             HouseUnit houseUnit,
-            AssignmentType assignmentType,
             LocalDate startDate,
             LocalDate endDate
     ) {
-        EmployeeHouseUnitAssignment assignment =
-                EmployeeHouseUnitAssignment.create(this, houseUnit, assignmentType, startDate, endDate);
+        EmployeeAssignment assignment =
+                EmployeeAssignment.create(this, houseUnit, startDate, endDate);
 
         this.assignments.add(assignment);
         return assignment;

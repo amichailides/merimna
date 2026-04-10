@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
+import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -22,7 +23,7 @@ import java.util.List;
 public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     private final EmployeeRepository employeeRepository;
     private final HouseUnitRepository houseUnitRepository;
-    private final EmployeeHouseUnitAssignmentRepository assignmentRepository;
+    private final EmployeeAssignmentRepository assignmentRepository;
     private final EmployeeAssignmentMapper mapper;
     private final EmployeeAssignmentPolicy assignmentPolicy;
 
@@ -37,14 +38,13 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
         assignmentPolicy.validateForCreate(
                 employee,
-                dto.assignmentType(),
+                houseUnit,
                 dto.startDate(),
                 dto.endDate()
         );
 
-        EmployeeHouseUnitAssignment assignment = employee.assignToHouseUnit(
+        EmployeeAssignment assignment = employee.assignToHouseUnit(
                 houseUnit,
-                dto.assignmentType(),
                 dto.startDate(),
                 dto.endDate()
         );
@@ -56,8 +56,8 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     @Override
     @Transactional
     public void cancel(Long employeeId, Long assignmentId) {
-        EmployeeHouseUnitAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
-        assignment.cancel();
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+        assignment.cancel(LocalDate.now());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
     }
 
-    private EmployeeHouseUnitAssignment getAssignmentOrThrow (Long assignmentId, Long employeeId) {
+    private EmployeeAssignment getAssignmentOrThrow (Long assignmentId, Long employeeId) {
         return assignmentRepository.findByIdAndEmployeeId(assignmentId, employeeId)
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
     }

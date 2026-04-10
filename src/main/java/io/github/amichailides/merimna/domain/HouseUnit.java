@@ -29,7 +29,7 @@ public class HouseUnit {
     private String address;
 
     @OneToMany(mappedBy = "houseUnit")
-    private Set<EmployeeHouseUnitAssignment> assignments = new HashSet<>();
+    private Set<EmployeeAssignment> assignments = new HashSet<>();
 
     @Column(nullable = false)
     private int maxCapacity;

@@ -3,9 +3,8 @@ package io.github.amichailides.merimna.employee;
 import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentMapper;
 import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeeHouseUnitAssignment;
+import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.EmployeePosition;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
@@ -13,11 +12,8 @@ import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +36,7 @@ public class EmployeeMapper {
                 .hireDate(entity.getHireDate())
                 .assignments(
                         entity.getAssignments().stream()
-                                .sorted(Comparator.comparing(EmployeeHouseUnitAssignment::getStartDate,
+                                .sorted(Comparator.comparing(EmployeeAssignment::getStartDate,
                                         Comparator.nullsLast(Comparator.naturalOrder())))
                                 .map(assignmentMapper::toDTO)
                                 .toList()

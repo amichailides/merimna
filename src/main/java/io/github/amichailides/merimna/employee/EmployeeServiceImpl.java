@@ -1,16 +1,13 @@
 package io.github.amichailides.merimna.employee;
 
-import io.github.amichailides.merimna.assignment.AssignmentType;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
-import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -113,23 +110,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EmployeeNotFoundByIdException(id));
 
         return employeeMapper.toDetailsDTO(employee);
-    }
-
-    @Transactional
-    public void assignEmployeeToHouseUnit(
-            Long employeeId,
-            String houseUnitCode,
-            AssignmentType assignmentType,
-            LocalDate startDate,
-            LocalDate endDate
-    ) {
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
-        HouseUnit houseUnit = houseUnitRepository.findByCode(houseUnitCode)
-                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(houseUnitCode));
-
-        employee.assignToHouseUnit(houseUnit, assignmentType, startDate, endDate);
-        employeeRepository.save(employee);
     }
 
     private Employee getEmployeeOrThrow(Long employeeId) {

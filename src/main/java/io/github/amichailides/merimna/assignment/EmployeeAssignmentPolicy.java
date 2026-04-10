@@ -1,7 +1,10 @@
 package io.github.amichailides.merimna.assignment;
 
-import io.github.amichailides.merimna.assignment.exception.AssignmentPolicyViolationException;
+import io.github.amichailides.merimna.assignment.exception.AssignmentOverlapNotAllowedException;
+import io.github.amichailides.merimna.assignment.exception.DuplicateActiveAssignmentForHouseException;
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.EmployeeAssignment;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -11,20 +14,16 @@ public class EmployeeAssignmentPolicy {
 
     public void validateForCreate(
             Employee employee,
-            AssignmentType assignmentType,
+            HouseUnit houseUnit,
             LocalDate startDate,
             LocalDate endDate
     ) {
-        if (assignmentType == AssignmentType.PRIMARY
-                && requiresExclusivePlacement(employee)
-                && hasOverlappingAssignment(employee, AssignmentType.PRIMARY, startDate, endDate)) {
-            throw new AssignmentPolicyViolationException();
+        if (requiresExclusivePlacement(employee)
+                && hasOverlappingAssignment(employee, startDate, endDate)) {
+            throw new AssignmentOverlapNotAllowedException();
         }
-
-        if (assignmentType == AssignmentType.TEMPORARY_COVERAGE
-                && requiresExclusivePlacement(employee)
-                && hasOverlappingAssignment(employee, AssignmentType.TEMPORARY_COVERAGE, startDate, endDate)) {
-            throw new AssignmentPolicyViolationException();
+        if (!validateNoActiveAssignmentForSameHouse(employee, houseUnit)) {
+            throw new DuplicateActiveAssignmentForHouseException();
         }
     }
 
@@ -34,12 +33,18 @@ public class EmployeeAssignmentPolicy {
 
     private boolean hasOverlappingAssignment(
             Employee employee,
-            AssignmentType assignmentType,
             LocalDate startDate,
             LocalDate endDate
     ) {
         return employee.getAssignments().stream()
-                .filter(assignment -> assignment.getAssignmentType() == assignmentType)
-                .anyMatch(assignment -> assignment.overlapsWith(startDate, endDate));
+                .filter(EmployeeAssignment::isActive)
+                .anyMatch(a -> a.overlapsWith(startDate, endDate));
+    }
+
+    private boolean validateNoActiveAssignmentForSameHouse(Employee employee, HouseUnit houseUnit) {
+        return employee.getAssignments().stream()
+                .noneMatch(a -> a.getStatus() == EmployeeAssignmentStatus.ACTIVE &&
+                        houseUnit.getCode().equals(a.getHouseUnit().getCode())
+                );
     }
 }
