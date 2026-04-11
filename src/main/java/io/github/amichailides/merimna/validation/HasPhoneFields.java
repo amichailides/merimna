@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.validation.validators;
+package io.github.amichailides.merimna.validation;
 
 public interface HasPhoneFields {
     String landlinePhone();

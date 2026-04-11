@@ -6,7 +6,7 @@ import io.github.amichailides.merimna.domain.RelationshipType;
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
-import io.github.amichailides.merimna.validation.validators.HasPhoneFields;
+import io.github.amichailides.merimna.validation.HasPhoneFields;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

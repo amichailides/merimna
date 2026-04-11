@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.domain.LegalRepresentativeType;
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
-import io.github.amichailides.merimna.validation.validators.HasPhoneFields;
+import io.github.amichailides.merimna.validation.HasPhoneFields;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

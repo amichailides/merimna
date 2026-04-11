@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.assignment.dto;
 
+import io.github.amichailides.merimna.validation.AssignmentDateRange;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.annotations.ValidAssignmentDateRange;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
@@ -24,4 +25,4 @@ public record EmployeeAssignmentCreateDTO(
 
         @FutureOrPresent(message = "{assignment.endDate.futureOrPresent}", groups = SecondOrder.class)
         LocalDate endDate
-) {}
+) implements AssignmentDateRange {}
