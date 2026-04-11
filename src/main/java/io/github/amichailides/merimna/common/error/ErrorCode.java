@@ -55,13 +55,14 @@ public enum ErrorCode {
     HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full"),
 
     // Employee assignment
-    ASSIGNMENT_ALREADY_CANCELLED("ASSIGNMENT_ALREADY_CANCELLED", HttpStatus.CONFLICT, "error.assignment.alreadyCancelled"),
     ASSIGNMENT_NOT_FOUND("ASSIGNMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.assignment.notFound"),
     ASSIGNMENT_OVERLAP_NOT_ALLOWED("ASSIGNMENT_OVERLAP_NOT_ALLOWED", HttpStatus.BAD_REQUEST, "error.assignment.overlapNotAllowed"),
     ASSIGNMENT_DUPLICATE_ACTIVE_FOR_HOUSE("ASSIGNMENT_DUPLICATE_ACTIVE_FOR_HOUSE", HttpStatus.BAD_REQUEST,"error.assignment.duplicateActiveForHouse"),
     ASSIGNMENT_NOT_ACTIVE("ASSIGNMENT_NOT_ACTIVE", HttpStatus.BAD_REQUEST, "error.assignment.notActive"),
     ASSIGNMENT_INVALID_DATE_RANGE("ASSIGNMENT_INVALID_DATE_RANGE", HttpStatus.BAD_REQUEST, "error.assignment.invalidDateRange"),
     ASSIGNMENT_BEFORE_HIRE_DATE("ASSIGNMENT_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.assignment.beforeHireDate"),
+    ASSIGNMENT_CANCELLATION_NOT_ALLOWED("ASSIGNMENT_CANCELLATION_NOT_ALLOWED", HttpStatus.BAD_REQUEST,"error.assignment.cancellationNotAllowed"),
+    ASSIGNMENT_CANCEL_DATE_BEFORE_START_DATE("ASSIGNMENT_CANCEL_DATE_BEFORE_START_DATE", HttpStatus.BAD_REQUEST, "error.assignment.cancelDate.beforeStartDate"),
 
     // Employee position
     EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),

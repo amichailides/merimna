@@ -1,9 +1,7 @@
 package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
-import io.github.amichailides.merimna.assignment.exception.AssignmentAlreadyCancelledException;
-import io.github.amichailides.merimna.assignment.exception.AssignmentNotActiveException;
-import io.github.amichailides.merimna.assignment.exception.InvalidAssignmentDateRangeException;
+import io.github.amichailides.merimna.assignment.exception.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -100,14 +98,14 @@ public class EmployeeAssignment {
     }
 
     public void cancel(LocalDate cancelDate) {
-        if (this.status == EmployeeAssignmentStatus.CANCELLED) {
-            throw new AssignmentAlreadyCancelledException(id);
+        Objects.requireNonNull(cancelDate, "cancelDate must not be null");
+
+        if (this.status != EmployeeAssignmentStatus.ACTIVE) {
+            throw new AssignmentCancellationNotAllowedException();
         }
 
-        Objects.requireNonNull(cancelDate);
-
-        if (cancelDate.isBefore(startDate)) {
-            throw new IllegalArgumentException("Cancel date before start date");
+        if (cancelDate.isBefore(this.startDate)) {
+            throw new AssignmentCancelDateBeforeStartDateException();
         }
 
         this.endDate = cancelDate;
