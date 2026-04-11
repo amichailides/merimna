@@ -19,7 +19,7 @@ public record EmployeeAssignmentCreateDTO(
         String houseUnitCode,
 
         @NotNull(message = "{assignment.startDate.required}", groups = FirstOrder.class)
-        @PastOrPresent(message = "{assignment.startDate.futureOrPresent}", groups = SecondOrder.class)
+        @FutureOrPresent(message = "{assignment.startDate.futureOrPresent}", groups = SecondOrder.class)
         LocalDate startDate,
 
         @FutureOrPresent(message = "{assignment.endDate.futureOrPresent}", groups = SecondOrder.class)

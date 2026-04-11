@@ -1,10 +1,12 @@
 package io.github.amichailides.merimna.assignment;
 
+import io.github.amichailides.merimna.assignment.exception.AssignmentBeforeHireDateException;
 import io.github.amichailides.merimna.assignment.exception.AssignmentOverlapNotAllowedException;
 import io.github.amichailides.merimna.assignment.exception.DuplicateActiveAssignmentForHouseException;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
+import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -18,6 +20,9 @@ public class EmployeeAssignmentPolicy {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        if (!employee.isActive()) {
+            throw new EmployeeInactiveException();
+        }
         if (requiresExclusivePlacement(employee)
                 && hasOverlappingAssignment(employee, startDate, endDate)) {
             throw new AssignmentOverlapNotAllowedException();
@@ -25,6 +30,8 @@ public class EmployeeAssignmentPolicy {
         if (!validateNoActiveAssignmentForSameHouse(employee, houseUnit)) {
             throw new DuplicateActiveAssignmentForHouseException();
         }
+
+        validateStartDateNotBeforeHireDate(employee.getHireDate(), startDate);
     }
 
     private boolean requiresExclusivePlacement(Employee employee) {
@@ -46,5 +53,11 @@ public class EmployeeAssignmentPolicy {
                 .noneMatch(a -> a.getStatus() == EmployeeAssignmentStatus.ACTIVE &&
                         houseUnit.getCode().equals(a.getHouseUnit().getCode())
                 );
+    }
+
+    private void validateStartDateNotBeforeHireDate (LocalDate hireDate,LocalDate startDate) {
+        if (hireDate.isAfter(startDate)) {
+            throw new AssignmentBeforeHireDateException();
+        }
     }
 }
