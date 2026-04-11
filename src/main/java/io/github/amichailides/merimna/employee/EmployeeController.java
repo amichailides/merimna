@@ -4,7 +4,6 @@ import io.github.amichailides.merimna.assignment.EmployeeAssignmentService;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentView;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.common.response.PageResponse;
-import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.Valid;
@@ -82,9 +81,10 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
             @PathVariable
             @Positive (message = "{employee.id.positive}")
-            Long id) {
+            Long id,
+            @RequestBody @Valid EmployeeTerminateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.terminate(id);
+        EmployeeDetailsDTO result = employeeService.terminate(id, dto.terminationDate());
 
         return ResponseEntity.ok(result);
     }
@@ -92,7 +92,7 @@ public class EmployeeController {
     @PostMapping("/{id}/reactivate")
     public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
             @PathVariable
-            @Positive (message = "{employee.id.positive}")
+            @Positive(message = "{employee.id.positive}")
             Long id) {
 
         EmployeeDetailsDTO result = employeeService.reactivate(id);
@@ -101,7 +101,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}/assignments")
-    public List<EmployeeAssignmentReadOnlyDTO> getAssignments (
+    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(
             @PathVariable @Positive(message = "{employee.id.positive}") Long id,
             @RequestParam (defaultValue = "ACTIVE")EmployeeAssignmentView view) {
 

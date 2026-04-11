@@ -7,7 +7,6 @@ import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
-import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
-    private final HouseUnitRepository houseUnitRepository;
     private final EmployeeMapper employeeMapper;
     private final EmployeeValidator employeeValidator;
     private final EmployeePositionRepository employeePositionRepository;
@@ -44,8 +42,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO terminate(Long employeeId) {
+    public EmployeeDetailsDTO terminate(Long employeeId, LocalDate terminationDate) {
         Employee employee = getEmployeeOrThrow(employeeId);
+
+        employeeValidator.validateForTerminate(employee, terminationDate);
 
         // TODO(#12): Add business validation for termination
         employee.terminate(LocalDate.now());
