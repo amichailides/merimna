@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.assignment;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
+import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 
 @Service
@@ -59,6 +59,18 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     public void cancel(Long employeeId, Long assignmentId) {
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
         assignment.cancel(LocalDate.now());
+    }
+
+    @Override
+    @Transactional
+    public void terminate(Long employeeId, Long assignmentId) {
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+
+        if (!assignment.getEmployee().isActive()) {
+            throw new AssignmentTerminationNotAllowedException();
+        }
+
+        assignment.terminate(LocalDate.now());
     }
 
     @Override

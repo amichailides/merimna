@@ -11,4 +11,6 @@ public interface EmployeeAssignmentService {
     void cancel(Long employeeId, Long assignmentId);
 
     List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId, EmployeeAssignmentView view);
+
+    void terminate(Long employeeId, Long assignmentId);
 }

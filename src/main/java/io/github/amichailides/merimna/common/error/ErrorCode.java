@@ -63,6 +63,8 @@ public enum ErrorCode {
     ASSIGNMENT_BEFORE_HIRE_DATE("ASSIGNMENT_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.assignment.beforeHireDate"),
     ASSIGNMENT_CANCELLATION_NOT_ALLOWED("ASSIGNMENT_CANCELLATION_NOT_ALLOWED", HttpStatus.BAD_REQUEST,"error.assignment.cancellationNotAllowed"),
     ASSIGNMENT_CANCEL_DATE_BEFORE_START_DATE("ASSIGNMENT_CANCEL_DATE_BEFORE_START_DATE", HttpStatus.BAD_REQUEST, "error.assignment.cancelDate.beforeStartDate"),
+    ASSIGNMENT_TERMINATION_NOT_ALLOWED("ASSIGNMENT_TERMINATION_NOT_ALLOWED", HttpStatus.BAD_REQUEST, "error.assignment.terminationNotAllowed"),
+    ASSIGNMENT_END_DATE_BEFORE_START_DATE("ASSIGNMENT_END_DATE_BEFORE_START_DATE", HttpStatus.BAD_REQUEST, "error.assignment.endDate.beforeStartDate"),
 
     // Employee position
     EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),

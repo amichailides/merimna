@@ -55,26 +55,19 @@ public class EmployeeAssignment {
         return a;
     }
 
-    public void complete(LocalDate endDate) {
-        requireActive();
-        validateDateRange(endDate);
-
-        this.endDate = endDate;
-        this.status = EmployeeAssignmentStatus.COMPLETED;
-    }
-
     public void terminate(LocalDate endDate) {
-        requireActive();
-        validateDateRange(endDate);
+        Objects.requireNonNull(endDate, "endDate must not be null");
+
+        if (this.status != EmployeeAssignmentStatus.ACTIVE) {
+            throw new AssignmentTerminationNotAllowedException();
+        }
+
+        if (endDate.isBefore(this.startDate)) {
+            throw new AssignmentEndDateBeforeStartDateException();
+        }
 
         this.endDate = endDate;
         this.status = EmployeeAssignmentStatus.TERMINATED;
-    }
-
-    private void requireActive() {
-        if (this.status != EmployeeAssignmentStatus.ACTIVE) {
-            throw new AssignmentNotActiveException();
-        }
     }
 
     private void validateDateRange(LocalDate endDate) {

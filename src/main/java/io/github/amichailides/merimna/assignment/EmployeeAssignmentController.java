@@ -33,4 +33,13 @@ public class EmployeeAssignmentController {
         service.cancel(employeeId, assignmentId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{assignmentId}/terminate")
+    public ResponseEntity<Void> terminateAssignment (
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
+            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
+    ) {
+        service.terminate(employeeId, assignmentId);
+        return ResponseEntity.noContent().build();
+    }
 }
