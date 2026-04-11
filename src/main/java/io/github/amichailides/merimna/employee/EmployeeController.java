@@ -1,8 +1,10 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentService;
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentView;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.common.response.PageResponse;
+import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.Valid;
@@ -100,9 +102,10 @@ public class EmployeeController {
 
     @GetMapping("/{id}/assignments")
     public List<EmployeeAssignmentReadOnlyDTO> getAssignments (
-            @PathVariable @Positive(message = "{employee.id.positive}") Long id) {
+            @PathVariable @Positive(message = "{employee.id.positive}") Long id,
+            @RequestParam (defaultValue = "ACTIVE")EmployeeAssignmentView view) {
 
-        return assignmentService.getAssignments(id);
+        return assignmentService.getAssignments(id, view);
     }
 
     private URI buildLocationUri(Object id) {

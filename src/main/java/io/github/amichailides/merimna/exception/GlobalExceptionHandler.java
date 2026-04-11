@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -175,11 +172,26 @@ public class GlobalExceptionHandler {
 
         log.error("Type mismatch for parameter '{}': {}", propertyName, providedValue);
 
-        String detail = messageSource.getMessage(
-                "error.request.parameter.typeMismatch",
-                new Object[]{String.valueOf(providedValue), propertyName},
-                LocaleContextHolder.getLocale()
-        );
+        Class<?> requiredType = ex.getRequiredType();
+        String detail;
+
+        if (requiredType != null && requiredType.isEnum()) {
+            String validValues = Arrays.stream(requiredType.getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+
+            detail = messageSource.getMessage(
+                    "error.request.parameter.typeMismatchEnum",
+                    new Object[]{String.valueOf(providedValue), propertyName, validValues},
+                    LocaleContextHolder.getLocale()
+            );
+        } else {
+            detail = messageSource.getMessage(
+                    "error.request.parameter.typeMismatch",
+                    new Object[]{String.valueOf(providedValue), propertyName},
+                    LocaleContextHolder.getLocale()
+            );
+        }
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

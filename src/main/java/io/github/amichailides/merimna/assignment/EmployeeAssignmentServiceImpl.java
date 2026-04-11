@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -62,11 +63,15 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId) {
+    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId, EmployeeAssignmentView view) {
         // TODO(#20): Add filtering support (e.g. ACTIVE, PAST, ALL) for employee assignments endpoint
         getEmployeeOrThrow(employeeId);
 
-        return assignmentRepository.findAssignmentsByEmployeeId(employeeId);
+        return switch (view) {
+            case ALL -> assignmentRepository.findAssignmentsByEmployeeId(employeeId);
+            case ACTIVE -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.ACTIVE);
+            case PAST -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.TERMINATED);
+        };
     }
 
     private Employee getEmployeeOrThrow(Long employeeId) {

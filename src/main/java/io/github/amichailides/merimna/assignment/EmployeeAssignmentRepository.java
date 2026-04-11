@@ -36,5 +36,23 @@ public interface EmployeeAssignmentRepository
             order by a.startDate desc
             """)
     List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeeId(Long employeeId);
+
+    @Query("""
+        select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
+            a.id,
+            hu.code,
+            hu.displayName,
+            a.status,
+            a.startDate,
+            a.endDate
+        )
+        from EmployeeAssignment a
+        join a.houseUnit hu
+        where a.employee.id = :employeeId
+          and a.status = :status
+        order by a.startDate desc
+        """)
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeeIdAndStatus(Long employeeId,
+                                                                             EmployeeAssignmentStatus status);
 }
 
