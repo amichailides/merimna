@@ -36,6 +36,7 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode, int status, String error,
                                            String message, String path) {
+        // TODO(#22): Add structured error context (e.g. entity ids) to error responses instead of embedding in messages
         return ApiResponse.<T>builder()
                 .type(errorCode)
                 .status(status)
@@ -49,6 +50,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> validationError(ErrorCode errorCode, int status,
                                                      String error, String detail, Map<String, List<String>> errors,
                                                      String path) {
+        // TODO(#22): Add structured error context (e.g. entity ids) to error responses instead of embedding in messages
         return ApiResponse.<T>builder()
                 .type(errorCode)
                 .status(status)
