@@ -21,7 +21,7 @@ public class AllergyMapper {
         if (dto == null) return null;
 
         return Allergy.builder()
-                .substance(dto.substance())
+                .substance(normalize(dto.substance()))
                 .severity(dto.severity())
                 .reaction(dto.reaction())
                 .build();
@@ -57,6 +57,12 @@ public class AllergyMapper {
         if (newValue != null && !newValue.isBlank()) {
             setter.accept(newValue);
         }
+    }
+
+    private String normalize(String value) {
+        return value == null
+                ? null
+                : value.trim().toLowerCase();
     }
 
 

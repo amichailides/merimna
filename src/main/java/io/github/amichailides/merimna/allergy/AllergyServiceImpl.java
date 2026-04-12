@@ -28,11 +28,12 @@ public class AllergyServiceImpl implements AllergyService {
     public AllergyReadOnlyDTO createAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
 
         // TODO(#12): Add AllergyValidator rules (duplicates, severity checks)
-
-        Beneficiary existing = getBeneficiaryOrThrow(beneficiaryId);
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
         Allergy allergy = allergyMapper.toEntity(dto);
-        existing.addAllergy(allergy);
+        allergyValidator.validateCreate(beneficiary, allergy);
+
+        beneficiary.addAllergy(allergy);
         Allergy savedAllergy = allergyRepository.save(allergy);
 
         return allergyMapper.toDTO(savedAllergy);

@@ -18,4 +18,6 @@ public interface AllergyRepository extends JpaRepository<Allergy, Long> {
             String substance,
             Long id
     );
+
+    boolean existsByBeneficiaryIdAndSubstanceIgnoreCase(Long beneficiaryId, String substance);
 }
