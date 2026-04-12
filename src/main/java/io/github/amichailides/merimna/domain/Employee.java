@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyActiveException;
 import io.github.amichailides.merimna.employee.exception.EmployeeAlreadyTerminatedException;
+import io.github.amichailides.merimna.employee.exception.EmployeeHasActiveAssignmentsException;
 import io.github.amichailides.merimna.employee.exception.SameEmployeePositionException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -79,6 +80,12 @@ public class Employee {
     public void reactivate() {
         if (isActive) {
             throw new EmployeeAlreadyActiveException();
+        }
+
+        boolean hasActiveAssignments = assignments.stream()
+                .anyMatch(EmployeeAssignment::isActive);
+        if (hasActiveAssignments) {
+            throw new EmployeeHasActiveAssignmentsException();
         }
         this.isActive = true;
     }

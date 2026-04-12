@@ -48,6 +48,7 @@ public enum ErrorCode {
     EMPLOYEE_EMAIL_ALREADY_EXISTS("EMPLOYEE_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employee.email.alreadyExists"),
     EMPLOYEE_ALREADY_ACTIVE("EMPLOYEE_ALREADY_ACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyActive"),
     EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE("EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.employee.termination.beforeHireDate"),
+    EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS("EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS", HttpStatus.CONFLICT, "error.employee.hasActiveAssignments"),
 
     // houseUnit
     HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
