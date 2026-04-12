@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,21 +37,18 @@ public class MedicationController {
                 .body(medication);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<MedicationReadOnlyDTO>> getMedications(@PathVariable Long beneficiaryId) {
+    @GetMapping
+    public List<MedicationReadOnlyDTO> getMedications(@PathVariable Long beneficiaryId) {
 
-        List<MedicationReadOnlyDTO> medications = medicationService.getMedicationsByBeneficiary(beneficiaryId);
-
-        return ResponseEntity.ok(medications);
+        return medicationService.getMedicationsByBeneficiary(beneficiaryId);
     }
 
     @GetMapping("/{medicationId}")
-    public ResponseEntity<MedicationReadOnlyDTO> getMedication(
-            @PathVariable Long beneficiaryId,
-            @PathVariable Long medicationId) {
+    public MedicationReadOnlyDTO getMedication(
+            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable @Positive(message = "{medication.id.positive}") Long medicationId) {
 
-        MedicationReadOnlyDTO dto =  medicationService.getMedication(beneficiaryId, medicationId);
-        return ResponseEntity.ok(dto);
+        return medicationService.getMedication(beneficiaryId, medicationId);
     }
 
     @PatchMapping("/{medicationId}")

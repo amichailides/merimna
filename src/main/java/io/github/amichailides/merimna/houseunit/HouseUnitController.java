@@ -24,10 +24,9 @@ public class HouseUnitController {
     private final HouseUnitService houseUnitService;
 
     @GetMapping
-    public ResponseEntity<List<HouseUnitReadOnlyDTO>> getAllHouseUnits() {
-        List<HouseUnitReadOnlyDTO> houseUnits = houseUnitService.getAllHouseUnits();
+    public List<HouseUnitReadOnlyDTO> getAllHouseUnits() {
 
-        return ResponseEntity.ok(houseUnits);
+        return houseUnitService.getAllHouseUnits();
     }
 
     @PostMapping
@@ -52,12 +51,12 @@ public class HouseUnitController {
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity<HouseUnitReadOnlyDTO> getHouseUnitByCode(
+    public HouseUnitReadOnlyDTO getHouseUnitByCode(
             @PathVariable
             @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE, message = "{houseUnit.code.invalid}")
             String code) {
 
-        return ResponseEntity.ok(houseUnitService.getHouseUnitByCode(code));
+        return houseUnitService.getHouseUnitByCode(code);
     }
 
     private URI buildLocationUri(String code) {

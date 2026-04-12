@@ -54,21 +54,18 @@ public class AllergyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AllergyReadOnlyDTO>> getAllergiesByBeneficiary(
+    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId) {
 
-        List<AllergyReadOnlyDTO> allergies = allergyService.getAllergiesByBeneficiary(beneficiaryId);
-
-        return ResponseEntity.ok(allergies);
+        return allergyService.getAllergiesByBeneficiary(beneficiaryId);
     }
 
     @GetMapping("/{allergyId}")
-    public ResponseEntity<AllergyReadOnlyDTO> getAllergyById(
+    public AllergyReadOnlyDTO getAllergyById(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
             @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
 
-        AllergyReadOnlyDTO allergy = allergyService.getAllergyById(beneficiaryId, allergyId);
-        return ResponseEntity.ok(allergy);
+        return allergyService.getAllergyById(beneficiaryId, allergyId);
     }
 
     private URI buildLocationUri(Long id) {
