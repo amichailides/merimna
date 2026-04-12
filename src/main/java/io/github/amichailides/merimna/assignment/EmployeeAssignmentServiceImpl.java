@@ -25,7 +25,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     private final EmployeeRepository employeeRepository;
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeeAssignmentRepository assignmentRepository;
-    private final EmployeeAssignmentMapper mapper;
+    private final EmployeeAssignmentMapper assignmentMapper;
     private final EmployeeAssignmentPolicy assignmentPolicy;
 
     @Override
@@ -51,7 +51,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         );
 
         assignmentRepository.saveAndFlush(assignment);
-        return mapper.toDTO(assignment);
+        return assignmentMapper.toDTO(assignment);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId, EmployeeAssignmentView view) {
+    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(Long employeeId, EmployeeAssignmentView view) {
         getEmployeeOrThrow(employeeId);
 
         return switch (view) {
@@ -83,6 +83,15 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
             case ACTIVE -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.ACTIVE);
             case PAST -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.TERMINATED);
         };
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeAssignmentReadOnlyDTO getAssignmentById(Long employeeId, Long assignmentId) {
+        getEmployeeOrThrow(employeeId);
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+
+        return assignmentMapper.toDTO(assignment);
     }
 
     private Employee getEmployeeOrThrow(Long employeeId) {

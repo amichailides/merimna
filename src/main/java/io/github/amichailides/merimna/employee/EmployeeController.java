@@ -101,11 +101,20 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}/assignments")
-    public List<EmployeeAssignmentReadOnlyDTO> getAssignments(
+    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(
             @PathVariable @Positive(message = "{employee.id.positive}") Long id,
             @RequestParam (defaultValue = "ACTIVE")EmployeeAssignmentView view) {
 
-        return assignmentService.getAssignments(id, view);
+        return assignmentService.getAllAssignments(id, view);
+    }
+
+    @GetMapping("/{employeeId}/assignments/{assignmentId}")
+    public ResponseEntity<EmployeeAssignmentReadOnlyDTO> getAssignmentById(
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
+            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId) {
+
+        EmployeeAssignmentReadOnlyDTO assignment = assignmentService.getAssignmentById(employeeId, assignmentId);
+        return ResponseEntity.ok(assignment);
     }
 
     private URI buildLocationUri(Object id) {

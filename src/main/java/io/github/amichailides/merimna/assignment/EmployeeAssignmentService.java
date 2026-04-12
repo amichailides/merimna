@@ -10,7 +10,9 @@ public interface EmployeeAssignmentService {
 
     void cancel(Long employeeId, Long assignmentId);
 
-    List<EmployeeAssignmentReadOnlyDTO> getAssignments(Long employeeId, EmployeeAssignmentView view);
+    List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(Long employeeId, EmployeeAssignmentView view);
 
     void terminate(Long employeeId, Long assignmentId);
+
+    EmployeeAssignmentReadOnlyDTO getAssignmentById(Long employeeId, Long assignmentId);
 }
