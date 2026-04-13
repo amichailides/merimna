@@ -27,13 +27,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto) {
-        //TODO validator εδω...
+        employeeValidator.validateForCreate(dto);
 
         EmployeePositionCode code = EmployeePositionCode.of(dto.positionCode());
-
         EmployeePosition position = resolvePositionOrThrow(code);
         Employee employee = employeeMapper.toEntity(dto, position);
-
         Employee saved = employeeRepository.save(employee);
 
         return employeeMapper.toDetailsDTO(saved);
