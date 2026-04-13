@@ -39,7 +39,7 @@ public class MedicationServiceImpl implements MedicationService{
 
         Medication existing = getMedicationOrThrow(medicationId, beneficiaryId);
 
-        // TODO: MedicationValidator - business rules (e.g. drug interactions,
+        // TODO(#14): MedicationValidator - business rules (e.g. drug interactions,
         // max dosage based on age/weight, or inactive beneficiary restrictions)
         medicationMapper.updateEntity(existing, dto);
         return medicationMapper.toDTO(existing); // managed λόγω @Transactional

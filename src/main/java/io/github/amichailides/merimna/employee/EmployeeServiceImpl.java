@@ -44,9 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = getEmployeeOrThrow(employeeId);
 
         employeeValidator.validateForTerminate(employee, terminationDate);
-
-        // TODO(#12): Add business validation for termination
-        employee.terminate(LocalDate.now());
+        employee.terminate(terminationDate);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -56,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDetailsDTO reactivate(Long employeeId) {
         Employee employee = getEmployeeOrThrow(employeeId);
 
-        // TODO(#12): Add business validation for reactivation
+        // TODO(#14): Add business validation for reactivation
         employee.reactivate();
 
         return employeeMapper.toDetailsDTO(employee);

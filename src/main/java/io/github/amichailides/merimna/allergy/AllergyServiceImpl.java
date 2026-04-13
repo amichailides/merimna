@@ -26,8 +26,6 @@ public class AllergyServiceImpl implements AllergyService {
     @Override
     @Transactional
     public AllergyReadOnlyDTO createAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
-
-        // TODO(#12): Add AllergyValidator rules (duplicates, severity checks)
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
 
         Allergy allergy = allergyMapper.toEntity(dto);
