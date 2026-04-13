@@ -34,6 +34,7 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
         LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
 
+        // TODO(#12): Add domain validation for legal representative assignment
         beneficiary.addLegalRepresentative(legal);
     }
 
