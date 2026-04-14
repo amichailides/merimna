@@ -1,22 +1,16 @@
 package io.github.amichailides.merimna.user;
 
-import io.github.amichailides.merimna.domain.Role;
 import io.github.amichailides.merimna.domain.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Collection;
-import java.util.Optional;
+
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUsername(String username);
+    boolean existsByEmployeeId(Long employeeId);
 
-    Page<User> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
+    boolean existsByUsername(String username);
 
-    boolean existsByLastNameContainingIgnoreCase(String lastName);
-
-    Page<User> findByRolesInAndActiveTrue(Collection<Role> roles, Pageable pageable);
+    boolean existsByEmail(String email);
 }

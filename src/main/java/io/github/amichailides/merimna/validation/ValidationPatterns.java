@@ -26,6 +26,9 @@ public final class ValidationPatterns {
 
     // Λατινικά γράμματα, αριθμοί, κενά, παύλα ή underscore, 2–50 χαρακτήρες
     public static final String EMPLOYEE_POSITION_CODE = "^[a-zA-Z0-9_\\s-]{2,50}$";
+
+    // Username: ξεκινά με γράμμα και περιέχει μόνο λατινικά γράμματα, αριθμούς, τελεία, underscore ή παύλα.
+    public static final String USERNAME = "^[a-zA-Z][a-zA-Z0-9._-]*$";
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }

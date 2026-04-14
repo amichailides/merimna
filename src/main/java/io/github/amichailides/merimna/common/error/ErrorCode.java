@@ -15,6 +15,7 @@ public enum ErrorCode {
     VALIDATION_FAILED("VALIDATION_FAILED", HttpStatus.BAD_REQUEST, "validation.failed"),
     AT_LEAST_ONE_PHONE_REQUIRED("AT_LEAST_ONE_PHONE_REQUIRED", HttpStatus.valueOf(422), "validation.legalRepresentative.phone.atLeastOneRequired"),
     DOMAIN_RULE_VIOLATION("DOMAIN_RULE_VIOLATION", HttpStatus.BAD_REQUEST, "error.domain.rule.violation"),
+    RESOURCE_CONFLICT("RESOURCE_CONFLICT", HttpStatus.CONFLICT, "error.resource.conflict"),
 
 
     // Beneficiary
@@ -71,7 +72,12 @@ public enum ErrorCode {
     // Employee position
     EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),
     EMPLOYEE_POSITION_ALREADY_EXISTS("EMPLOYEE_POSITION_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employeePosition.alreadyExists"),
-    INVALID_EMPLOYEE_POSITION_CODE("INVALID_EMPLOYEE_POSITION_CODE", HttpStatus.BAD_REQUEST, "error.employeePosition.invalidCode");
+    INVALID_EMPLOYEE_POSITION_CODE("INVALID_EMPLOYEE_POSITION_CODE", HttpStatus.BAD_REQUEST, "error.employeePosition.invalidCode"),
+
+    // User
+    EMPLOYEE_ALREADY_HAS_ACCOUNT("EMPLOYEE_ALREADY_HAS_ACCOUNT", HttpStatus.CONFLICT, "error.user.employeeAlreadyHasAccount"),
+    USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.usernameAlreadyExists"),
+    EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.emailAlreadyExists");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
