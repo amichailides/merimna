@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.beneficiary;
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.exception.ConflictValidationException;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import org.springframework.stereotype.Component;
@@ -37,24 +38,8 @@ public class BeneficiaryValidator {
     }
 
     public void validateForSave(BeneficiaryCreateDTO dto) {
-        Map<String, String> errors = new LinkedHashMap<>();
-
-        String amka = dto.amka();
-        LocalDate dob = dto.dateOfBirth();
-
-        if (repository.existsByAmka(amka)) {
-            errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
-        }
-        else if (!isAmkaConsistentWithDob(amka, dob)) {
-            errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
-        }
-
-        // Additional business rules can be added here
-
-
-        if (!errors.isEmpty()) {
-            throw new DomainValidationException(errors);
-        }
+        checkForCreateConflicts(dto);
+        validateCreateBusinessRules(dto);
     }
 
     public void validateForDischarge(Beneficiary beneficiary) {
@@ -71,18 +56,56 @@ public class BeneficiaryValidator {
     // On update, validate the final AMKA/DOB state, not only the patched field,
     // so partial updates cannot introduce inconsistent data.
     public void validateForUpdate(Beneficiary existing, BeneficiaryUpdateDTO dto) {
-        Map<String, String> errors = new LinkedHashMap<>();
         Long id = existing.getId();
-
         String finalAmka = (dto.amka() != null) ? dto.amka() : existing.getAmka();
         LocalDate finalDob = (dto.dateOfBirth() != null) ? dto.dateOfBirth() : existing.getDateOfBirth();
-
         boolean amkaChanged = dto.amka() != null;
         boolean dobChanged = dto.dateOfBirth() != null;
 
+        checkForUpdateConflicts(id, finalAmka, amkaChanged);
+        validateUpdateBusinessRules(finalAmka, finalDob, amkaChanged, dobChanged);
+    }
+
+    private void checkForCreateConflicts(BeneficiaryCreateDTO dto) {
+        Map<String, String> conflicts = new LinkedHashMap<>();
+
+        if (repository.existsByAmka(dto.amka())) {
+            conflicts.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
+        }
+
+        if (!conflicts.isEmpty()) {
+            throw new ConflictValidationException(conflicts);
+        }
+    }
+
+    private void validateCreateBusinessRules(BeneficiaryCreateDTO dto) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        if (!isAmkaConsistentWithDob(dto.amka(), dto.dateOfBirth())) {
+            errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
+        }
+
+        if (!errors.isEmpty()) {
+            throw new DomainValidationException(errors);
+        }
+    }
+
+    private void checkForUpdateConflicts(Long id, String finalAmka, boolean amkaChanged) {
+        Map<String, String> conflicts = new LinkedHashMap<>();
+
         if (amkaChanged && repository.existsByAmkaAndIdNot(finalAmka, id)) {
-            errors.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
-        } else if ((amkaChanged || dobChanged) && !isAmkaConsistentWithDob(finalAmka, finalDob)) {
+            conflicts.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
+        }
+
+        if (!conflicts.isEmpty()) {
+            throw new ConflictValidationException(conflicts);
+        }
+    }
+
+    private void validateUpdateBusinessRules(String finalAmka, LocalDate finalDob, boolean amkaChanged, boolean dobChanged) {
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        if ((amkaChanged || dobChanged) && !isAmkaConsistentWithDob(finalAmka, finalDob)) {
             errors.put("amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey());
         }
 
