@@ -11,20 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/employees/{employeeId}/assignments")
 @Validated
 @RequiredArgsConstructor
 public class EmployeeAssignmentController {
-    private final EmployeeAssignmentService service;
+    private final EmployeeAssignmentService assignmentService;
 
     @PostMapping
     public ResponseEntity<EmployeeAssignmentReadOnlyDTO> create (
-            @PathVariable @Positive Long employeeId,
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeAssignmentCreateDTO dto) {
 
-        EmployeeAssignmentReadOnlyDTO assignment = service.create(employeeId, dto);
+        EmployeeAssignmentReadOnlyDTO assignment = assignmentService.create(employeeId, dto);
         return ResponseEntity
                 .created(buildLocationUri(assignment.id()))
                 .body(assignment);
@@ -35,7 +36,7 @@ public class EmployeeAssignmentController {
             @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
     ) {
-        service.cancel(employeeId, assignmentId);
+        assignmentService.cancel(employeeId, assignmentId);
         return ResponseEntity.noContent().build();
     }
 
@@ -44,8 +45,25 @@ public class EmployeeAssignmentController {
             @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
     ) {
-        service.terminate(employeeId, assignmentId);
+        assignmentService.terminate(employeeId, assignmentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
+            @RequestParam(defaultValue = "ACTIVE") EmployeeAssignmentView view) {
+
+        return assignmentService.getAllAssignments(employeeId, view);
+    }
+
+    @GetMapping("/{assignmentId}")
+    public ResponseEntity<EmployeeAssignmentReadOnlyDTO> getAssignmentById(
+            @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
+            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId) {
+
+        EmployeeAssignmentReadOnlyDTO assignment = assignmentService.getAssignmentById(employeeId, assignmentId);
+        return ResponseEntity.ok(assignment);
     }
 
     private URI buildLocationUri(Object id) {
