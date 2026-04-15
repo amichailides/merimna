@@ -58,6 +58,14 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
         return legalRepresentativeMapper.toReadOnlyDTO(existing);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LegalRepresentativeReadOnlyDTO getLegalRepresentativeById(Long legalRepresentativeId) {
+        LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
+
+        return legalRepresentativeMapper.toReadOnlyDTO(legal);
+    }
+
     private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
         return  beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));

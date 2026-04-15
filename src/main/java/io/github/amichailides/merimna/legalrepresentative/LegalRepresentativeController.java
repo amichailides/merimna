@@ -34,4 +34,11 @@ public class LegalRepresentativeController {
         LegalRepresentativeReadOnlyDTO legal = legalRepresentativeService.updateLegalRepresentative(legalRepresentativeId, dto);
         return ResponseEntity.ok(legal);
     }
+
+    @GetMapping("/{legalRepresentativeId}")
+    public LegalRepresentativeReadOnlyDTO getLegalRepresentativeById(
+            @PathVariable Long legalRepresentativeId) {
+
+        return legalRepresentativeService.getLegalRepresentativeById(legalRepresentativeId);
+    }
 }
