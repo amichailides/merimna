@@ -21,7 +21,7 @@ public class EmployeeAssignmentController {
     private final EmployeeAssignmentService assignmentService;
 
     @PostMapping
-    public ResponseEntity<EmployeeAssignmentReadOnlyDTO> create (
+    public ResponseEntity<EmployeeAssignmentReadOnlyDTO> create(
             @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeAssignmentCreateDTO dto) {
 
@@ -41,7 +41,7 @@ public class EmployeeAssignmentController {
     }
 
     @PostMapping("/{assignmentId}/terminate")
-    public ResponseEntity<Void> terminateAssignment (
+    public ResponseEntity<Void> terminateAssignment(
             @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
     ) {
@@ -58,12 +58,11 @@ public class EmployeeAssignmentController {
     }
 
     @GetMapping("/{assignmentId}")
-    public ResponseEntity<EmployeeAssignmentReadOnlyDTO> getAssignmentById(
+    public EmployeeAssignmentReadOnlyDTO getAssignmentById(
             @PathVariable @Positive(message = "{employee.id.positive}") Long employeeId,
             @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId) {
 
-        EmployeeAssignmentReadOnlyDTO assignment = assignmentService.getAssignmentById(employeeId, assignmentId);
-        return ResponseEntity.ok(assignment);
+        return assignmentService.getAssignmentById(employeeId, assignmentId);
     }
 
     private URI buildLocationUri(Object id) {

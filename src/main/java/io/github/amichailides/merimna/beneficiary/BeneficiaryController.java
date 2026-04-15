@@ -127,12 +127,11 @@ public class BeneficiaryController {
     })
     // TODO(#9): Replace {id} path variable with public identifier (UUID/ULID).
     @GetMapping("/{id}")
-    public ResponseEntity<BeneficiaryDetailsDTO> getById(
+    public BeneficiaryDetailsDTO getById(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
             @Positive @PathVariable Long id) {
 
-        BeneficiaryDetailsDTO beneficiary = service.findById(id);
-        return ResponseEntity.ok(beneficiary);
+        return service.findById(id);
     }
 
     // TODO(#5): Revisit discharge API design.
@@ -189,20 +188,19 @@ public class BeneficiaryController {
             )
     })
     @GetMapping
-    public ResponseEntity<PageResponse<BeneficiaryListDTO>> getBeneficiaries(
+    public PageResponse<BeneficiaryListDTO> getBeneficiaries(
             @Valid @ModelAttribute BeneficiarySearchDTO criteria,
             @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
         Page<BeneficiaryListDTO> page = service.findBeneficiaries(criteria, pageable);
 
-        return ResponseEntity.ok(PageResponse.<BeneficiaryListDTO>builder()
+        return PageResponse.<BeneficiaryListDTO>builder()
                 .content(page.getContent())
                 .page(page.getNumber())
                 .size(page.getSize())
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
-                .build()
-        );
+                .build();
     }
 
     @Operation(summary = "Change beneficiary house unit")
