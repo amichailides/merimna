@@ -36,7 +36,7 @@ The application now uses a centralized error handling architecture based on the 
 
 ### 1. ErrorCode as the Single Source of Truth
 An `ErrorCode` enum is used to define all application error types. Each error code now contains:
-*   A stable machine-readable `code` (e.g., `BENEFICIARY_NOT_FOUND`)
+*   A stable machine-readable `code` (e.g., `BENEFICIARY_NOT_FOUND_BY_ID`)
 *   The associated `HttpStatus` (e.g., `NOT_FOUND`)
 *   A `messageKey` used for i18n message resolution
 
@@ -61,7 +61,7 @@ All error responses follow a consistent structure inspired by the **Problem Deta
 **General Error Response:**
 ```json
 {
-  "code": "BENEFICIARY_NOT_FOUND",
+  "code": "BENEFICIARY_NOT_FOUND_BY_ID",
   "status": 404,
   "title": "Not Found",
   "detail": "The beneficiary with ID 123 was not found.",

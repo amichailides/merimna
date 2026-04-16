@@ -19,7 +19,7 @@ public enum ErrorCode {
 
 
     // Beneficiary
-    BENEFICIARY_NOT_FOUND_BY_ID("BENEFICIARY_NOT_FOUND", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundById"),
+    BENEFICIARY_NOT_FOUND_BY_ID("BENEFICIARY_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundById"),
     BENEFICIARY_NOT_FOUND_BY_AMKA("BENEFICIARY_NOT_FOUND_BY_AMKA", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundByAmka"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.beneficiary.amkaAlreadyExists"),
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "error.beneficiary.amkaDateMismatch"),
@@ -44,7 +44,7 @@ public enum ErrorCode {
     // employee
     EMPLOYEE_ALREADY_TERMINATED("EMPLOYEE_ALREADY_TERMINATED", HttpStatus.CONFLICT, "error.employee.alreadyTerminated"),
     SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same"),
-    EMPLOYEE_NOT_FOUND_BY_ID("EMPLOYEE_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employee.notFoundById"),
+    EMPLOYEE_NOT_FOUND_BY_ID("EMPLOYEE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.employee.notFoundById"),
     EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
     EMPLOYEE_EMAIL_ALREADY_EXISTS("EMPLOYEE_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employee.email.alreadyExists"),
     EMPLOYEE_ALREADY_ACTIVE("EMPLOYEE_ALREADY_ACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyActive"),
@@ -52,7 +52,7 @@ public enum ErrorCode {
     EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS("EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS", HttpStatus.CONFLICT, "error.employee.hasActiveAssignments"),
 
     // houseUnit
-    HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
+    HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
     HOUSE_UNIT_ALREADY_EXISTS("HOUSE_UNIT_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.houseUnit.alreadyExists"),
     HOUSE_UNIT_CAPACITY_EXCEEDED("HOUSE_UNIT_CAPACITY_EXCEEDED", HttpStatus.BAD_REQUEST, "error.houseUnit.capacityExceeded"),
     HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full"),
