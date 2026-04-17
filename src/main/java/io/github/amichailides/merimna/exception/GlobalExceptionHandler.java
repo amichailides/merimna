@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,8 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>Μετατρέπει τα exceptions σε {@link ApiResponse} χρησιμοποιώντας
- * τους προκαθορισμένους κωδικούς του {@link ErrorCode}.</p>
+ * <p>Μετατρέπει τα exceptions σε {@link ApiResponse}.
  */
 @Slf4j
 @RestControllerAdvice
@@ -39,7 +39,6 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
         HttpStatus status = ex.getErrorCode().getStatus();
 
-        // Παίρνουμε το localized message
         String detail = translate(ex.getErrorCode().getMessageKey(), ex.getArgs());
 
         return ResponseEntity
@@ -208,7 +207,7 @@ public class GlobalExceptionHandler {
             ConstraintViolationException ex,
             HttpServletRequest request) {
 
-        // Χρησιμοποιούμε LinkedHashMap για να κρατήσουμε τη σειρά των σφαλμάτων
+        // LinkedHashMap για να κρατήσουμε τη σειρά των σφαλμάτων
         Map<String, List<String>> errors = new LinkedHashMap<>();
 
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -233,7 +232,6 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    // Πιάνει τα πάντα που δεν έχουν πιάσει οι προηγούμενοί
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleAllUncaughtException(
             Exception ex,
@@ -267,6 +265,4 @@ public class GlobalExceptionHandler {
                 LocaleContextHolder.getLocale()
         );
     }
-
-
 }
