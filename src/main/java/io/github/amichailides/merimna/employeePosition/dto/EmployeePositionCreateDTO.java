@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.employeePosition.dto;
 
+import io.github.amichailides.merimna.domain.Permission;
 import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+
+import java.util.Set;
 
 @Builder
 public record EmployeePositionCreateDTO(
@@ -26,5 +29,8 @@ public record EmployeePositionCreateDTO(
         String displayName,
 
         @NotNull(message = "{employeePosition.requiresExclusivePlacement.notNull}", groups = FirstOrder.class)
-        Boolean requiresExclusivePlacement
+        Boolean requiresExclusivePlacement,
+
+        @NotNull(message = "{employeePosition.permissions.notNull}", groups = FirstOrder.class)
+        Set<Permission> permissions
 ) {}

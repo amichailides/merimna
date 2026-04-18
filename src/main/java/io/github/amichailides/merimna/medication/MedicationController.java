@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +24,7 @@ import java.util.List;
 public class MedicationController {
     private final MedicationService medicationService;
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<MedicationReadOnlyDTO> addMedication(
             @PathVariable Long beneficiaryId,
@@ -37,12 +39,14 @@ public class MedicationController {
                 .body(medication);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public List<MedicationReadOnlyDTO> getMedications(@PathVariable Long beneficiaryId) {
 
         return medicationService.getMedicationsByBeneficiary(beneficiaryId);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{medicationId}")
     public MedicationReadOnlyDTO getMedication(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
@@ -51,6 +55,7 @@ public class MedicationController {
         return medicationService.getMedication(beneficiaryId, medicationId);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{medicationId}")
     public ResponseEntity<MedicationReadOnlyDTO> updateMedication(
             @PathVariable Long beneficiaryId,
@@ -63,6 +68,7 @@ public class MedicationController {
 
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @DeleteMapping("/{medicationId}")
     public ResponseEntity<Void> deleteMedication (
             @PathVariable Long beneficiaryId,

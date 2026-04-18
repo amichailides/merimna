@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,6 +27,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_CREATE')")
     public ResponseEntity<EmployeeDetailsDTO> createEmployee(
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeCreateDTO dto) {
 
@@ -36,6 +38,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<PageResponse<EmployeeListDTO>> getAllEmployees(
             @Valid @ModelAttribute EmployeeSearchDTO criteria,
             @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -53,6 +56,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployeeById(
             @PathVariable @Positive(message = "{employee.id.positive}")
             Long id) {
@@ -62,6 +66,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_UPDATE')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
             @PathVariable @Positive(message = "{employee.id.positive}")
             Long id,
@@ -73,6 +78,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/{id}/terminate")
+    @PreAuthorize("hasAuthority('EMPLOYEE_TERMINATE')")
     public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
             @PathVariable
             @Positive (message = "{employee.id.positive}")
@@ -85,6 +91,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/{id}/reactivate")
+    @PreAuthorize("hasAuthority('EMPLOYEE_REACTIVATE')")
     public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
             @PathVariable
             @Positive(message = "{employee.id.positive}")

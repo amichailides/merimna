@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class LegalRepresentativeController {
 
     private final LegalRepresentativeService legalRepresentativeService;
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<LegalRepresentativeReadOnlyDTO> createLegalRepresentative(
             @Validated(ValidationGroupSequence.class) @RequestBody LegalRepresentativeDTO dto) {
@@ -27,6 +29,7 @@ public class LegalRepresentativeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(legal);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{legalRepresentativeId}")
     public ResponseEntity<LegalRepresentativeReadOnlyDTO> updateLegalRepresentative(
             @PathVariable Long legalRepresentativeId,
@@ -35,6 +38,7 @@ public class LegalRepresentativeController {
         return ResponseEntity.ok(legal);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{legalRepresentativeId}")
     public LegalRepresentativeReadOnlyDTO getLegalRepresentativeById(
             @PathVariable Long legalRepresentativeId) {

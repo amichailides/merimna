@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,6 +23,7 @@ import java.util.List;
 public class AllergyController {
     private final AllergyService allergyService;
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<AllergyReadOnlyDTO> createAllergy(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
@@ -34,6 +36,7 @@ public class AllergyController {
                 .body(allergy);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{allergyId}")
     public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
@@ -44,6 +47,7 @@ public class AllergyController {
         return ResponseEntity.ok(allergy);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @DeleteMapping("/{allergyId}")
     public ResponseEntity<Void> deleteAllergy(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
@@ -53,6 +57,7 @@ public class AllergyController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId) {
@@ -60,6 +65,7 @@ public class AllergyController {
         return allergyService.getAllergiesByBeneficiary(beneficiaryId);
     }
 
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{allergyId}")
     public AllergyReadOnlyDTO getAllergyById(
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,

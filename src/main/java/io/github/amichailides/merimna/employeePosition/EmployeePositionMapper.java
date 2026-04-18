@@ -6,6 +6,8 @@ import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionCreat
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionReadOnlyDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+
 @Component
 public class EmployeePositionMapper {
 
@@ -16,6 +18,7 @@ public class EmployeePositionMapper {
                 .code(entity.getCode().getValue())
                 .displayName(entity.getDisplayName())
                 .requiresExclusivePlacement(entity.isRequiresExclusivePlacement())
+                .permissions(new HashSet<>(entity.getPermissions()))
                 .build();
     }
 
@@ -25,6 +28,7 @@ public class EmployeePositionMapper {
                 .code(code)
                 .displayName(dto.displayName())
                 .requiresExclusivePlacement(dto.requiresExclusivePlacement())
+                .permissions(new HashSet<>(dto.permissions()))
                 .build();
     }
 }

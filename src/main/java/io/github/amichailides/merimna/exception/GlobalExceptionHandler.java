@@ -12,6 +12,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -230,6 +232,32 @@ public class GlobalExceptionHandler {
                         detail,
                         errors,
                         request.getRequestURI()));
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthorizationDenied(
+            AuthorizationDeniedException ex,
+            HttpServletRequest request) {
+
+        ErrorCode errorCode = ErrorCode.FORBIDDEN;
+
+        String detail = messageSource.getMessage(
+                errorCode.getMessageKey(),
+                null,
+                "Δεν έχετε δικαίωμα πρόσβασης σε αυτόν τον πόρο",
+                request.getLocale()
+        );
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ApiResponse.error(
+                        errorCode,
+                        errorCode.getStatus().value(),
+                        errorCode.getStatus().getReasonPhrase(),
+                        detail,
+                        request.getRequestURI()
+                ));
+
     }
 
     @ExceptionHandler(Exception.class)

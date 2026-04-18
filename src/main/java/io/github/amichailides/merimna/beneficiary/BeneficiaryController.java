@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -65,6 +66,7 @@ public class BeneficiaryController {
                     )
             )
     })
+    @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<BeneficiaryDetailsDTO> create(
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryCreateDTO dto) {
@@ -99,6 +101,7 @@ public class BeneficiaryController {
                     )
             )
     })
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{id}")
     public ResponseEntity<BeneficiaryDetailsDTO> updateBeneficiary(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
@@ -126,6 +129,7 @@ public class BeneficiaryController {
             )
     })
     // TODO(#9): Replace {id} path variable with public identifier (UUID/ULID).
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{id}")
     public BeneficiaryDetailsDTO getById(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
@@ -162,6 +166,7 @@ public class BeneficiaryController {
                     )
             )
     })
+    @PreAuthorize("hasAuthority('BENEFICIARY_DISCHARGE')")
     @PostMapping("/{beneficiaryId}/discharge")
     public ResponseEntity<BeneficiaryDetailsDTO> discharge
     (@Parameter(description = "Beneficiary unique identifier", example = "42")
@@ -187,6 +192,7 @@ public class BeneficiaryController {
                     )
             )
     })
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public PageResponse<BeneficiaryListDTO> getBeneficiaries(
             @Valid @ModelAttribute BeneficiarySearchDTO criteria,
@@ -227,6 +233,7 @@ public class BeneficiaryController {
             )
     })
     @PatchMapping("/{id}/house-unit/{code}")
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
             @Parameter(description = "Beneficiary ID", example = "1")
             @PathVariable @Positive(message = "{beneficiary.id.positive}") Long id,

@@ -8,6 +8,7 @@ import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,12 +24,14 @@ public class HouseUnitController {
 
     private final HouseUnitService houseUnitService;
 
+    @PreAuthorize("hasAuthority('HOUSE_UNIT_READ')")
     @GetMapping
     public List<HouseUnitReadOnlyDTO> getAllHouseUnits() {
 
         return houseUnitService.getAllHouseUnits();
     }
 
+    @PreAuthorize("hasAuthority('HOUSE_UNIT_CREATE')")
     @PostMapping
     public ResponseEntity<HouseUnitReadOnlyDTO> createHouseUnit(
             @Validated(ValidationGroupSequence.class) @RequestBody HouseUnitCreateDTO dto) {
@@ -39,6 +42,7 @@ public class HouseUnitController {
                 .body(houseUnit);
     }
 
+    @PreAuthorize("hasAuthority('HOUSE_UNIT_UPDATE')")
     @PatchMapping("/{houseUnitCode}")
     public ResponseEntity<HouseUnitReadOnlyDTO> updateHouseUnit(
             @PathVariable
@@ -50,6 +54,7 @@ public class HouseUnitController {
         return ResponseEntity.ok(updated);
     }
 
+    @PreAuthorize("hasAuthority('HOUSE_UNIT_READ')")
     @GetMapping("/{code}")
     public HouseUnitReadOnlyDTO getHouseUnitByCode(
             @PathVariable
