@@ -1,9 +1,14 @@
 package io.github.amichailides.merimna.user;
 
+import io.github.amichailides.merimna.common.response.PageResponse;
+import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
+import io.github.amichailides.merimna.user.dto.UserSearchDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +22,6 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @PostMapping
     public ResponseEntity<UserReadOnlyDTO> create(
@@ -27,6 +31,22 @@ public class UserController {
         return ResponseEntity
                 .created(buildLocationUri(user.id()))
                 .body(user);
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<UserReadOnlyDTO>> getAllUsers(
+            @ModelAttribute UserSearchDTO criteria,
+            Pageable pageable) {
+
+        Page<UserReadOnlyDTO> page = userService.getAllUsers(criteria, pageable);
+        return ResponseEntity.ok(PageResponse.<UserReadOnlyDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
     }
 
 

@@ -1,12 +1,17 @@
 package io.github.amichailides.merimna.user;
 
+import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
+import io.github.amichailides.merimna.user.dto.UserSearchDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +44,24 @@ public class UserServiceImpl implements UserService{
                 .employee(employee)
                 .build();
 
-
         return userMapper.toReadOnlyDTO(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserReadOnlyDTO> getAllUsers(UserSearchDTO criteria, Pageable pageable) {
+
+        Boolean activeFilter = Boolean.TRUE.equals(criteria.includeInactive())
+                ? null
+                : Boolean.TRUE;
+
+        Specification<User> spec = Specification.where(
+                UserSpecifications.searchByUsernameOrEmail(criteria.q())
+                        .and(UserSpecifications.hasRole(criteria.role()))
+                        .and(UserSpecifications.isActive(activeFilter))
+        );
+
+        return userRepository.findAll(spec, pageable)
+                .map(userMapper::toReadOnlyDTO);
     }
 }
