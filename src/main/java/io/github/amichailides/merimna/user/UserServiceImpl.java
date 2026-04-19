@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.user;
 
-import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
@@ -8,6 +7,7 @@ import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdExc
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
 import io.github.amichailides.merimna.user.dto.UserSearchDTO;
+import io.github.amichailides.merimna.user.dto.UserUpdateDTO;
 import io.github.amichailides.merimna.user.exception.UserNotFoundByIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -73,6 +73,17 @@ public class UserServiceImpl implements UserService{
 
         return userMapper.toReadOnlyDTO(user);
 
+    }
+
+    @Override
+    @Transactional
+    public UserReadOnlyDTO updateUser(Long id, UserUpdateDTO dto) {
+        User user = getUserOrThrow(id);
+
+        userValidator.validateForUpdate(id, dto, user);
+         userMapper.updateEntity(user, dto);
+
+         return userMapper.toReadOnlyDTO(user);
     }
 
     private User getUserOrThrow(Long userId) {

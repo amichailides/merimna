@@ -1,10 +1,10 @@
 package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
-import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
 import io.github.amichailides.merimna.user.dto.UserSearchDTO;
+import io.github.amichailides.merimna.user.dto.UserUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +55,15 @@ public class UserController {
             @PathVariable @Positive(message = "{user.id.positive}") Long id) {
 
         UserReadOnlyDTO result = userService.getUserById(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserReadOnlyDTO> updateUser(
+            @PathVariable @Positive(message = "{user.id.positive}") Long id,
+            @Validated(ValidationGroupSequence.class) @RequestBody UserUpdateDTO dto) {
+
+        UserReadOnlyDTO result = userService.updateUser(id, dto);
         return ResponseEntity.ok(result);
     }
 
