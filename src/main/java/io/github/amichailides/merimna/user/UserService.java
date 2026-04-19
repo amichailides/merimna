@@ -10,4 +10,6 @@ public interface UserService {
     UserReadOnlyDTO create(UserCreateDTO dto);
 
     Page<UserReadOnlyDTO> getAllUsers(UserSearchDTO criteria, Pageable pageable);
+
+    UserReadOnlyDTO getUserById(Long id);
 }

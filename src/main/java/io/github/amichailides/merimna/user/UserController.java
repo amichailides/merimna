@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
 import io.github.amichailides.merimna.user.dto.UserSearchDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,14 @@ public class UserController {
                 .totalPages(page.getTotalPages())
                 .build()
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserReadOnlyDTO> getUserById(
+            @PathVariable @Positive(message = "{user.id.positive}") Long id) {
+
+        UserReadOnlyDTO result = userService.getUserById(id);
+        return ResponseEntity.ok(result);
     }
 
 

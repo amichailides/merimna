@@ -8,6 +8,7 @@ import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdExc
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
 import io.github.amichailides.merimna.user.dto.UserSearchDTO;
+import io.github.amichailides.merimna.user.exception.UserNotFoundByIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,5 +64,19 @@ public class UserServiceImpl implements UserService{
 
         return userRepository.findAll(spec, pageable)
                 .map(userMapper::toReadOnlyDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserReadOnlyDTO getUserById(Long id) {
+        User user = getUserOrThrow(id);
+
+        return userMapper.toReadOnlyDTO(user);
+
+    }
+
+    private User getUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(UserNotFoundByIdException::new);
     }
 }

@@ -111,7 +111,8 @@ public enum ErrorCode {
     // =========================================================================
     EMPLOYEE_ALREADY_HAS_ACCOUNT("EMPLOYEE_ALREADY_HAS_ACCOUNT", HttpStatus.CONFLICT, "error.user.employeeAlreadyHasAccount"),
     USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.usernameAlreadyExists"),
-    EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.emailAlreadyExists");
+    EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.emailAlreadyExists"),
+    USER_NOT_FOUND_BY_ID("USER_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.user.notFoundById");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
