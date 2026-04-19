@@ -3,10 +3,12 @@ package io.github.amichailides.merimna.employee;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
+import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
+import io.github.amichailides.merimna.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final EmployeeValidator employeeValidator;
     private final EmployeePositionRepository employeePositionRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -45,6 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeValidator.validateForTerminate(employee, terminationDate);
         employee.terminate(terminationDate);
+        deactivateLinkedUser(employeeId);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -117,4 +122,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeePositionRepository.findByCode(code)
                 .orElseThrow(() -> new EmployeePositionNotFoundByCodeException(code.getValue()));
     }
+
+    private void deactivateLinkedUser(Long employeeId) {
+        Optional<User> user = userRepository.findByEmployeeId(employeeId);
+        user.ifPresent(User::deactivate);
+    }
+
 }

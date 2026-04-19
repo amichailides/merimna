@@ -36,6 +36,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Setter(AccessLevel.NONE)
     @Column(nullable = false)
     private boolean active = true;
 
@@ -65,6 +66,10 @@ public class User implements UserDetails {
         }
 
         return authorities;
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 
     @Override
