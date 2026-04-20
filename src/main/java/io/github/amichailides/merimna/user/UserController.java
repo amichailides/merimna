@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -64,6 +65,13 @@ public class UserController {
 
         UserReadOnlyDTO result = userService.updateUser(id, dto);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/me")
+    public UserReadOnlyDTO getCurrentUser(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return userService.getByEmail(userDetails.getUsername());
     }
 
     @PatchMapping("/me/password")

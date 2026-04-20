@@ -14,4 +14,6 @@ public interface UserService {
     UserReadOnlyDTO updateUser(Long id, UserUpdateDTO dto);
 
     void changePassword(String email, ChangePasswordDTO dto);
+
+    UserReadOnlyDTO getByEmail(String email);
 }

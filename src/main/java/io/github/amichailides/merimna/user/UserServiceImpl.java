@@ -103,6 +103,15 @@ public class UserServiceImpl implements UserService{
         user.setEncodedPassword(encoded);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserReadOnlyDTO getByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundByEmailException::new);
+
+        return userMapper.toReadOnlyDTO(user);
+    }
+
     private User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(UserNotFoundByIdException::new);
