@@ -72,6 +72,10 @@ public class User implements UserDetails {
         this.active = false;
     }
 
+    public void reactivate() {
+        this.active = true;
+    }
+
     @Override
     public boolean isEnabled() { return active; }
 

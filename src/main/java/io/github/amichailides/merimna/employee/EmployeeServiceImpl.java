@@ -61,6 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // TODO(#14): Add business validation for reactivation
         employee.reactivate();
+        reactivateLinkedUser(employeeId);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -126,6 +127,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     private void deactivateLinkedUser(Long employeeId) {
         Optional<User> user = userRepository.findByEmployeeId(employeeId);
         user.ifPresent(User::deactivate);
+    }
+
+    private void reactivateLinkedUser(Long employeeId) {
+        Optional<User> user = userRepository.findByEmployeeId(employeeId);
+        user.ifPresent(User::reactivate);
     }
 
 }
