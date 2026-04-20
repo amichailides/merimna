@@ -4,10 +4,10 @@ import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
-import io.github.amichailides.merimna.user.dto.UserCreateDTO;
-import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
-import io.github.amichailides.merimna.user.dto.UserSearchDTO;
-import io.github.amichailides.merimna.user.dto.UserUpdateDTO;
+import io.github.amichailides.merimna.user.dto.*;
+import io.github.amichailides.merimna.user.exception.InvalidCurrentPasswordException;
+import io.github.amichailides.merimna.user.exception.NewPasswordMustBeDifferentException;
+import io.github.amichailides.merimna.user.exception.UserNotFoundByEmailException;
 import io.github.amichailides.merimna.user.exception.UserNotFoundByIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -84,6 +84,23 @@ public class UserServiceImpl implements UserService{
          userMapper.updateEntity(user, dto);
 
          return userMapper.toReadOnlyDTO(user);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String email,ChangePasswordDTO dto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundByEmailException::new);
+
+        if (dto.newPassword().equals(dto.currentPassword())) {
+            throw new NewPasswordMustBeDifferentException();
+        }
+        if(!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new InvalidCurrentPasswordException();
+        }
+
+        String encoded = passwordEncoder.encode(dto.newPassword());
+        user.setEncodedPassword(encoded);
     }
 
     private User getUserOrThrow(Long userId) {

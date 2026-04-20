@@ -1,9 +1,6 @@
 package io.github.amichailides.merimna.user;
 
-import io.github.amichailides.merimna.user.dto.UserCreateDTO;
-import io.github.amichailides.merimna.user.dto.UserReadOnlyDTO;
-import io.github.amichailides.merimna.user.dto.UserSearchDTO;
-import io.github.amichailides.merimna.user.dto.UserUpdateDTO;
+import io.github.amichailides.merimna.user.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,4 +12,6 @@ public interface UserService {
     UserReadOnlyDTO getUserById(Long id);
 
     UserReadOnlyDTO updateUser(Long id, UserUpdateDTO dto);
+
+    void changePassword(String email, ChangePasswordDTO dto);
 }
