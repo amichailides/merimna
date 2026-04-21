@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     SELECT u FROM User u
     JOIN FETCH u.employee e
     JOIN FETCH e.position p
-    JOIN FETCH p.permissions
+    LEFT JOIN FETCH p.permissions
     WHERE u.email = :email
 """)
     Optional<User> findByEmailWithPermissions(String email);

@@ -20,6 +20,8 @@ public class EmployeePositionServiceImpl implements EmployeePositionService{
     public EmployeePositionReadOnlyDTO create(EmployeePositionCreateDTO dto) {
         EmployeePositionCode code = EmployeePositionCode.of(dto.code());
 
+        System.out.println("CODE VALUE: " + code.getValue());
+        System.out.println("EXISTS CHECK: " + positionRepository.existsByCode(code));
         if (positionRepository.existsByCode(code)) {
             throw new  EmployeePositionAlreadyExistsException(code.getValue());
         }
