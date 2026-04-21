@@ -25,7 +25,7 @@ public record EmployeeUpdateDTO(
 
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
         @Email(message = "{email.invalid}", groups = SecondOrder.class)
-        String email,
+        String contactEmail,
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
         @ValidMobile(groups = SecondOrder.class)

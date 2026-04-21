@@ -17,8 +17,8 @@ public class EmployeeValidator {
     private final EmployeeRepository employeeRepository;
 
     public void validateForCreate(EmployeeCreateDTO dto) {
-        if (employeeRepository.existsByEmailIgnoreCase(dto.email())) {
-            throw new EmployeeEmailAlreadyExistsException(dto.email());
+        if (employeeRepository.existsByContactEmailIgnoreCase(dto.contactEmail())) {
+            throw new EmployeeEmailAlreadyExistsException(dto.contactEmail());
         }
     }
 
@@ -27,10 +27,10 @@ public class EmployeeValidator {
             throw new EmployeeInactiveException();
         }
 
-        boolean emailChanged = dto.email() != null && !dto.email().equalsIgnoreCase(existing.getEmail());
+        boolean emailChanged = dto.contactEmail() != null && !dto.contactEmail().equalsIgnoreCase(existing.getContactEmail());
 
-        if (emailChanged && employeeRepository.existsByEmailIgnoreCase(dto.email())) {
-            throw new EmployeeEmailAlreadyExistsException(dto.email());
+        if (emailChanged && employeeRepository.existsByContactEmailIgnoreCase(dto.contactEmail())) {
+            throw new EmployeeEmailAlreadyExistsException(dto.contactEmail());
         }
     }
 

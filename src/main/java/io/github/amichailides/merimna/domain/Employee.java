@@ -35,7 +35,7 @@ public class Employee {
     private String lastName;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String contactEmail;
 
     @Column(nullable = false)
     private String mobileNumber;

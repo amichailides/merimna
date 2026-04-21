@@ -20,7 +20,7 @@ public record EmployeeDetailsDTO(
         String lastName,
 
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
-        String email,
+        String contactEmail,
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
         String mobileNumber,

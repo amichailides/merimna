@@ -28,7 +28,7 @@ public class EmployeeMapper {
                 .id(entity.getId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
-                .email(entity.getEmail())
+                .contactEmail(entity.getContactEmail())
                 .mobileNumber(entity.getMobileNumber())
                 .address(addressMapper.toDTO(entity.getAddress()))
                 .positionCode(entity.getPosition().getCode().getValue())
@@ -63,7 +63,7 @@ public class EmployeeMapper {
         return Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .email(dto.email())
+                .contactEmail(dto.contactEmail())
                 .mobileNumber(dto.mobileNumber())
                 .address(addressMapper.toEntity(dto.address()))
                 .position(position)
@@ -77,7 +77,7 @@ public class EmployeeMapper {
 
         if (dto.firstName() != null) existing.setFirstName(dto.firstName());
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
-        if (dto.email() != null) existing.setEmail(dto.email());
+        if (dto.contactEmail() != null) existing.setContactEmail(dto.contactEmail());
         if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
         if (position != null) existing.changePosition(position);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());

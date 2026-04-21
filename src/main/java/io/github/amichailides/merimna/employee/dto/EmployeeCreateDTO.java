@@ -29,7 +29,7 @@ public record EmployeeCreateDTO(
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
         @NotBlank(message = "{email.required}", groups = FirstOrder.class)
         @Email(message = "{email.invalid}", groups = SecondOrder.class)
-        String email,
+        String contactEmail,
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
         @NotBlank(message = "{mobile.required}", groups = FirstOrder.class)
