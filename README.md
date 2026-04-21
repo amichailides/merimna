@@ -43,6 +43,7 @@ It focuses on data consistency, explicit domain rules, and controlled state tran
 ## Technical Stack
 
 - **Backend:** Java 21, Spring Boot 4.x
+- **Security:** Spring Security 7.x, JWT, Argon2 password hashing
 - **Data Persistence:** Spring Data JPA, PostgreSQL, Flyway
 - **Build Tool:** Maven
 - **Utilities:** Lombok
@@ -67,7 +68,7 @@ assignments, and user administration.
 - `POST /api/beneficiaries/{id}/discharge`
 - `PATCH /api/beneficiaries/{id}/house-unit/{code}`
 
-#### Related resources
+**Related resources:**
 
 - `/api/beneficiaries/{beneficiaryId}/allergies`
 - `/api/beneficiaries/{beneficiaryId}/medications`
