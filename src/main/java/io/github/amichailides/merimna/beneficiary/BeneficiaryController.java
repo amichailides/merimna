@@ -131,7 +131,6 @@ public class BeneficiaryController {
                     )
             )
     })
-    // TODO(#9): Replace {id} path variable with public identifier (UUID/ULID).
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{publicId}")
     public BeneficiaryDetailsDTO getById(

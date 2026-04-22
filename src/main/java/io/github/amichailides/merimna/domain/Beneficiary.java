@@ -26,7 +26,6 @@ public class Beneficiary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // TODO(#9): Use publicId as immutable identifier for equals/hashCode (avoid mutable field issues)
     private Long id;
 
     @EqualsAndHashCode.Include
