@@ -13,7 +13,10 @@ import java.util.List;
 
 @Builder
 public record BeneficiaryDetailsDTO(
-        @Schema(description = "Unique identifier of the beneficiary", example = "42")
+        @Schema(
+                description = "Public identifier of the beneficiary",
+                example = "550e8400-e29b-41d4-a716-446655440000"
+        )
         String publicId,
 
         @Schema(description = "First name", example = "Γεώργιος")

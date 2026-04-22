@@ -15,9 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,8 +104,11 @@ public class BeneficiaryController {
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{publicId}")
     public ResponseEntity<BeneficiaryDetailsDTO> updateBeneficiary(
-            @Parameter(description = "Beneficiary unique identifier", example = "42")
-            @PathVariable String publicId,
+            @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{beneficiary.publicId.required}")
+            @UUID(message = "{beneficiary.publicId.invalid}")
+            String publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
         BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(publicId, dto);
@@ -132,8 +135,11 @@ public class BeneficiaryController {
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{publicId}")
     public BeneficiaryDetailsDTO getById(
-            @Parameter(description = "Beneficiary unique identifier", example = "42")
-            @PathVariable String publicId) {
+            @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{beneficiary.publicId.required}")
+            @UUID(message = "{beneficiary.publicId.invalid}")
+            String publicId) {
 
         return service.findByPublicId(publicId);
     }
@@ -168,9 +174,12 @@ public class BeneficiaryController {
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_DISCHARGE')")
     @PostMapping("/{publicId}/discharge")
-    public ResponseEntity<BeneficiaryDetailsDTO> discharge
-    (@Parameter(description = "Beneficiary unique identifier", example = "42")
-     @PathVariable String publicId) {
+    public ResponseEntity<BeneficiaryDetailsDTO> discharge(
+            @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{beneficiary.publicId.required}")
+            @UUID(message = "{beneficiary.publicId.invalid}")
+            String publicId) {
 
 
         BeneficiaryDetailsDTO updated = service.discharge(publicId);
@@ -235,8 +244,11 @@ public class BeneficiaryController {
     @PatchMapping("/{publicId}/house-unit/{code}")
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
-            @Parameter(description = "Beneficiary ID", example = "1")
-            @PathVariable String publicId,
+            @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{beneficiary.publicId.required}")
+            @UUID(message = "{beneficiary.publicId.invalid}")
+            String publicId,
 
             @Parameter(description = "House unit code", example = "UNIT_A")
             @PathVariable @NotBlank @Size(max = 20) String code) {
