@@ -4,7 +4,7 @@ import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
-import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
@@ -24,8 +24,8 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
 
     @Transactional
     public EmployeePlacementReadOnlyDTO create(EmployeePlacementCreateDTO dto) {
-        Employee employee = employeeRepository.findById(dto.employeeId())
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(dto.employeeId()));
+        Employee employee = employeeRepository.findByPublicId(dto.employeePublicId())
+                .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(dto.employeePublicId()));
 
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));

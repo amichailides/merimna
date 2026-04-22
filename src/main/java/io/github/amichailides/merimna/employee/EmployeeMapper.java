@@ -25,7 +25,7 @@ public class EmployeeMapper {
         if (entity == null) return null;
 
         return EmployeeDetailsDTO.builder()
-                .id(entity.getId())
+                .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .contactEmail(entity.getContactEmail())
@@ -49,7 +49,7 @@ public class EmployeeMapper {
         if (entity == null) return null;
 
         return EmployeeListDTO.builder()
-                .id(entity.getId())
+                .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .positionCode(entity.getPosition().getCode().getValue())

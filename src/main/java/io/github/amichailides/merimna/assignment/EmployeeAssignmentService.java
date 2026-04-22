@@ -6,13 +6,13 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 import java.util.List;
 
 public interface EmployeeAssignmentService {
-    EmployeeAssignmentReadOnlyDTO create(Long employeeId, EmployeeAssignmentCreateDTO dto);
+    EmployeeAssignmentReadOnlyDTO create(String employeePublicId, EmployeeAssignmentCreateDTO dto);
 
-    void cancel(Long employeeId, Long assignmentId);
+    void cancel(String employeePublicId, Long assignmentId);
 
-    List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(Long employeeId, EmployeeAssignmentView view);
+    List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(String employeePublicId, EmployeeAssignmentView view);
 
-    void terminate(Long employeeId, Long assignmentId);
+    void terminate(String employeePublicId, Long assignmentId);
 
-    EmployeeAssignmentReadOnlyDTO getAssignmentById(Long employeeId, Long assignmentId);
+    EmployeeAssignmentReadOnlyDTO getAssignmentById(String employeePublicId, Long assignmentId);
 }

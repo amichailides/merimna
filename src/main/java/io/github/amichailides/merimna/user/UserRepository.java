@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.user;
 
-import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByEmployeeId(Long employeeId);
+    boolean existsByEmployeePublicId(String employeeId);
 
     boolean existsByUsername(String username);
 
@@ -33,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndIdNot(String email, Long userId);
 
-    Optional<User> findByEmployeeId(Long employeeId);
+    Optional<User> findByEmployeePublicId(String publicId);
 
     Optional<User> findByEmail(String email);
 }

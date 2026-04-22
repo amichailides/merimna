@@ -5,7 +5,7 @@ import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.dto.*;
-import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.user.UserRepository;
@@ -44,24 +44,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO terminate(Long employeeId, LocalDate terminationDate) {
-        Employee employee = getEmployeeOrThrow(employeeId);
+    public EmployeeDetailsDTO terminate(String publicId, LocalDate terminationDate) {
+        Employee employee = getEmployeeOrThrow(publicId);
 
         employeeValidator.validateForTerminate(employee, terminationDate);
         employee.terminate(terminationDate);
-        deactivateLinkedUser(employeeId);
+        deactivateLinkedUser(publicId);
 
         return employeeMapper.toDetailsDTO(employee);
     }
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO reactivate(Long employeeId) {
-        Employee employee = getEmployeeOrThrow(employeeId);
+    public EmployeeDetailsDTO reactivate(String publicId) {
+        Employee employee = getEmployeeOrThrow(publicId);
 
         // TODO(#14): Add business validation for reactivation
         employee.reactivate();
-        reactivateLinkedUser(employeeId);
+        reactivateLinkedUser(publicId);
 
         return employeeMapper.toDetailsDTO(employee);
     }
@@ -89,7 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO updateEmployee(Long id, EmployeeUpdateDTO dto) {
+    public EmployeeDetailsDTO updateEmployee(String publicId, EmployeeUpdateDTO dto) {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
@@ -97,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 ? resolvePositionOrThrow(EmployeePositionCode.of(dto.positionCode()))
                 : null;
 
-        Employee employee = getEmployeeOrThrow(id);
+        Employee employee = getEmployeeOrThrow(publicId);
         employeeValidator.validateForUpdate(employee, dto);
 
         employeeMapper.updateEntity(employee, dto, position);
@@ -107,16 +107,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeDetailsDTO getEmployeeById(Long id) {
-        Employee employee = employeeRepository.findWithDetailsById(id)
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(id));
+    public EmployeeDetailsDTO getEmployeeByPublicId(String publicId) {
+        Employee employee = employeeRepository.findWithDetailsByPublicId(publicId)
+                .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(publicId));
 
         return employeeMapper.toDetailsDTO(employee);
     }
 
-    private Employee getEmployeeOrThrow(Long employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
+    private Employee getEmployeeOrThrow(String publicId) {
+        return employeeRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(publicId));
     }
 
     private EmployeePosition resolvePositionOrThrow(EmployeePositionCode code) {
@@ -124,13 +124,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EmployeePositionNotFoundByCodeException(code.getValue()));
     }
 
-    private void deactivateLinkedUser(Long employeeId) {
-        Optional<User> user = userRepository.findByEmployeeId(employeeId);
+    private void deactivateLinkedUser(String publicId) {
+        Optional<User> user = userRepository.findByEmployeePublicId(publicId);
         user.ifPresent(User::deactivate);
     }
 
-    private void reactivateLinkedUser(Long employeeId) {
-        Optional<User> user = userRepository.findByEmployeeId(employeeId);
+    private void reactivateLinkedUser(String publicId) {
+        Optional<User> user = userRepository.findByEmployeePublicId(publicId);
         user.ifPresent(User::reactivate);
     }
 

@@ -15,28 +15,6 @@ public interface EmployeeAssignmentRepository
         extends JpaRepository<EmployeeAssignment, Long>,
         JpaSpecificationExecutor<EmployeeAssignment> {
 
-    List<EmployeeAssignment> findByEmployeeId(Long employeeId);
-
-    List<EmployeeAssignment> findByHouseUnitId(Long houseUnitId);
-
-    Optional<EmployeeAssignment> findByIdAndEmployeeId(Long id, Long employeeId);
-
-    @Query("""
-            select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
-                a.id,
-                    hu.code,
-                    hu.displayName,
-                    a.status,
-                    a.startDate,
-                    a.endDate
-            )
-            from EmployeeAssignment a
-            join a.houseUnit hu
-            where a.employee.id = :employeeId
-            order by a.startDate desc
-            """)
-    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeeId(Long employeeId);
-
     @Query("""
         select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
             a.id,
@@ -48,11 +26,29 @@ public interface EmployeeAssignmentRepository
         )
         from EmployeeAssignment a
         join a.houseUnit hu
-        where a.employee.id = :employeeId
-          and a.status = :status
+        where a.employee.publicId = :employeePublicId
         order by a.startDate desc
         """)
-    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeeIdAndStatus(Long employeeId,
-                                                                             EmployeeAssignmentStatus status);
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicId(String employeePublicId);
+
+    @Query("""
+    select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
+        a.id,
+        hu.code,
+        hu.displayName,
+        a.status,
+        a.startDate,
+        a.endDate
+    )
+    from EmployeeAssignment a
+    join a.houseUnit hu
+    where a.employee.publicId = :employeePublicId
+      and a.status = :status
+    order by a.startDate desc
+    """)
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicIdAndStatus(String employeePublicId,
+                                                                                   EmployeeAssignmentStatus status);
+
+    Optional<EmployeeAssignment> findByIdAndEmployeePublicId(Long id, String employeePublicId);
 }
 

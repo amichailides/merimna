@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 
 public record EmployeePlacementCreateDTO(
 
-        @Schema(description = "Employee id to be placed.", example = "12")
+        @Schema(description = "Public identifier of the employee to be placed", example = "550e8400-e29b-41d4-a716-446655440000")
         @NotNull(message = "{placement.employeeId.notNull}", groups = FirstOrder.class)
-        Long employeeId,
+        String employeePublicId,
 
         @Schema(description = "House unit business code.", example = "HU-TH-01")
-        @NotBlank(message = "houseUnit.code.required}", groups = FirstOrder.class)
+        @NotBlank(message = "{houseUnit.code.required}", groups = FirstOrder.class)
         @Size(min = 2, max = 50, message = "{placement.houseUnitCode.size}", groups = SecondOrder.class)
         String houseUnitCode,
 

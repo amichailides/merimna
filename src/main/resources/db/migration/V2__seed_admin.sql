@@ -37,9 +37,9 @@ VALUES (1, 'BENEFICIARY_READ'),
 -- Seed: Admin Employee
 -- =========================================================================
 
-INSERT INTO employees (id, position_id, first_name, last_name, contact_email, mobile_number,
+INSERT INTO employees (id, public_id, position_id, first_name, last_name, contact_email, mobile_number,
                        street, street_number, city, zip_code, hire_date, is_active)
-VALUES (1, 1, 'Νίκος', 'Παπαδόπουλος', 'nikos.papadopoulos@merimna.gr',
+VALUES (1, '550e8400-e29b-41d4-a716-446655440000', 1, 'Νίκος', 'Παπαδόπουλος', 'nikos.papadopoulos@merimna.gr',
         '6944000001', 'Tsimiski', '43', 'Thessaloniki', '54623', CURRENT_DATE, true)
     ON CONFLICT (id) DO NOTHING;
 

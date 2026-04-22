@@ -18,10 +18,10 @@ public class UserValidator {
 
     private final UserRepository userRepository;
 
-    public void validateForCreate(Long employeeId, UserCreateDTO dto) {
+    public void validateForCreate(String employeePublicId, UserCreateDTO dto) {
         Map<String, String> errors = new LinkedHashMap<>();
 
-        if (userRepository.existsByEmployeeId(employeeId)) {
+        if (userRepository.existsByEmployeePublicId(employeePublicId)) {
             errors.put("employeeId", ErrorCode.EMPLOYEE_ALREADY_HAS_ACCOUNT.getMessageKey());
         }
         if (userRepository.existsByUsername(dto.username())) {

@@ -9,15 +9,15 @@ import java.time.LocalDate;
 public interface EmployeeService {
     EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto);
 
-    EmployeeDetailsDTO terminate(Long employeeId, LocalDate dto);
+    EmployeeDetailsDTO terminate(String publicId, LocalDate terminationDate);
 
     Page<EmployeeListDTO> getAllEmployees(
             EmployeeSearchDTO criteria,
             Pageable pageable);
 
-    EmployeeDetailsDTO getEmployeeById(Long id);
+    EmployeeDetailsDTO getEmployeeByPublicId(String publicId);
 
-    EmployeeDetailsDTO updateEmployee(Long id, EmployeeUpdateDTO dto);
+    EmployeeDetailsDTO updateEmployee(String publicId, EmployeeUpdateDTO dto);
 
-    EmployeeDetailsDTO reactivate(Long employeeId);
+    EmployeeDetailsDTO reactivate(String publicId);
 }

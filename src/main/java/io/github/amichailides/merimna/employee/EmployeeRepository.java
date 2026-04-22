@@ -14,7 +14,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>,
             "assignments",
             "assignments.houseUnit"
     })
-    Optional<Employee> findWithDetailsById(Long id);
+    Optional<Employee> findWithDetailsByPublicId(String publicId);
+
+    Optional<Employee> findByPublicId(String publicId);
 
     boolean existsByContactEmailIgnoreCase(String email);
 }

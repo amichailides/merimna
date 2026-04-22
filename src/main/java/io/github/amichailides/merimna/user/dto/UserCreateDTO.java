@@ -14,7 +14,7 @@ import lombok.Builder;
 public record UserCreateDTO(
 
         @NotNull(message = "{user.employeeId.required}", groups = FirstOrder.class)
-        Long employeeId,
+        String employeePublicId,
 
         @NotBlank(message = "{user.username.required}", groups = FirstOrder.class)
         @ValidUsername(groups = SecondOrder.class)

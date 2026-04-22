@@ -11,6 +11,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -24,9 +25,13 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     // TODO(#9): Use publicId as immutable identifier for equals/hashCode (avoid mutable field issues)
     private Long id;
+
+    @EqualsAndHashCode.Include
+    @Builder.Default
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    private String publicId = UUID.randomUUID().toString();
 
     @Column(nullable = false)
     private String firstName;

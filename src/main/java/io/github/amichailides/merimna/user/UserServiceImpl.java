@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.user;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
-import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.user.dto.*;
 import io.github.amichailides.merimna.user.exception.InvalidCurrentPasswordException;
 import io.github.amichailides.merimna.user.exception.NewPasswordMustBeDifferentException;
@@ -30,11 +30,11 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public UserReadOnlyDTO create(UserCreateDTO dto) {
-        Long employeeId = dto.employeeId();
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
+        String employeePublicId = dto.employeePublicId();
+        Employee employee = employeeRepository.findByPublicId(employeePublicId)
+                .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(employeePublicId));
 
-        userValidator.validateForCreate(employeeId, dto);
+        userValidator.validateForCreate(employeePublicId, dto);
 
         User user = User.builder()
                 .username(dto.username())

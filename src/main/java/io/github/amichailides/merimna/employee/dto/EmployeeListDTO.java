@@ -5,8 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record EmployeeListDTO(
-        @Schema(description = "Employee ID", example = "1")
-        Long id,
+        @Schema(description = "Public identifier of the employee", example = "550e8400-e29b-41d4-a716-446655440000")
+        String publicId,
 
         @Schema(description = "First name", example = "Giannis")
         String firstName,

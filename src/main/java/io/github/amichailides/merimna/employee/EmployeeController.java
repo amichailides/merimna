@@ -33,7 +33,7 @@ public class EmployeeController {
 
         EmployeeDetailsDTO employee = employeeService.createEmployee(dto);
         return ResponseEntity
-                .created(buildLocationUri(employee.id()))
+                .created(buildLocationUri(employee.publicId()))
                 .body(employee);
     }
 
@@ -55,49 +55,43 @@ public class EmployeeController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{publicId}")
     @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
-    public ResponseEntity<EmployeeDetailsDTO> getEmployeeById(
-            @PathVariable @Positive(message = "{employee.id.positive}")
-            Long id) {
-        EmployeeDetailsDTO result = employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeDetailsDTO> getEmployeeByPublicId(
+            @PathVariable String publicId) {
+        EmployeeDetailsDTO result = employeeService.getEmployeeByPublicId(publicId);
 
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{publicId}")
     @PreAuthorize("hasAuthority('EMPLOYEE_UPDATE')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
-            @PathVariable @Positive(message = "{employee.id.positive}")
-            Long id,
+            @PathVariable String publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeUpdateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.updateEmployee(id, dto);
+        EmployeeDetailsDTO result = employeeService.updateEmployee(publicId, dto);
 
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{id}/terminate")
+    @PostMapping("/{publicId}/terminate")
     @PreAuthorize("hasAuthority('EMPLOYEE_TERMINATE')")
     public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
-            @PathVariable
-            @Positive (message = "{employee.id.positive}")
-            Long id,
+            @PathVariable String publicId,
             @RequestBody @Valid EmployeeTerminateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.terminate(id, dto.terminationDate());
+        EmployeeDetailsDTO result = employeeService.terminate(publicId, dto.terminationDate());
 
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{id}/reactivate")
+    @PostMapping("/{publicId}/reactivate")
     @PreAuthorize("hasAuthority('EMPLOYEE_REACTIVATE')")
     public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
-            @PathVariable
-            @Positive(message = "{employee.id.positive}")
-            Long id) {
+            @PathVariable String publicId) {
 
-        EmployeeDetailsDTO result = employeeService.reactivate(id);
+        EmployeeDetailsDTO result = employeeService.reactivate(publicId);
 
         return ResponseEntity.ok(result);
     }

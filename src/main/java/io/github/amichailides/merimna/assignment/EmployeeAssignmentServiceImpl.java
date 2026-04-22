@@ -8,7 +8,7 @@ import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
-import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByIdException;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional
-    public EmployeeAssignmentReadOnlyDTO create(Long employeeId, EmployeeAssignmentCreateDTO dto) {
-        Employee employee = getEmployeeOrThrow(employeeId);
+    public EmployeeAssignmentReadOnlyDTO create(String employeePublicId, EmployeeAssignmentCreateDTO dto) {
+        Employee employee = getEmployeeOrThrow(employeePublicId);
         HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
 
@@ -56,15 +56,15 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional
-    public void cancel(Long employeeId, Long assignmentId) {
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+    public void cancel(String employeePublicId, Long assignmentId) {
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
         assignment.cancel(LocalDate.now());
     }
 
     @Override
     @Transactional
-    public void terminate(Long employeeId, Long assignmentId) {
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+    public void terminate(String employeePublicId, Long assignmentId) {
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
 
         if (!assignment.getEmployee().isActive()) {
             throw new AssignmentTerminationNotAllowedException();
@@ -75,32 +75,32 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(Long employeeId, EmployeeAssignmentView view) {
-        getEmployeeOrThrow(employeeId);
+    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(String employeePublicId, EmployeeAssignmentView view) {
+        getEmployeeOrThrow(employeePublicId);
 
         return switch (view) {
-            case ALL -> assignmentRepository.findAssignmentsByEmployeeId(employeeId);
-            case ACTIVE -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.ACTIVE);
-            case PAST -> assignmentRepository.findAssignmentsByEmployeeIdAndStatus(employeeId, EmployeeAssignmentStatus.TERMINATED);
+            case ALL -> assignmentRepository.findAssignmentsByEmployeePublicId(employeePublicId);
+            case ACTIVE -> assignmentRepository.findAssignmentsByEmployeePublicIdAndStatus(employeePublicId, EmployeeAssignmentStatus.ACTIVE);
+            case PAST -> assignmentRepository.findAssignmentsByEmployeePublicIdAndStatus(employeePublicId, EmployeeAssignmentStatus.TERMINATED);
         };
     }
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeAssignmentReadOnlyDTO getAssignmentById(Long employeeId, Long assignmentId) {
-        getEmployeeOrThrow(employeeId);
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeeId);
+    public EmployeeAssignmentReadOnlyDTO getAssignmentById(String employeePublicId, Long assignmentId) {
+        getEmployeeOrThrow(employeePublicId);
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
 
         return assignmentMapper.toDTO(assignment);
     }
 
-    private Employee getEmployeeOrThrow(Long employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundByIdException(employeeId));
+    private Employee getEmployeeOrThrow(String employeePublicId) {
+        return employeeRepository.findByPublicId(employeePublicId)
+                .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(employeePublicId));
     }
 
-    private EmployeeAssignment getAssignmentOrThrow (Long assignmentId, Long employeeId) {
-        return assignmentRepository.findByIdAndEmployeeId(assignmentId, employeeId)
+    private EmployeeAssignment getAssignmentOrThrow(Long assignmentId, String employeePublicId) {
+        return assignmentRepository.findByIdAndEmployeePublicId(assignmentId, employeePublicId)
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
     }
 }
