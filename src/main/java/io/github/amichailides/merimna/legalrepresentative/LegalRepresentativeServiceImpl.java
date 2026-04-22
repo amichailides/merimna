@@ -1,12 +1,11 @@
 package io.github.amichailides.merimna.legalrepresentative;
 
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.LegalRepresentative;
-import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeNotAssignedException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeNotFoundByIdException;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
@@ -30,8 +29,8 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     }
 
     @Transactional
-    public void assignToBeneficiary(Long beneficiaryId, Long legalRepresentativeId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public void assignToBeneficiary(String beneficiaryPublicId, Long legalRepresentativeId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
         LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
 
         // TODO(#12): Add domain validation for legal representative assignment
@@ -39,9 +38,9 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     }
 
     @Transactional
-    public void unassignLegalRepresentative(Long beneficiaryId, Long legalRepresentativeId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        LegalRepresentative legalRepresentative = getLegalRepresentativeOrThrow(legalRepresentativeId, beneficiaryId);
+    public void unassignLegalRepresentative(String beneficiaryPublicId, Long legalRepresentativeId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+        LegalRepresentative legalRepresentative = getLegalRepresentativeOrThrow(legalRepresentativeId, beneficiaryPublicId);
 
         beneficiary.removeLegalRepresentative(legalRepresentative);
     }
@@ -66,19 +65,19 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
         return legalRepresentativeMapper.toReadOnlyDTO(legal);
     }
 
-    private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
-        return  beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
+    private Beneficiary getBeneficiaryOrThrow (String publicId) {
+        return  beneficiaryRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
     // remove - legalId + beneficiaryId check
-    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId, Long beneficiaryId) {
-        return legalRepresentativeRepository.findByIdAndBeneficiariesId(legalRepresentativeId, beneficiaryId)
+    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId, String beneficiaryPublicId) {
+        return legalRepresentativeRepository.findByIdAndBeneficiariesPublicId(legalRepresentativeId, beneficiaryPublicId)
                 .orElseThrow(() -> {
                     if (!legalRepresentativeRepository.existsById(legalRepresentativeId)) {
                         return new LegalRepresentativeNotFoundByIdException(legalRepresentativeId);
                     }
-                    return new LegalRepresentativeNotAssignedException(legalRepresentativeId, beneficiaryId);
+                    return new LegalRepresentativeNotAssignedException(legalRepresentativeId, beneficiaryPublicId);
                 });
     }
 

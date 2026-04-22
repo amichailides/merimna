@@ -93,7 +93,7 @@ public class BeneficiaryValidatorTest {
                 .amka("06046678912")
                 .build();
 
-        when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(true);
+        when(repository.existsByAmkaAndPublicIdNot(dto.amka(), existing.getPublicId())).thenReturn(true);
 
         DomainValidationException ex = assertThrows(
                 DomainValidationException.class,
@@ -116,7 +116,7 @@ public class BeneficiaryValidatorTest {
                 .amka("06045678912")
                 .build();
 
-        when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(false);
+        when(repository.existsByAmkaAndPublicIdNot(dto.amka(), existing.getPublicId())).thenReturn(false);
 
         DomainValidationException ex = assertThrows(
                 DomainValidationException.class,
@@ -158,7 +158,7 @@ public class BeneficiaryValidatorTest {
                 .amka("06048678913")
                 .build();
 
-        when(repository.existsByAmkaAndIdNot(dto.amka(), existing.getId())).thenReturn(false);
+        when(repository.existsByAmkaAndPublicIdNot(dto.amka(), existing.getPublicId())).thenReturn(false);
 
         assertDoesNotThrow(() -> validator.validateForUpdate(existing, dto));
     }
@@ -187,7 +187,7 @@ public class BeneficiaryValidatorTest {
         );
 
         //assert
-        verify(repository, never()).existsByAmkaAndIdNot(any(), any());
+        verify(repository, never()).existsByAmkaAndPublicIdNot(any(), any());
 
     }
 
@@ -195,13 +195,13 @@ public class BeneficiaryValidatorTest {
     void validateForUpdate_shouldNotCheckConsistency_whenDuplicateAmkaFound() {
         // arrange
         Beneficiary existing = createDefaultBeneficiary(1L, true);
-        Long id = existing.getId();
+        String publicId = existing.getPublicId();
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .amka("06048612345")
                 .dateOfBirth(LocalDate.of(1950, 1, 1)) // deliberately inconsistent
                 .build();
 
-        when(repository.existsByAmkaAndIdNot(dto.amka(), id)).thenReturn(true);
+        when(repository.existsByAmkaAndPublicIdNot(dto.amka(), publicId)).thenReturn(true);
 
         // act
         DomainValidationException ex = assertThrows(
@@ -215,7 +215,7 @@ public class BeneficiaryValidatorTest {
                 ex.getValidationErrors().get("amka").getFirst()
         );
 
-        verify(repository).existsByAmkaAndIdNot(dto.amka(), existing.getId());
+        verify(repository).existsByAmkaAndPublicIdNot(dto.amka(), publicId);
         verifyNoMoreInteractions(repository);
 
     }

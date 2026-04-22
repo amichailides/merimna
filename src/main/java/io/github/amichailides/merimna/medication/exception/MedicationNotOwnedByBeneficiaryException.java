@@ -4,9 +4,9 @@ import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
 public class MedicationNotOwnedByBeneficiaryException extends BaseDomainException {
-    public MedicationNotOwnedByBeneficiaryException(Long medicationId, Long beneficiaryId) {
+    public MedicationNotOwnedByBeneficiaryException(Long medicationId, String beneficiaryPublicId) {
         super(ErrorCode.MEDICATION_NOT_OWNED_BY_BENEFICIARY,
                 medicationId,
-                beneficiaryId);
+                beneficiaryPublicId);
     }
 }

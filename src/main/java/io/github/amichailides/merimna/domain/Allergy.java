@@ -48,8 +48,8 @@ public class Allergy {
         this.beneficiary = null;
     }
 
-    public boolean belongsTo(Long beneficiaryId) {
-        return beneficiaryId != null &&
-                beneficiaryId.equals(this.beneficiary.getId());
+    public boolean belongsTo(String beneficiaryPublicId) {
+        return beneficiaryPublicId != null &&
+                beneficiaryPublicId.equals(this.beneficiary.getPublicId());
     }
 }

@@ -56,13 +56,13 @@ public class BeneficiaryValidator {
     // On update, validate the final AMKA/DOB state, not only the patched field,
     // so partial updates cannot introduce inconsistent data.
     public void validateForUpdate(Beneficiary existing, BeneficiaryUpdateDTO dto) {
-        Long id = existing.getId();
+        String publicId = existing.getPublicId();
         String finalAmka = (dto.amka() != null) ? dto.amka() : existing.getAmka();
         LocalDate finalDob = (dto.dateOfBirth() != null) ? dto.dateOfBirth() : existing.getDateOfBirth();
         boolean amkaChanged = dto.amka() != null;
         boolean dobChanged = dto.dateOfBirth() != null;
 
-        checkForUpdateConflicts(id, finalAmka, amkaChanged);
+        checkForUpdateConflicts(publicId, finalAmka, amkaChanged);
         validateUpdateBusinessRules(finalAmka, finalDob, amkaChanged, dobChanged);
     }
 
@@ -90,10 +90,10 @@ public class BeneficiaryValidator {
         }
     }
 
-    private void checkForUpdateConflicts(Long id, String finalAmka, boolean amkaChanged) {
+    private void checkForUpdateConflicts(String publicId, String finalAmka, boolean amkaChanged) {
         Map<String, String> conflicts = new LinkedHashMap<>();
 
-        if (amkaChanged && repository.existsByAmkaAndIdNot(finalAmka, id)) {
+        if (amkaChanged && repository.existsByAmkaAndPublicIdNot(finalAmka, publicId)) {
             conflicts.put("amka", ErrorCode.AMKA_ALREADY_EXISTS.getMessageKey());
         }
 

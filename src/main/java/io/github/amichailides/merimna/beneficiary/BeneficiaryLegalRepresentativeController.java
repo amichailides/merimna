@@ -8,26 +8,26 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Legal Representatives", description = "Operations related to legal representatives")
 @RestController
-@RequestMapping("/beneficiaries/{beneficiaryId}/legal-representatives")
+@RequestMapping("/beneficiaries/{beneficiaryPublicId}/legal-representatives")
 @RequiredArgsConstructor
 public class BeneficiaryLegalRepresentativeController {
     private final LegalRepresentativeService legalRepresentativeService;
 
     @PostMapping("/{legalRepresentativeId}")
     public ResponseEntity<Void> assignLegalRepresentative(
-            @PathVariable Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @PathVariable Long legalRepresentativeId) {
 
-        legalRepresentativeService.assignToBeneficiary(beneficiaryId, legalRepresentativeId);
+        legalRepresentativeService.assignToBeneficiary(beneficiaryPublicId, legalRepresentativeId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{legalRepresentativeId}")
     public ResponseEntity<Void> unassignLegalRepresentative(
-            @PathVariable Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @PathVariable Long legalRepresentativeId) {
 
-        legalRepresentativeService.unassignLegalRepresentative(beneficiaryId, legalRepresentativeId);
+        legalRepresentativeService.unassignLegalRepresentative(beneficiaryPublicId, legalRepresentativeId);
         return ResponseEntity.noContent().build();
     }
 

@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record BeneficiaryListDTO(
         @Schema(description = "Unique identifier of the beneficiary", example = "42")
-        Long id,
+        String publicId,
 
         @Schema(description = "First name", example = "Γεώργιος")
         String firstName,

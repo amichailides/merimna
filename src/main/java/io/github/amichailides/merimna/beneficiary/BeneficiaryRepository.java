@@ -12,19 +12,21 @@ import java.util.Optional;
 public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Long>,
         JpaSpecificationExecutor<Beneficiary> {
 
-    Optional<Beneficiary> findByAmka(String amka);
-
     boolean existsByAmka(String amka);
 
-    boolean existsByAmkaAndIdNot(String amka, Long id);
+    boolean existsByAmkaAndPublicIdNot(String amka, String publicId);
 
     @EntityGraph(attributePaths = {
             "medications",
             "allergies",
             "legalRepresentatives"
     })
-    Optional<Beneficiary> findWithDetailsById(Long id);
+    Optional<Beneficiary> findWithDetailsByPublicId(String publicId);
 
     long countByHouseUnitAndIsActiveTrue(HouseUnit houseUnit);
+
+    Optional<Beneficiary> findByPublicId(String publicId);
+
+    boolean existsByPublicId(String publicId);
 
 }

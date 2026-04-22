@@ -18,7 +18,7 @@ import java.util.List;
 @Tag(name = "Allergies", description = "Operations related to allergies")
 @RestController
 @Validated
-@RequestMapping("/beneficiaries/{beneficiaryId}/allergies")
+@RequestMapping("/beneficiaries/{beneficiaryPublicId}/allergies")
 @RequiredArgsConstructor
 public class AllergyController {
     private final AllergyService allergyService;
@@ -26,10 +26,10 @@ public class AllergyController {
     @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<AllergyReadOnlyDTO> createAllergy(
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyCreateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergyService.createAllergy(beneficiaryId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.createAllergy(beneficiaryPublicId, dto);
 
         return ResponseEntity
                 .created(buildLocationUri(allergy.id()))
@@ -39,39 +39,39 @@ public class AllergyController {
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{allergyId}")
     public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyUpdateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryId, allergyId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryPublicId, allergyId, dto);
         return ResponseEntity.ok(allergy);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @DeleteMapping("/{allergyId}")
     public ResponseEntity<Void> deleteAllergy(
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
 
-        allergyService.deleteAllergy(beneficiaryId, allergyId);
+        allergyService.deleteAllergy(beneficiaryPublicId, allergyId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId) {
+            @PathVariable String beneficiaryPublicId) {
 
-        return allergyService.getAllergiesByBeneficiary(beneficiaryId);
+        return allergyService.getAllergiesByBeneficiary(beneficiaryPublicId);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{allergyId}")
     public AllergyReadOnlyDTO getAllergyById(
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long beneficiaryId,
+            @PathVariable String beneficiaryPublicId,
             @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
 
-        return allergyService.getAllergyById(beneficiaryId, allergyId);
+        return allergyService.getAllergyById(beneficiaryPublicId, allergyId);
     }
 
     private URI buildLocationUri(Long id) {

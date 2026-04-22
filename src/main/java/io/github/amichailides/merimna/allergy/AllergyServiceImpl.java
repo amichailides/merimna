@@ -5,7 +5,7 @@ import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotOwnedByBeneficiaryException;
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Allergy;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
@@ -25,8 +25,8 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO createAllergy(Long beneficiaryId, AllergyCreateDTO dto) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public AllergyReadOnlyDTO createAllergy(String beneficiaryPublicId, AllergyCreateDTO dto) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         Allergy allergy = allergyMapper.toEntity(dto);
         allergyValidator.validateCreate(beneficiary, allergy);
@@ -39,8 +39,8 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO updateAllergy(Long beneficiaryId, Long allergyId, AllergyUpdateDTO dto) {
-        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
+    public AllergyReadOnlyDTO updateAllergy(String beneficiaryPublicId, Long allergyId, AllergyUpdateDTO dto) {
+        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
 
         allergyValidator.validateForUpdate(allergy, dto);
         allergyMapper.updateEntity(allergy, dto);
@@ -50,23 +50,23 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public void deleteAllergy(Long beneficiaryId, Long allergyId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public void deleteAllergy(String beneficiaryPublicId, Long allergyId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
-        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryId);
+        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
 
         beneficiary.removeAllergy(allergy);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(Long beneficiaryId) {
-        if (!beneficiaryRepository.existsById(beneficiaryId)) {
-            throw new BeneficiaryNotFoundByIdException(beneficiaryId);
+    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(String beneficiaryPublicId) {
+        if (!beneficiaryRepository.existsByPublicId(beneficiaryPublicId)) {
+            throw new BeneficiaryNotFoundByPublicIdException(beneficiaryPublicId);
         }
 
         // TODO(#19): Consider projection-based query to avoid loading full Allergy entities for read operations
-        return allergyRepository.findAllByBeneficiaryId(beneficiaryId)
+        return allergyRepository.findAllByBeneficiaryPublicId(beneficiaryPublicId)
                 .stream()
                 .map(allergyMapper::toDTO)
                 .toList();
@@ -74,21 +74,21 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional(readOnly = true)
-    public AllergyReadOnlyDTO getAllergyById(Long beneficiaryId, Long allergyId) {
-        return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryId));
+    public AllergyReadOnlyDTO getAllergyById(String beneficiaryPublicId, Long allergyId) {
+        return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryPublicId));
     }
 
-    private Beneficiary getBeneficiaryOrThrow(Long beneficiaryId) {
-        return beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
+    private Beneficiary getBeneficiaryOrThrow(String publicId) {
+        return beneficiaryRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
-    private Allergy getAllergyOrThrow(Long allergyId, Long beneficiaryId) {
+    private Allergy getAllergyOrThrow(Long allergyId, String beneficiaryPublicId) {
         Allergy allergy = allergyRepository.findById(allergyId)
                 .orElseThrow(() -> new AllergyNotFoundException(allergyId));
 
-        if (!allergy.belongsTo(beneficiaryId)) {
-            throw new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryId);
+        if (!allergy.belongsTo(beneficiaryPublicId)) {
+            throw new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryPublicId);
         }
 
         return allergy;

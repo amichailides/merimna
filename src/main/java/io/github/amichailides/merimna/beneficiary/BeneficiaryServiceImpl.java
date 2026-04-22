@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.beneficiary;
 
 
 import io.github.amichailides.merimna.beneficiary.dto.*;
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
@@ -38,9 +38,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BeneficiaryDetailsDTO findById(Long id) {
-        Beneficiary beneficiary = beneficiaryRepository.findWithDetailsById(id)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(id));
+    public BeneficiaryDetailsDTO findByPublicId(String publicId) {
+        Beneficiary beneficiary = beneficiaryRepository.findWithDetailsByPublicId(publicId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
 
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
@@ -62,8 +62,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryDetailsDTO discharge(Long id) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
+    public BeneficiaryDetailsDTO discharge(String publicId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
 
         beneficiaryValidator.validateForDischarge(beneficiary); // business rules
         beneficiary.discharge(); // state check
@@ -73,11 +73,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto) {
+    public BeneficiaryDetailsDTO updateBeneficiary(String publicId, BeneficiaryUpdateDTO dto) {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
-        Beneficiary beneficiary = getBeneficiaryOrThrow(id);
+        Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
 
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
@@ -129,8 +129,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public BeneficiaryListDTO changeHouseUnit(String publicId, String code) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
 
         HouseUnit targetHouseUnit  = houseUnitRepository.findByCode(code)
                 .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
@@ -147,9 +147,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return value != null && !value.trim().isEmpty();
     }
 
-    private Beneficiary getBeneficiaryOrThrow(Long beneficiaryId) {
-        return beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
+    private Beneficiary getBeneficiaryOrThrow(String publicId) {
+        return beneficiaryRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
 }

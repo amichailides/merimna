@@ -4,10 +4,10 @@ import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
 public class AllergyNotOwnedByBeneficiaryException extends BaseDomainException {
-    public AllergyNotOwnedByBeneficiaryException(Long allergyId, Long beneficiaryId) {
+    public AllergyNotOwnedByBeneficiaryException(Long allergyId, String beneficiaryPublicId) {
 
         super(ErrorCode.ALLERGY_NOT_OWNED_BY_BENEFICIARY,
                 allergyId,
-                beneficiaryId);
+                beneficiaryPublicId);
     }
 }

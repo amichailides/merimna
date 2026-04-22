@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface AllergyRepository extends JpaRepository<Allergy, Long> {
     Optional<Allergy> findByIdAndBeneficiaryId(Long allergyId, Long beneficiaryId);
 
-    List<Allergy> findAllByBeneficiaryId(Long beneficiaryId);
+    List<Allergy> findAllByBeneficiaryPublicId(String beneficiaryPublicId);
 
     boolean existsByBeneficiaryIdAndSubstanceIgnoreCaseAndIdNot(
             Long beneficiaryId,

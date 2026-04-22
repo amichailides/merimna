@@ -73,7 +73,7 @@ public class BeneficiaryController {
 
         BeneficiaryDetailsDTO beneficiary = service.create(dto);
         return ResponseEntity
-                .created(buildLocationUri(beneficiary.id()))
+                .created(buildLocationUri(beneficiary.publicId()))
                 .body(beneficiary);
     }
 
@@ -102,13 +102,13 @@ public class BeneficiaryController {
             )
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @PatchMapping("/{id}")
+    @PatchMapping("/{publicId}")
     public ResponseEntity<BeneficiaryDetailsDTO> updateBeneficiary(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
-            @PathVariable @Positive Long id,
+            @PathVariable String publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
-        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(id, dto);
+        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(publicId, dto);
         return ResponseEntity.ok(beneficiary);
     }
 
@@ -130,12 +130,12 @@ public class BeneficiaryController {
     })
     // TODO(#9): Replace {id} path variable with public identifier (UUID/ULID).
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
-    @GetMapping("/{id}")
+    @GetMapping("/{publicId}")
     public BeneficiaryDetailsDTO getById(
             @Parameter(description = "Beneficiary unique identifier", example = "42")
-            @Positive @PathVariable Long id) {
+            @PathVariable String publicId) {
 
-        return service.findById(id);
+        return service.findByPublicId(publicId);
     }
 
     // TODO(#5): Revisit discharge API design.
@@ -167,13 +167,13 @@ public class BeneficiaryController {
             )
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_DISCHARGE')")
-    @PostMapping("/{beneficiaryId}/discharge")
+    @PostMapping("/{publicId}/discharge")
     public ResponseEntity<BeneficiaryDetailsDTO> discharge
     (@Parameter(description = "Beneficiary unique identifier", example = "42")
-     @PathVariable @Positive Long beneficiaryId) {
+     @PathVariable String publicId) {
 
 
-        BeneficiaryDetailsDTO updated = service.discharge(beneficiaryId);
+        BeneficiaryDetailsDTO updated = service.discharge(publicId);
         return ResponseEntity.ok(updated);
     }
 
@@ -232,16 +232,16 @@ public class BeneficiaryController {
                     )
             )
     })
-    @PatchMapping("/{id}/house-unit/{code}")
+    @PatchMapping("/{publicId}/house-unit/{code}")
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
             @Parameter(description = "Beneficiary ID", example = "1")
-            @PathVariable @Positive(message = "{beneficiary.id.positive}") Long id,
+            @PathVariable String publicId,
 
             @Parameter(description = "House unit code", example = "UNIT_A")
             @PathVariable @NotBlank @Size(max = 20) String code) {
 
-        BeneficiaryListDTO updated = service.changeHouseUnit(id, code);
+        BeneficiaryListDTO updated = service.changeHouseUnit(publicId, code);
         return ResponseEntity.ok(updated);
     }
 

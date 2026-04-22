@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface LegalRepresentativeRepository extends JpaRepository<LegalRepresentative, Long> {
 
-    Optional<LegalRepresentative> findByIdAndBeneficiariesId(Long legalRepresentativeId, Long beneficiaryId);
+    Optional<LegalRepresentative> findByIdAndBeneficiariesPublicId(Long id, String beneficiaryPublicId);
 }

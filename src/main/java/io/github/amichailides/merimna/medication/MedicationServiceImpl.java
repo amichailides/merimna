@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.medication;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.medication.exception.MedicationNotFoundException;
 import io.github.amichailides.merimna.medication.exception.MedicationNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -22,8 +22,8 @@ public class MedicationServiceImpl implements MedicationService{
     private final MedicationRepository medicationRepository;
 
     @Transactional
-    public MedicationReadOnlyDTO addMedication (Long beneficiaryId, MedicationCreateDTO dto) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public MedicationReadOnlyDTO addMedication (String beneficiaryPublicId, MedicationCreateDTO dto) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         Medication medication = medicationMapper.toEntity(dto);
         beneficiary.addMedication(medication);
@@ -33,11 +33,11 @@ public class MedicationServiceImpl implements MedicationService{
 
     @Transactional
     public MedicationReadOnlyDTO updateMedication(
-            Long beneficiaryId,
+            String beneficiaryPublicId,
             Long medicationId,
             MedicationUpdateDTO dto) {
 
-        Medication existing = getMedicationOrThrow(medicationId, beneficiaryId);
+        Medication existing = getMedicationOrThrow(medicationId, beneficiaryPublicId);
 
         // TODO(#14): MedicationValidator - business rules (e.g. drug interactions,
         // max dosage based on age/weight, or inactive beneficiary restrictions)
@@ -47,41 +47,40 @@ public class MedicationServiceImpl implements MedicationService{
     }
 
     @Transactional
-    public void deleteMedication (Long beneficiaryId, Long medicationId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
-        Medication medication = getMedicationOrThrow(medicationId, beneficiaryId);
+    public void deleteMedication (String beneficiaryPublicId, Long medicationId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+        Medication medication = getMedicationOrThrow(medicationId, beneficiaryPublicId);
 
         beneficiary.removeMedication(medication);
     }
 
     @Transactional(readOnly = true)
-    public MedicationReadOnlyDTO getMedication(Long beneficiaryId, Long medicationId) {
+    public MedicationReadOnlyDTO getMedication(String beneficiaryPublicId, Long medicationId) {
 
-        return medicationMapper.toDTO(getMedicationOrThrow(medicationId, beneficiaryId));
+        return medicationMapper.toDTO(getMedicationOrThrow(medicationId, beneficiaryPublicId));
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(Long beneficiaryId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryId);
+    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(String beneficiaryPublicId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         return beneficiary.getMedications().stream()
                 .map(medicationMapper::toDTO)
                 .toList();
     }
 
-    private Beneficiary getBeneficiaryOrThrow (Long beneficiaryId) {
-        return  beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new BeneficiaryNotFoundByIdException(beneficiaryId));
+    private Beneficiary getBeneficiaryOrThrow (String beneficiaryPublicId) {
+        return  beneficiaryRepository.findByPublicId(beneficiaryPublicId)
+                .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(beneficiaryPublicId));
     }
 
-    private Medication getMedicationOrThrow (Long medicationId, Long beneficiaryId) {
-        return  medicationRepository.findByIdAndBeneficiaryId(medicationId, beneficiaryId)
+    private Medication getMedicationOrThrow(Long medicationId, String beneficiaryPublicId) {
+        return medicationRepository.findByIdAndBeneficiaryPublicId(medicationId, beneficiaryPublicId)
                 .orElseThrow(() -> {
                     if (!medicationRepository.existsById(medicationId)) {
                         return new MedicationNotFoundException(medicationId);
                     }
-                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryId);
+                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryPublicId);
                 });
-
     }
 }

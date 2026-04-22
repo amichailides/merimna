@@ -10,13 +10,13 @@ public interface BeneficiaryService {
 
     BeneficiaryDetailsDTO create(BeneficiaryCreateDTO dto);
 
-    BeneficiaryDetailsDTO findById(Long id);
+    BeneficiaryDetailsDTO findByPublicId(String publicId);
 
-    BeneficiaryDetailsDTO discharge(Long id);
+    BeneficiaryDetailsDTO discharge(String publicId);
 
-    public BeneficiaryDetailsDTO updateBeneficiary(Long id, BeneficiaryUpdateDTO dto);
+    public BeneficiaryDetailsDTO updateBeneficiary(String publicId, BeneficiaryUpdateDTO dto);
 
     Page<BeneficiaryListDTO> findBeneficiaries(BeneficiarySearchDTO criteria, Pageable pageable);
 
-    BeneficiaryListDTO changeHouseUnit(Long beneficiaryId, String code);
+    BeneficiaryListDTO changeHouseUnit(String publicId, String code);
 }

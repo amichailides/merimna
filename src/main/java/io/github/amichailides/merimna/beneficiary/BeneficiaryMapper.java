@@ -30,7 +30,7 @@ public class BeneficiaryMapper {
         if (entity == null) return null;
 
         return BeneficiaryDetailsDTO.builder()
-                .id(entity.getId())
+                .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .amka(entity.getAmka())
@@ -56,7 +56,7 @@ public class BeneficiaryMapper {
         if (entity == null) return null;
 
         return BeneficiaryListDTO.builder()
-                .id(entity.getId())
+                .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .isActive(entity.isActive())

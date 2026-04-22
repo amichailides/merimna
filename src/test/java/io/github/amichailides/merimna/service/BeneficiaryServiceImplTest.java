@@ -3,15 +3,16 @@ package io.github.amichailides.merimna.service;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryServiceImpl;
 import io.github.amichailides.merimna.beneficiary.dto.*;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByIdException;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryMapper;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryValidator;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -36,6 +37,9 @@ import static org.mockito.Mockito.*;
 // Remaining scenarios: q only, amka only, houseUnit filter, blank criteria handling
 @ExtendWith(MockitoExtension.class)
 public class BeneficiaryServiceImplTest {
+
+    private static final String TEST_PUBLIC_ID = "550e8400-e29b-41d4-a716-446655440000";
+
     @Mock
     private BeneficiaryRepository beneficiaryRepository;
 
@@ -48,23 +52,45 @@ public class BeneficiaryServiceImplTest {
     @Mock
     private HouseUnitRepository houseUnitRepository;
 
+    @Mock
+    private HouseUnitValidator houseUnitValidator;
+
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
 
     @Test
-    void findById_shouldThrowException_whenBeneficiaryMissing() {
+    void findByPublicId_shouldThrowException_whenBeneficiaryMissing() {
         // arrange
-        Long beneficiaryId = 1L;
-        when(beneficiaryRepository.findWithDetailsById(beneficiaryId))
+        when(beneficiaryRepository.findWithDetailsByPublicId(TEST_PUBLIC_ID))
                 .thenReturn(Optional.empty());
 
         // act & assert
         assertThrows(
-                BeneficiaryNotFoundByIdException.class,
-                () -> beneficiaryService.findById(beneficiaryId)
+                BeneficiaryNotFoundByPublicIdException.class,
+                () -> beneficiaryService.findByPublicId(TEST_PUBLIC_ID)
         );
-        verify(beneficiaryRepository).findWithDetailsById(beneficiaryId);
+        verify(beneficiaryRepository).findWithDetailsByPublicId(TEST_PUBLIC_ID);
         verifyNoInteractions(beneficiaryMapper);
+    }
+
+    @Test
+    void findByPublicId_shouldReturnDetailsDto_whenBeneficiaryExists() {
+        // arrange
+        Beneficiary beneficiary = createDefaultBeneficiary(true);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(true);
+
+        when(beneficiaryRepository.findWithDetailsByPublicId(TEST_PUBLIC_ID))
+                .thenReturn(Optional.of(beneficiary));
+        when(beneficiaryMapper.toDetailsDTO(beneficiary))
+                .thenReturn(expectedDto);
+
+        // act
+        BeneficiaryDetailsDTO result = beneficiaryService.findByPublicId(TEST_PUBLIC_ID);
+
+        // assert
+        assertEquals(expectedDto, result);
+        verify(beneficiaryRepository).findWithDetailsByPublicId(TEST_PUBLIC_ID);
+        verify(beneficiaryMapper).toDetailsDTO(beneficiary);
     }
 
     @Test
@@ -72,15 +98,13 @@ public class BeneficiaryServiceImplTest {
         // arrange
         BeneficiaryCreateDTO dto = createDefaultBeneficiaryCreateDTO();
 
-        Map<String, String> errors = Map.of(
+        doThrow(new DomainValidationException(Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
-        );
-
-        // act & assert
-        doThrow(new DomainValidationException(errors))
+        )))
                 .when(validator)
                 .validateForSave(dto);
 
+        // act & assert
         assertThrows(
                 DomainValidationException.class,
                 () -> beneficiaryService.create(dto)
@@ -89,68 +113,6 @@ public class BeneficiaryServiceImplTest {
         verify(validator).validateForSave(dto);
         verifyNoInteractions(beneficiaryMapper);
         verify(beneficiaryRepository, never()).save(any());
-
-    }
-
-    @Test
-    void update_shouldFailFast_whenNotFound() {
-        // arrange
-        Long beneficiaryId = 1L;
-        BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder().build();
-
-        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.empty());
-
-        // act & assert
-        assertThrows(BeneficiaryNotFoundByIdException.class,
-                () -> beneficiaryService.updateBeneficiary(beneficiaryId, dto)
-        );
-
-        verify(beneficiaryRepository).findById(beneficiaryId);
-        verify(beneficiaryRepository, never()).save(any());
-        verifyNoInteractions(validator);
-    }
-
-    @Test
-    void discharge_shouldThrowNotFound_whenIdMissing() {
-        // arrange
-        Long beneficiaryId = 1L;
-        when(beneficiaryRepository.findById(beneficiaryId))
-                .thenReturn(Optional.empty());
-
-        // act & assert
-        assertThrows(
-                BeneficiaryNotFoundByIdException.class,
-                () -> beneficiaryService.discharge(beneficiaryId)
-        );
-        verify(beneficiaryRepository).findById(beneficiaryId);
-        verifyNoInteractions(validator);
-    }
-
-    @Test
-    void findById_shouldReturnDetailsDto_whenBeneficiaryExists() {
-        // arrange
-        Long beneficiaryId = 1L;
-        Beneficiary beneficiary = createDefaultBeneficiary(beneficiaryId, true);
-
-        BeneficiaryDetailsDTO expectedDto = BeneficiaryDetailsDTO.builder()
-                .id(beneficiaryId)
-                .build();
-
-        when(beneficiaryRepository.findWithDetailsById(beneficiaryId))
-                .thenReturn(Optional.of(beneficiary));
-
-        when(beneficiaryMapper.toDetailsDTO(beneficiary))
-                .thenReturn(expectedDto);
-
-        // act
-        BeneficiaryDetailsDTO result = beneficiaryService.findById(beneficiaryId);
-
-        // assert
-        assertEquals(expectedDto, result);
-
-        verify(beneficiaryRepository).findWithDetailsById(beneficiaryId);
-        verify(beneficiaryMapper).toDetailsDTO(beneficiary);
-
     }
 
     @Test
@@ -158,9 +120,8 @@ public class BeneficiaryServiceImplTest {
         // arrange
         BeneficiaryCreateDTO saveDto = createDefaultBeneficiaryCreateDTO();
         Beneficiary entityFromMapper = createDefaultBeneficiary(false);
-        Beneficiary savedEntity = createDefaultBeneficiary(1L, true);
-
-        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(1L, true);
+        Beneficiary savedEntity = createDefaultBeneficiary(true);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(true);
 
         when(houseUnitRepository.findByCode(saveDto.houseUnitCode()))
                 .thenReturn(Optional.of(createDefaultHouseUnit()));
@@ -175,8 +136,8 @@ public class BeneficiaryServiceImplTest {
         // assert
         assertNotNull(result);
         assertEquals(expectedDto, result);
-
         verify(beneficiaryRepository).save(entityFromMapper);
+        verify(houseUnitValidator).validateAssignmentForBeneficiary(any(HouseUnit.class));
         verify(beneficiaryMapper).toEntity(eq(saveDto), any(HouseUnit.class));
         verify(houseUnitRepository).findByCode(saveDto.houseUnitCode());
         verify(beneficiaryMapper).toDetailsDTO(savedEntity);
@@ -184,65 +145,53 @@ public class BeneficiaryServiceImplTest {
     }
 
     @Test
+    void update_shouldFailFast_whenNotFound() {
+        // arrange
+        BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder().build();
+
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID)).thenReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(BeneficiaryNotFoundByPublicIdException.class,
+                () -> beneficiaryService.updateBeneficiary(TEST_PUBLIC_ID, dto)
+        );
+
+        verify(beneficiaryRepository).findByPublicId(TEST_PUBLIC_ID);
+        verify(beneficiaryRepository, never()).save(any());
+        verifyNoInteractions(validator);
+    }
+
+    @Test
     void update_shouldPersistAndReturnDto_whenValidInputProvided() {
         // arrange
-        Long beneficiaryId = 1L;
-        Beneficiary existing = createDefaultBeneficiary(beneficiaryId, true);
-
+        Beneficiary existing = createDefaultBeneficiary(true);
         BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
                 .firstName("UpdatedName")
                 .build();
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(true);
 
-        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, true);
-
-        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID)).thenReturn(Optional.of(existing));
         when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
 
         // act
-        BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(beneficiaryId, updateDto);
+        BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(TEST_PUBLIC_ID, updateDto);
 
         // assert
         assertNotNull(result);
         assertEquals(expectedDto, result);
         verify(validator).validateForUpdate(existing, updateDto);
         verify(beneficiaryMapper).updateEntity(existing, updateDto);
-
-    }
-
-    @Test
-    void discharge_shouldSetInactiveAndReturnDto_whenBeneficiaryIsActive() {
-        // arrange
-        Long beneficiaryId = 1L;
-        Beneficiary existing = createDefaultBeneficiary(beneficiaryId, true);
-
-        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(beneficiaryId, false);
-
-        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
-        when(beneficiaryRepository.save(existing)).thenReturn(existing);
-        when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
-
-        //act
-        BeneficiaryDetailsDTO result = beneficiaryService.discharge(beneficiaryId);
-
-        //assert
-        assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
-        assertEquals(expectedDto, result);
-        verify(validator).validateForDischarge(existing);
-        verify(beneficiaryRepository).save(existing);
-        verify(beneficiaryMapper).toDetailsDTO(existing);
     }
 
     @Test
     void update_shouldNotMapOrPersist_whenValidationFails() {
         // arrange
-        Long beneficiaryId = 1L;
-        Beneficiary existing = createDefaultBeneficiary(beneficiaryId, true);
-
+        Beneficiary existing = createDefaultBeneficiary(true);
         BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
                 .amka("06047678912")
                 .build();
 
-        when(beneficiaryRepository.findById(beneficiaryId)).thenReturn(Optional.of(existing));
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID)).thenReturn(Optional.of(existing));
         doThrow(new DomainValidationException(Map.of(
                 "amka", ErrorCode.AMKA_DATE_MISMATCH.getMessageKey()
         )))
@@ -251,36 +200,67 @@ public class BeneficiaryServiceImplTest {
 
         // act & assert
         assertThrows(DomainValidationException.class,
-                () -> beneficiaryService.updateBeneficiary(beneficiaryId, updateDto));
+                () -> beneficiaryService.updateBeneficiary(TEST_PUBLIC_ID, updateDto));
 
-        // verify flow
-        verify(beneficiaryRepository).findById(beneficiaryId);
+        verify(beneficiaryRepository).findByPublicId(TEST_PUBLIC_ID);
         verify(validator).validateForUpdate(existing, updateDto);
-
-        // fail-fast
         verify(beneficiaryMapper, never()).updateEntity(any(), any());
         verify(beneficiaryMapper, never()).toDetailsDTO(any());
         verify(beneficiaryRepository, never()).save(any());
     }
 
     @Test
+    void discharge_shouldThrowNotFound_whenPublicIdMissing() {
+        // arrange
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID))
+                .thenReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(
+                BeneficiaryNotFoundByPublicIdException.class,
+                () -> beneficiaryService.discharge(TEST_PUBLIC_ID)
+        );
+        verify(beneficiaryRepository).findByPublicId(TEST_PUBLIC_ID);
+        verifyNoInteractions(validator);
+    }
+
+    @Test
+    void discharge_shouldSetInactiveAndReturnDto_whenBeneficiaryIsActive() {
+        // arrange
+        Beneficiary existing = createDefaultBeneficiary(true);
+        BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(false);
+
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID)).thenReturn(Optional.of(existing));
+        when(beneficiaryRepository.save(existing)).thenReturn(existing);
+        when(beneficiaryMapper.toDetailsDTO(existing)).thenReturn(expectedDto);
+
+        // act
+        BeneficiaryDetailsDTO result = beneficiaryService.discharge(TEST_PUBLIC_ID);
+
+        // assert
+        assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
+        assertEquals(expectedDto, result);
+        verify(validator).validateForDischarge(existing);
+        verify(beneficiaryRepository).save(existing);
+        verify(beneficiaryMapper).toDetailsDTO(existing);
+    }
+
+    @Test
     void discharge_shouldNotValidateOrPersist_whenAlreadyInactive() {
-        Long id = 1L;
+        // arrange
         Beneficiary inactiveBeneficiary = createDefaultBeneficiary(false);
 
-        when(beneficiaryRepository.findById(id)).thenReturn(Optional.of(inactiveBeneficiary));
+        when(beneficiaryRepository.findByPublicId(TEST_PUBLIC_ID)).thenReturn(Optional.of(inactiveBeneficiary));
 
         // act & assert
         assertThrows(BeneficiaryAlreadyInactiveException.class,
-                () -> beneficiaryService.discharge(id)
+                () -> beneficiaryService.discharge(TEST_PUBLIC_ID)
         );
 
-        // verify
-        verify(beneficiaryRepository).findById(id);
+        verify(beneficiaryRepository).findByPublicId(TEST_PUBLIC_ID);
         verify(validator).validateForDischarge(inactiveBeneficiary);
         verify(beneficiaryRepository, never()).save(any());
         verify(beneficiaryMapper, never()).toDetailsDTO(any());
-
     }
 
     @Test
@@ -290,7 +270,7 @@ public class BeneficiaryServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         Beneficiary beneficiary = createDefaultBeneficiary(true);
-        BeneficiaryListDTO dto = createDefaultListDTO(1L, true);
+        BeneficiaryListDTO dto = createDefaultListDTO(true);
 
         Page<Beneficiary> entityPage = new PageImpl<>(List.of(beneficiary));
 
@@ -306,7 +286,6 @@ public class BeneficiaryServiceImplTest {
         // assert
         assertEquals(1, result.getContent().size());
         assertSame(dto, result.getContent().getFirst());
-
         verify(beneficiaryRepository).findAll(
                 ArgumentMatchers.<Specification<Beneficiary>>any(),
                 eq(pageable)
@@ -362,7 +341,6 @@ public class BeneficiaryServiceImplTest {
 
         // assert
         assertTrue(result.isEmpty());
-
         verify(beneficiaryRepository).findAll(
                 ArgumentMatchers.<Specification<Beneficiary>>any(),
                 eq(pageable)
@@ -370,10 +348,9 @@ public class BeneficiaryServiceImplTest {
         verifyNoInteractions(beneficiaryMapper);
     }
 
-
-    private Beneficiary createDefaultBeneficiary(Long id, boolean isActive) {
+    // Helpers
+    private Beneficiary createDefaultBeneficiary(boolean isActive) {
         return Beneficiary.builder()
-                .id(id)
                 .firstName("Joe")
                 .lastName("Doe")
                 .amka("12345678912")
@@ -390,7 +367,7 @@ public class BeneficiaryServiceImplTest {
                         .lastName("Παπαδόπουλος")
                         .relationshipType(RelationshipType.FRIEND)
                         .address(Address.builder()
-                                .street("Άγου Μελέτιου")
+                                .street("Αγίου Μελέτιου")
                                 .streetNumber("32")
                                 .city("Αθήνα")
                                 .zipCode("11361")
@@ -400,8 +377,29 @@ public class BeneficiaryServiceImplTest {
                 .build();
     }
 
-    private Beneficiary createDefaultBeneficiary(boolean isActive) {
-        return createDefaultBeneficiary(1L, isActive);
+    private BeneficiaryDetailsDTO createDefaultDetailsDTO(boolean isActive) {
+        return BeneficiaryDetailsDTO.builder()
+                .publicId(TEST_PUBLIC_ID)
+                .firstName("Joe")
+                .lastName("Doe")
+                .amka("12345678912")
+                .dateOfBirth(LocalDate.of(1986, 4, 6))
+                .houseUnitCode("UNIT_A")
+                .houseUnitDisplayName("Στέγη Α")
+                .isActive(isActive)
+                .permanentAddress(createDefaultAddressDTO())
+                .emergencyContact(createDefaultEmergencyContactDTO())
+                .build();
+    }
+
+    private BeneficiaryListDTO createDefaultListDTO(boolean isActive) {
+        return BeneficiaryListDTO.builder()
+                .publicId(TEST_PUBLIC_ID)
+                .firstName("Joe")
+                .lastName("Doe")
+                .houseUnit("UNIT_A")
+                .isActive(isActive)
+                .build();
     }
 
     private BeneficiaryCreateDTO createDefaultBeneficiaryCreateDTO() {
@@ -430,32 +428,7 @@ public class BeneficiaryServiceImplTest {
                 .firstName("Γιάννης")
                 .lastName("Παπαδόπουλος")
                 .relationshipType(RelationshipType.FRIEND)
-                .address(createDefaultAddressDTO()) // Επαναχρησιμοποίηση!
-                .build();
-    }
-
-    private BeneficiaryDetailsDTO createDefaultDetailsDTO(Long id, boolean isActive) {
-        return BeneficiaryDetailsDTO.builder()
-                .id(id)
-                .firstName("Joe")
-                .lastName("Doe")
-                .amka("12345678912")
-                .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnitCode("UNIT_A")
-                .houseUnitDisplayName("Στέγη Α")
-                .isActive(isActive)
-                .permanentAddress(createDefaultAddressDTO())
-                .emergencyContact(createDefaultEmergencyContactDTO())
-                .build();
-    }
-
-    private BeneficiaryListDTO createDefaultListDTO(Long id, boolean isActive) {
-        return BeneficiaryListDTO.builder()
-                .id(id)
-                .firstName("Joe")
-                .lastName("Doe")
-                .houseUnit("UNIT_A")
-                .isActive(isActive)
+                .address(createDefaultAddressDTO())
                 .build();
     }
 

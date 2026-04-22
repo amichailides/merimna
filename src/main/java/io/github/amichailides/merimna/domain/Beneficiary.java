@@ -23,11 +23,16 @@ import static java.util.Collections.unmodifiableSet;
                 @UniqueConstraint(name = "uk_beneficiary_amka", columnNames = "amka")
         })
 public class Beneficiary {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     // TODO(#9): Use publicId as immutable identifier for equals/hashCode (avoid mutable field issues)
     private Long id;
+
+    @EqualsAndHashCode.Include
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    @Builder.Default
+    private String publicId = UUID.randomUUID().toString();
 
     @NonNull
     @Column(nullable = false)
