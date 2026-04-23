@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long>,
         JpaSpecificationExecutor<Employee> {
@@ -14,9 +15,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>,
             "assignments",
             "assignments.houseUnit"
     })
-    Optional<Employee> findWithDetailsByPublicId(String publicId);
+    Optional<Employee> findWithDetailsByPublicId(UUID publicId);
 
-    Optional<Employee> findByPublicId(String publicId);
+    Optional<Employee> findByPublicId(UUID publicId);
 
     boolean existsByContactEmailIgnoreCase(String email);
 }

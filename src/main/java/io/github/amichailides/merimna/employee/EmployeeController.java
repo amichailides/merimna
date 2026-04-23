@@ -2,11 +2,11 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.*;
+import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/employees")
@@ -61,10 +62,10 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> getEmployeeByPublicId(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
-            @UUID(message = "{employee.publicId.invalid}")
+            @ValidUUID(message = "{employee.publicId.invalid}")
             String publicId) {
 
-        EmployeeDetailsDTO result = employeeService.getEmployeeByPublicId(publicId);
+        EmployeeDetailsDTO result = employeeService.getEmployeeByPublicId(UUID.fromString(publicId));
         return ResponseEntity.ok(result);
     }
 
@@ -73,11 +74,11 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
-            @UUID(message = "{employee.publicId.invalid}")
+            @ValidUUID(message = "{employee.publicId.invalid}")
             String publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeUpdateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.updateEmployee(publicId, dto);
+        EmployeeDetailsDTO result = employeeService.updateEmployee(UUID.fromString(publicId), dto);
         return ResponseEntity.ok(result);
     }
 
@@ -86,11 +87,11 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
-            @UUID(message = "{employee.publicId.invalid}")
+            @ValidUUID(message = "{employee.publicId.invalid}")
             String publicId,
             @RequestBody @Valid EmployeeTerminateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.terminate(publicId, dto.terminationDate());
+        EmployeeDetailsDTO result = employeeService.terminate(UUID.fromString(publicId), dto.terminationDate());
         return ResponseEntity.ok(result);
     }
 
@@ -99,10 +100,10 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
-            @UUID(message = "{employee.publicId.invalid}")
+            @ValidUUID(message = "{employee.publicId.invalid}")
             String publicId) {
 
-        EmployeeDetailsDTO result = employeeService.reactivate(publicId);
+        EmployeeDetailsDTO result = employeeService.reactivate(UUID.fromString(publicId));
         return ResponseEntity.ok(result);
     }
 

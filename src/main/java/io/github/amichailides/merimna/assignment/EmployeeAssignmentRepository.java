@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface EmployeeAssignmentRepository
@@ -29,7 +30,7 @@ public interface EmployeeAssignmentRepository
         where a.employee.publicId = :employeePublicId
         order by a.startDate desc
         """)
-    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicId(String employeePublicId);
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicId(UUID employeePublicId);
 
     @Query("""
     select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
@@ -46,9 +47,9 @@ public interface EmployeeAssignmentRepository
       and a.status = :status
     order by a.startDate desc
     """)
-    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicIdAndStatus(String employeePublicId,
+    List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicIdAndStatus(UUID employeePublicId,
                                                                                    EmployeeAssignmentStatus status);
 
-    Optional<EmployeeAssignment> findByIdAndEmployeePublicId(Long id, String employeePublicId);
+    Optional<EmployeeAssignment> findByIdAndEmployeePublicId(Long id, UUID employeePublicId);
 }
 

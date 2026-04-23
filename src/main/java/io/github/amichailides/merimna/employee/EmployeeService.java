@@ -5,19 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public interface EmployeeService {
     EmployeeDetailsDTO createEmployee(EmployeeCreateDTO dto);
 
-    EmployeeDetailsDTO terminate(String publicId, LocalDate terminationDate);
+    EmployeeDetailsDTO terminate(UUID publicId, LocalDate terminationDate);
 
     Page<EmployeeListDTO> getAllEmployees(
             EmployeeSearchDTO criteria,
             Pageable pageable);
 
-    EmployeeDetailsDTO getEmployeeByPublicId(String publicId);
+    EmployeeDetailsDTO getEmployeeByPublicId(UUID publicId);
 
-    EmployeeDetailsDTO updateEmployee(String publicId, EmployeeUpdateDTO dto);
+    EmployeeDetailsDTO updateEmployee(UUID publicId, EmployeeUpdateDTO dto);
 
-    EmployeeDetailsDTO reactivate(String publicId);
+    EmployeeDetailsDTO reactivate(UUID publicId);
 }

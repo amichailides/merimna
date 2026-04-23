@@ -13,7 +13,7 @@ public record EmployeePlacementCreateDTO(
 
         @Schema(description = "Public identifier of the employee to be placed", example = "550e8400-e29b-41d4-a716-446655440000")
         @NotNull(message = "{placement.employeeId.notNull}", groups = FirstOrder.class)
-        String employeePublicId,
+        UUID employeePublicId,
 
         @Schema(description = "Public identifier of the house unit", example = "550e8400-e29b-41d4-a716-446655440000")
         @NotNull(message = "{houseUnit.publicId.notNull}", groups = FirstOrder.class)

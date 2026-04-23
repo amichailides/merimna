@@ -7,11 +7,12 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 public record EmployeeDetailsDTO(
         @Schema(description = "Public identifier of the employee", example = "550e8400-e29b-41d4-a716-446655440000")
-        String publicId,
+        UUID publicId,
 
         @Schema(description = "Employee first name", example = "Γεώργιος")
         String firstName,

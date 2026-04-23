@@ -10,11 +10,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
+import java.util.UUID;
+
 @Builder
 public record UserCreateDTO(
 
         @NotNull(message = "{user.employeeId.required}", groups = FirstOrder.class)
-        String employeePublicId,
+        UUID employeePublicId,
 
         @NotBlank(message = "{user.username.required}", groups = FirstOrder.class)
         @ValidUsername(groups = SecondOrder.class)

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -30,7 +31,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional
-    public EmployeeAssignmentReadOnlyDTO create(String employeePublicId, EmployeeAssignmentCreateDTO dto) {
+    public EmployeeAssignmentReadOnlyDTO create(UUID employeePublicId, EmployeeAssignmentCreateDTO dto) {
         Employee employee = getEmployeeOrThrow(employeePublicId);
         HouseUnit houseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
                 .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
@@ -56,14 +57,14 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional
-    public void cancel(String employeePublicId, Long assignmentId) {
+    public void cancel(UUID employeePublicId, Long assignmentId) {
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
         assignment.cancel(LocalDate.now());
     }
 
     @Override
     @Transactional
-    public void terminate(String employeePublicId, Long assignmentId) {
+    public void terminate(UUID employeePublicId, Long assignmentId) {
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
 
         if (!assignment.getEmployee().isActive()) {
@@ -75,7 +76,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(String employeePublicId, EmployeeAssignmentView view) {
+    public List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(UUID employeePublicId, EmployeeAssignmentView view) {
         getEmployeeOrThrow(employeePublicId);
 
         return switch (view) {
@@ -87,19 +88,19 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeAssignmentReadOnlyDTO getAssignmentById(String employeePublicId, Long assignmentId) {
+    public EmployeeAssignmentReadOnlyDTO getAssignmentById(UUID employeePublicId, Long assignmentId) {
         getEmployeeOrThrow(employeePublicId);
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
 
         return assignmentMapper.toDTO(assignment);
     }
 
-    private Employee getEmployeeOrThrow(String employeePublicId) {
+    private Employee getEmployeeOrThrow(UUID employeePublicId) {
         return employeeRepository.findByPublicId(employeePublicId)
                 .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(employeePublicId));
     }
 
-    private EmployeeAssignment getAssignmentOrThrow(Long assignmentId, String employeePublicId) {
+    private EmployeeAssignment getAssignmentOrThrow(Long assignmentId, UUID employeePublicId) {
         return assignmentRepository.findByIdAndEmployeePublicId(assignmentId, employeePublicId)
                 .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
     }

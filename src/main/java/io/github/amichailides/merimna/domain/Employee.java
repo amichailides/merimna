@@ -30,7 +30,7 @@ public class Employee {
     @EqualsAndHashCode.Include
     @Builder.Default
     @Column(name = "public_id", unique = true, nullable = false, updatable = false)
-    private String publicId = UUID.randomUUID().toString();
+    private UUID publicId = UUID.randomUUID();
 
     @Column(nullable = false)
     private String firstName;

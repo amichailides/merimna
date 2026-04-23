@@ -8,12 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByEmployeePublicId(String employeeId);
+    boolean existsByEmployeePublicId(UUID employeeId);
 
     boolean existsByUsername(String username);
 
@@ -32,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndIdNot(String email, Long userId);
 
-    Optional<User> findByEmployeePublicId(String publicId);
+    Optional<User> findByEmployeePublicId(UUID publicId);
 
     Optional<User> findByEmail(String email);
 }

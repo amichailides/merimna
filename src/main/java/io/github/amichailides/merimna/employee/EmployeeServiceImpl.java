@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO terminate(String publicId, LocalDate terminationDate) {
+    public EmployeeDetailsDTO terminate(UUID publicId, LocalDate terminationDate) {
         Employee employee = getEmployeeOrThrow(publicId);
 
         employeeValidator.validateForTerminate(employee, terminationDate);
@@ -56,7 +57,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO reactivate(String publicId) {
+    public EmployeeDetailsDTO reactivate(UUID publicId) {
         Employee employee = getEmployeeOrThrow(publicId);
 
         // TODO(#14): Add business validation for reactivation
@@ -89,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDetailsDTO updateEmployee(String publicId, EmployeeUpdateDTO dto) {
+    public EmployeeDetailsDTO updateEmployee(UUID publicId, EmployeeUpdateDTO dto) {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
@@ -107,14 +108,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeDetailsDTO getEmployeeByPublicId(String publicId) {
+    public EmployeeDetailsDTO getEmployeeByPublicId(UUID publicId) {
         Employee employee = employeeRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(publicId));
 
         return employeeMapper.toDetailsDTO(employee);
     }
 
-    private Employee getEmployeeOrThrow(String publicId) {
+    private Employee getEmployeeOrThrow(UUID publicId) {
         return employeeRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(publicId));
     }
@@ -124,12 +125,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EmployeePositionNotFoundByCodeException(code.getValue()));
     }
 
-    private void deactivateLinkedUser(String publicId) {
+    private void deactivateLinkedUser(UUID publicId) {
         Optional<User> user = userRepository.findByEmployeePublicId(publicId);
         user.ifPresent(User::deactivate);
     }
 
-    private void reactivateLinkedUser(String publicId) {
+    private void reactivateLinkedUser(UUID publicId) {
         Optional<User> user = userRepository.findByEmployeePublicId(publicId);
         user.ifPresent(User::reactivate);
     }
