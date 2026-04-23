@@ -28,20 +28,20 @@ public class HouseUnitValidator {
         }
     }
 
-    public void validateForUpdate(HouseUnit existing, HouseUnitUpdateDTO dto) {
-        validateCodeUniquenessForUpdate(existing, dto.code());
+    public void validateForUpdate(HouseUnit existing, String normalizedCode,HouseUnitUpdateDTO dto) {
+        validateCodeUniquenessForUpdate(existing, normalizedCode);
         validateMaxCapacity(existing, dto.maxCapacity());
     }
 
-    private void validateCodeUniqueness(String code) {
-        if (houseUnitRepository.existsByCode(code)) {
-            throw new HouseUnitAlreadyExistsException(code);
+    private void validateCodeUniqueness(String normalizedCode) {
+        if (houseUnitRepository.existsByCode(normalizedCode)) {
+            throw new HouseUnitAlreadyExistsException(normalizedCode);
         }
     }
 
     private void validateCodeUniquenessForUpdate(HouseUnit existing, String newCode) {
         if (newCode != null &&
-                houseUnitRepository.existsByCodeAndIdNot(newCode, existing.getId())) {
+                houseUnitRepository.existsByCodeAndPublicIdNot(newCode, existing.getPublicId())) {
 
             throw new HouseUnitAlreadyExistsException(newCode);
         }

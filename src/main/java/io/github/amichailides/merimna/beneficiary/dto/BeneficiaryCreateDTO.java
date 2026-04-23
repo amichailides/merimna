@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import java.time.LocalDate;
+import java.util.UUID;
+
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 
 /**
@@ -40,9 +42,9 @@ public record BeneficiaryCreateDTO(
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
 
-        @Schema(description = "The house unit the beneficiary is assigned to", example = "UNIT_A")
-        @NotBlank(message = "{houseUnit.required}")
-        String houseUnitCode,
+        @Schema(description = "Public identifier of the house unit the beneficiary is assigned to", example = "550e8400-e29b-41d4-a716-446655440000")
+        @NotNull(message = "{houseUnit.publicId.notNull}")
+        UUID houseUnitPublicId,
 
         @Schema(description = "Permanent residential address of the beneficiary")
         @Valid

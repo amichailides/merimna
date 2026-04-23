@@ -2,13 +2,12 @@ package io.github.amichailides.merimna.placement.dto;
 
 import io.github.amichailides.merimna.domain.PlacementReason;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
-import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record EmployeePlacementCreateDTO(
 
@@ -16,10 +15,9 @@ public record EmployeePlacementCreateDTO(
         @NotNull(message = "{placement.employeeId.notNull}", groups = FirstOrder.class)
         String employeePublicId,
 
-        @Schema(description = "House unit business code.", example = "HU-TH-01")
-        @NotBlank(message = "{houseUnit.code.required}", groups = FirstOrder.class)
-        @Size(min = 2, max = 50, message = "{placement.houseUnitCode.size}", groups = SecondOrder.class)
-        String houseUnitCode,
+        @Schema(description = "Public identifier of the house unit", example = "550e8400-e29b-41d4-a716-446655440000")
+        @NotNull(message = "{houseUnit.publicId.notNull}", groups = FirstOrder.class)
+        UUID houseUnitPublicId,
 
         @Schema(description = "Placement start datetime.", example = "2026-04-21T10:30:00")
         @NotNull(message = "{placement.startDateTime.notNull}", groups = FirstOrder.class)

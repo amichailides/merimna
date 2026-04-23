@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -123,7 +124,7 @@ public class BeneficiaryServiceImplTest {
         Beneficiary savedEntity = createDefaultBeneficiary(true);
         BeneficiaryDetailsDTO expectedDto = createDefaultDetailsDTO(true);
 
-        when(houseUnitRepository.findByCode(saveDto.houseUnitCode()))
+        when(houseUnitRepository.findByPublicId(saveDto.houseUnitPublicId()))
                 .thenReturn(Optional.of(createDefaultHouseUnit()));
         when(beneficiaryMapper.toEntity(eq(saveDto), any(HouseUnit.class)))
                 .thenReturn(entityFromMapper);
@@ -139,7 +140,7 @@ public class BeneficiaryServiceImplTest {
         verify(beneficiaryRepository).save(entityFromMapper);
         verify(houseUnitValidator).validateAssignmentForBeneficiary(any(HouseUnit.class));
         verify(beneficiaryMapper).toEntity(eq(saveDto), any(HouseUnit.class));
-        verify(houseUnitRepository).findByCode(saveDto.houseUnitCode());
+        verify(houseUnitRepository).findByPublicId(saveDto.houseUnitPublicId());
         verify(beneficiaryMapper).toDetailsDTO(savedEntity);
         verify(validator).validateForSave(saveDto);
     }
@@ -408,7 +409,7 @@ public class BeneficiaryServiceImplTest {
                 .lastName("Doe")
                 .amka("12345678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
-                .houseUnitCode("UNIT_A")
+                .houseUnitPublicId(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"))
                 .permanentAddress(createDefaultAddressDTO())
                 .emergencyContact(createDefaultEmergencyContactDTO())
                 .build();

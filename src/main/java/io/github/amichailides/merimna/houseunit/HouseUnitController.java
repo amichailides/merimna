@@ -15,6 +15,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("house-units")
@@ -38,37 +40,33 @@ public class HouseUnitController {
 
         HouseUnitReadOnlyDTO houseUnit = houseUnitService.createHouseUnit(dto);
         return ResponseEntity
-                .created(buildLocationUri(houseUnit.code()))
+                .created(buildLocationUri(houseUnit.publicId().toString()))
                 .body(houseUnit);
     }
 
     @PreAuthorize("hasAuthority('HOUSE_UNIT_UPDATE')")
-    @PatchMapping("/{houseUnitCode}")
+    @PatchMapping("/{publicId}")
     public ResponseEntity<HouseUnitReadOnlyDTO> updateHouseUnit(
-            @PathVariable
-            @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE, message = "{houseUnit.code.invalid}")
-            String houseUnitCode,
+            @PathVariable UUID publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody HouseUnitUpdateDTO dto) {
 
-        HouseUnitReadOnlyDTO updated = houseUnitService.updateHouseUnit(houseUnitCode, dto);
+        HouseUnitReadOnlyDTO updated = houseUnitService.updateHouseUnit(publicId, dto);
         return ResponseEntity.ok(updated);
     }
 
     @PreAuthorize("hasAuthority('HOUSE_UNIT_READ')")
-    @GetMapping("/{code}")
-    public HouseUnitReadOnlyDTO getHouseUnitByCode(
-            @PathVariable
-            @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE, message = "{houseUnit.code.invalid}")
-            String code) {
+    @GetMapping("/{publicId}")
+    public HouseUnitReadOnlyDTO getHouseUnit(
+            @PathVariable UUID publicId) {
 
-        return houseUnitService.getHouseUnitByCode(code);
+        return houseUnitService.getHouseUnit(publicId);
     }
 
-    private URI buildLocationUri(String code) {
+    private URI buildLocationUri(String publicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{code}")
-                .buildAndExpand(code)
+                .buildAndExpand(publicId)
                 .toUri();
     }
 }

@@ -4,13 +4,13 @@ import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
-import io.github.amichailides.merimna.houseunit.exception.HouseUnitAlreadyExistsException;
-import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,24 +43,25 @@ public class HouseUnitServiceImpl implements HouseUnitService{
 
     @Override
     @Transactional
-    public HouseUnitReadOnlyDTO updateHouseUnit(String houseUnitCode, HouseUnitUpdateDTO dto) {
+    public HouseUnitReadOnlyDTO updateHouseUnit(UUID publicId, HouseUnitUpdateDTO dto) {
 
-        HouseUnit existing = houseUnitRepository.findByCode(houseUnitCode)
-                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(houseUnitCode));
+        HouseUnit existing = houseUnitRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new HouseUnitNotFoundException(publicId));
 
-        houseUnitValidator.validateForUpdate(existing, dto);
+        String normalizedCode = dto.code() != null ? normalizeCode(dto.code()) : null;
 
-        houseUnitMapper.updateEntity(existing, dto);
+        houseUnitValidator.validateForUpdate(existing,normalizedCode, dto);
+
+        houseUnitMapper.updateEntity(existing, dto, normalizedCode);
         return houseUnitMapper.toDTO(existing);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public HouseUnitReadOnlyDTO getHouseUnitByCode(String code) {
-        HouseUnit houseUnit = houseUnitRepository.findByCode(code)
-                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
-
-        return houseUnitMapper.toDTO(houseUnit);
+    public HouseUnitReadOnlyDTO getHouseUnit(UUID publicId) {
+        return houseUnitRepository.findByPublicId(publicId)
+                .map(houseUnitMapper::toDTO)
+                .orElseThrow(() -> new HouseUnitNotFoundException(publicId));
     }
 
     private String normalizeCode(String code) {

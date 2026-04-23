@@ -5,13 +5,14 @@ import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface HouseUnitService {
     List<HouseUnitReadOnlyDTO> getAllHouseUnits();
 
     HouseUnitReadOnlyDTO createHouseUnit(HouseUnitCreateDTO dto);
 
-    HouseUnitReadOnlyDTO updateHouseUnit(String houseUnitCode, HouseUnitUpdateDTO dto);
+    HouseUnitReadOnlyDTO updateHouseUnit(UUID publicId, HouseUnitUpdateDTO dto);
 
-    HouseUnitReadOnlyDTO getHouseUnitByCode(String code);
+    HouseUnitReadOnlyDTO getHouseUnit(UUID publicId);
 }

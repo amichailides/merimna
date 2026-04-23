@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
 import org.springdoc.core.annotations.ParameterObject;
@@ -240,7 +239,7 @@ public class BeneficiaryController {
                     )
             )
     })
-    @PatchMapping("/{publicId}/house-unit/{code}")
+    @PatchMapping("/{publicId}/house-unit/{houseUnitPublicId}")
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
@@ -250,9 +249,9 @@ public class BeneficiaryController {
             String publicId,
 
             @Parameter(description = "House unit code", example = "UNIT_A")
-            @PathVariable @NotBlank @Size(max = 20) String code) {
+            @PathVariable java.util.UUID houseUnitPublicId) {
 
-        BeneficiaryListDTO updated = service.changeHouseUnit(publicId, code);
+        BeneficiaryListDTO updated = service.changeHouseUnit(publicId, houseUnitPublicId);
         return ResponseEntity.ok(updated);
     }
 

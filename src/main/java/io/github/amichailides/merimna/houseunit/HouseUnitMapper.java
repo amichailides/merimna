@@ -15,6 +15,7 @@ public class HouseUnitMapper {
         if (entity == null) return null;
 
         return HouseUnitReadOnlyDTO.builder()
+                .publicId(entity.getPublicId())
                 .code(entity.getCode())
                 .displayName(entity.getDisplayName())
                 .address(entity.getAddress())
@@ -33,11 +34,11 @@ public class HouseUnitMapper {
                 .build();
     }
 
-    public void updateEntity(HouseUnit existing, HouseUnitUpdateDTO dto) {
+    public void updateEntity(HouseUnit existing, HouseUnitUpdateDTO dto, String normalizedCode) {
         Objects.requireNonNull(existing, "HouseUnit must not be null");
         Objects.requireNonNull(dto, "HouseUnitUpdateDTO must not be null");
 
-        if (dto.code() != null) existing.setCode(dto.code());
+        if (normalizedCode != null) existing.setCode(normalizedCode);
         if (dto.displayName() != null) existing.setDisplayName(dto.displayName());
         if (dto.address() != null) existing.setAddress(dto.address());
         if (dto.maxCapacity() != null) existing.setMaxCapacity(dto.maxCapacity());

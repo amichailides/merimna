@@ -7,13 +7,15 @@ import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
-import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundByCodeException;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 
 /**
@@ -50,8 +52,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryDetailsDTO create(BeneficiaryCreateDTO dto) {
         beneficiaryValidator.validateForSave(dto);
 
-        HouseUnit houseUnit = houseUnitRepository.findByCode(dto.houseUnitCode())
-                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnitCode()));
+        HouseUnit houseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
+                .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
         houseUnitValidator.validateAssignmentForBeneficiary(houseUnit);
 
@@ -81,9 +83,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
-        if (dto.houseUnit() != null) {
-            HouseUnit targetHouseUnit = houseUnitRepository.findByCode(dto.houseUnit())
-                    .orElseThrow(() -> new HouseUnitNotFoundByCodeException(dto.houseUnit()));
+        if (dto.houseUnitPublicId() != null) {
+            HouseUnit targetHouseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
+                    .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
             if (!beneficiary.isAssignedTo(targetHouseUnit)) {
                 houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
@@ -129,11 +131,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryListDTO changeHouseUnit(String publicId, String code) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
+    public BeneficiaryListDTO changeHouseUnit(String beneficiaryPublicId, UUID houseUnitPublicId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
-        HouseUnit targetHouseUnit  = houseUnitRepository.findByCode(code)
-                .orElseThrow(() -> new HouseUnitNotFoundByCodeException(code));
+        HouseUnit targetHouseUnit  = houseUnitRepository.findByPublicId(houseUnitPublicId)
+                .orElseThrow(() -> new HouseUnitNotFoundException(houseUnitPublicId));
 
         if (!beneficiary.getHouseUnit().getCode().equals(targetHouseUnit.getCode())) {
             houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);

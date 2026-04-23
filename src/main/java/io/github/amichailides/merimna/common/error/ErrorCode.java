@@ -79,7 +79,7 @@ public enum ErrorCode {
     // =========================================================================
     // House Unit
     // =========================================================================
-    HOUSE_UNIT_NOT_FOUND_BY_CODE("HOUSE_UNIT_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.houseUnit.notFoundByCode"),
+    HOUSE_UNIT_NOT_FOUND("HOUSE_UNIT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.houseUnit.notFound"),
     HOUSE_UNIT_ALREADY_EXISTS("HOUSE_UNIT_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.houseUnit.alreadyExists"),
     HOUSE_UNIT_CAPACITY_EXCEEDED("HOUSE_UNIT_CAPACITY_EXCEEDED", HttpStatus.BAD_REQUEST, "error.houseUnit.capacityExceeded"),
     HOUSE_UNIT_FULL("HOUSE_UNIT_FULL", HttpStatus.BAD_REQUEST, "error.houseUnit.full"),

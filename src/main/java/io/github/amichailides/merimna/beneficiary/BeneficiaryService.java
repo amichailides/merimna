@@ -4,6 +4,8 @@ import io.github.amichailides.merimna.beneficiary.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.UUID;
+
 public interface BeneficiaryService {
 
     boolean existsByAmka(String amka);
@@ -18,5 +20,5 @@ public interface BeneficiaryService {
 
     Page<BeneficiaryListDTO> findBeneficiaries(BeneficiarySearchDTO criteria, Pageable pageable);
 
-    BeneficiaryListDTO changeHouseUnit(String publicId, String code);
+    BeneficiaryListDTO changeHouseUnit(String beneficiaryPublicId, UUID houseUnitPublicId);
 }
