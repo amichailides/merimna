@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class MedicationServiceImpl implements MedicationService{
     private final MedicationRepository medicationRepository;
 
     @Transactional
-    public MedicationReadOnlyDTO addMedication (String beneficiaryPublicId, MedicationCreateDTO dto) {
+    public MedicationReadOnlyDTO addMedication (UUID beneficiaryPublicId, MedicationCreateDTO dto) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         Medication medication = medicationMapper.toEntity(dto);
@@ -33,7 +34,7 @@ public class MedicationServiceImpl implements MedicationService{
 
     @Transactional
     public MedicationReadOnlyDTO updateMedication(
-            String beneficiaryPublicId,
+            UUID beneficiaryPublicId,
             Long medicationId,
             MedicationUpdateDTO dto) {
 
@@ -47,7 +48,7 @@ public class MedicationServiceImpl implements MedicationService{
     }
 
     @Transactional
-    public void deleteMedication (String beneficiaryPublicId, Long medicationId) {
+    public void deleteMedication (UUID beneficiaryPublicId, Long medicationId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
         Medication medication = getMedicationOrThrow(medicationId, beneficiaryPublicId);
 
@@ -55,13 +56,13 @@ public class MedicationServiceImpl implements MedicationService{
     }
 
     @Transactional(readOnly = true)
-    public MedicationReadOnlyDTO getMedication(String beneficiaryPublicId, Long medicationId) {
+    public MedicationReadOnlyDTO getMedication(UUID beneficiaryPublicId, Long medicationId) {
 
         return medicationMapper.toDTO(getMedicationOrThrow(medicationId, beneficiaryPublicId));
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(String beneficiaryPublicId) {
+    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         return beneficiary.getMedications().stream()
@@ -69,12 +70,12 @@ public class MedicationServiceImpl implements MedicationService{
                 .toList();
     }
 
-    private Beneficiary getBeneficiaryOrThrow (String beneficiaryPublicId) {
+    private Beneficiary getBeneficiaryOrThrow (UUID beneficiaryPublicId) {
         return  beneficiaryRepository.findByPublicId(beneficiaryPublicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(beneficiaryPublicId));
     }
 
-    private Medication getMedicationOrThrow(Long medicationId, String beneficiaryPublicId) {
+    private Medication getMedicationOrThrow(Long medicationId, UUID beneficiaryPublicId) {
         return medicationRepository.findByIdAndBeneficiaryPublicId(medicationId, beneficiaryPublicId)
                 .orElseThrow(() -> {
                     if (!medicationRepository.existsById(medicationId)) {

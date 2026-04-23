@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO createAllergy(String beneficiaryPublicId, AllergyCreateDTO dto) {
+    public AllergyReadOnlyDTO createAllergy(UUID beneficiaryPublicId, AllergyCreateDTO dto) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         Allergy allergy = allergyMapper.toEntity(dto);
@@ -39,7 +40,7 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO updateAllergy(String beneficiaryPublicId, Long allergyId, AllergyUpdateDTO dto) {
+    public AllergyReadOnlyDTO updateAllergy(UUID beneficiaryPublicId, Long allergyId, AllergyUpdateDTO dto) {
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
 
         allergyValidator.validateForUpdate(allergy, dto);
@@ -50,7 +51,7 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public void deleteAllergy(String beneficiaryPublicId, Long allergyId) {
+    public void deleteAllergy(UUID beneficiaryPublicId, Long allergyId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
@@ -60,7 +61,7 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(String beneficiaryPublicId) {
+    public List<AllergyReadOnlyDTO> getAllergiesByBeneficiary(UUID beneficiaryPublicId) {
         if (!beneficiaryRepository.existsByPublicId(beneficiaryPublicId)) {
             throw new BeneficiaryNotFoundByPublicIdException(beneficiaryPublicId);
         }
@@ -74,16 +75,16 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional(readOnly = true)
-    public AllergyReadOnlyDTO getAllergyById(String beneficiaryPublicId, Long allergyId) {
+    public AllergyReadOnlyDTO getAllergyById(UUID beneficiaryPublicId, Long allergyId) {
         return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryPublicId));
     }
 
-    private Beneficiary getBeneficiaryOrThrow(String publicId) {
+    private Beneficiary getBeneficiaryOrThrow(UUID publicId) {
         return beneficiaryRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
-    private Allergy getAllergyOrThrow(Long allergyId, String beneficiaryPublicId) {
+    private Allergy getAllergyOrThrow(Long allergyId, UUID beneficiaryPublicId) {
         Allergy allergy = allergyRepository.findById(allergyId)
                 .orElseThrow(() -> new AllergyNotFoundException(allergyId));
 

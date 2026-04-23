@@ -31,7 +31,7 @@ public class Beneficiary {
     @EqualsAndHashCode.Include
     @Column(name = "public_id", unique = true, nullable = false, updatable = false)
     @Builder.Default
-    private String publicId = UUID.randomUUID().toString();
+    private UUID publicId = UUID.randomUUID();
 
     @NonNull
     @Column(nullable = false)
@@ -185,7 +185,7 @@ public class Beneficiary {
         }
     }
 
-    public boolean isAssignedTo(HouseUnit houseUnit) {
-        return this.houseUnit.getCode().equals(houseUnit.getCode());
+    public boolean isNotAssignedTo(HouseUnit houseUnit) {
+        return this.houseUnit.getPublicId().equals(houseUnit.getPublicId());
     }
 }

@@ -9,6 +9,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 
 @Builder
@@ -17,7 +18,7 @@ public record BeneficiaryDetailsDTO(
                 description = "Public identifier of the beneficiary",
                 example = "550e8400-e29b-41d4-a716-446655440000"
         )
-        String publicId,
+        UUID publicId,
 
         @Schema(description = "First name", example = "Γεώργιος")
         String firstName,

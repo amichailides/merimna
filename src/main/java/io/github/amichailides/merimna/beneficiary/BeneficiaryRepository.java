@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Long>,
@@ -14,19 +15,19 @@ public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Long>,
 
     boolean existsByAmka(String amka);
 
-    boolean existsByAmkaAndPublicIdNot(String amka, String publicId);
+    boolean existsByAmkaAndPublicIdNot(String amka, UUID publicId);
 
     @EntityGraph(attributePaths = {
             "medications",
             "allergies",
             "legalRepresentatives"
     })
-    Optional<Beneficiary> findWithDetailsByPublicId(String publicId);
+    Optional<Beneficiary> findWithDetailsByPublicId(UUID publicId);
 
     long countByHouseUnitAndIsActiveTrue(HouseUnit houseUnit);
 
-    Optional<Beneficiary> findByPublicId(String publicId);
+    Optional<Beneficiary> findByPublicId(UUID publicId);
 
-    boolean existsByPublicId(String publicId);
+    boolean existsByPublicId(UUID publicId);
 
 }

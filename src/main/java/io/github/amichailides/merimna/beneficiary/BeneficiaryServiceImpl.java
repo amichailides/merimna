@@ -40,7 +40,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BeneficiaryDetailsDTO findByPublicId(String publicId) {
+    public BeneficiaryDetailsDTO findByPublicId(UUID publicId) {
         Beneficiary beneficiary = beneficiaryRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
 
@@ -64,7 +64,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryDetailsDTO discharge(String publicId) {
+    public BeneficiaryDetailsDTO discharge(UUID publicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
 
         beneficiaryValidator.validateForDischarge(beneficiary); // business rules
@@ -75,7 +75,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryDetailsDTO updateBeneficiary(String publicId, BeneficiaryUpdateDTO dto) {
+    public BeneficiaryDetailsDTO updateBeneficiary(UUID publicId, BeneficiaryUpdateDTO dto) {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
@@ -87,7 +87,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             HouseUnit targetHouseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
                     .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
-            if (!beneficiary.isAssignedTo(targetHouseUnit)) {
+            if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
                 houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
                 beneficiary.changeHouseUnit(targetHouseUnit);
             }
@@ -131,14 +131,15 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryListDTO changeHouseUnit(String beneficiaryPublicId, UUID houseUnitPublicId) {
+    public BeneficiaryListDTO changeHouseUnit(UUID beneficiaryPublicId, UUID houseUnitPublicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
         HouseUnit targetHouseUnit  = houseUnitRepository.findByPublicId(houseUnitPublicId)
                 .orElseThrow(() -> new HouseUnitNotFoundException(houseUnitPublicId));
 
-        if (!beneficiary.getHouseUnit().getCode().equals(targetHouseUnit.getCode())) {
+        if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
             houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
+            beneficiary.changeHouseUnit(targetHouseUnit);
         }
 
         beneficiary.changeHouseUnit(targetHouseUnit );
@@ -149,7 +150,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return value != null && !value.trim().isEmpty();
     }
 
-    private Beneficiary getBeneficiaryOrThrow(String publicId) {
+    private Beneficiary getBeneficiaryOrThrow(UUID publicId) {
         return beneficiaryRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }

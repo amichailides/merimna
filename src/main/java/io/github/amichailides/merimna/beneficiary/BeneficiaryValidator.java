@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Validator για την οντότητα Beneficiary (Ωφελούμενος).
@@ -56,7 +57,7 @@ public class BeneficiaryValidator {
     // On update, validate the final AMKA/DOB state, not only the patched field,
     // so partial updates cannot introduce inconsistent data.
     public void validateForUpdate(Beneficiary existing, BeneficiaryUpdateDTO dto) {
-        String publicId = existing.getPublicId();
+        UUID publicId = existing.getPublicId();
         String finalAmka = (dto.amka() != null) ? dto.amka() : existing.getAmka();
         LocalDate finalDob = (dto.dateOfBirth() != null) ? dto.dateOfBirth() : existing.getDateOfBirth();
         boolean amkaChanged = dto.amka() != null;
@@ -90,7 +91,7 @@ public class BeneficiaryValidator {
         }
     }
 
-    private void checkForUpdateConflicts(String publicId, String finalAmka, boolean amkaChanged) {
+    private void checkForUpdateConflicts(UUID publicId, String finalAmka, boolean amkaChanged) {
         Map<String, String> conflicts = new LinkedHashMap<>();
 
         if (amkaChanged && repository.existsByAmkaAndPublicIdNot(finalAmka, publicId)) {

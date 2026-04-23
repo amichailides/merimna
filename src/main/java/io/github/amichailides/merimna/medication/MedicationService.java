@@ -5,15 +5,16 @@ import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MedicationService {
-    MedicationReadOnlyDTO addMedication (String beneficiaryPublicId, MedicationCreateDTO dto);
+    MedicationReadOnlyDTO addMedication (UUID beneficiaryPublicId, MedicationCreateDTO dto);
 
-    MedicationReadOnlyDTO updateMedication(String beneficiaryPublicId, Long medicationId, MedicationUpdateDTO dto);
+    MedicationReadOnlyDTO updateMedication(UUID beneficiaryPublicId, Long medicationId, MedicationUpdateDTO dto);
 
-    void deleteMedication (String beneficiaryPublicId, Long medicationId);
+    void deleteMedication (UUID beneficiaryPublicId, Long medicationId);
 
-    MedicationReadOnlyDTO getMedication(String beneficiaryPublicId, Long medicationId);
+    MedicationReadOnlyDTO getMedication(UUID beneficiaryPublicId, Long medicationId);
 
-    List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(String beneficiaryPublicId);
+    List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId);
 }

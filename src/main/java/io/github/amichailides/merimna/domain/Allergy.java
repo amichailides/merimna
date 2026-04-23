@@ -4,6 +4,8 @@ import io.github.amichailides.merimna.allergy.exception.AllergyAlreadyAssignedEx
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "allergies")
 @Getter
@@ -48,7 +50,7 @@ public class Allergy {
         this.beneficiary = null;
     }
 
-    public boolean belongsTo(String beneficiaryPublicId) {
+    public boolean belongsTo(UUID beneficiaryPublicId) {
         return beneficiaryPublicId != null &&
                 beneficiaryPublicId.equals(this.beneficiary.getPublicId());
     }

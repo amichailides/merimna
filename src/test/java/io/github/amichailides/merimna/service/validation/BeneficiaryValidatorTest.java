@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
+import io.github.amichailides.merimna.exception.ConflictValidationException;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,6 +23,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BeneficiaryValidatorTest {
+
+    private static final UUID TEST_PUBLIC_ID = UUID.randomUUID();
+
     @Mock
     private  BeneficiaryRepository repository;
 
@@ -41,8 +47,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmka(dto.amka())).thenReturn(true);
 
-        DomainValidationException ex = assertThrows(
-                DomainValidationException.class,
+        ConflictValidationException ex = assertThrows(
+                ConflictValidationException.class,
                 () -> validator.validateForSave(dto)
         );
 
@@ -95,8 +101,8 @@ public class BeneficiaryValidatorTest {
 
         when(repository.existsByAmkaAndPublicIdNot(dto.amka(), existing.getPublicId())).thenReturn(true);
 
-        DomainValidationException ex = assertThrows(
-                DomainValidationException.class,
+        ConflictValidationException ex = assertThrows(
+                ConflictValidationException.class,
                 () -> validator.validateForUpdate(existing, dto)
         );
 
@@ -195,7 +201,7 @@ public class BeneficiaryValidatorTest {
     void validateForUpdate_shouldNotCheckConsistency_whenDuplicateAmkaFound() {
         // arrange
         Beneficiary existing = createDefaultBeneficiary(1L, true);
-        String publicId = existing.getPublicId();
+        UUID publicId = existing.getPublicId();
         BeneficiaryUpdateDTO dto = BeneficiaryUpdateDTO.builder()
                 .amka("06048612345")
                 .dateOfBirth(LocalDate.of(1950, 1, 1)) // deliberately inconsistent
@@ -204,8 +210,8 @@ public class BeneficiaryValidatorTest {
         when(repository.existsByAmkaAndPublicIdNot(dto.amka(), publicId)).thenReturn(true);
 
         // act
-        DomainValidationException ex = assertThrows(
-                DomainValidationException.class,
+        ConflictValidationException ex = assertThrows(
+                ConflictValidationException.class,
                 () -> validator.validateForUpdate(existing, dto)
         );
 
@@ -224,9 +230,10 @@ public class BeneficiaryValidatorTest {
     private Beneficiary createDefaultBeneficiary(Long id, boolean isActive) {
         return Beneficiary.builder()
                 .id(id)
+                .publicId(TEST_PUBLIC_ID)
                 .firstName("Joe")
                 .lastName("Doe")
-                .amka(("12345678912"))
+                .amka("06048678912")
                 .dateOfBirth(LocalDate.of(1986, 4, 6))
                 .houseUnit(createDefaultHouseUnit())
                 .permanentAddress( Address.builder()

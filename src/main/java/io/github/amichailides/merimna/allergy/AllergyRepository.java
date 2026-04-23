@@ -6,12 +6,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface AllergyRepository extends JpaRepository<Allergy, Long> {
     Optional<Allergy> findByIdAndBeneficiaryId(Long allergyId, Long beneficiaryId);
 
-    List<Allergy> findAllByBeneficiaryPublicId(String beneficiaryPublicId);
+    List<Allergy> findAllByBeneficiaryPublicId(UUID beneficiaryPublicId);
 
     boolean existsByBeneficiaryIdAndSubstanceIgnoreCaseAndIdNot(
             Long beneficiaryId,

@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class BeneficiaryServiceImplTest {
 
-    private static final String TEST_PUBLIC_ID = "550e8400-e29b-41d4-a716-446655440000";
+    private static final UUID TEST_PUBLIC_ID = UUID.randomUUID();
 
     @Mock
     private BeneficiaryRepository beneficiaryRepository;

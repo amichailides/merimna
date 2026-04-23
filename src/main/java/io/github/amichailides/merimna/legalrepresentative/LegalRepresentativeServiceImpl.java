@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class LegalRepresentativeServiceImpl implements LegalRepresentativeService{
@@ -29,7 +31,7 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     }
 
     @Transactional
-    public void assignToBeneficiary(String beneficiaryPublicId, Long legalRepresentativeId) {
+    public void assignToBeneficiary(UUID beneficiaryPublicId, Long legalRepresentativeId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
         LegalRepresentative legal = getLegalRepresentativeOrThrow(legalRepresentativeId);
 
@@ -38,7 +40,7 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     }
 
     @Transactional
-    public void unassignLegalRepresentative(String beneficiaryPublicId, Long legalRepresentativeId) {
+    public void unassignLegalRepresentative(UUID beneficiaryPublicId, Long legalRepresentativeId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
         LegalRepresentative legalRepresentative = getLegalRepresentativeOrThrow(legalRepresentativeId, beneficiaryPublicId);
 
@@ -65,13 +67,13 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
         return legalRepresentativeMapper.toReadOnlyDTO(legal);
     }
 
-    private Beneficiary getBeneficiaryOrThrow (String publicId) {
+    private Beneficiary getBeneficiaryOrThrow (UUID publicId) {
         return  beneficiaryRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
     // remove - legalId + beneficiaryId check
-    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId, String beneficiaryPublicId) {
+    private LegalRepresentative getLegalRepresentativeOrThrow(Long legalRepresentativeId, UUID beneficiaryPublicId) {
         return legalRepresentativeRepository.findByIdAndBeneficiariesPublicId(legalRepresentativeId, beneficiaryPublicId)
                 .orElseThrow(() -> {
                     if (!legalRepresentativeRepository.existsById(legalRepresentativeId)) {

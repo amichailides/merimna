@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.common.openapi.ConflictErrorResponse;
 import io.github.amichailides.merimna.common.openapi.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.common.openapi.ValidationErrorResponse;
+import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +17,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @Tag(name = "Beneficiaries", description = "Operations related to beneficiaries")
 @RestController
@@ -106,11 +107,11 @@ public class BeneficiaryController {
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable
             @NotBlank(message = "{beneficiary.publicId.required}")
-            @UUID(message = "{beneficiary.publicId.invalid}")
+            @ValidUUID(message = "{beneficiary.publicId.invalid}")
             String publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
-        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(publicId, dto);
+        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(UUID.fromString(publicId), dto);
         return ResponseEntity.ok(beneficiary);
     }
 
@@ -136,10 +137,10 @@ public class BeneficiaryController {
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable
             @NotBlank(message = "{beneficiary.publicId.required}")
-            @UUID(message = "{beneficiary.publicId.invalid}")
+            @ValidUUID(message = "{beneficiary.publicId.invalid}")
             String publicId) {
 
-        return service.findByPublicId(publicId);
+        return service.findByPublicId(UUID.fromString(publicId));
     }
 
     // TODO(#5): Revisit discharge API design.
@@ -176,11 +177,11 @@ public class BeneficiaryController {
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable
             @NotBlank(message = "{beneficiary.publicId.required}")
-            @UUID(message = "{beneficiary.publicId.invalid}")
+            @ValidUUID(message = "{beneficiary.publicId.invalid}")
             String publicId) {
 
 
-        BeneficiaryDetailsDTO updated = service.discharge(publicId);
+        BeneficiaryDetailsDTO updated = service.discharge(UUID.fromString(publicId));
         return ResponseEntity.ok(updated);
     }
 
@@ -245,13 +246,17 @@ public class BeneficiaryController {
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable
             @NotBlank(message = "{beneficiary.publicId.required}")
-            @UUID(message = "{beneficiary.publicId.invalid}")
+            @ValidUUID(message = "{beneficiary.publicId.invalid}")
             String publicId,
 
-            @Parameter(description = "House unit code", example = "UNIT_A")
-            @PathVariable java.util.UUID houseUnitPublicId) {
 
-        BeneficiaryListDTO updated = service.changeHouseUnit(publicId, houseUnitPublicId);
+            @Parameter(description = "House unit public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{houseUnit.publicId.required}")
+            @ValidUUID(message = "{houseUnit.publicId.invalid}")
+            String houseUnitPublicId) {
+
+        BeneficiaryListDTO updated = service.changeHouseUnit(UUID.fromString(publicId), UUID.fromString(houseUnitPublicId));
         return ResponseEntity.ok(updated);
     }
 
