@@ -4,11 +4,11 @@ import io.github.amichailides.merimna.domain.PlacementReason;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Builder
 public record EmployeePlacementReadOnlyDTO(
-        Long id,
-        Long employeeId,
+        UUID publicId,
         String houseUnitCode,
         String houseUnitDisplayName,
         LocalDateTime startDateTime,

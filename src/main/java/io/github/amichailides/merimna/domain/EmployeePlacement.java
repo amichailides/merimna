@@ -5,17 +5,23 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "employee_placements")
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmployeePlacement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @EqualsAndHashCode.Include
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    private UUID publicId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Employee employee;

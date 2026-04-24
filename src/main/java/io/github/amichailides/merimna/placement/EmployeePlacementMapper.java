@@ -10,7 +10,7 @@ public class EmployeePlacementMapper {
         if (p == null) return null;
 
         return EmployeePlacementReadOnlyDTO.builder()
-                .id(p.getId())
+                .publicId(p.getPublicId())
                 .employeeId(p.getEmployee().getId())
                 .houseUnitCode(p.getHouseUnit().getCode())
                 .houseUnitDisplayName(p.getHouseUnit().getDisplayName())
