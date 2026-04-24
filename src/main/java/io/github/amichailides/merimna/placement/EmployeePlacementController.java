@@ -2,7 +2,9 @@ package io.github.amichailides.merimna.placement;
 
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
+import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/placements")
@@ -29,7 +32,15 @@ public class EmployeePlacementController {
                 .body(placement);
     }
 
-    @GetMapping("")
+    @GetMapping("/{publicId}")
+    public EmployeePlacementReadOnlyDTO getPlacement(
+            @PathVariable
+            @NotBlank(message = "{placement.publicId.required}")
+            @ValidUUID(message = "{placement.publicId.invalid}")
+            String publicId) {
+
+        return placementService.getByPublicId(UUID.fromString(publicId));
+    }
 
 
     private URI buildLocationUri(Object id) {

@@ -116,7 +116,12 @@ public enum ErrorCode {
     USER_EMAIL_ALREADY_EXISTS("USER_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.email.alreadyExists"),
     USER_NOT_FOUND_BY_EMAIL("USER_NOT_FOUND_BY_EMAIL", HttpStatus.NOT_FOUND, "error.user.notFoundByEmail"),
     NEW_PASSWORD_MUST_BE_DIFFERENT("NEW_PASSWORD_MUST_BE_DIFFERENT", HttpStatus.BAD_REQUEST, "error.user.newPasswordMustBeDifferent"),
-    INVALID_CURRENT_PASSWORD("INVALID_CURRENT_PASSWORD", HttpStatus.FORBIDDEN, "error.user.invalidCurrentPassword");
+    INVALID_CURRENT_PASSWORD("INVALID_CURRENT_PASSWORD", HttpStatus.FORBIDDEN, "error.user.invalidCurrentPassword"),
+
+    // =========================================================================
+    // Employee Placement
+    // =========================================================================
+    EMPLOYEE_PLACEMENT_NOT_FOUND("EMPLOYEE_PLACEMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employeePlacement.notFound");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer

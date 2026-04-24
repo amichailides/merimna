@@ -21,7 +21,7 @@ public class EmployeePlacement {
 
     @EqualsAndHashCode.Include
     @Column(name = "public_id", unique = true, nullable = false, updatable = false)
-    private UUID publicId;
+    private UUID publicId = UUID.randomUUID();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Employee employee;

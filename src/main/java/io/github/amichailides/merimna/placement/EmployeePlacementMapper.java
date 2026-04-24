@@ -11,7 +11,6 @@ public class EmployeePlacementMapper {
 
         return EmployeePlacementReadOnlyDTO.builder()
                 .publicId(p.getPublicId())
-                .employeeId(p.getEmployee().getId())
                 .houseUnitCode(p.getHouseUnit().getCode())
                 .houseUnitDisplayName(p.getHouseUnit().getDisplayName())
                 .startDateTime(p.getStartDateTime())
