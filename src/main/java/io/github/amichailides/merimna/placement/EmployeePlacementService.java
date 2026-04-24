@@ -10,4 +10,6 @@ public interface EmployeePlacementService {
     EmployeePlacementReadOnlyDTO create(EmployeePlacementCreateDTO dto);
 
     EmployeePlacementReadOnlyDTO getByPublicId(UUID publicId);
+
+    void terminate(UUID publicId);
 }

@@ -42,6 +42,17 @@ public class EmployeePlacementController {
         return placementService.getByPublicId(UUID.fromString(publicId));
     }
 
+    @PatchMapping("/{publicId}/terminate")
+    public ResponseEntity<Void> terminate(
+            @PathVariable
+            @NotBlank(message = "{placement.publicId.required}")
+            @ValidUUID(message = "{placement.publicId.invalid}")
+            String publicId) {
+
+        placementService.terminate(UUID.fromString(publicId));
+        return ResponseEntity.noContent().build();
+    }
+
 
     private URI buildLocationUri(Object id) {
         return ServletUriComponentsBuilder

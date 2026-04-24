@@ -1,5 +1,7 @@
 package io.github.amichailides.merimna.domain;
 
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementAlreadyClosed;
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementInvalidEndDate;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -60,11 +62,11 @@ public class EmployeePlacement {
 
     public void close(LocalDateTime end) {
         if (this.endDateTime != null) {
-            throw new IllegalStateException("Placement already closed");
+            throw new EmployeePlacementAlreadyClosed();
         }
 
         if (end.isBefore(this.startDateTime)) {
-            throw new IllegalArgumentException("End before start");
+            throw new EmployeePlacementInvalidEndDate();
         }
 
         this.endDateTime = end;
