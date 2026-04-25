@@ -186,6 +186,6 @@ public class Beneficiary {
     }
 
     public boolean isNotAssignedTo(HouseUnit houseUnit) {
-        return this.houseUnit.getPublicId().equals(houseUnit.getPublicId());
+        return !this.houseUnit.getPublicId().equals(houseUnit.getPublicId());
     }
 }
