@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
     private final HouseUnitRepository houseUnitRepository;
     private final EmployeePlacementRepository placementRepository;
     private final EmployeePlacementMapper placementMapper;
+    private final EmployeePlacementValidator placementValidator;
 
     @Transactional
     public EmployeePlacementReadOnlyDTO create(EmployeePlacementCreateDTO dto) {
@@ -34,11 +36,13 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
         HouseUnit houseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
                 .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
+        placementValidator.validateForCreate(employee, dto);
+
         EmployeePlacement placement = EmployeePlacement.create(
                 employee,
                 houseUnit,
-                dto.startDateTime(),
-                dto.endDateTime(),
+                dto.startDate(),
+                dto.endDate(),
                 dto.reason()
         );
 
@@ -62,7 +66,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
         EmployeePlacement placement = placementRepository.findByPublicId(publicId)
                 .orElseThrow(EmployeePlacementNotFoundException::new);
 
-        placement.close(LocalDateTime.now());
+        placement.close(LocalDate.now());
     }
 
 }

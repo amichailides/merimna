@@ -4,6 +4,8 @@ import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class EmployeePlacementMapper {
     public EmployeePlacementReadOnlyDTO toReadOnlyDTO(EmployeePlacement p) {
@@ -13,10 +15,10 @@ public class EmployeePlacementMapper {
                 .publicId(p.getPublicId())
                 .houseUnitCode(p.getHouseUnit().getCode())
                 .houseUnitDisplayName(p.getHouseUnit().getDisplayName())
-                .startDateTime(p.getStartDateTime())
-                .endDateTime(p.getEndDateTime())
+                .startDate(p.getStartDate())
+                .endDate(p.getEndDate())
                 .reason(p.getReason())
-                .active(p.getEndDateTime() == null)
+                .active(p.isActive(LocalDate.now()))
                 .build();
     }
 }

@@ -123,6 +123,7 @@ public enum ErrorCode {
     // =========================================================================
     EMPLOYEE_PLACEMENT_NOT_FOUND("EMPLOYEE_PLACEMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employeePlacement.notFound"),
     EMPLOYEE_PLACEMENT_ALREADY_CLOSED("EMPLOYEE_PLACEMENT_ALREADY_CLOSED", HttpStatus.CONFLICT, "error.employeePlacement.alreadyClosed"),
+    EMPLOYEE_PLACEMENT_OVERLAP("EMPLOYEE_PLACEMENT_OVERLAP", HttpStatus.CONFLICT, "error.employeePlacement.overlap"),
     EMPLOYEE_PLACEMENT_INVALID_END_DATE("EMPLOYEE_PLACEMENT_INVALID_END_DATE", HttpStatus.valueOf(422), "error.employeePlacement.invalidEndDate");
 
     private final String code;           // για logging και debugging

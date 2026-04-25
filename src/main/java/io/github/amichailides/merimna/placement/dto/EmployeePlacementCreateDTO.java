@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record EmployeePlacementCreateDTO(
@@ -19,16 +19,16 @@ public record EmployeePlacementCreateDTO(
         @NotNull(message = "{houseUnit.publicId.notNull}", groups = FirstOrder.class)
         UUID houseUnitPublicId,
 
-        @Schema(description = "Placement start datetime.", example = "2026-04-21T10:30:00")
+        @Schema(description = "Placement start date.", example = "2026-04-21")
         @NotNull(message = "{placement.startDateTime.notNull}", groups = FirstOrder.class)
-        LocalDateTime startDateTime,
+        LocalDate startDate,
 
         @Schema(
-                description = "Placement end datetime. Nullable for open placement.",
-                example = "2026-04-21T18:00:00",
+                description = "Placement end date. Nullable for open-ended placement.",
+                example = "2026-04-25",
                 nullable = true
         )
-        LocalDateTime endDateTime,
+        LocalDate endDate,
 
         @Schema(description = "Reason for the placement.", example = "TEMPORARY_COVERAGE")
         @NotNull(message = "{placement.reason.notNull}", groups = FirstOrder.class)

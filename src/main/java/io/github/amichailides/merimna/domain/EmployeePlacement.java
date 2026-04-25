@@ -5,7 +5,7 @@ import io.github.amichailides.merimna.placement.exception.EmployeePlacementInval
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -31,11 +31,11 @@ public class EmployeePlacement {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private HouseUnit houseUnit;
 
-    @Column(nullable = false)
-    private LocalDateTime startDateTime;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
 
-    @Column
-    private LocalDateTime endDateTime;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -44,8 +44,8 @@ public class EmployeePlacement {
     public static EmployeePlacement create(
             Employee employee,
             HouseUnit houseUnit,
-            LocalDateTime start,
-            LocalDateTime end,
+            LocalDate start,
+            LocalDate end,
             PlacementReason reason
     ) {
         validateDates(start, end);
@@ -53,31 +53,35 @@ public class EmployeePlacement {
         EmployeePlacement p = new EmployeePlacement();
         p.employee = Objects.requireNonNull(employee, "employee is required");
         p.houseUnit = Objects.requireNonNull(houseUnit, "houseUnit is required");
-        p.startDateTime = Objects.requireNonNull(start, "startDateTime is required");
-        p.endDateTime = end;
+        p.startDate = Objects.requireNonNull(start, "startDate is required");
+        p.endDate = end;
         p.reason = Objects.requireNonNull(reason, "reason is required");
 
         return p;
     }
 
-    public void close(LocalDateTime end) {
-        if (this.endDateTime != null) {
+    public void close(LocalDate end) {
+        Objects.requireNonNull(end, "endDate is required");
+
+        if (this.endDate != null) {
             throw new EmployeePlacementAlreadyClosed();
         }
 
-        if (end.isBefore(this.startDateTime)) {
+        if (end.isBefore(this.startDate)) {
             throw new EmployeePlacementInvalidEndDate();
         }
 
-        this.endDateTime = end;
+        this.endDate = end;
     }
 
-    public boolean isActive(LocalDateTime now) {
-        return !startDateTime.isAfter(now) &&
-                (endDateTime == null || now.isBefore(endDateTime));
+    public boolean isActive(LocalDate now) {
+        Objects.requireNonNull(now, "now is required");
+
+        return !startDate.isAfter(now) &&
+                (endDate == null || !endDate.isBefore(now));
     }
 
-    private static void validateDates(LocalDateTime start, LocalDateTime end) {
+    private static void validateDates(LocalDate start, LocalDate end) {
         if (start == null) {
             throw new IllegalArgumentException("Start cannot be null");
         }
