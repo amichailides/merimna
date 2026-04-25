@@ -18,6 +18,7 @@ public enum ErrorCode {
     AT_LEAST_ONE_PHONE_REQUIRED("AT_LEAST_ONE_PHONE_REQUIRED", HttpStatus.valueOf(422), "validation.legalRepresentative.phone.atLeastOneRequired"),
     DOMAIN_RULE_VIOLATION("DOMAIN_RULE_VIOLATION", HttpStatus.BAD_REQUEST, "error.domain.rule.violation"),
     RESOURCE_CONFLICT("RESOURCE_CONFLICT", HttpStatus.CONFLICT, "error.resource.conflict"),
+    RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, "error.resource.notFound"),
 
     // =========================================================================
     // Security

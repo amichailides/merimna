@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
+
     public GlobalExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
@@ -75,11 +77,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(status)
                 .body(ApiResponse.validationError(
-                                ex.getErrorCode(),
-                                status.value(),
-                                status.getReasonPhrase(), // title
-                                detail,
-                                localizedErrors,
+                        ex.getErrorCode(),
+                        status.value(),
+                        status.getReasonPhrase(), // title
+                        detail,
+                        localizedErrors,
                         request.getRequestURI()
                 ));
     }
@@ -258,6 +260,33 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()
                 ));
 
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(
+            NoResourceFoundException ex,
+            HttpServletRequest request
+    ) {
+        ErrorCode errorCode = ErrorCode.RESOURCE_NOT_FOUND;
+
+        log.warn("No resource found for request path: {}", request.getRequestURI());
+
+        String detail = messageSource.getMessage(
+                errorCode.getMessageKey(),
+                null,
+                "Δεν βρέθηκε διαθέσιμος πόρος για τη συγκεκριμένη διεύθυνση.",
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ApiResponse.error(
+                        errorCode,
+                        errorCode.getStatus().value(),
+                        errorCode.getStatus().getReasonPhrase(),
+                        detail,
+                        request.getRequestURI()
+                ));
     }
 
     @ExceptionHandler(Exception.class)
