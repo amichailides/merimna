@@ -38,6 +38,8 @@ public class EmployeeAssignmentPolicy {
         return employee.getPosition().isRequiresExclusivePlacement();
     }
 
+    // TODO(#25): Refactor to repository-based existence query.
+    // This is an existence check and should not rely on loading employee assignments in memory.
     private boolean hasOverlappingAssignment(
             Employee employee,
             LocalDate startDate,
@@ -48,6 +50,8 @@ public class EmployeeAssignmentPolicy {
                 .anyMatch(a -> a.overlapsWith(startDate, endDate));
     }
 
+    // TODO(#25): Refactor to repository-based existence query.
+    // This is an existence check and should not rely on loading employee assignments in memory.
     private boolean validateNoActiveAssignmentForSameHouse(Employee employee, HouseUnit houseUnit) {
         return employee.getAssignments().stream()
                 .noneMatch(a -> a.getStatus() == EmployeeAssignmentStatus.ACTIVE &&
