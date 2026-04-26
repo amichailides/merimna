@@ -4,14 +4,18 @@ package io.github.amichailides.merimna.beneficiary;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
+import io.github.amichailides.merimna.placement.EmployeeHouseUnitScopeService;
+import io.github.amichailides.merimna.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryValidator beneficiaryValidator;
     private final HouseUnitRepository houseUnitRepository;
     private final HouseUnitValidator houseUnitValidator;
+    private final EmployeeHouseUnitScopeService scopeService;
+    private final CurrentUserProvider currentUserProvider;
 
     @Override
     @Transactional(readOnly = true)
@@ -43,6 +49,12 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryDetailsDTO findByPublicId(UUID publicId) {
         Beneficiary beneficiary = beneficiaryRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
+
+        Employee currentEmployee = currentUserProvider.getCurrentEmployee();
+
+        if (!scopeService.hasActiveAccessTo(currentEmployee, beneficiary.getHouseUnit())) {
+            throw new AccessDeniedException("No access to this beneficiary");
+        }
 
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }

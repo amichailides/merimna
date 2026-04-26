@@ -123,4 +123,28 @@ public class Employee {
     public void addPlacement(EmployeePlacement placement) {
         placements.add(placement);
     }
+
+    /**
+     * Returns all house units this employee can access,
+     * based on active assignments and active placements.
+     * <p>
+     * NOTE: Uses in-memory filtering — acceptable given the low volume
+     * of assignments/placements per employee. If this becomes a
+     * performance concern, consider dedicated repository queries.
+     */
+    public Set<HouseUnit> getAccessibleHouseUnits(LocalDate today) {
+        Set<HouseUnit> accessible = new HashSet<>();
+
+        assignments.stream()
+                .filter(EmployeeAssignment::isActive)
+                .map(EmployeeAssignment::getHouseUnit)
+                .forEach(accessible::add);
+
+        placements.stream()
+                .filter(p -> p.isActive(today))
+                .map(EmployeePlacement::getHouseUnit)
+                .forEach(accessible::add);
+
+        return accessible;
+    }
 }

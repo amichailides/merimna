@@ -236,32 +236,6 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAuthorizationDenied(
-            AuthorizationDeniedException ex,
-            HttpServletRequest request) {
-
-        ErrorCode errorCode = ErrorCode.FORBIDDEN;
-
-        String detail = messageSource.getMessage(
-                errorCode.getMessageKey(),
-                null,
-                "Δεν έχετε δικαίωμα πρόσβασης σε αυτόν τον πόρο",
-                request.getLocale()
-        );
-
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.error(
-                        errorCode,
-                        errorCode.getStatus().value(),
-                        errorCode.getStatus().getReasonPhrase(),
-                        detail,
-                        request.getRequestURI()
-                ));
-
-    }
-
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(
             NoResourceFoundException ex,
@@ -304,6 +278,31 @@ public class GlobalExceptionHandler {
                         ErrorCode.INTERNAL_SERVER_ERROR,
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                        detail,
+                        request.getRequestURI()
+                ));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        ErrorCode errorCode = ErrorCode.FORBIDDEN;
+
+        String detail = messageSource.getMessage(
+                errorCode.getMessageKey(),
+                null,
+                "Δεν έχετε δικαίωμα πρόσβασης σε αυτόν τον πόρο",
+                request.getLocale()
+        );
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ApiResponse.error(
+                        errorCode,
+                        errorCode.getStatus().value(),
+                        errorCode.getStatus().getReasonPhrase(),
                         detail,
                         request.getRequestURI()
                 ));
