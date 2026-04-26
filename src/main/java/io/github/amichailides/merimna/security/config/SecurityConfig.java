@@ -1,5 +1,7 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.config;
 
+import io.github.amichailides.merimna.security.exception.CustomAuthenticationEntryPoint;
+import io.github.amichailides.merimna.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

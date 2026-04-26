@@ -1,7 +1,8 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.auth;
 
-import io.github.amichailides.merimna.security.dto.AuthResponse;
-import io.github.amichailides.merimna.security.dto.LoginRequest;
+import io.github.amichailides.merimna.security.jwt.JwtService;
+import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
+import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
 import io.github.amichailides.merimna.security.exception.AccountDisabledException;
 import io.github.amichailides.merimna.security.exception.AccountLockedException;
 import io.github.amichailides.merimna.security.exception.AuthenticationFailedException;

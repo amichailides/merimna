@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

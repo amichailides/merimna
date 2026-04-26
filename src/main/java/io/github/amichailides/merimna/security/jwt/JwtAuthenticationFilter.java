@@ -1,6 +1,7 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.jwt;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
+import io.github.amichailides.merimna.security.config.SecurityConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;

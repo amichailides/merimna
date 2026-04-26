@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.user.UserRepository;
 import lombok.RequiredArgsConstructor;

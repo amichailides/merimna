@@ -1,7 +1,8 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.exception;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.common.response.ApiResponse;
+import io.github.amichailides.merimna.security.config.SecurityConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

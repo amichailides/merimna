@@ -1,7 +1,7 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.auth;
 
-import io.github.amichailides.merimna.security.dto.AuthResponse;
-import io.github.amichailides.merimna.security.dto.LoginRequest;
+import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
+import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

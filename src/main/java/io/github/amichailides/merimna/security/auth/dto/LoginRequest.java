@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security.dto;
+package io.github.amichailides.merimna.security.auth.dto;
 
 public record LoginRequest(
         String email,
