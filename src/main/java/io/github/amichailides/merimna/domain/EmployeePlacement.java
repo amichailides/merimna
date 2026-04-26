@@ -63,7 +63,7 @@ public class EmployeePlacement {
     public void close(LocalDate end) {
         Objects.requireNonNull(end, "endDate is required");
 
-        if (this.endDate != null) {
+        if (this.endDate != null && this.endDate.isBefore(LocalDate.now())) {
             throw new EmployeePlacementAlreadyClosed();
         }
 

@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.placement;
 
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
+import io.github.amichailides.merimna.placement.dto.EmployeePlacementTerminateDTO;
 import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.NotBlank;
@@ -42,14 +43,16 @@ public class EmployeePlacementController {
         return placementService.getByPublicId(UUID.fromString(publicId));
     }
 
-    @PatchMapping("/{publicId}/terminate")
+    @PostMapping("/{publicId}/terminate")
     public ResponseEntity<Void> terminate(
             @PathVariable
             @NotBlank(message = "{placement.publicId.required}")
             @ValidUUID(message = "{placement.publicId.invalid}")
-            String publicId) {
+            String publicId,
+            @Validated(ValidationGroupSequence.class)
+            @RequestBody EmployeePlacementTerminateDTO dto) {
 
-        placementService.terminate(UUID.fromString(publicId));
+        placementService.terminate(UUID.fromString(publicId), dto);
         return ResponseEntity.noContent().build();
     }
 
