@@ -9,9 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -69,6 +67,13 @@ public class Employee {
     )
     private Set<EmployeeAssignment> assignments = new HashSet<>();
 
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "employee",
+            fetch = FetchType.LAZY
+    )
+    private List<EmployeePlacement> placements = new ArrayList<>();
+
 
     public void terminate(LocalDate terminationDate) {
         if (!isActive) {
@@ -113,5 +118,9 @@ public class Employee {
 
         this.assignments.add(assignment);
         return assignment;
+    }
+
+    public void addPlacement(EmployeePlacement placement) {
+        placements.add(placement);
     }
 }

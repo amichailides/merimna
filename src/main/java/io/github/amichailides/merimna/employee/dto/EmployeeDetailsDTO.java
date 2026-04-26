@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
+import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -36,6 +37,9 @@ public record EmployeeDetailsDTO(
                 description = "House unit assignments for this employee",
                 example = "[{ \"houseUnitCode\": \"UNIT_A\", \"status\": \"ACTIVE\" }]")
         List<EmployeeAssignmentReadOnlyDTO> assignments,
+
+        @Schema(description = "Active placement of the employee, if any")
+        EmployeePlacementReadOnlyDTO activePlacement,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")
         LocalDate hireDate,

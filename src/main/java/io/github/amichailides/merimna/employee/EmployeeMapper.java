@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.address.AddressMapper;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentMapper;
+import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.EmployeePosition;
@@ -9,10 +10,14 @@ import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeListDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
+import io.github.amichailides.merimna.placement.EmployeePlacementMapper;
+import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -20,6 +25,7 @@ import java.util.Objects;
 public class EmployeeMapper {
     private final AddressMapper addressMapper;
     private final EmployeeAssignmentMapper assignmentMapper;
+    private final EmployeePlacementMapper employeePlacementMapper;
 
     public EmployeeDetailsDTO toDetailsDTO(Employee entity) {
         if (entity == null) return null;
@@ -34,13 +40,8 @@ public class EmployeeMapper {
                 .positionCode(entity.getPosition().getCode().getValue())
                 .positionDisplayName(entity.getPosition().getDisplayName())
                 .hireDate(entity.getHireDate())
-                .assignments(
-                        entity.getAssignments().stream()
-                                .sorted(Comparator.comparing(EmployeeAssignment::getStartDate,
-                                        Comparator.nullsLast(Comparator.naturalOrder())))
-                                .map(assignmentMapper::toDTO)
-                                .toList()
-                )
+                .assignments(resolveAssignments(entity))
+                .activePlacement(resolveActivePlacement(entity))
                 .active(entity.isActive())
                 .build();
     }
@@ -82,5 +83,22 @@ public class EmployeeMapper {
         if (position != null) existing.changePosition(position);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
         if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());
+    }
+
+
+    private EmployeePlacementReadOnlyDTO resolveActivePlacement(Employee entity) {
+        return entity.getPlacements().stream()
+                .filter(p -> p.isActive(LocalDate.now()))
+                .findFirst()
+                .map(employeePlacementMapper::toReadOnlyDTO)
+                .orElse(null);
+    }
+
+    private List<EmployeeAssignmentReadOnlyDTO> resolveAssignments(Employee entity) {
+        return entity.getAssignments().stream()
+                .sorted(Comparator.comparing(EmployeeAssignment::getStartDate,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(assignmentMapper::toDTO)
+                .toList();
     }
 }

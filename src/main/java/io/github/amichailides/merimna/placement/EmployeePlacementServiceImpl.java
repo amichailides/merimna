@@ -46,6 +46,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
                 dto.reason()
         );
 
+        employee.addPlacement(placement);
         EmployeePlacement saved = placementRepository.save(placement);
         return placementMapper.toReadOnlyDTO(saved);
     }
