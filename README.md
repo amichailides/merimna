@@ -11,34 +11,42 @@ It focuses on data consistency, explicit domain rules, and controlled state tran
 
 ## Key Features & Architecture
 
-- **Greek-aware search:** A custom Specification-based search approach handles Greek accents, case
-  sensitivity, and common character variations (e.g., σ/ς).
+- **Authentication & authorization:** Stateless JWT authentication with a custom filter chain, method-level access
+  control via Spring Security annotations, and permissions derived from each employee's position.
 
-- **Authentication & authorization:**
-    - Stateless JWT authentication with a custom filter chain
-    - Method-level access control via Spring Security annotations
-    - Permissions are derived from the employee's position
+- **Placement-aware access control:** Active placements temporarily extend an employee's access to beneficiary records
+  of another house unit, with scope resolved at runtime from active assignments and placements.
 
-- **Centralized error handling:**
-    - Domain and validation exceptions are structured under base classes
-    - A global `@RestControllerAdvice` maps them to consistent `ApiResponse` error payloads
-    - Stable error types are defined through an `ErrorCode` enum
+- **Rich domain model:** Core business workflows, such as beneficiary discharge and employee termination, are captured
+  through dedicated domain methods.
 
-- **User & employee linkage:** Users are tied one-to-one to employees; account state
-  follows the employee lifecycle (e.g., deactivated on termination).
+- **Assignment & placement lifecycle:** Domain methods handle lifecycle transitions, while validation policies use
+  repository-level overlap checks to prevent invalid date ranges and conflicting active assignments or placements.
 
-- **Rich domain model:** Important state changes, such as discharge, are handled in
-  the domain model instead of being left only to controllers.
+- **Greek-aware search:** Custom JPA Specifications support accent-insensitive and case-insensitive Greek search using
+  PostgreSQL `unaccent`, including Greek-specific variations such as σ/ς. For example, searching for `Σαββας` can match
+  `Σάββας`, `ΣΑΒΒΑΣ`, and `Σαββας`.
 
-- **Employee assignments:**
-    - Assignment lifecycle handled through domain logic, enforcing rules such as
-      valid date ranges and conflict prevention
+- **Centralized error handling:** Domain and validation exceptions are mapped by a global `@RestControllerAdvice` to
+  consistent `ApiResponse` error payloads with stable `ErrorCode` values.
 
-- **Domain validation:** Custom annotations and sequencing enforce domain rules and
-  reduce noisy error output.
+- **Domain validation:** Custom validation annotations and validation group sequencing enforce domain rules while
+  reducing noisy error output.
 
-- **Database versioning:** Schema changes are managed through Flyway migrations to keep
-  database structure predictable and controlled.
+- **User & employee linkage:** User accounts are linked one-to-one with employees, and account state follows the
+  employee lifecycle, such as automatic deactivation on termination.
+
+- **Database versioning:** Flyway migrations manage schema changes, keeping database structure predictable and
+  controlled.
+
+## Development Context
+
+As the project evolves, [ADRs](docs/adr) are used to document important design
+decisions and trade-offs.
+
+Planned features, technical debt, and refactoring tasks are tracked
+through [GitHub Issues](https://github.com/amichailides/merimna/issues)
+to keep the development workflow structured and the project's evolution visible.
 
 ## Technical Stack
 
@@ -53,53 +61,61 @@ It focuses on data consistency, explicit domain rules, and controlled state tran
 ## API Overview
 
 The API is centered around the `Beneficiary` aggregate, alongside employee management,
-assignments, and user administration.
+assignments, placements, and user administration.
 
 ### Authentication
 
-- `POST /api/auth/login`
+- **POST** `/api/auth/login`
 
 ### Beneficiaries
 
-- `POST /api/beneficiaries`
-- `GET /api/beneficiaries`
-- `GET /api/beneficiaries/{id}`
-- `PATCH /api/beneficiaries/{id}`
-- `POST /api/beneficiaries/{id}/discharge`
-- `PATCH /api/beneficiaries/{id}/house-unit/{code}`
+- **GET** `/api/beneficiaries`
+- **POST** `/api/beneficiaries`
+- **GET** `/api/beneficiaries/{publicId}`
+- **PATCH** `/api/beneficiaries/{publicId}`
+- **PATCH** `/api/beneficiaries/{publicId}/house-unit/{houseUnitPublicId}`
+- **POST** `/api/beneficiaries/{publicId}/discharge`
 
-**Related resources:**
+**Related beneficiary resources:**
 
-- `/api/beneficiaries/{beneficiaryId}/allergies`
-- `/api/beneficiaries/{beneficiaryId}/medications`
-- `/api/beneficiaries/{beneficiaryId}/legal-representatives/{legalRepresentativeId}`
+- `/api/beneficiaries/{beneficiaryPublicId}/allergies`
+- `/api/beneficiaries/{beneficiaryPublicId}/medications`
+- `/api/beneficiaries/{beneficiaryPublicId}/legal-representatives/{legalRepresentativePublicId}`
 
 ### Employees
 
-- `GET /api/employees`
-- `POST /api/employees`
-- `PATCH /api/employees/{id}`
-- `POST /api/employees/{id}/terminate`
-- `POST /api/employees/{id}/reactivate`
+- **GET** `/api/employees`
+- **POST** `/api/employees`
+- **GET** `/api/employees/{publicId}`
+- **PATCH** `/api/employees/{publicId}`
+- **POST** `/api/employees/{publicId}/terminate`
+- **POST** `/api/employees/{publicId}/reactivate`
 
 ### Employee Assignments
 
-- `POST /api/employees/{employeeId}/assignments`
-- `GET /api/employees/{employeeId}/assignments`
-- `GET /api/employees/{employeeId}/assignments/{assignmentId}`
-- `POST /api/employees/{employeeId}/assignments/{assignmentId}/cancel`
-- `POST /api/employees/{employeeId}/assignments/{assignmentId}/terminate`
+- **GET** `/api/employees/{employeePublicId}/assignments`
+- **POST** `/api/employees/{employeePublicId}/assignments`
+- **GET** `/api/employees/{employeePublicId}/assignments/{assignmentPublicId}`
+- **POST** `/api/employees/{employeePublicId}/assignments/{assignmentPublicId}/cancel`
+- **POST** `/api/employees/{employeePublicId}/assignments/{assignmentPublicId}/terminate`
+
+### Employee Placements
+
+- **GET** `/api/placements`
+- **POST** `/api/placements`
+- **GET** `/api/placements/{publicId}`
+- **POST** `/api/placements/{publicId}/terminate`
 
 ### Users
 
-- `POST /api/users`
-- `GET /api/users`
-- `GET /api/users/{id}`
-- `PATCH /api/users/{id}`
-- `GET /api/users/me`
-- `PATCH /api/users/me/password`
+- **GET** `/api/users`
+- **POST** `/api/users`
+- **GET** `/api/users/{publicId}`
+- **PATCH** `/api/users/{publicId}`
+- **GET** `/api/users/me`
+- **PATCH** `/api/users/me/password`
 
-### Supporting resources
+### Reference data & supporting resources
 
 Standard CRUD operations are available for:
 
@@ -109,15 +125,10 @@ Standard CRUD operations are available for:
 
 ## API Documentation
 
+After starting the application locally, API documentation is available at:
+
 - `/api/v3/api-docs` — OpenAPI specification
 - `/api/scalar` — interactive API UI
-
-## Design Considerations
-
-- Validation is split between DTO-level constraints and domain rules to keep business logic explicit.
-- Error handling is centralized, providing consistent API responses across all failure scenarios.
-- Responsibilities are clearly separated between controllers, services, mappers, and domain entities.
-- Domain logic is kept inside the model where possible, avoiding an anemic domain design.
 
 ## Development Setup
 
@@ -144,32 +155,9 @@ Standard CRUD operations are available for:
 
 ## Future Vision
 
-- Refine authorization coverage across all endpoints
-- Improve security logging and auditing
-- Add integration tests for critical flows
-- Introduce a frontend application
-
-## Project Evolution
-
-As the project evolved, architectural decisions started to be documented using ADRs, while technical improvements and
-refactoring tasks are tracked through GitHub Issues.
-
-Some changes that shaped the current codebase include:
-
-- Moving from simple CRUD-style endpoints toward more domain-driven workflows.
-- Centralizing error handling to ensure consistent API responses.
-- Evolving authorization from role-based checks to permission-based access control.
-
-## Non-functional Concerns
-
-### Security
-
-Dependencies are periodically reviewed and updated to address known vulnerabilities (CVEs) during development.
-
-### Documentation
-
-Architectural decisions are documented in the [ADR section](docs/adr).
-
-### Project Tracking
-
-Ongoing improvements are tracked through [Issues](https://github.com/amichailides/merimna/issues).
+- **Care activity records:** Add staff-facing forms for recording beneficiary care activities, incidents, and daily
+  notes.
+- **Authorization testing:** Expand integration tests for placement-aware access control and other critical security
+  flows.
+- **Audit logging:** Introduce structured audit logs for sensitive data changes and access-related events.
+- **Staff dashboard:** Build a frontend application focused on common staff workflows in supported living environments.
