@@ -1,9 +1,11 @@
 package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
+import java.util.Set;
 
 /**
  * Fuzzy αναζήτηση σε firstName, lastName και amka (partial match).
@@ -53,6 +55,16 @@ public class BeneficiarySpecifications {
                 (amka == null || amka.isBlank())
                         ? null
                         : cb.equal(root.get("amka"), amka);
+    }
+
+    public static Specification<Beneficiary> inHouseUnits(Set<HouseUnit> houseUnits) {
+        return (root, query, cb) -> {
+            if (houseUnits == null || houseUnits.isEmpty()) {
+                return cb.disjunction(); // always false
+            }
+
+            return root.get("houseUnit").in(houseUnits);
+        };
     }
 
     public static Specification<Beneficiary> isActive() {

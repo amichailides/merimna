@@ -4,13 +4,10 @@ package io.github.amichailides.merimna.beneficiary;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
-import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
-import io.github.amichailides.merimna.placement.EmployeeHouseUnitScopeService;
-import io.github.amichailides.merimna.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +16,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -35,8 +34,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryValidator beneficiaryValidator;
     private final HouseUnitRepository houseUnitRepository;
     private final HouseUnitValidator houseUnitValidator;
-    private final EmployeeHouseUnitScopeService scopeService;
-    private final CurrentUserProvider currentUserProvider;
+    private final BeneficiaryAccessService beneficiaryAccessService;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,11 +48,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary beneficiary = beneficiaryRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
 
-        Employee currentEmployee = currentUserProvider.getCurrentEmployee();
-
-        if (!scopeService.hasActiveAccessTo(currentEmployee, beneficiary.getHouseUnit())) {
-            throw new AccessDeniedException("No access to this beneficiary");
-        }
+        beneficiaryAccessService.checkCanAccess(beneficiary);
 
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
@@ -67,6 +61,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         HouseUnit houseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
                 .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
+        beneficiaryAccessService.checkCanAccess(houseUnit);
         houseUnitValidator.validateAssignmentForBeneficiary(houseUnit);
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
@@ -78,6 +73,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public BeneficiaryDetailsDTO discharge(UUID publicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
+        beneficiaryAccessService.checkCanAccess(beneficiary);
 
         beneficiaryValidator.validateForDischarge(beneficiary); // business rules
         beneficiary.discharge(); // state check
@@ -92,6 +88,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         // Currently null = no update
 
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
+        beneficiaryAccessService.checkCanAccess(beneficiary);
 
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
@@ -122,14 +119,31 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         Specification<Beneficiary> spec = (root, query, cb) -> cb.conjunction();
 
-        // Αν υπάρχει amka, αγνοούμε το q
+        Optional<Set<HouseUnit>> houseUnitScope =
+                beneficiaryAccessService.resolveHouseUnitScope();
+
+        if (houseUnitScope.isPresent()) {
+            Set<HouseUnit> accessibleHouseUnits = houseUnitScope.get();
+
+            spec = spec.and(BeneficiarySpecifications.inHouseUnits(accessibleHouseUnits));
+
+            if (hasText(criteria.getHouseUnit())) {
+                boolean hasAccess = accessibleHouseUnits.stream()
+                        .anyMatch(h -> criteria.getHouseUnit().equals(h.getCode()));
+
+                if (!hasAccess) {
+                    throw new AccessDeniedException("No access to this house unit");
+                }
+            }
+        }
+
         if (hasText(criteria.getAmka())) {
             spec = spec.and(BeneficiarySpecifications.hasAmka(criteria.getAmka()));
         } else if (hasText(criteria.getQ())) {
             spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
         }
 
-        if (criteria.getHouseUnit() != null) {
+        if (hasText(criteria.getHouseUnit())) {
             spec = spec.and(BeneficiarySpecifications.hasHouseUnit(criteria.getHouseUnit()));
         }
 
@@ -145,16 +159,20 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public BeneficiaryListDTO changeHouseUnit(UUID beneficiaryPublicId, UUID houseUnitPublicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+        beneficiaryAccessService.checkCanAccess(beneficiary);
 
         HouseUnit targetHouseUnit  = houseUnitRepository.findByPublicId(houseUnitPublicId)
                 .orElseThrow(() -> new HouseUnitNotFoundException(houseUnitPublicId));
+
+        // TODO(#26): Revisit beneficiary house-unit transfer policy.
+        // Current V1 policy requires access to both source and target house units
+        beneficiaryAccessService.checkCanAccess(targetHouseUnit);
 
         if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
             houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
             beneficiary.changeHouseUnit(targetHouseUnit);
         }
 
-        beneficiary.changeHouseUnit(targetHouseUnit );
         return beneficiaryMapper.toListDTO(beneficiary);
     }
 

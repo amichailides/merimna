@@ -9,10 +9,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class EmployeeHouseUnitScopeService {
-
-    private final EmployeePlacementRepository placementRepository;
 
     public boolean hasActiveAccessTo(Employee employee, HouseUnit houseUnit) {
         return employee.getAccessibleHouseUnits(LocalDate.now())

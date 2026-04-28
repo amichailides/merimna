@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.security;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.Role;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,13 @@ public class CurrentUserProvider {
 
         return employeeRepository.findWithAccessDataById(currentUser.getEmployee().getId())
                 .orElseThrow(() -> new AccessDeniedException("Employee not found"));
+    }
+
+    public Role getCurrentUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication.getPrincipal() instanceof User currentUser)) {
+            throw new AccessDeniedException(ErrorCode.UNAUTHORIZED.name());
+        }
+        return currentUser.getRole();
     }
 }
