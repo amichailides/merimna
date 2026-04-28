@@ -52,6 +52,9 @@ class BeneficiaryServiceImplTest {
     @Mock
     private HouseUnitValidator houseUnitValidator;
 
+    @Mock
+    private BeneficiaryAccessService beneficiaryAccessService;
+
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
 
@@ -86,6 +89,7 @@ class BeneficiaryServiceImplTest {
 
             assertEquals(expectedDto, result);
             verify(beneficiaryRepository).findWithDetailsByPublicId(BENEFICIARY_PUBLIC_ID);
+            verify(beneficiaryAccessService).checkCanAccess(beneficiary);
             verify(beneficiaryMapper).toDetailsDTO(beneficiary);
         }
     }
@@ -137,6 +141,7 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
             verify(validator).validateForSave(createDto);
             verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
+            verify(beneficiaryAccessService).checkCanAccess(houseUnit);
             verify(houseUnitValidator).validateAssignmentForBeneficiary(houseUnit);
             verify(beneficiaryMapper).toEntity(createDto, houseUnit);
             verify(beneficiaryRepository).save(entityFromMapper);
@@ -181,6 +186,7 @@ class BeneficiaryServiceImplTest {
             BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(BENEFICIARY_PUBLIC_ID, updateDto);
 
             assertEquals(expectedDto, result);
+            verify(beneficiaryAccessService).checkCanAccess(existing);
             verify(validator).validateForUpdate(existing, updateDto);
             verify(beneficiaryMapper).updateEntity(existing, updateDto);
             verify(beneficiaryMapper).toDetailsDTO(existing);
@@ -213,80 +219,6 @@ class BeneficiaryServiceImplTest {
             verify(beneficiaryMapper, never()).toDetailsDTO(any());
             verify(beneficiaryRepository, never()).save(any());
         }
-
-        @Test
-        void shouldChangeHouseUnit_whenDifferentHouseUnitProvided() {
-            UUID newHouseUnitPublicId = UUID.randomUUID();
-            HouseUnit newHouseUnit = defaultHouseUnit()
-                    .id(2L)
-                    .publicId(newHouseUnitPublicId)
-                    .code("UNIT_B")
-                    .displayName("Στέγη Β")
-                    .address("Κάποια 5, Αθήνα")
-                    .build();
-
-            Beneficiary existing = defaultBeneficiary().build();
-            BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
-                    .houseUnitPublicId(newHouseUnitPublicId)
-                    .build();
-            BeneficiaryDetailsDTO expectedDto = defaultDetailsDTO()
-                    .houseUnitCode("UNIT_B")
-                    .houseUnitDisplayName("Στέγη Β")
-                    .build();
-
-            when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
-                    .thenReturn(Optional.of(existing));
-            when(houseUnitRepository.findByPublicId(newHouseUnitPublicId))
-                    .thenReturn(Optional.of(newHouseUnit));
-            when(beneficiaryMapper.toDetailsDTO(existing))
-                    .thenReturn(expectedDto);
-
-            BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(BENEFICIARY_PUBLIC_ID, updateDto);
-
-            assertEquals(expectedDto, result);
-            assertSame(newHouseUnit, existing.getHouseUnit());
-
-            verify(validator).validateForUpdate(existing, updateDto);
-            verify(houseUnitRepository).findByPublicId(newHouseUnitPublicId);
-            verify(houseUnitValidator).validateAssignmentForBeneficiary(newHouseUnit);
-            verify(beneficiaryMapper).updateEntity(existing, updateDto);
-            verify(beneficiaryMapper).toDetailsDTO(existing);
-            verify(beneficiaryRepository, never()).save(any());
-        }
-
-        @Test
-        void shouldSkipHouseUnitChange_whenSameHouseUnitProvided() {
-            HouseUnit sameHouseUnit = defaultHouseUnit().build();
-
-            Beneficiary existing = defaultBeneficiary().build();
-            HouseUnit originalHouseUnit = existing.getHouseUnit();
-
-            BeneficiaryUpdateDTO updateDto = BeneficiaryUpdateDTO.builder()
-                    .houseUnitPublicId(HOUSE_UNIT_PUBLIC_ID)
-                    .build();
-            BeneficiaryDetailsDTO expectedDto = defaultDetailsDTO().build();
-
-            when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
-                    .thenReturn(Optional.of(existing));
-            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
-                    .thenReturn(Optional.of(sameHouseUnit));
-            when(beneficiaryMapper.toDetailsDTO(existing))
-                    .thenReturn(expectedDto);
-
-            BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(BENEFICIARY_PUBLIC_ID, updateDto);
-
-            assertEquals(expectedDto, result);
-            assertSame(originalHouseUnit, existing.getHouseUnit());
-
-            verify(validator).validateForUpdate(existing, updateDto);
-            verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
-            verifyNoInteractions(houseUnitValidator);
-            verify(beneficiaryMapper).updateEntity(existing, updateDto);
-            verify(beneficiaryMapper).toDetailsDTO(existing);
-            verify(beneficiaryRepository, never()).save(any());
-        }
-
-
     }
 
     @Nested
@@ -326,6 +258,9 @@ class BeneficiaryServiceImplTest {
 
             assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
             assertEquals(expectedDto, result);
+
+            verify(beneficiaryRepository).findByPublicId(BENEFICIARY_PUBLIC_ID);
+            verify(beneficiaryAccessService).checkCanAccess(existing);
             verify(validator).validateForDischarge(existing);
             verify(beneficiaryRepository).save(existing);
             verify(beneficiaryMapper).toDetailsDTO(existing);
@@ -383,6 +318,75 @@ class BeneficiaryServiceImplTest {
                     eq(pageable)
             );
             verify(beneficiaryMapper).toListDTO(beneficiary);
+        }
+    }
+
+    @Nested
+    class ChangeHouseUnitTests {
+
+        @Test
+        void shouldChangeHouseUnit_whenDifferentHouseUnitProvided() {
+            UUID newHouseUnitPublicId = UUID.randomUUID();
+
+            HouseUnit newHouseUnit = defaultHouseUnit()
+                    .id(2L)
+                    .publicId(newHouseUnitPublicId)
+                    .code("UNIT_B")
+                    .displayName("Στέγη Β")
+                    .address("Κάποια 5, Αθήνα")
+                    .build();
+
+            Beneficiary existing = defaultBeneficiary().build();
+
+            BeneficiaryListDTO expectedDto = defaultListDTO()
+                    .houseUnit("UNIT_B")
+                    .build();
+
+            when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
+                    .thenReturn(Optional.of(existing));
+            when(houseUnitRepository.findByPublicId(newHouseUnitPublicId))
+                    .thenReturn(Optional.of(newHouseUnit));
+            when(beneficiaryMapper.toListDTO(existing))
+                    .thenReturn(expectedDto);
+
+            BeneficiaryListDTO result =
+                    beneficiaryService.changeHouseUnit(BENEFICIARY_PUBLIC_ID, newHouseUnitPublicId);
+
+            assertEquals(expectedDto, result);
+            assertSame(newHouseUnit, existing.getHouseUnit());
+
+            verify(beneficiaryAccessService).checkCanAccess(existing);
+            verify(beneficiaryAccessService).checkCanAccess(newHouseUnit);
+            verify(houseUnitValidator).validateAssignmentForBeneficiary(newHouseUnit);
+            verify(beneficiaryMapper).toListDTO(existing);
+        }
+
+        @Test
+        void shouldSkipHouseUnitChange_whenSameHouseUnitProvided() {
+            HouseUnit sameHouseUnit = defaultHouseUnit().build();
+
+            Beneficiary existing = defaultBeneficiary().build();
+            HouseUnit originalHouseUnit = existing.getHouseUnit();
+
+            BeneficiaryListDTO expectedDto = defaultListDTO().build();
+
+            when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
+                    .thenReturn(Optional.of(existing));
+            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
+                    .thenReturn(Optional.of(sameHouseUnit));
+            when(beneficiaryMapper.toListDTO(existing))
+                    .thenReturn(expectedDto);
+
+            BeneficiaryListDTO result =
+                    beneficiaryService.changeHouseUnit(BENEFICIARY_PUBLIC_ID, HOUSE_UNIT_PUBLIC_ID);
+
+            assertEquals(expectedDto, result);
+            assertSame(originalHouseUnit, existing.getHouseUnit());
+
+            verify(beneficiaryAccessService).checkCanAccess(existing);
+            verify(beneficiaryAccessService).checkCanAccess(sameHouseUnit);
+            verifyNoInteractions(houseUnitValidator);
+            verify(beneficiaryMapper).toListDTO(existing);
         }
     }
 
