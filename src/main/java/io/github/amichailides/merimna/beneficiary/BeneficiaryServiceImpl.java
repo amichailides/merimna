@@ -75,8 +75,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
         beneficiaryAccessService.checkCanAccess(beneficiary);
 
-        beneficiaryValidator.validateForDischarge(beneficiary); // business rules
-        beneficiary.discharge(); // state check
+        beneficiaryValidator.validateForDischarge(beneficiary);
+        beneficiary.discharge();
 
         return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
     }
@@ -88,19 +88,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         // Currently null = no update
 
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
+
         beneficiaryAccessService.checkCanAccess(beneficiary);
-
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
-
-        if (dto.houseUnitPublicId() != null) {
-            HouseUnit targetHouseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
-                    .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
-
-            if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
-                houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
-                beneficiary.changeHouseUnit(targetHouseUnit);
-            }
-        }
 
         beneficiaryMapper.updateEntity(beneficiary, dto);
 

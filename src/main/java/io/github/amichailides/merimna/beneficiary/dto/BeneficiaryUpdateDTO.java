@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Builder
 public record BeneficiaryUpdateDTO(
@@ -29,9 +28,6 @@ public record BeneficiaryUpdateDTO(
         @Schema(description = "Updated date of birth", example = "1965-04-23")
         @ValidDateOfBirth(groups = SecondOrder.class)
         LocalDate dateOfBirth,
-
-        @Schema(description = "Updated house unit assignment", example = "550e8400-e29b-41d4-a716-446655440000")
-        UUID houseUnitPublicId,
 
         @Schema(description = "Updated permanent address. Only provided fields will be changed.")
         @Valid
