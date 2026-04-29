@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.beneficiary;
 
+import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
@@ -53,7 +54,7 @@ class BeneficiaryServiceImplTest {
     private HouseUnitValidator houseUnitValidator;
 
     @Mock
-    private BeneficiaryAccessService beneficiaryAccessService;
+    private HouseUnitAccessService houseUnitAccessService;
 
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
@@ -89,7 +90,7 @@ class BeneficiaryServiceImplTest {
 
             assertEquals(expectedDto, result);
             verify(beneficiaryRepository).findWithDetailsByPublicId(BENEFICIARY_PUBLIC_ID);
-            verify(beneficiaryAccessService).checkCanAccess(beneficiary);
+            verify(houseUnitAccessService).ensureCanAccess(beneficiary);
             verify(beneficiaryMapper).toDetailsDTO(beneficiary);
         }
     }
@@ -141,7 +142,7 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
             verify(validator).validateForSave(createDto);
             verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
-            verify(beneficiaryAccessService).checkCanAccess(houseUnit);
+            verify(houseUnitAccessService).ensureCanAccess(houseUnit);
             verify(houseUnitValidator).validateAssignmentForBeneficiary(houseUnit);
             verify(beneficiaryMapper).toEntity(createDto, houseUnit);
             verify(beneficiaryRepository).save(entityFromMapper);
@@ -186,7 +187,7 @@ class BeneficiaryServiceImplTest {
             BeneficiaryDetailsDTO result = beneficiaryService.updateBeneficiary(BENEFICIARY_PUBLIC_ID, updateDto);
 
             assertEquals(expectedDto, result);
-            verify(beneficiaryAccessService).checkCanAccess(existing);
+            verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(validator).validateForUpdate(existing, updateDto);
             verify(beneficiaryMapper).updateEntity(existing, updateDto);
             verify(beneficiaryMapper).toDetailsDTO(existing);
@@ -260,7 +261,7 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
 
             verify(beneficiaryRepository).findByPublicId(BENEFICIARY_PUBLIC_ID);
-            verify(beneficiaryAccessService).checkCanAccess(existing);
+            verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(validator).validateForDischarge(existing);
             verify(beneficiaryRepository).save(existing);
             verify(beneficiaryMapper).toDetailsDTO(existing);
@@ -355,8 +356,8 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
             assertSame(newHouseUnit, existing.getHouseUnit());
 
-            verify(beneficiaryAccessService).checkCanAccess(existing);
-            verify(beneficiaryAccessService).checkCanAccess(newHouseUnit);
+            verify(houseUnitAccessService).ensureCanAccess(existing);
+            verify(houseUnitAccessService).ensureCanAccess(newHouseUnit);
             verify(houseUnitValidator).validateAssignmentForBeneficiary(newHouseUnit);
             verify(beneficiaryMapper).toListDTO(existing);
         }
@@ -383,8 +384,8 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
             assertSame(originalHouseUnit, existing.getHouseUnit());
 
-            verify(beneficiaryAccessService).checkCanAccess(existing);
-            verify(beneficiaryAccessService).checkCanAccess(sameHouseUnit);
+            verify(houseUnitAccessService).ensureCanAccess(existing);
+            verify(houseUnitAccessService).ensureCanAccess(sameHouseUnit);
             verifyNoInteractions(houseUnitValidator);
             verify(beneficiaryMapper).toListDTO(existing);
         }

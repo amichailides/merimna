@@ -1,9 +1,8 @@
-package io.github.amichailides.merimna.beneficiary;
+package io.github.amichailides.merimna.access;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
-import io.github.amichailides.merimna.placement.EmployeeHouseUnitScopeService;
 import io.github.amichailides.merimna.security.CurrentUserProvider;
 import io.github.amichailides.merimna.domain.Role;
 import lombok.RequiredArgsConstructor;
@@ -15,24 +14,24 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class BeneficiaryAccessService {
+public class HouseUnitAccessService {
 
     private final CurrentUserProvider currentUserProvider;
     private final EmployeeHouseUnitScopeService scopeService;
 
-    public void checkCanAccess(Beneficiary beneficiary) {
-        checkCanAccess(beneficiary.getHouseUnit());
+    public void ensureCanAccess(Beneficiary beneficiary) {
+        ensureCanAccess(beneficiary.getHouseUnit());
     }
 
-    public void checkCanAccess(HouseUnit houseUnit) {
+    public void ensureCanAccess(HouseUnit houseUnit) {
         if (isUnrestricted()) {
             return;
         }
 
         Employee employee = currentUserProvider.getCurrentEmployee();
 
-        if (!scopeService.hasActiveAccessTo(employee, houseUnit)) {
-            throw new AccessDeniedException("No access to this beneficiary");
+        if (!scopeService.canAccess(employee, houseUnit)) {
+            throw new AccessDeniedException("No access to this house unit");
         }
     }
 

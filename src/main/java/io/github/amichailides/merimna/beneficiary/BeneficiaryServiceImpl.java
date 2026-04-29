@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.beneficiary;
 
 
+import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -34,7 +35,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryValidator beneficiaryValidator;
     private final HouseUnitRepository houseUnitRepository;
     private final HouseUnitValidator houseUnitValidator;
-    private final BeneficiaryAccessService beneficiaryAccessService;
+    private final HouseUnitAccessService houseUnitAccessService;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +49,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary beneficiary = beneficiaryRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
 
-        beneficiaryAccessService.checkCanAccess(beneficiary);
+        houseUnitAccessService.ensureCanAccess(beneficiary);
 
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
@@ -61,7 +62,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         HouseUnit houseUnit = houseUnitRepository.findByPublicId(dto.houseUnitPublicId())
                 .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
-        beneficiaryAccessService.checkCanAccess(houseUnit);
+        houseUnitAccessService.ensureCanAccess(houseUnit);
         houseUnitValidator.validateAssignmentForBeneficiary(houseUnit);
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
@@ -73,7 +74,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public BeneficiaryDetailsDTO discharge(UUID publicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
-        beneficiaryAccessService.checkCanAccess(beneficiary);
+        houseUnitAccessService.ensureCanAccess(beneficiary);
 
         beneficiaryValidator.validateForDischarge(beneficiary);
         beneficiary.discharge();
@@ -89,7 +90,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
 
-        beneficiaryAccessService.checkCanAccess(beneficiary);
+        houseUnitAccessService.ensureCanAccess(beneficiary);
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
         beneficiaryMapper.updateEntity(beneficiary, dto);
@@ -110,7 +111,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Specification<Beneficiary> spec = (root, query, cb) -> cb.conjunction();
 
         Optional<Set<HouseUnit>> houseUnitScope =
-                beneficiaryAccessService.resolveHouseUnitScope();
+                houseUnitAccessService.resolveHouseUnitScope();
 
         if (houseUnitScope.isPresent()) {
             Set<HouseUnit> accessibleHouseUnits = houseUnitScope.get();
@@ -149,14 +150,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public BeneficiaryListDTO changeHouseUnit(UUID beneficiaryPublicId, UUID houseUnitPublicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
-        beneficiaryAccessService.checkCanAccess(beneficiary);
+        houseUnitAccessService.ensureCanAccess(beneficiary);
 
         HouseUnit targetHouseUnit  = houseUnitRepository.findByPublicId(houseUnitPublicId)
                 .orElseThrow(() -> new HouseUnitNotFoundException(houseUnitPublicId));
 
         // TODO(#26): Revisit beneficiary house-unit transfer policy.
         // Current V1 policy requires access to both source and target house units
-        beneficiaryAccessService.checkCanAccess(targetHouseUnit);
+        houseUnitAccessService.ensureCanAccess(targetHouseUnit);
 
         if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
             houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
