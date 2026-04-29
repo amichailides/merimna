@@ -31,6 +31,7 @@ public enum ErrorCode {
     TOKEN_INVALID("TOKEN_INVALID", HttpStatus.UNAUTHORIZED, "error.security.tokenInvalid"),
     INVALID_CREDENTIALS("INVALID_CREDENTIALS", HttpStatus.UNAUTHORIZED, "error.security.invalidCredentials"),
     AUTHENTICATION_FAILED("AUTHENTICATION_FAILED", HttpStatus.UNAUTHORIZED, "error.security.authenticationFailed"),
+    INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", HttpStatus.UNAUTHORIZED, "error.security.refreshTokenInvalid"),
 
     // =========================================================================
     // Beneficiary

@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.security.auth;
 
+import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.jwt.JwtService;
 import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
@@ -15,14 +16,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -31,11 +35,12 @@ public class AuthService {
                     )
             );
 
+            User user = (User) Objects.requireNonNull(authentication.getPrincipal());
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String token = jwtService.generateToken(userDetails);
+            String accessToken  = jwtService.generateToken(user);
+            String refreshToken = refreshTokenService.createRefreshToken(user, userAgent, ipAddress);
 
-            return new AuthResponse(token);
+            return new AuthResponse(accessToken, refreshToken);
 
         } catch (BadCredentialsException | UsernameNotFoundException ex) {
             throw new InvalidCredentialsException();
@@ -46,5 +51,12 @@ public class AuthService {
         } catch (AuthenticationException ex) {
             throw new AuthenticationFailedException();
         }
+    }
+
+    public AuthResponse refresh(String rawRefreshToken) {
+        User user = refreshTokenService.validateAndGetUser(rawRefreshToken);
+        String accessToken = jwtService.generateToken(user);
+
+        return new AuthResponse(accessToken, rawRefreshToken);
     }
 }
