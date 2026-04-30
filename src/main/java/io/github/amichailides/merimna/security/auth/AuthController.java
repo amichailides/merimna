@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
 import io.github.amichailides.merimna.security.auth.dto.RefreshRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
-            @RequestBody LoginRequest request,
+            @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
 
         String userAgent = httpRequest.getHeader("User-Agent");
@@ -30,7 +31,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+    public ResponseEntity<AuthResponse> refresh(
+            @Valid @RequestBody RefreshRequest request) {
 
         return ResponseEntity.ok(authService.refresh(request.refreshToken()));
     }
