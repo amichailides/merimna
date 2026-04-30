@@ -4,15 +4,18 @@ import io.github.amichailides.merimna.assignment.exception.AssignmentBeforeHireD
 import io.github.amichailides.merimna.assignment.exception.AssignmentOverlapNotAllowedException;
 import io.github.amichailides.merimna.assignment.exception.DuplicateActiveAssignmentForHouseException;
 import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Component
+@RequiredArgsConstructor
 public class EmployeeAssignmentPolicy {
+
+    private final EmployeeAssignmentRepository employeeAssignmentRepository;
 
     public void validateForCreate(
             Employee employee,
@@ -27,7 +30,7 @@ public class EmployeeAssignmentPolicy {
                 && hasOverlappingAssignment(employee, startDate, endDate)) {
             throw new AssignmentOverlapNotAllowedException();
         }
-        if (!validateNoActiveAssignmentForSameHouse(employee, houseUnit)) {
+        if (hasActiveAssignmentForSameHouse(employee, houseUnit)) {
             throw new DuplicateActiveAssignmentForHouseException();
         }
 
@@ -38,25 +41,21 @@ public class EmployeeAssignmentPolicy {
         return employee.getPosition().isRequiresExclusivePlacement();
     }
 
-    // TODO(#25): Refactor to repository-based existence query.
-    // This is an existence check and should not rely on loading employee assignments in memory.
     private boolean hasOverlappingAssignment(
             Employee employee,
             LocalDate startDate,
             LocalDate endDate
     ) {
-        return employee.getAssignments().stream()
-                .filter(EmployeeAssignment::isActive)
-                .anyMatch(a -> a.overlapsWith(startDate, endDate));
+        LocalDate effectiveEndDate = endDate != null ? endDate : LocalDate.MAX;
+        return employeeAssignmentRepository.existsOverlappingAssignment(
+                employee, EmployeeAssignmentStatus.ACTIVE, startDate, effectiveEndDate
+        );
     }
 
-    // TODO(#25): Refactor to repository-based existence query.
-    // This is an existence check and should not rely on loading employee assignments in memory.
-    private boolean validateNoActiveAssignmentForSameHouse(Employee employee, HouseUnit houseUnit) {
-        return employee.getAssignments().stream()
-                .noneMatch(a -> a.getStatus() == EmployeeAssignmentStatus.ACTIVE &&
-                        houseUnit.getCode().equals(a.getHouseUnit().getCode())
-                );
+    private boolean hasActiveAssignmentForSameHouse(Employee employee, HouseUnit houseUnit) {
+        return employeeAssignmentRepository.existsByEmployeeAndHouseUnitAndStatus(
+                employee, houseUnit, EmployeeAssignmentStatus.ACTIVE
+        );
     }
 
     private void validateStartDateNotBeforeHireDate (LocalDate hireDate,LocalDate startDate) {

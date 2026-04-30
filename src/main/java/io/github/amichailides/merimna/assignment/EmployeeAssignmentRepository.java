@@ -1,12 +1,16 @@
 package io.github.amichailides.merimna.assignment;
 
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
+import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,5 +55,26 @@ public interface EmployeeAssignmentRepository
                                                                                    EmployeeAssignmentStatus status);
 
     Optional<EmployeeAssignment> findByIdAndEmployeePublicId(Long id, UUID employeePublicId);
+
+    @Query("""
+    SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+    FROM EmployeeAssignment a
+    WHERE a.employee = :employee
+      AND a.status = :status
+      AND a.startDate <= :effectiveEndDate
+      AND (a.endDate IS NULL OR a.endDate >= :startDate)
+    """)
+    boolean existsOverlappingAssignment(
+            @Param("employee") Employee employee,
+            @Param("status") EmployeeAssignmentStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("effectiveEndDate") LocalDate effectiveEndDate
+    );
+
+    boolean existsByEmployeeAndHouseUnitAndStatus(
+            Employee employee,
+            HouseUnit houseUnit,
+            EmployeeAssignmentStatus status
+    );
 }
 
