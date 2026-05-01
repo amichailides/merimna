@@ -15,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -58,5 +59,13 @@ public class AuthService {
         String accessToken = jwtService.generateToken(user);
 
         return new AuthResponse(accessToken, rawRefreshToken);
+    }
+
+    @Transactional
+    public void logout(String rawToken) {
+        if (rawToken == null || rawToken.isBlank()) {
+            return;
+        }
+        refreshTokenService.revokeToken(rawToken);
     }
 }

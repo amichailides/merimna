@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.domain.RefreshToken;
+import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.RefreshTokenGenerator;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
@@ -23,6 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
 
+    @Override
     @Transactional
     public String createRefreshToken(User user, String userAgent, String ipAddress) {
         String rawToken = refreshTokenGenerator.generate();
@@ -45,6 +47,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         return rawToken;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public User validateAndGetUser(String rawRefreshToken) {
         String tokenHash = hash(rawRefreshToken);
@@ -65,7 +68,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         return user;
     }
 
+    @Override
+    @Transactional
+    public void revokeToken(String rawToken) {
+        String tokenHash = hash(rawToken);
 
+        refreshTokenRepository.findByTokenHash(tokenHash)
+                .ifPresent(token -> token.revoke(RevocationReason.LOGOUT));
+    }
+
+    @Override
+    @Transactional
+    public void revokeAllUserTokens(User user, RevocationReason reason) {
+        refreshTokenRepository.revokeAllActiveTokensForUser(
+                user.getId(),
+                reason,
+                Instant.now()
+        );
+    }
 
     private String hash(String rawToken) {
         try {

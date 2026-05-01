@@ -43,7 +43,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(securityProperties.getRefreshToken().isSecureCookie())
                 .sameSite("Strict")
-                .path("/auth")
+                .path("/api/auth")
                 .maxAge(securityProperties.getRefreshToken().getExpiration())
                 .build();
 
@@ -63,6 +63,21 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(refreshToken));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestBody(required = false) RefreshRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse) {
+
+        String refreshToken = extractRefreshToken(httpRequest,
+                request != null ? request.refreshToken() : null);
+
+        authService.logout(refreshToken);
+        clearRefreshTokenCookie(httpResponse);
+
+        return ResponseEntity.noContent().build();
+    }
+
     private String extractRefreshToken(HttpServletRequest request, String bodyToken) {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
@@ -72,5 +87,17 @@ public class AuthController {
                     .orElse(bodyToken);
         }
         return bodyToken;
+    }
+
+    private void clearRefreshTokenCookie(HttpServletResponse httpResponse) {
+        ResponseCookie clearedCookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .secure(securityProperties.getRefreshToken().isSecureCookie())
+                .sameSite("Strict")
+                .path("/api/auth")
+                .maxAge(Duration.ZERO)
+                .build();
+
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, clearedCookie.toString());
     }
 }
