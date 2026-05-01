@@ -21,6 +21,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+// TODO #28: Record audit event for login success/failure and logout.
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -58,6 +59,7 @@ public class AuthService {
         User user = refreshTokenService.validateAndGetUser(rawRefreshToken);
         String accessToken = jwtService.generateToken(user);
 
+        // TODO #29: Rotate refresh token on refresh and detect reuse of replaced tokens.
         return new AuthResponse(accessToken, rawRefreshToken);
     }
 

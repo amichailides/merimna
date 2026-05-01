@@ -79,6 +79,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         beneficiaryValidator.validateForDischarge(beneficiary);
         beneficiary.discharge();
 
+        // TODO #28: Record audit event with actor and beneficiary publicId after discharge.
         return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
     }
 
