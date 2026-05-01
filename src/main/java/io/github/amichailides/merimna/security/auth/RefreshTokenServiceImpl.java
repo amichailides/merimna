@@ -30,7 +30,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         String tokenHash = hash(rawToken);
 
         Instant now = Instant.now();
-        Instant expiresAt = now.plusMillis(securityProperties.getRefreshToken().getExpiration());
+        Instant expiresAt = now.plus(securityProperties.getRefreshToken().getExpiration());
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .tokenHash(tokenHash)

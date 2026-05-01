@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = "security")
 @Component
 @EnableConfigurationProperties
@@ -20,12 +22,13 @@ public class SecurityProperties {
     @Getter
     @Setter
     public static class AccessToken {
-        private long expiration;
+        private Duration expiration;
     }
 
     @Getter
     @Setter
     public static class RefreshToken {
-        private long expiration;
+        private Duration expiration;
+        private boolean secureCookie = true; // για application-dev
     }
 }
