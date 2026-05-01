@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
 import io.github.amichailides.merimna.security.auth.dto.RefreshRequest;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/auth")
@@ -52,8 +54,23 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(
-            @Valid @RequestBody RefreshRequest request) {
+            @RequestBody(required = false) RefreshRequest request,
+            HttpServletRequest httpRequest) {
 
-        return ResponseEntity.ok(authService.refresh(request.refreshToken()));
+        String refreshToken = extractRefreshToken(httpRequest,
+                request != null ? request.refreshToken() : null);
+
+        return ResponseEntity.ok(authService.refresh(refreshToken));
+    }
+
+    private String extractRefreshToken(HttpServletRequest request, String bodyToken) {
+        if (request.getCookies() != null) {
+            return Arrays.stream(request.getCookies())
+                    .filter(c -> "refresh_token".equals(c.getName()))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(bodyToken);
+        }
+        return bodyToken;
     }
 }
