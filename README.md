@@ -11,8 +11,10 @@ It focuses on data consistency, explicit domain rules, and controlled state tran
 
 ## Key Features & Architecture
 
-- **Authentication & authorization:** Stateless JWT authentication with a custom filter chain, method-level access
-  control via Spring Security annotations, and permissions derived from each employee's position.
+- **Authentication & authorization:** Stateless JWT authentication with short-lived access tokens and database-backed
+  opaque refresh tokens, transported via HttpOnly cookies for browser clients or request body fallback for non-browser
+  clients, with method-level access control via Spring Security annotations and permissions derived from each employee's
+  position.
 
 - **Placement-aware access control:** Active placements temporarily extend an employee's access to beneficiary records
   of another house unit, with scope resolved at runtime from active assignments and placements.
@@ -66,6 +68,8 @@ assignments, placements, and user administration.
 ### Authentication
 
 - **POST** `/api/auth/login`
+- **POST** `/api/auth/refresh`
+- **POST** `/api/auth/logout`
 
 ### Beneficiaries
 
@@ -161,3 +165,4 @@ After starting the application locally, API documentation is available at:
   flows.
 - **Audit logging:** Introduce structured audit logs for sensitive data changes and access-related events.
 - **Staff dashboard:** Build a frontend application focused on common staff workflows in supported living environments.
+- **Refresh token hardening:** Add refresh token rotation and bulk revocation on password changes or user deactivation.
