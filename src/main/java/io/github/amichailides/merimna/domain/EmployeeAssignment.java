@@ -76,16 +76,6 @@ public class EmployeeAssignment {
         }
     }
 
-    public boolean overlapsWith(LocalDate otherStartDate, LocalDate otherEndDate) {
-        LocalDate thisStart = this.startDate;
-        LocalDate thisEnd = this.endDate != null ? this.endDate : LocalDate.MAX;
-
-        LocalDate otherEnd = otherEndDate != null ? otherEndDate : LocalDate.MAX;
-
-        return !thisStart.isAfter(otherEnd)
-                && !otherStartDate.isAfter(thisEnd);
-    }
-
     public boolean isActive() {
         return this.status == EmployeeAssignmentStatus.ACTIVE;
     }
