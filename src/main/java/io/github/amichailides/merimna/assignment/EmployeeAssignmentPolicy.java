@@ -46,7 +46,7 @@ public class EmployeeAssignmentPolicy {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        LocalDate effectiveEndDate = endDate != null ? endDate : LocalDate.MAX;
+        LocalDate effectiveEndDate = endDate != null ? endDate : LocalDate.of(9999, 12, 31);
         return employeeAssignmentRepository.existsOverlappingAssignment(
                 employee, EmployeeAssignmentStatus.ACTIVE, startDate, effectiveEndDate
         );
