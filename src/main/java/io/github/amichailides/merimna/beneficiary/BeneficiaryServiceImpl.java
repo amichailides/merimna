@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.beneficiary;
 
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
+import io.github.amichailides.merimna.audit.event.BeneficiaryCreatedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -10,6 +11,7 @@ import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,6 +38,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final HouseUnitRepository houseUnitRepository;
     private final HouseUnitValidator houseUnitValidator;
     private final HouseUnitAccessService houseUnitAccessService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -67,6 +70,11 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
+
+        eventPublisher.publishEvent(
+                new BeneficiaryCreatedEvent(savedBeneficiary.getPublicId())
+        );
+
         return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
     }
 

@@ -47,10 +47,17 @@ VALUES (1, '550e8400-e29b-41d4-a716-446655440000', 1, 'Νίκος', 'Παπαδ�
 -- Seed: Admin User
 -- =========================================================================
 
-INSERT INTO users (id, username, email, password, role, active, employee_id)
-VALUES (1, 'admin', 'admin@merimna.local',
-        '$argon2id$v=19$m=16384,t=2,p=1$7sGaCOZuHysZQGju3DJblg$iKDo2gle6oXpzOd4P/O+jR+i688dYqTj82o3pcI4kww',
-        'ADMIN', true, 1)
+INSERT INTO users (id, public_id, username, email, password, role, active, employee_id)
+VALUES (
+           1,
+           '11111111-1111-1111-1111-111111111111',
+           'admin',
+           'admin@merimna.local',
+           '$argon2id$v=19$m=16384,t=2,p=1$7sGaCOZuHysZQGju3DJblg$iKDo2gle6oXpzOd4P/O+jR+i688dYqTj82o3pcI4kww',
+           'ADMIN',
+           true,
+           1
+       )
     ON CONFLICT (id) DO NOTHING;
 
 SELECT setval('employees_id_seq', (SELECT MAX(id) FROM employees));
