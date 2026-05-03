@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryListDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryCreateDTO;
 import io.github.amichailides.merimna.beneficiary.dto.BeneficiaryUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.legalrepresentative.LegalRepresentativeMapper;
 import io.github.amichailides.merimna.medication.MedicationMapper;
@@ -29,6 +30,8 @@ public class BeneficiaryMapper {
     public BeneficiaryDetailsDTO toDetailsDTO(Beneficiary entity) {
         if (entity == null) return null;
 
+        Employee dischargedBy = entity.getDischargedBy();
+
         return BeneficiaryDetailsDTO.builder()
                 .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
@@ -36,6 +39,16 @@ public class BeneficiaryMapper {
                 .amka(entity.getAmka())
                 .dateOfBirth(entity.getDateOfBirth())
                 .isActive(entity.isActive())
+                .dischargeDate(entity.getDischargeDate())
+                .dischargeReason(entity.getDischargeReason())
+                .dischargedByEmployeePublicId(
+                        dischargedBy != null ? dischargedBy.getPublicId() : null
+                )
+                .dischargedByEmployeeFullName(
+                        dischargedBy != null
+                                ? dischargedBy.getFirstName() + " " + dischargedBy.getLastName()
+                                : null
+                )
                 .houseUnitCode(entity.getHouseUnit().getCode())
                 .houseUnitDisplayName(entity.getHouseUnit().getDisplayName())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))

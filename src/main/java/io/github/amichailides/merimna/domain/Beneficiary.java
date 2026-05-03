@@ -59,6 +59,16 @@ public class Beneficiary {
     @JoinColumn(name = "house_unit_id", nullable = false)
     private HouseUnit houseUnit;
 
+    @Column(name = "discharge_date")
+    private LocalDate dischargeDate;
+
+    @Column(name = "discharge_reason", length = 500)
+    private String dischargeReason;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discharged_by_employee_id")
+    private Employee dischargedBy;
+
     /*
      * Υποχρεωτική διεύθυνση. Αν ο ωφελούμενος δεν έχει οικογενειακή διεύθυνση,
      * καταχωρείται η διεύθυνση της δομής φιλοξενίας.
@@ -159,14 +169,19 @@ public class Beneficiary {
         legalRepresentative.getBeneficiaries().remove(this);
     }
 
-    public void discharge() {
-
+    public void discharge(
+            LocalDate dischargeDate,
+            String dischargeReason,
+            Employee dischargedBy
+    ) {
         if (!isActive) {
             throw new BeneficiaryAlreadyInactiveException();
         }
 
         this.isActive = false;
-        // TODO: add exitReason, exitDate, approvedBy fields when DischargeDTO is implemented
+        this.dischargeDate = Objects.requireNonNull(dischargeDate, "dischargeDate must not be null");
+        this.dischargeReason = Objects.requireNonNull(dischargeReason, "dischargeReason must not be null");
+        this.dischargedBy = Objects.requireNonNull(dischargedBy, "dischargedBy must not be null");
     }
 
     public void changeHouseUnit(@NonNull HouseUnit newHouseUnit) {

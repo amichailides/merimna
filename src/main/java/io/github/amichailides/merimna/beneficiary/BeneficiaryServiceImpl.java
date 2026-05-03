@@ -7,10 +7,12 @@ import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
+import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
+import io.github.amichailides.merimna.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -40,6 +42,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final HouseUnitValidator houseUnitValidator;
     private final HouseUnitAccessService houseUnitAccessService;
     private final ApplicationEventPublisher eventPublisher;
+    private final CurrentUserProvider currentUserProvider;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -81,20 +85,24 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Override
     @Transactional
-    public BeneficiaryDetailsDTO discharge(UUID publicId) {
+    public BeneficiaryDetailsDTO discharge(UUID publicId, DischargeRequestDTO dto) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(publicId);
         houseUnitAccessService.ensureCanAccess(beneficiary);
 
         beneficiaryValidator.validateForDischarge(beneficiary);
-        beneficiary.discharge();
+        Employee dischargedBy = currentUserProvider.getCurrentEmployee();
 
-        Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
-
-        eventPublisher.publishEvent(
-                new BeneficiaryDischargedEvent(savedBeneficiary.getPublicId())
+        beneficiary.discharge(
+                dto.dischargeDate(),
+                dto.dischargeReason(),
+                dischargedBy
         );
 
-        return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
+        eventPublisher.publishEvent(
+                BeneficiaryDischargedEvent.from(beneficiary)
+        );
+
+        return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
     @Override

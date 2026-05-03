@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
@@ -10,6 +11,7 @@ import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.exception.DomainValidationException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitValidator;
+import io.github.amichailides.merimna.security.CurrentUserProvider;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -55,6 +58,12 @@ class BeneficiaryServiceImplTest {
 
     @Mock
     private HouseUnitAccessService houseUnitAccessService;
+
+    @Mock
+    private CurrentUserProvider currentUserProvider;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
@@ -227,12 +236,14 @@ class BeneficiaryServiceImplTest {
 
         @Test
         void shouldThrowNotFound_whenPublicIdMissing() {
+            DischargeRequestDTO dto = dischargeRequest();
+
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.empty());
 
             assertThrows(
                     BeneficiaryNotFoundByPublicIdException.class,
-                    () -> beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID)
+                    () -> beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID, dto)
             );
 
             verify(beneficiaryRepository).findByPublicId(BENEFICIARY_PUBLIC_ID);
@@ -243,6 +254,10 @@ class BeneficiaryServiceImplTest {
 
         @Test
         void shouldSetInactiveAndReturnDto_whenBeneficiaryIsActive() {
+            DischargeRequestDTO dto = dischargeRequest();
+
+            Employee dischargedBy = defaultEmployee().build();
+
             Beneficiary existing = defaultBeneficiary().build();
             BeneficiaryDetailsDTO expectedDto = defaultDetailsDTO()
                     .isActive(false)
@@ -250,25 +265,31 @@ class BeneficiaryServiceImplTest {
 
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.of(existing));
-            when(beneficiaryRepository.save(existing))
-                    .thenReturn(existing);
+            when(currentUserProvider.getCurrentEmployee())
+                    .thenReturn(dischargedBy);
             when(beneficiaryMapper.toDetailsDTO(existing))
                     .thenReturn(expectedDto);
 
-            BeneficiaryDetailsDTO result = beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID);
+            BeneficiaryDetailsDTO result = beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID, dto);
 
             assertFalse(existing.isActive(), "Beneficiary should be inactive after discharge");
+            assertEquals(dto.dischargeDate(), existing.getDischargeDate());
+            assertEquals(dto.dischargeReason(), existing.getDischargeReason());
+            assertEquals(dischargedBy, existing.getDischargedBy());
             assertEquals(expectedDto, result);
 
             verify(beneficiaryRepository).findByPublicId(BENEFICIARY_PUBLIC_ID);
             verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(validator).validateForDischarge(existing);
-            verify(beneficiaryRepository).save(existing);
+            verify(currentUserProvider).getCurrentEmployee();
+            verify(eventPublisher).publishEvent(BeneficiaryDischargedEvent.from(existing));
             verify(beneficiaryMapper).toDetailsDTO(existing);
         }
 
         @Test
         void shouldThrowExceptionAndNotPersist_whenAlreadyInactive() {
+            DischargeRequestDTO dto = dischargeRequest();
+
             Beneficiary inactiveBeneficiary = defaultBeneficiary()
                     .isActive(false)
                     .build();
@@ -276,14 +297,20 @@ class BeneficiaryServiceImplTest {
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.of(inactiveBeneficiary));
 
+            doThrow(new BeneficiaryAlreadyInactiveException())
+                    .when(validator).validateForDischarge(inactiveBeneficiary);
+
             assertThrows(
                     BeneficiaryAlreadyInactiveException.class,
-                    () -> beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID)
+                    () -> beneficiaryService.discharge(BENEFICIARY_PUBLIC_ID, dto)
             );
 
             verify(beneficiaryRepository).findByPublicId(BENEFICIARY_PUBLIC_ID);
+            verify(houseUnitAccessService).ensureCanAccess(inactiveBeneficiary);
             verify(validator).validateForDischarge(inactiveBeneficiary);
-            verify(beneficiaryRepository, never()).save(any());
+
+            verify(currentUserProvider, never()).getCurrentEmployee();
+            verify(eventPublisher, never()).publishEvent(any());
             verify(beneficiaryMapper, never()).toDetailsDTO(any());
         }
     }
@@ -476,5 +503,17 @@ class BeneficiaryServiceImplTest {
                 .code("UNIT_A")
                 .displayName("Στέγη Α")
                 .address("Ελπίδας 10, Μαρούσι");
+    }
+
+    private static DischargeRequestDTO dischargeRequest() {
+        return new DischargeRequestDTO(
+                LocalDate.now(),
+                "Completion of supported living services."
+        );
+    }
+
+    private static Employee.EmployeeBuilder defaultEmployee() {
+        return Employee.builder()
+                .publicId(UUID.randomUUID());
     }
 }

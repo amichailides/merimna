@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-
 @Builder
 public record BeneficiaryDetailsDTO(
         @Schema(
@@ -34,6 +33,34 @@ public record BeneficiaryDetailsDTO(
 
         @Schema(description = "Whether the beneficiary is currently active", example = "true")
         Boolean isActive,
+
+        @Schema(
+                description = "Official discharge date. Null while the beneficiary is active.",
+                example = "2026-05-03",
+                nullable = true
+        )
+        LocalDate dischargeDate,
+
+        @Schema(
+                description = "Reason for discharging the beneficiary. Null while the beneficiary is active.",
+                example = "Completion of supported living services.",
+                nullable = true
+        )
+        String dischargeReason,
+
+        @Schema(
+                description = "Public identifier of the employee who recorded the discharge. Null while the beneficiary is active.",
+                example = "7b9f0e0a-6e1a-4e8c-9f61-5f5f2f7f5d3a",
+                nullable = true
+        )
+        UUID dischargedByEmployeePublicId,
+
+        @Schema(
+                description = "Full name of the employee who recorded the discharge. Null while the beneficiary is active.",
+                example = "John Doe",
+                nullable = true
+        )
+        String dischargedByEmployeeFullName,
 
         @Schema(description = "Assigned house unit code", example = "UNIT_A")
         String houseUnitCode,

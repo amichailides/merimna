@@ -14,7 +14,7 @@ public interface BeneficiaryService {
 
     BeneficiaryDetailsDTO findByPublicId(UUID publicId);
 
-    BeneficiaryDetailsDTO discharge(UUID publicId);
+    BeneficiaryDetailsDTO discharge(UUID publicId, DischargeRequestDTO dto);
 
     public BeneficiaryDetailsDTO updateBeneficiary(UUID publicId, BeneficiaryUpdateDTO dto);
 
