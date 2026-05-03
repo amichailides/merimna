@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.event.BeneficiaryCreatedEvent;
+import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -87,8 +88,13 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         beneficiaryValidator.validateForDischarge(beneficiary);
         beneficiary.discharge();
 
-        // TODO #28: Record audit event with actor and beneficiary publicId after discharge.
-        return beneficiaryMapper.toDetailsDTO(beneficiaryRepository.save(beneficiary));
+        Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
+
+        eventPublisher.publishEvent(
+                new BeneficiaryDischargedEvent(savedBeneficiary.getPublicId())
+        );
+
+        return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
     }
 
     @Override
