@@ -79,7 +79,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
 
         eventPublisher.publishEvent(
-                new BeneficiaryCreatedEvent(savedBeneficiary.getPublicId())
+                BeneficiaryCreatedEvent.from(savedBeneficiary)
         );
 
         return beneficiaryMapper.toDetailsDTO(savedBeneficiary);
