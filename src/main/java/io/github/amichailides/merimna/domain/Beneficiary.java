@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryInactiveE
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -184,20 +185,27 @@ public class Beneficiary {
         this.dischargedBy = Objects.requireNonNull(dischargedBy, "dischargedBy must not be null");
     }
 
-    public void changeHouseUnit(@NonNull HouseUnit newHouseUnit) {
+    public void changeHouseUnit(HouseUnit targetHouseUnit) {
+        ensureActive();
 
-        // Objects.equals => no NullPointerException
-        if (Objects.equals(this.houseUnit, newHouseUnit)){
-            throw new BeneficiaryAlreadyInHouseUnitException(this.getId(), houseUnit.getCode());
+        if (isAssignedTo(targetHouseUnit)) {
+            throw new BeneficiaryAlreadyInHouseUnitException(
+                    this.getId(),
+                    targetHouseUnit.getCode()
+            );
         }
 
-        this.houseUnit = newHouseUnit;
+        this.houseUnit = targetHouseUnit;
     }
 
     public void ensureActive() {
         if (!this.isActive) {
             throw new BeneficiaryInactiveException(id);
         }
+    }
+
+    public boolean isAssignedTo(HouseUnit houseUnit) {
+        return this.houseUnit.getPublicId().equals(houseUnit.getPublicId());
     }
 
     public boolean isNotAssignedTo(HouseUnit houseUnit) {

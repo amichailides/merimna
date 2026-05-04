@@ -176,29 +176,23 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
         houseUnitAccessService.ensureCanAccess(beneficiary);
 
-        HouseUnit targetHouseUnit  = houseUnitRepository.findByPublicId(houseUnitPublicId)
+        HouseUnit targetHouseUnit = houseUnitRepository.findByPublicId(houseUnitPublicId)
                 .orElseThrow(() -> new HouseUnitNotFoundException(houseUnitPublicId));
 
         // TODO(#26): Revisit beneficiary house-unit transfer policy.
         // Current V1 policy requires access to both source and target house units
         houseUnitAccessService.ensureCanAccess(targetHouseUnit);
 
-        // Idempotent V1 behavior: no audit event is recorded if the beneficiary
-        // is already assigned to the requested house unit.
-        if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
-            HouseUnit sourceHouseUnit = beneficiary.getHouseUnit();
+        HouseUnit sourceHouseUnit = beneficiary.getHouseUnit();
 
-            houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
-            beneficiary.changeHouseUnit(targetHouseUnit);
+        houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
+        beneficiary.changeHouseUnit(targetHouseUnit);
 
-            eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.of(
-                    beneficiary,
-                    sourceHouseUnit,
-                    targetHouseUnit)
-            );
-        }
-
-
+        eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.of(
+                beneficiary,
+                sourceHouseUnit,
+                targetHouseUnit)
+        );
 
         return beneficiaryMapper.toListDTO(beneficiary);
     }
