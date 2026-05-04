@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
@@ -10,6 +11,7 @@ import io.github.amichailides.merimna.employeePosition.EmployeePositionRepositor
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeValidator employeeValidator;
     private final EmployeePositionRepository employeePositionRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -38,6 +41,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeePosition position = resolvePositionOrThrow(code);
         Employee employee = employeeMapper.toEntity(dto, position);
         Employee saved = employeeRepository.save(employee);
+
+        eventPublisher.publishEvent(EmployeeCreatedEvent.from(saved));
 
         return employeeMapper.toDetailsDTO(saved);
     }
