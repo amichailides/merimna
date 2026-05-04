@@ -4,6 +4,7 @@ package io.github.amichailides.merimna.beneficiary;
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.event.BeneficiaryCreatedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
+import io.github.amichailides.merimna.audit.event.BeneficiaryHouseUnitChangedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -182,10 +183,22 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         // Current V1 policy requires access to both source and target house units
         houseUnitAccessService.ensureCanAccess(targetHouseUnit);
 
+        // Idempotent V1 behavior: no audit event is recorded if the beneficiary
+        // is already assigned to the requested house unit.
         if (beneficiary.isNotAssignedTo(targetHouseUnit)) {
+            HouseUnit sourceHouseUnit = beneficiary.getHouseUnit();
+
             houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
             beneficiary.changeHouseUnit(targetHouseUnit);
+
+            eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.of(
+                    beneficiary,
+                    sourceHouseUnit,
+                    targetHouseUnit)
+            );
         }
+
+
 
         return beneficiaryMapper.toListDTO(beneficiary);
     }
