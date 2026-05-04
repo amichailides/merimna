@@ -191,7 +191,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
         beneficiary.changeHouseUnit(targetHouseUnit);
 
-        eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.of(
+        eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.from(
                 beneficiary,
                 sourceHouseUnit,
                 targetHouseUnit)

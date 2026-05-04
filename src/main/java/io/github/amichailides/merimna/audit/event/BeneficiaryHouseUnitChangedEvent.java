@@ -14,7 +14,7 @@ public record BeneficiaryHouseUnitChangedEvent(
         UUID toHouseUnitPublicId
 ) implements AuditableEvent {
 
-    public static BeneficiaryHouseUnitChangedEvent of(
+    public static BeneficiaryHouseUnitChangedEvent from(
             Beneficiary beneficiary,
             HouseUnit fromHouseUnit,
             HouseUnit toHouseUnit) {
