@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeTerminatedEvent;
+import io.github.amichailides.merimna.audit.event.EmployeeUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
@@ -111,6 +112,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeValidator.validateForUpdate(employee, dto);
 
         employeeMapper.updateEntity(employee, dto, position);
+
+        eventPublisher.publishEvent(
+                EmployeeUpdatedEvent.from(employee)
+        );
 
         return employeeMapper.toDetailsDTO(employee);
     }
