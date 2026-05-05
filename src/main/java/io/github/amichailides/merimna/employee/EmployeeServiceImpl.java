@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
+import io.github.amichailides.merimna.audit.event.EmployeeTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
@@ -56,6 +57,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeValidator.validateForTerminate(employee, terminationDate);
         employee.terminate(terminationDate);
         deactivateLinkedUser(publicId);
+
+        eventPublisher.publishEvent(
+                EmployeeTerminatedEvent.from(employee, terminationDate));
 
         return employeeMapper.toDetailsDTO(employee);
     }
