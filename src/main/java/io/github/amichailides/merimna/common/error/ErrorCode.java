@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.common.error;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
 @RequiredArgsConstructor
@@ -51,7 +52,6 @@ public enum ErrorCode {
     LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID("LEGAL_REPRESENTATIVE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.legalRepresentative.notFoundById"),
     LEGAL_REPRESENTATIVE_NOT_ASSIGNED("LEGAL_REPRESENTATIVE_NOT_ASSIGNED", HttpStatus.CONFLICT, "error.legalRepresentative.beneficiary.notAssigned"),
 
-
     // =========================================================================
     // Allergy
     // =========================================================================
@@ -78,6 +78,7 @@ public enum ErrorCode {
     EMPLOYEE_ALREADY_ACTIVE("EMPLOYEE_ALREADY_ACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyActive"),
     EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE("EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.employee.termination.beforeHireDate"),
     EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS("EMPLOYEE_HAS_ACTIVE_ASSIGNMENTS", HttpStatus.CONFLICT, "error.employee.hasActiveAssignments"),
+    EMPLOYEE_TERMINATION_DATE_IN_FUTURE("EMPLOYEE_TERMINATION_DATE_IN_FUTURE", HttpStatus.UNPROCESSABLE_CONTENT, "error.employee.terminationDateInFuture"),
 
     // =========================================================================
     // House Unit
@@ -107,7 +108,6 @@ public enum ErrorCode {
     EMPLOYEE_POSITION_NOT_FOUND_BY_CODE("EMPLOYEE_POSITION_NOT_FOUND_BY_CODE", HttpStatus.NOT_FOUND, "error.employeePosition.notFoundByCode"),
     EMPLOYEE_POSITION_ALREADY_EXISTS("EMPLOYEE_POSITION_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employeePosition.alreadyExists"),
     INVALID_EMPLOYEE_POSITION_CODE("INVALID_EMPLOYEE_POSITION_CODE", HttpStatus.BAD_REQUEST, "error.employeePosition.invalidCode"),
-
 
     // =========================================================================
     // User

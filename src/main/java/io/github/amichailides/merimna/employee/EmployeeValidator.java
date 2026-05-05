@@ -41,5 +41,8 @@ public class EmployeeValidator {
                     terminationDate
             );
         }
+        if (terminationDate.isAfter(LocalDate.now())) {
+            throw new EmployeeTerminationDateInFutureException();
+        }
     }
 }
