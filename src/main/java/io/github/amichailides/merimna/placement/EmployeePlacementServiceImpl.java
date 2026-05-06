@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.placement;
 
 import io.github.amichailides.merimna.audit.event.EmployeePlacementCreatedEvent;
+import io.github.amichailides.merimna.audit.event.EmployeePlacementTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -82,6 +83,10 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
                 .orElseThrow(EmployeePlacementNotFoundException::new);
 
         placement.close(dto.endDate());
+
+        eventPublisher.publishEvent(
+                EmployeePlacementTerminatedEvent.from(placement)
+        );
     }
 
     @Transactional(readOnly = true)
