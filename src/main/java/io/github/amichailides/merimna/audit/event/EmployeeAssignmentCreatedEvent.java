@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.audit.AuditableEvent;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,11 +38,11 @@ public record EmployeeAssignmentCreatedEvent(
 
     @Override
     public Map<String, Object> metadata() {
-        Map<String, Object> metadata = new LinkedHashMap<>();
-        metadata.put("employeePublicId", employeePublicId);
-        metadata.put("houseUnitPublicId", houseUnitPublicId);
-        metadata.put("startDate", startDate.toString());
-        metadata.put("endDate", endDate != null ? endDate.toString() : null);
-        return metadata;
+        return EmployeeAssignmentEventMetadata.of(
+                employeePublicId,
+                houseUnitPublicId,
+                startDate,
+                endDate
+        );
     }
 }
