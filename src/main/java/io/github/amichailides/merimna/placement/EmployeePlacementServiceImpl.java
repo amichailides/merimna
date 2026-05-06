@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.placement;
 
+import io.github.amichailides.merimna.audit.event.EmployeePlacementCreatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -13,6 +14,7 @@ import io.github.amichailides.merimna.placement.dto.EmployeePlacementSearchDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementTerminateDTO;
 import io.github.amichailides.merimna.placement.exception.EmployeePlacementNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +35,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
     private final EmployeePlacementRepository placementRepository;
     private final EmployeePlacementMapper placementMapper;
     private final EmployeePlacementValidator placementValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public EmployeePlacementReadOnlyDTO create(EmployeePlacementCreateDTO dto) {
@@ -54,6 +57,11 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
 
         employee.addPlacement(placement);
         EmployeePlacement saved = placementRepository.save(placement);
+
+        eventPublisher.publishEvent(
+                EmployeePlacementCreatedEvent.from(saved)
+        );
+
         return placementMapper.toReadOnlyDTO(saved);
     }
 
