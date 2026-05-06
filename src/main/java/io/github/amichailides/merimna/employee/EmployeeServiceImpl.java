@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
+import io.github.amichailides.merimna.audit.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeTerminatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
@@ -73,6 +74,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         // TODO(#14): Add business validation for reactivation
         employee.reactivate();
         reactivateLinkedUser(publicId);
+
+        eventPublisher.publishEvent(
+                EmployeeReactivatedEvent.from(employee)
+        );
 
         return employeeMapper.toDetailsDTO(employee);
     }
