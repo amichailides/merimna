@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
+import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -12,6 +13,7 @@ import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPubli
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     private final EmployeeAssignmentRepository assignmentRepository;
     private final EmployeeAssignmentMapper assignmentMapper;
     private final EmployeeAssignmentPolicy assignmentPolicy;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -52,6 +55,11 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         );
 
         assignmentRepository.saveAndFlush(assignment);
+
+        eventPublisher.publishEvent(
+                EmployeeAssignmentCreatedEvent.from(assignment)
+        );
+
         return assignmentMapper.toDTO(assignment);
     }
 
