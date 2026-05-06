@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
 import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCreatedEvent;
+import io.github.amichailides.merimna.audit.event.EmployeeAssignmentTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -80,6 +81,10 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         }
 
         assignment.terminate(LocalDate.now());
+
+        eventPublisher.publishEvent(
+                EmployeeAssignmentTerminatedEvent.from(assignment)
+        );
     }
 
     @Override
