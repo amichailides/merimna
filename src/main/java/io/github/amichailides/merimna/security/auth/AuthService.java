@@ -1,7 +1,9 @@
 package io.github.amichailides.merimna.security.auth;
 
+import io.github.amichailides.merimna.audit.event.AuthLoginFailedEvent;
 import io.github.amichailides.merimna.audit.event.AuthLoginSuccessEvent;
 import io.github.amichailides.merimna.domain.User;
+import io.github.amichailides.merimna.exception.BaseDomainException;
 import io.github.amichailides.merimna.security.jwt.JwtService;
 import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
@@ -52,13 +54,13 @@ public class AuthService {
             return new AuthResponse(accessToken, refreshToken);
 
         } catch (BadCredentialsException | UsernameNotFoundException ex) {
-            throw new InvalidCredentialsException();
+            throw auditAndReturnLoginFailure(request.email(), new InvalidCredentialsException());
         } catch (LockedException ex) {
-            throw new AccountLockedException();
+            throw auditAndReturnLoginFailure(request.email(), new AccountLockedException());
         } catch (DisabledException ex) {
-            throw new AccountDisabledException();
+            throw auditAndReturnLoginFailure(request.email(), new AccountDisabledException());
         } catch (AuthenticationException ex) {
-            throw new AuthenticationFailedException();
+            throw auditAndReturnLoginFailure(request.email(), new AuthenticationFailedException());
         }
     }
 
@@ -76,5 +78,13 @@ public class AuthService {
             return;
         }
         refreshTokenService.revokeToken(rawToken);
+    }
+
+    private RuntimeException auditAndReturnLoginFailure(String attemptedEmail, BaseDomainException ex) {
+        eventPublisher.publishEvent(
+                AuthLoginFailedEvent.from(attemptedEmail, ex)
+        );
+
+        return ex;
     }
 }

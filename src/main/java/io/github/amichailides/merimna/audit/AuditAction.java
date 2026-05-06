@@ -21,6 +21,7 @@ public enum AuditAction {
     PLACEMENT_TERMINATED(AuditEntityType.EMPLOYEE_PLACEMENT),
 
     AUTH_LOGIN_SUCCESS(AuditEntityType.AUTH),
+    AUTH_LOGIN_FAILED(AuditEntityType.AUTH),
     AUTH_LOGOUT(AuditEntityType.AUTH);
 
     private final AuditEntityType entityType;

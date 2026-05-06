@@ -335,7 +335,7 @@ create table audit_logs
     public_id          uuid         not null unique,
     action             varchar(100) not null,
     entity_type        varchar(100) not null,
-    entity_public_id   uuid         not null,
+    entity_public_id   uuid,
     user_public_id     uuid,
     employee_public_id uuid,
     ip_address         varchar(100),

@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.audit;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -33,7 +34,8 @@ public class AuditLog {
     @Column(name = "entity_type", nullable = false, length = 100, updatable = false)
     private AuditEntityType entityType;
 
-    @Column(name = "entity_public_id", nullable = false, updatable = false)
+    @Nullable
+    @Column(name = "entity_public_id", updatable = false)
     private UUID entityPublicId;
 
     @Column(name = "user_public_id", updatable = false)
