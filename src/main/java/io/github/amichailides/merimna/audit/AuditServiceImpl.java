@@ -16,8 +16,12 @@ public class AuditServiceImpl implements AuditService{
                 .action(event.action())
                 .entityType(event.action().getEntityType())
                 .entityPublicId(event.entityPublicId())
-                .userPublicId(auditContext.getUserPublicId())
-                .employeePublicId(auditContext.getEmployeePublicId())
+                .userPublicId(event.actorUserPublicId() != null
+                        ? event.actorUserPublicId()
+                        : auditContext.getUserPublicId())
+                .employeePublicId(event.actorEmployeePublicId() != null
+                        ? event.actorEmployeePublicId()
+                        : auditContext.getEmployeePublicId())
                 .ipAddress(auditContext.getIpAddress())
                 .userAgent(auditContext.getUserAgent())
                 .outcome(AuditOutcome.SUCCESS)

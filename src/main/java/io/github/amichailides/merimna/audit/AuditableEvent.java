@@ -9,6 +9,14 @@ public interface AuditableEvent {
 
     UUID entityPublicId();
 
+    default UUID actorUserPublicId() {
+        return null;
+    }
+
+    default UUID actorEmployeePublicId() {
+        return null;
+    }
+
     default Map<String, Object> metadata() {
         return Map.of();
     }

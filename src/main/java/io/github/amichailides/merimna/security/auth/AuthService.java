@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.security.auth;
 
+import io.github.amichailides.merimna.audit.event.AuthLoginSuccessEvent;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.jwt.JwtService;
 import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
@@ -9,6 +10,7 @@ import io.github.amichailides.merimna.security.exception.AccountLockedException;
 import io.github.amichailides.merimna.security.exception.AuthenticationFailedException;
 import io.github.amichailides.merimna.security.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,6 +29,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
         try {
@@ -41,6 +44,10 @@ public class AuthService {
 
             String accessToken  = jwtService.generateToken(user);
             String refreshToken = refreshTokenService.createRefreshToken(user, userAgent, ipAddress);
+
+            eventPublisher.publishEvent(
+                    AuthLoginSuccessEvent.from(user)
+            );
 
             return new AuthResponse(accessToken, refreshToken);
 
