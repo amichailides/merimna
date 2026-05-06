@@ -57,15 +57,15 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional
-    public void cancel(UUID employeePublicId, Long assignmentId) {
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
+    public void cancel(UUID employeePublicId, UUID assignmentPublicId) {
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentPublicId, employeePublicId);
         assignment.cancel(LocalDate.now());
     }
 
     @Override
     @Transactional
-    public void terminate(UUID employeePublicId, Long assignmentId) {
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
+    public void terminate(UUID employeePublicId, UUID assignmentPublicId) {
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentPublicId, employeePublicId);
 
         if (!assignment.getEmployee().isActive()) {
             throw new AssignmentTerminationNotAllowedException();
@@ -88,9 +88,9 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
 
     @Override
     @Transactional(readOnly = true)
-    public EmployeeAssignmentReadOnlyDTO getAssignmentById(UUID employeePublicId, Long assignmentId) {
+    public EmployeeAssignmentReadOnlyDTO getAssignmentByPublicId(UUID employeePublicId, UUID assignmentPublicId) {
         getEmployeeOrThrow(employeePublicId);
-        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentId, employeePublicId);
+        EmployeeAssignment assignment = getAssignmentOrThrow(assignmentPublicId, employeePublicId);
 
         return assignmentMapper.toDTO(assignment);
     }
@@ -100,8 +100,8 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
                 .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(employeePublicId));
     }
 
-    private EmployeeAssignment getAssignmentOrThrow(Long assignmentId, UUID employeePublicId) {
-        return assignmentRepository.findByIdAndEmployeePublicId(assignmentId, employeePublicId)
-                .orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
+    private EmployeeAssignment getAssignmentOrThrow(UUID assignmentPublicId, UUID employeePublicId) {
+        return assignmentRepository.findByPublicIdAndEmployee_PublicId(assignmentPublicId, employeePublicId)
+                .orElseThrow(() -> new AssignmentNotFoundException(assignmentPublicId));
     }
 }

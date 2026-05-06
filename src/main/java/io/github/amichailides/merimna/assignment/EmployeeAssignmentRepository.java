@@ -22,8 +22,8 @@ public interface EmployeeAssignmentRepository
 
     @Query("""
         select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
-            a.id,
-            hu.code,
+            a.publicId,
+            hu.publicId,
             hu.displayName,
             a.status,
             a.startDate,
@@ -38,8 +38,8 @@ public interface EmployeeAssignmentRepository
 
     @Query("""
     select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
-        a.id,
-        hu.code,
+        a.publicId,
+        hu.publicId,
         hu.displayName,
         a.status,
         a.startDate,
@@ -54,7 +54,10 @@ public interface EmployeeAssignmentRepository
     List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicIdAndStatus(UUID employeePublicId,
                                                                                    EmployeeAssignmentStatus status);
 
-    Optional<EmployeeAssignment> findByIdAndEmployeePublicId(Long id, UUID employeePublicId);
+    Optional<EmployeeAssignment> findByPublicIdAndEmployee_PublicId(
+            UUID assignmentPublicId,
+            UUID employeePublicId
+    );
 
     @Query("""
     SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END

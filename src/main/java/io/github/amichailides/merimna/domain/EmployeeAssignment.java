@@ -4,11 +4,13 @@ import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import io.github.amichailides.merimna.assignment.exception.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "employee_assignments")
@@ -19,6 +21,9 @@ public class EmployeeAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "public_id", nullable = false, updatable = false, unique = true)
+    private UUID publicId = UUID.randomUUID();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)

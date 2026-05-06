@@ -10,8 +10,8 @@ public class EmployeeAssignmentMapper {
         if (entity == null) return null;
 
         return EmployeeAssignmentReadOnlyDTO.builder()
-                .id(entity.getId())
-                .houseUnitCode(entity.getHouseUnit().getCode())
+                .publicId(entity.getPublicId())
+                .houseUnitPublicId(entity.getHouseUnit().getPublicId())
                 .houseUnitDisplayName(entity.getHouseUnit().getDisplayName())
                 .status(entity.getStatus())
                 .startDate(entity.getStartDate())

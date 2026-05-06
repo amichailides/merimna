@@ -4,11 +4,12 @@ import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Builder
 public record EmployeeAssignmentReadOnlyDTO(
-        Long id,
-        String houseUnitCode,
+        UUID publicId,
+        UUID houseUnitPublicId,
         String houseUnitDisplayName,
         EmployeeAssignmentStatus status,
         LocalDate startDate,

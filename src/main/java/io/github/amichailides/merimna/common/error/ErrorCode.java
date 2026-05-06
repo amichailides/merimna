@@ -72,8 +72,7 @@ public enum ErrorCode {
     // =========================================================================
     EMPLOYEE_ALREADY_TERMINATED("EMPLOYEE_ALREADY_TERMINATED", HttpStatus.CONFLICT, "error.employee.alreadyTerminated"),
     SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same"),
-    EMPLOYEE_NOT_FOUND_BY_ID("EMPLOYEE_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.employee.notFoundById"),
-    EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
+    EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID("EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.employee.notFoundByPublicId"),    EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
     EMPLOYEE_EMAIL_ALREADY_EXISTS("EMPLOYEE_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employee.email.alreadyExists"),
     EMPLOYEE_ALREADY_ACTIVE("EMPLOYEE_ALREADY_ACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyActive"),
     EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE("EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.employee.termination.beforeHireDate"),

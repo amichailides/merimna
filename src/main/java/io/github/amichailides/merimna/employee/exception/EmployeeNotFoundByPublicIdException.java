@@ -8,6 +8,6 @@ import java.util.UUID;
 public class EmployeeNotFoundByPublicIdException extends BaseDomainException {
     public EmployeeNotFoundByPublicIdException(UUID publicId)
     {
-        super(ErrorCode.EMPLOYEE_NOT_FOUND_BY_ID, publicId);
+        super(ErrorCode.EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID, publicId);
     }
 }

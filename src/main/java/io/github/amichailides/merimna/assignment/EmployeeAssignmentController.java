@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,33 +34,33 @@ public class EmployeeAssignmentController {
 
         EmployeeAssignmentReadOnlyDTO assignment = assignmentService.create(UUID.fromString(employeePublicId), dto);
         return ResponseEntity
-                .created(buildLocationUri(assignment.id()))
+                .created(buildLocationUri(assignment.publicId()))
                 .body(assignment);
     }
 
     @PreAuthorize("hasAuthority('ASSIGNMENT_CANCEL')")
-    @PostMapping("/{assignmentId}/cancel")
+    @PostMapping("/{assignmentPublicId}/cancel")
     public ResponseEntity<Void> cancelAssignment(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
             @ValidUUID(message = "{employee.publicId.invalid}")
             String employeePublicId,
-            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
+            @PathVariable UUID assignmentPublicId
     ) {
-        assignmentService.cancel(UUID.fromString(employeePublicId), assignmentId);
+        assignmentService.cancel(UUID.fromString(employeePublicId), assignmentPublicId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('ASSIGNMENT_TERMINATE')")
-    @PostMapping("/{assignmentId}/terminate")
+    @PostMapping("/{assignmentPublicId}/terminate")
     public ResponseEntity<Void> terminateAssignment(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
             @ValidUUID(message = "{employee.publicId.invalid}")
             String employeePublicId,
-            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId
+            @PathVariable UUID assignmentPublicId
     ) {
-        assignmentService.terminate(UUID.fromString(employeePublicId), assignmentId);
+        assignmentService.terminate(UUID.fromString(employeePublicId), assignmentPublicId);
         return ResponseEntity.noContent().build();
     }
 
@@ -78,22 +77,22 @@ public class EmployeeAssignmentController {
     }
 
     @PreAuthorize("hasAuthority('ASSIGNMENT_READ')")
-    @GetMapping("/{assignmentId}")
-    public EmployeeAssignmentReadOnlyDTO getAssignmentById(
+    @GetMapping("/{assignmentPublicId}")
+    public EmployeeAssignmentReadOnlyDTO getAssignmentByPublicId(
             @PathVariable
             @NotBlank(message = "{employee.publicId.required}")
             @ValidUUID(message = "{employee.publicId.invalid}")
             String employeePublicId,
-            @PathVariable @Positive(message = "{assignment.id.positive}") Long assignmentId) {
+            @PathVariable UUID assignmentPublicId) {
 
-        return assignmentService.getAssignmentById(UUID.fromString(employeePublicId), assignmentId);
+        return assignmentService.getAssignmentByPublicId(UUID.fromString(employeePublicId), assignmentPublicId);
     }
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(UUID assignmentPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{assignmentPublicId}")
+                .buildAndExpand(assignmentPublicId)
                 .toUri();
     }
 }

@@ -9,11 +9,11 @@ import java.util.UUID;
 public interface EmployeeAssignmentService {
     EmployeeAssignmentReadOnlyDTO create(UUID employeePublicId, EmployeeAssignmentCreateDTO dto);
 
-    void cancel(UUID employeePublicId, Long assignmentId);
+    void cancel(UUID employeePublicId, UUID assignmentPublicId);
 
     List<EmployeeAssignmentReadOnlyDTO> getAllAssignments(UUID employeePublicId, EmployeeAssignmentView view);
 
-    void terminate(UUID employeePublicId, Long assignmentId);
+    void terminate(UUID employeePublicId, UUID assignmentPublicId);
 
-    EmployeeAssignmentReadOnlyDTO getAssignmentById(UUID employeePublicId, Long assignmentId);
+    EmployeeAssignmentReadOnlyDTO getAssignmentByPublicId(UUID employeePublicId, UUID assignmentPublicId);
 }
