@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
+import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCancelledEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeAssignmentTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
@@ -69,6 +70,10 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
     public void cancel(UUID employeePublicId, UUID assignmentPublicId) {
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentPublicId, employeePublicId);
         assignment.cancel(LocalDate.now());
+
+        eventPublisher.publishEvent(
+                EmployeeAssignmentCancelledEvent.from(assignment)
+        );
     }
 
     @Override
