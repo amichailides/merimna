@@ -14,7 +14,7 @@ import java.util.Map;
  * Ενιαία δομή απόκρισης για όλα τα REST endpoints.
  *
  * <p>Καλύπτει τόσο επιτυχημένες αποκρίσεις (με {@code data})
- * όσο και σφάλματα (με {@code title}, {@code detail}, {@code validationErrors}).</p>
+ * όσο και σφάλματα (με {@code title}, {@code detail}, {@code context}, {@code validationErrors}).</p>
  *
  * @param <T> ο τύπος του {@code data} payload
  * @see ErrorCode
@@ -27,6 +27,7 @@ import java.util.Map;
         "title",
         "status",
         "detail",
+        "context",
         "validationErrors",
         "data",
         "path",
@@ -39,14 +40,13 @@ public class ApiResponse<T> {
     private String title;       // null σε success
     private Map<String, List<String>> validationErrors;  // null σε non-validation errors, το @JsonInclude το κρύβει
     private String detail;     // null σε success
-    private Map<String, Object> metadata;
+    private Map<String, Object> context;
     private String path;        // null σε success
     private String timestamp;
 
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode, int status, String error,
                                            String message, String path) {
-        // TODO(#22): Add structured error context (e.g. entity ids) to error responses instead of embedding in messages
         return ApiResponse.<T>builder()
                 .type(errorCode)
                 .status(status)
@@ -59,13 +59,13 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode, int status, String error,
                                            String message, String path,
-                                           Map<String, Object> metadata) {
+                                           Map<String, Object> context) {
         return ApiResponse.<T>builder()
                 .type(errorCode)
                 .status(status)
                 .title(error)
                 .detail(message)
-                .metadata(metadata)
+                .context(context)
                 .path(path)
                 .timestamp(formatTimestamp())
                 .build();
@@ -74,7 +74,6 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> validationError(ErrorCode errorCode, int status,
                                                      String error, String detail, Map<String, List<String>> errors,
                                                      String path) {
-        // TODO(#22): Add structured error context (e.g. entity ids) to error responses instead of embedding in messages
         return ApiResponse.<T>builder()
                 .type(errorCode)
                 .status(status)
