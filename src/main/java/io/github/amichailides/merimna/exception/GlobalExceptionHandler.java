@@ -50,7 +50,8 @@ public class GlobalExceptionHandler {
                         status.value(),
                         status.getReasonPhrase(),
                         detail,
-                        request.getRequestURI()
+                        request.getRequestURI(),
+                        ex.getContext().isEmpty() ? null : ex.getContext()
                 ));
     }
 
