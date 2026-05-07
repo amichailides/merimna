@@ -70,10 +70,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     @Override
     @Transactional
-    public void revokeToken(String rawToken) {
-        String tokenHash = hash(rawToken);
+    public void revokeToken(String rawRefreshToken) {
+        String refreshTokenHash = hash(rawRefreshToken);
 
-        refreshTokenRepository.findByTokenHash(tokenHash)
+        refreshTokenRepository.findByTokenHash(refreshTokenHash )
                 .ifPresent(token -> token.revoke(RevocationReason.LOGOUT));
     }
 

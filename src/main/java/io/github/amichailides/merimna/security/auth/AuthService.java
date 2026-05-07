@@ -1,7 +1,9 @@
 package io.github.amichailides.merimna.security.auth;
 
+import io.github.amichailides.merimna.audit.AuditContext;
 import io.github.amichailides.merimna.audit.event.AuthLoginFailedEvent;
 import io.github.amichailides.merimna.audit.event.AuthLoginSuccessEvent;
+import io.github.amichailides.merimna.audit.event.AuthLogoutEvent;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 import io.github.amichailides.merimna.security.jwt.JwtService;
@@ -16,7 +18,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final ApplicationEventPublisher eventPublisher;
+    private final AuditContext auditContext;
 
     public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
         try {
@@ -73,11 +75,14 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(String rawToken) {
-        if (rawToken == null || rawToken.isBlank()) {
+    public void logout(String rawRefreshToken) {
+        if (rawRefreshToken == null || rawRefreshToken.isBlank()) {
             return;
         }
-        refreshTokenService.revokeToken(rawToken);
+
+        refreshTokenService.revokeToken(rawRefreshToken);
+
+        eventPublisher.publishEvent(AuthLogoutEvent.from(auditContext));
     }
 
     private RuntimeException auditAndReturnLoginFailure(String attemptedEmail, BaseDomainException ex) {
