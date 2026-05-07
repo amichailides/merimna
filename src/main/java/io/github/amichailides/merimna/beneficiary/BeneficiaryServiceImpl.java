@@ -46,13 +46,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final ApplicationEventPublisher eventPublisher;
     private final CurrentUserProvider currentUserProvider;
 
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean existsByAmka(String amka) {
-        return beneficiaryRepository.existsByAmka(amka);
-    }
-
     @Override
     @Transactional(readOnly = true)
     public BeneficiaryDetailsDTO findByPublicId(UUID publicId) {

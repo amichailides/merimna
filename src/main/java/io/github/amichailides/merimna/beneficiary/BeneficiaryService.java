@@ -8,8 +8,6 @@ import java.util.UUID;
 
 public interface BeneficiaryService {
 
-    boolean existsByAmka(String amka);
-
     BeneficiaryDetailsDTO create(BeneficiaryCreateDTO dto);
 
     BeneficiaryDetailsDTO findByPublicId(UUID publicId);
