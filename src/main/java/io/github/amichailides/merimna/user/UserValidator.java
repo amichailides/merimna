@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.exception.ConflictValidationException;
 import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import io.github.amichailides.merimna.user.dto.UserUpdateDTO;
-import io.github.amichailides.merimna.user.exception.UserEmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,23 +24,36 @@ public class UserValidator {
         if (userRepository.existsByEmployeePublicId(employeePublicId)) {
             errors.put("employeeId", ErrorCode.EMPLOYEE_ALREADY_HAS_ACCOUNT.getMessageKey());
         }
+
         if (userRepository.existsByUsername(dto.username())) {
             errors.put("username", ErrorCode.USERNAME_ALREADY_EXISTS.getMessageKey());
         }
+
         if (userRepository.existsByEmail(dto.email())) {
             errors.put("email", ErrorCode.EMAIL_ALREADY_EXISTS.getMessageKey());
         }
 
-        if (!errors.isEmpty()) {
-            throw new ConflictValidationException(errors);
-        }
+        throwIfConflicts(errors);
     }
 
     public void validateForUpdate(Long id, UserUpdateDTO dto, User existing) {
-        if (dto.email() != null
-                && !dto.email().equals(existing.getEmail())
-                && userRepository.existsByEmailAndIdNot(dto.email(), id))
+        Map<String, String> errors = new LinkedHashMap<>();
 
-            throw new UserEmailAlreadyExistsException();
+        if (emailChanged(dto, existing)
+                && userRepository.existsByEmailAndIdNot(dto.email(), id)) {
+            errors.put("email", ErrorCode.EMAIL_ALREADY_EXISTS.getMessageKey());
+        }
+
+        throwIfConflicts(errors);
+    }
+
+    private boolean emailChanged(UserUpdateDTO dto, User existing) {
+        return dto.email() != null && !dto.email().equals(existing.getEmail());
+    }
+
+    private void throwIfConflicts(Map<String, String> errors) {
+        if (!errors.isEmpty()) {
+            throw new ConflictValidationException(errors);
+        }
     }
 }
