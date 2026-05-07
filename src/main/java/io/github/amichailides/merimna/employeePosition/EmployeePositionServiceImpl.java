@@ -1,17 +1,21 @@
 package io.github.amichailides.merimna.employeePosition;
 
+import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionCreateDTO;
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionReadOnlyDTO;
-import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionAlreadyExistsException;
+import io.github.amichailides.merimna.exception.ConflictValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
-public class EmployeePositionServiceImpl implements EmployeePositionService{
+public class EmployeePositionServiceImpl implements EmployeePositionService {
     private final EmployeePositionRepository positionRepository;
     private final EmployeePositionMapper positionMapper;
 
@@ -21,7 +25,9 @@ public class EmployeePositionServiceImpl implements EmployeePositionService{
         EmployeePositionCode code = EmployeePositionCode.of(dto.code());
 
         if (positionRepository.existsByCode(code)) {
-            throw new  EmployeePositionAlreadyExistsException(code.getValue());
+            Map<String, String> conflicts = new LinkedHashMap<>();
+            conflicts.put("code", ErrorCode.EMPLOYEE_POSITION_ALREADY_EXISTS.getMessageKey());
+            throw new ConflictValidationException(conflicts);
         }
 
         EmployeePosition position = positionMapper.toEntity(dto, code);
