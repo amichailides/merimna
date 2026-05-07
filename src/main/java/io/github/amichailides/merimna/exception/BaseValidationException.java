@@ -11,7 +11,7 @@ import java.util.Map;
  * Τα subclasses που έχουν simple Map<String, String> κάνουν convert στον constructor.
  */
 @Getter
-public abstract class BaseValidationException extends BaseDomainException {
+public abstract class BaseValidationException extends BaseApplicationException {
 
     private final Map<String, List<String>> validationErrors;
 

@@ -1,9 +1,9 @@
 package io.github.amichailides.merimna.employeePosition.exception;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.exception.BaseDomainException;
+import io.github.amichailides.merimna.exception.BaseApplicationException;
 
-public class EmployeePositionNotFoundByCodeException extends BaseDomainException {
+public class EmployeePositionNotFoundByCodeException extends BaseApplicationException {
     public EmployeePositionNotFoundByCodeException(String code) {
         super(ErrorCode.EMPLOYEE_POSITION_NOT_FOUND_BY_CODE, code);
     }

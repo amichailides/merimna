@@ -1,7 +1,6 @@
 package io.github.amichailides.merimna.employee.exception;
 
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
 public class SameEmployeePositionException extends BaseDomainException {

@@ -5,7 +5,7 @@ import io.github.amichailides.merimna.audit.event.AuthLoginFailedEvent;
 import io.github.amichailides.merimna.audit.event.AuthLoginSuccessEvent;
 import io.github.amichailides.merimna.audit.event.AuthLogoutEvent;
 import io.github.amichailides.merimna.domain.User;
-import io.github.amichailides.merimna.exception.BaseDomainException;
+import io.github.amichailides.merimna.exception.BaseApplicationException;
 import io.github.amichailides.merimna.security.jwt.JwtService;
 import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
@@ -85,7 +85,7 @@ public class AuthService {
         eventPublisher.publishEvent(AuthLogoutEvent.from(auditContext));
     }
 
-    private RuntimeException auditAndReturnLoginFailure(String attemptedEmail, BaseDomainException ex) {
+    private RuntimeException auditAndReturnLoginFailure(String attemptedEmail, BaseApplicationException ex) {
         eventPublisher.publishEvent(
                 AuthLoginFailedEvent.from(attemptedEmail, ex)
         );

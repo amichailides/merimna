@@ -3,7 +3,7 @@ package io.github.amichailides.merimna.audit.event;
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;
 import io.github.amichailides.merimna.common.error.ErrorCode;
-import io.github.amichailides.merimna.exception.BaseDomainException;
+import io.github.amichailides.merimna.exception.BaseApplicationException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public record AuthLoginFailedEvent(
         ErrorCode failureReason
 ) implements AuditableEvent {
 
-    public static AuthLoginFailedEvent  from(String attemptedEmail, BaseDomainException ex){
+    public static AuthLoginFailedEvent  from(String attemptedEmail, BaseApplicationException ex){
         return new AuthLoginFailedEvent(attemptedEmail, ex.getErrorCode());
     }
 
