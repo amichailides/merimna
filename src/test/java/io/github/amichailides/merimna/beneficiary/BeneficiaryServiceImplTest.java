@@ -297,7 +297,7 @@ class BeneficiaryServiceImplTest {
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.of(inactiveBeneficiary));
 
-            doThrow(new BeneficiaryAlreadyInactiveException())
+            doThrow(new BeneficiaryAlreadyInactiveException(inactiveBeneficiary.getPublicId()))
                     .when(validator).validateForDischarge(inactiveBeneficiary);
 
             assertThrows(

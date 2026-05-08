@@ -176,7 +176,7 @@ public class Beneficiary {
             Employee dischargedBy
     ) {
         if (!isActive) {
-            throw new BeneficiaryAlreadyInactiveException();
+            throw new BeneficiaryAlreadyInactiveException(publicId);
         }
 
         this.isActive = false;
@@ -190,8 +190,8 @@ public class Beneficiary {
 
         if (isAssignedTo(targetHouseUnit)) {
             throw new BeneficiaryAlreadyInHouseUnitException(
-                    this.getId(),
-                    targetHouseUnit.getCode()
+                    this.getPublicId(),
+                    targetHouseUnit.getPublicId()
             );
         }
 
@@ -200,7 +200,7 @@ public class Beneficiary {
 
     public void ensureActive() {
         if (!this.isActive) {
-            throw new BeneficiaryInactiveException(id);
+            throw new BeneficiaryInactiveException(publicId);
         }
     }
 

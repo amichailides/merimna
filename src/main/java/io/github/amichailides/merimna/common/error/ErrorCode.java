@@ -3,7 +3,6 @@ package io.github.amichailides.merimna.common.error;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 @Getter
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public enum ErrorCode {
     // =========================================================================
     // Beneficiary
     // =========================================================================
-    BENEFICIARY_NOT_FOUND_BY_ID("BENEFICIARY_NOT_FOUND_BY_ID", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundById"),
+    BENEFICIARY_NOT_FOUND_BY_PUBLIC_ID("BENEFICIARY_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundByPublicId"),
     BENEFICIARY_NOT_FOUND_BY_AMKA("BENEFICIARY_NOT_FOUND_BY_AMKA", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundByAmka"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.beneficiary.amkaAlreadyExists"),
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "error.beneficiary.amkaDateMismatch"),
