@@ -28,7 +28,7 @@ public class HouseUnitValidator {
         long count = beneficiaryRepository.countByHouseUnitAndIsActiveTrue(houseUnit);
 
         if (houseUnit.isFull(count)) {
-            throw new HouseUnitFullException(houseUnit.getCode(), count);
+            throw new HouseUnitFullException(houseUnit.getPublicId(), count);
         }
     }
 
@@ -63,7 +63,7 @@ public class HouseUnitValidator {
         long count = beneficiaryRepository.countByHouseUnitAndIsActiveTrue(existing);
 
         if (newMaxCapacity < count) {
-            throw new HouseUnitCapacityExceededException(existing.getCode(), count);
+            throw new HouseUnitCapacityExceededException(existing.getPublicId(), count);
         }
     }
 }
