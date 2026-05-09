@@ -33,7 +33,7 @@ public class EmployeePlacementValidator {
 
     private void validateDateRange(LocalDate start, LocalDate end) {
         if (end != null && end.isBefore(start)) {
-            throw new EmployeePlacementInvalidEndDate();
+            throw new EmployeePlacementInvalidEndDate(start, end);
         }
     }
 
@@ -53,7 +53,11 @@ public class EmployeePlacementValidator {
         );
 
         if (overlaps) {
-            throw new EmployeePlacementOverlapException();
+            throw new EmployeePlacementOverlapException(
+                    employee.getPublicId(),
+                    start,
+                    end
+            );
         }
     }
 }

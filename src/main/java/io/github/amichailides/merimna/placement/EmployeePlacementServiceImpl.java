@@ -72,7 +72,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
     @Transactional(readOnly = true)
     public EmployeePlacementReadOnlyDTO getByPublicId(UUID publicId) {
         EmployeePlacement placement = placementRepository.findByPublicId(publicId)
-                .orElseThrow(EmployeePlacementNotFoundException::new);
+                .orElseThrow(() -> new EmployeePlacementNotFoundException(publicId));
 
         return placementMapper.toReadOnlyDTO(placement);
     }
@@ -80,7 +80,7 @@ public class EmployeePlacementServiceImpl implements EmployeePlacementService{
     @Transactional
     public void terminate(UUID publicId, EmployeePlacementTerminateDTO dto){
         EmployeePlacement placement = placementRepository.findByPublicId(publicId)
-                .orElseThrow(EmployeePlacementNotFoundException::new);
+                .orElseThrow(() -> new EmployeePlacementNotFoundException(publicId));
 
         placement.close(dto.endDate());
 

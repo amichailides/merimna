@@ -53,7 +53,7 @@ public class EmployeePlacement {
         EmployeePlacement p = new EmployeePlacement();
         p.employee = Objects.requireNonNull(employee, "employee is required");
         p.houseUnit = Objects.requireNonNull(houseUnit, "houseUnit is required");
-        p.startDate = Objects.requireNonNull(start, "startDate is required");
+        p.startDate = start;
         p.endDate = end;
         p.reason = Objects.requireNonNull(reason, "reason is required");
 
@@ -64,11 +64,18 @@ public class EmployeePlacement {
         Objects.requireNonNull(end, "endDate is required");
 
         if (this.endDate != null && this.endDate.isBefore(LocalDate.now())) {
-            throw new EmployeePlacementAlreadyClosed();
+            throw new EmployeePlacementAlreadyClosed(
+                    this.publicId,
+                    this.endDate
+            );
         }
 
         if (end.isBefore(this.startDate)) {
-            throw new EmployeePlacementInvalidEndDate();
+            throw new EmployeePlacementInvalidEndDate(
+                    this.publicId,
+                    this.startDate,
+                    end
+            );
         }
 
         this.endDate = end;
@@ -82,12 +89,10 @@ public class EmployeePlacement {
     }
 
     private static void validateDates(LocalDate start, LocalDate end) {
-        if (start == null) {
-            throw new IllegalArgumentException("Start cannot be null");
-        }
+        Objects.requireNonNull(start, "startDate is required");
 
         if (end != null && end.isBefore(start)) {
-            throw new IllegalArgumentException("End before start");
+            throw new EmployeePlacementInvalidEndDate(start, end);
         }
     }
 
