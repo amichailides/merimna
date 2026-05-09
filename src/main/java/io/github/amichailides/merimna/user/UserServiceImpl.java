@@ -8,7 +8,7 @@ import io.github.amichailides.merimna.user.dto.*;
 import io.github.amichailides.merimna.user.exception.InvalidCurrentPasswordException;
 import io.github.amichailides.merimna.user.exception.NewPasswordMustBeDifferentException;
 import io.github.amichailides.merimna.user.exception.UserNotFoundByEmailException;
-import io.github.amichailides.merimna.user.exception.UserNotFoundByIdException;
+import io.github.amichailides.merimna.user.exception.UserNotFoundByPublicIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -115,6 +115,6 @@ public class UserServiceImpl implements UserService {
 
     private User getUserOrThrow(UUID publicId) {
         return userRepository.findByPublicId(publicId)
-                .orElseThrow(UserNotFoundByIdException::new);
+                .orElseThrow(() -> new UserNotFoundByPublicIdException(publicId));
     }
 }
