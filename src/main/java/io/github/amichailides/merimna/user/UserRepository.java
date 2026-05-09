@@ -14,7 +14,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByEmployeePublicId(UUID employeeId);
+    boolean existsByEmployeePublicId(UUID employeePublicId);
 
     boolean existsByUsername(String username);
 
@@ -31,9 +31,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAll(Specification<User> spec, Pageable pageable);
 
-    boolean existsByEmailAndIdNot(String email, Long userId);
+    boolean existsByEmailAndPublicIdNot(String email, UUID publicId);
 
     Optional<User> findByEmployeePublicId(UUID publicId);
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByPublicId(UUID publicId);
 }

@@ -12,7 +12,7 @@ public class UserMapper {
 
     public UserReadOnlyDTO toReadOnlyDTO(User user) {
         return new UserReadOnlyDTO(
-                user.getId(),
+                user.getPublicId(),
                 user.getActualUsername(),
                 user.getEmail(),
                 user.getRole(),

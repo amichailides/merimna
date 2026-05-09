@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -30,7 +31,7 @@ public class UserController {
 
         UserReadOnlyDTO user = userService.create(dto);
         return ResponseEntity
-                .created(buildLocationUri(user.id()))
+                .created(buildLocationUri(user.publicId()))
                 .body(user);
     }
 
@@ -50,20 +51,20 @@ public class UserController {
         );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserReadOnlyDTO> getUserById(
-            @PathVariable @Positive(message = "{user.id.positive}") Long id) {
+    @GetMapping("/{publicId}")
+    public ResponseEntity<UserReadOnlyDTO> getUserByPublicId(
+            @PathVariable UUID publicId) {
 
-        UserReadOnlyDTO result = userService.getUserById(id);
+        UserReadOnlyDTO result = userService.getUserByPublicId(publicId);
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{publicId}")
     public ResponseEntity<UserReadOnlyDTO> updateUser(
-            @PathVariable @Positive(message = "{user.id.positive}") Long id,
+            @PathVariable UUID publicId,
             @Validated(ValidationGroupSequence.class) @RequestBody UserUpdateDTO dto) {
 
-        UserReadOnlyDTO result = userService.updateUser(id, dto);
+        UserReadOnlyDTO result = userService.updateUser(publicId, dto);
         return ResponseEntity.ok(result);
     }
 
@@ -84,11 +85,11 @@ public class UserController {
     }
 
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(UUID publicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{publicId}")
+                .buildAndExpand(publicId)
                 .toUri();
     }
 }

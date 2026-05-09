@@ -36,11 +36,11 @@ public class UserValidator {
         throwIfConflicts(errors);
     }
 
-    public void validateForUpdate(Long id, UserUpdateDTO dto, User existing) {
+    public void validateForUpdate(UserUpdateDTO dto, User existing) {
         Map<String, String> errors = new LinkedHashMap<>();
 
         if (emailChanged(dto, existing)
-                && userRepository.existsByEmailAndIdNot(dto.email(), id)) {
+                && userRepository.existsByEmailAndPublicIdNot(dto.email(), existing.getPublicId())) {
             errors.put("email", ErrorCode.EMAIL_ALREADY_EXISTS.getMessageKey());
         }
 

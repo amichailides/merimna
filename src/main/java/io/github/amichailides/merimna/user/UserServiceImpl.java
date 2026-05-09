@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -70,34 +70,33 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional(readOnly = true)
-    public UserReadOnlyDTO getUserById(Long id) {
-        User user = getUserOrThrow(id);
+    public UserReadOnlyDTO getUserByPublicId(UUID publicId) {
+        User user = getUserOrThrow(publicId);
 
         return userMapper.toReadOnlyDTO(user);
-
     }
 
     @Override
     @Transactional
-    public UserReadOnlyDTO updateUser(Long id, UserUpdateDTO dto) {
-        User user = getUserOrThrow(id);
+    public UserReadOnlyDTO updateUser(UUID publicId, UserUpdateDTO dto) {
+        User user = getUserOrThrow(publicId);
 
-        userValidator.validateForUpdate(id, dto, user);
-         userMapper.updateEntity(user, dto);
+        userValidator.validateForUpdate(dto, user);
+        userMapper.updateEntity(user, dto);
 
-         return userMapper.toReadOnlyDTO(user);
+        return userMapper.toReadOnlyDTO(user);
     }
 
     @Override
     @Transactional
-    public void changePassword(String email,ChangePasswordDTO dto) {
+    public void changePassword(String email, ChangePasswordDTO dto) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundByEmailException::new);
 
         if (dto.newPassword().equals(dto.currentPassword())) {
             throw new NewPasswordMustBeDifferentException();
         }
-        if(!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             throw new InvalidCurrentPasswordException();
         }
 
@@ -114,8 +113,8 @@ public class UserServiceImpl implements UserService{
         return userMapper.toReadOnlyDTO(user);
     }
 
-    private User getUserOrThrow(Long userId) {
-        return userRepository.findById(userId)
+    private User getUserOrThrow(UUID publicId) {
+        return userRepository.findByPublicId(publicId)
                 .orElseThrow(UserNotFoundByIdException::new);
     }
 }
