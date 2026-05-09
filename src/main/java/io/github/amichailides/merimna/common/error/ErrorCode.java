@@ -37,7 +37,6 @@ public enum ErrorCode {
     // Beneficiary
     // =========================================================================
     BENEFICIARY_NOT_FOUND_BY_PUBLIC_ID("BENEFICIARY_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundByPublicId"),
-    BENEFICIARY_NOT_FOUND_BY_AMKA("BENEFICIARY_NOT_FOUND_BY_AMKA", HttpStatus.NOT_FOUND, "error.beneficiary.notFoundByAmka"),
     AMKA_ALREADY_EXISTS("AMKA_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.beneficiary.amkaAlreadyExists"),
     AMKA_DATE_MISMATCH("AMKA_DATE_MISMATCH", HttpStatus.BAD_REQUEST, "error.beneficiary.amkaDateMismatch"),
     BENEFICIARY_ALREADY_INACTIVE("BENEFICIARY_ALREADY_INACTIVE", HttpStatus.CONFLICT, "error.beneficiary.alreadyInactive"),
@@ -71,7 +70,8 @@ public enum ErrorCode {
     // =========================================================================
     EMPLOYEE_ALREADY_TERMINATED("EMPLOYEE_ALREADY_TERMINATED", HttpStatus.CONFLICT, "error.employee.alreadyTerminated"),
     SAME_EMPLOYEE_POSITION("SAME_EMPLOYEE_POSITION", HttpStatus.BAD_REQUEST, "error.employee.position.same"),
-    EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID("EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.employee.notFoundByPublicId"),    EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
+    EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID("EMPLOYEE_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.employee.notFoundByPublicId"),
+    EMPLOYEE_INACTIVE("EMPLOYEE_INACTIVE", HttpStatus.CONFLICT, "error.employee.inactive"),
     EMPLOYEE_EMAIL_ALREADY_EXISTS("EMPLOYEE_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.employee.email.alreadyExists"),
     EMPLOYEE_ALREADY_ACTIVE("EMPLOYEE_ALREADY_ACTIVE", HttpStatus.CONFLICT, "error.employee.alreadyActive"),
     EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE("EMPLOYEE_TERMINATION_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.employee.termination.beforeHireDate"),
@@ -92,7 +92,6 @@ public enum ErrorCode {
     ASSIGNMENT_NOT_FOUND("ASSIGNMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.assignment.notFound"),
     ASSIGNMENT_OVERLAP_NOT_ALLOWED("ASSIGNMENT_OVERLAP_NOT_ALLOWED", HttpStatus.BAD_REQUEST, "error.assignment.overlapNotAllowed"),
     ASSIGNMENT_DUPLICATE_ACTIVE_FOR_HOUSE("ASSIGNMENT_DUPLICATE_ACTIVE_FOR_HOUSE", HttpStatus.BAD_REQUEST,"error.assignment.duplicateActiveForHouse"),
-    ASSIGNMENT_NOT_ACTIVE("ASSIGNMENT_NOT_ACTIVE", HttpStatus.BAD_REQUEST, "error.assignment.notActive"),
     ASSIGNMENT_INVALID_DATE_RANGE("ASSIGNMENT_INVALID_DATE_RANGE", HttpStatus.BAD_REQUEST, "error.assignment.invalidDateRange"),
     ASSIGNMENT_BEFORE_HIRE_DATE("ASSIGNMENT_BEFORE_HIRE_DATE", HttpStatus.BAD_REQUEST, "error.assignment.beforeHireDate"),
     ASSIGNMENT_CANCELLATION_NOT_ALLOWED("ASSIGNMENT_CANCELLATION_NOT_ALLOWED", HttpStatus.BAD_REQUEST,"error.assignment.cancellationNotAllowed"),
@@ -114,7 +113,6 @@ public enum ErrorCode {
     USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.usernameAlreadyExists"),
     EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.emailAlreadyExists"),
     USER_NOT_FOUND_BY_PUBLIC_ID("USER_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.user.notFoundByPublicId"),
-    USER_EMAIL_ALREADY_EXISTS("USER_EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.email.alreadyExists"),
     USER_NOT_FOUND_BY_EMAIL("USER_NOT_FOUND_BY_EMAIL", HttpStatus.NOT_FOUND, "error.user.notFoundByEmail"),
     NEW_PASSWORD_MUST_BE_DIFFERENT("NEW_PASSWORD_MUST_BE_DIFFERENT", HttpStatus.BAD_REQUEST, "error.user.newPasswordMustBeDifferent"),
     INVALID_CURRENT_PASSWORD("INVALID_CURRENT_PASSWORD", HttpStatus.FORBIDDEN, "error.user.invalidCurrentPassword"),
@@ -125,7 +123,7 @@ public enum ErrorCode {
     EMPLOYEE_PLACEMENT_NOT_FOUND("EMPLOYEE_PLACEMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employeePlacement.notFound"),
     EMPLOYEE_PLACEMENT_ALREADY_CLOSED("EMPLOYEE_PLACEMENT_ALREADY_CLOSED", HttpStatus.CONFLICT, "error.employeePlacement.alreadyClosed"),
     EMPLOYEE_PLACEMENT_OVERLAP("EMPLOYEE_PLACEMENT_OVERLAP", HttpStatus.CONFLICT, "error.employeePlacement.overlap"),
-    EMPLOYEE_PLACEMENT_INVALID_END_DATE("EMPLOYEE_PLACEMENT_INVALID_END_DATE", HttpStatus.valueOf(422), "error.employeePlacement.invalidEndDate");
+    EMPLOYEE_PLACEMENT_INVALID_END_DATE("EMPLOYEE_PLACEMENT_INVALID_END_DATE", HttpStatus.UNPROCESSABLE_CONTENT, "error.employeePlacement.invalidEndDate");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
