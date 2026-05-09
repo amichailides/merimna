@@ -156,7 +156,7 @@ public class Beneficiary {
         if (this.legalRepresentatives.contains(legalRepresentative)) {
             throw new LegalRepresentativeAlreadyAssignedException(
                     legalRepresentative.getId(),
-                    this.getId()
+                    this.getPublicId()
             );
         }
 
