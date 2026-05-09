@@ -28,13 +28,20 @@ public class EmployeeAssignmentPolicy {
         }
         if (requiresExclusivePlacement(employee)
                 && hasOverlappingAssignment(employee, startDate, endDate)) {
-            throw new AssignmentOverlapNotAllowedException();
+            throw new AssignmentOverlapNotAllowedException(
+                    employee.getPublicId(),
+                    startDate,
+                    endDate
+            );
         }
         if (hasActiveAssignmentForSameHouse(employee, houseUnit)) {
-            throw new DuplicateActiveAssignmentForHouseException();
+            throw new DuplicateActiveAssignmentForHouseException(
+                    employee.getPublicId(),
+                    houseUnit.getPublicId()
+            );
         }
 
-        validateStartDateNotBeforeHireDate(employee.getHireDate(), startDate);
+        validateStartDateNotBeforeHireDate(employee, startDate);
     }
 
     private boolean requiresExclusivePlacement(Employee employee) {
@@ -58,9 +65,13 @@ public class EmployeeAssignmentPolicy {
         );
     }
 
-    private void validateStartDateNotBeforeHireDate (LocalDate hireDate,LocalDate startDate) {
-        if (hireDate.isAfter(startDate)) {
-            throw new AssignmentBeforeHireDateException();
+    private void validateStartDateNotBeforeHireDate(Employee employee, LocalDate startDate) {
+        if (employee.getHireDate().isAfter(startDate)) {
+            throw new AssignmentBeforeHireDateException(
+                    employee.getPublicId(),
+                    employee.getHireDate(),
+                    startDate
+            );
         }
     }
 }

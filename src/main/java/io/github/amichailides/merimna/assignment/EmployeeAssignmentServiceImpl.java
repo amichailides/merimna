@@ -82,7 +82,10 @@ public class EmployeeAssignmentServiceImpl implements EmployeeAssignmentService{
         EmployeeAssignment assignment = getAssignmentOrThrow(assignmentPublicId, employeePublicId);
 
         if (!assignment.getEmployee().isActive()) {
-            throw new AssignmentTerminationNotAllowedException();
+            throw new AssignmentTerminationNotAllowedException(
+                    assignment.getPublicId(),
+                    assignment.getStatus()
+            );
         }
 
         assignment.terminate(LocalDate.now());

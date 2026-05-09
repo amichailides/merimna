@@ -64,11 +64,18 @@ public class EmployeeAssignment {
         Objects.requireNonNull(endDate, "endDate must not be null");
 
         if (this.status != EmployeeAssignmentStatus.ACTIVE) {
-            throw new AssignmentTerminationNotAllowedException();
+            throw new AssignmentTerminationNotAllowedException(
+                    this.publicId,
+                    this.status
+            );
         }
 
         if (endDate.isBefore(this.startDate)) {
-            throw new AssignmentEndDateBeforeStartDateException();
+            throw new AssignmentEndDateBeforeStartDateException(
+                    this.publicId,
+                    this.startDate,
+                    endDate
+            );
         }
 
         this.endDate = endDate;
@@ -77,7 +84,10 @@ public class EmployeeAssignment {
 
     private void validateDateRange(LocalDate endDate) {
         if (endDate != null && endDate.isBefore(startDate)) {
-            throw new InvalidAssignmentDateRangeException();
+            throw new InvalidAssignmentDateRangeException(
+                    this.startDate,
+                    endDate
+            );
         }
     }
 
@@ -89,11 +99,17 @@ public class EmployeeAssignment {
         Objects.requireNonNull(cancelDate, "cancelDate must not be null");
 
         if (this.status != EmployeeAssignmentStatus.ACTIVE) {
-            throw new AssignmentCancellationNotAllowedException();
+            throw new AssignmentCancellationNotAllowedException(
+                    this.publicId,
+                    this.status);
         }
 
         if (cancelDate.isBefore(this.startDate)) {
-            throw new AssignmentCancelDateBeforeStartDateException();
+            throw new AssignmentCancelDateBeforeStartDateException(
+                    this.publicId,
+                    this.startDate,
+                    cancelDate
+            );
         }
 
         this.endDate = cancelDate;

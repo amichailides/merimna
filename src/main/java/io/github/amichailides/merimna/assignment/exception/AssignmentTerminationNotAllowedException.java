@@ -1,10 +1,18 @@
 package io.github.amichailides.merimna.assignment.exception;
 
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
+import java.util.Map;
+import java.util.UUID;
+
 public class AssignmentTerminationNotAllowedException extends BaseDomainException {
-    public AssignmentTerminationNotAllowedException() {
-        super(ErrorCode.ASSIGNMENT_TERMINATION_NOT_ALLOWED);
+    public AssignmentTerminationNotAllowedException(UUID assignmentPublicId,
+                                                    EmployeeAssignmentStatus status) {
+        super(ErrorCode.ASSIGNMENT_TERMINATION_NOT_ALLOWED, Map.of(
+                "assignmentPublicId", assignmentPublicId,
+                "status", status
+        ));
     }
 }
