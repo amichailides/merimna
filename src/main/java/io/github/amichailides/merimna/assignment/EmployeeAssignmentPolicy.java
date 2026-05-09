@@ -24,7 +24,7 @@ public class EmployeeAssignmentPolicy {
             LocalDate endDate
     ) {
         if (!employee.isActive()) {
-            throw new EmployeeInactiveException();
+            throw new EmployeeInactiveException(employee.getPublicId());
         }
         if (requiresExclusivePlacement(employee)
                 && hasOverlappingAssignment(employee, startDate, endDate)) {

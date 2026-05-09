@@ -88,13 +88,13 @@ public class Employee {
 
     public void reactivate() {
         if (isActive) {
-            throw new EmployeeAlreadyActiveException();
+            throw new EmployeeAlreadyActiveException(this.publicId);
         }
 
         boolean hasActiveAssignments = assignments.stream()
                 .anyMatch(EmployeeAssignment::isActive);
         if (hasActiveAssignments) {
-            throw new EmployeeHasActiveAssignmentsException();
+            throw new EmployeeHasActiveAssignmentsException(this.publicId);
         }
         this.isActive = true;
     }

@@ -27,7 +27,7 @@ public class EmployeePlacementValidator {
 
     private void validateEmployeeIsActive(Employee employee) {
         if (!employee.isActive()) {
-            throw new EmployeeInactiveException();
+            throw new EmployeeInactiveException(employee.getPublicId());
         }
     }
 

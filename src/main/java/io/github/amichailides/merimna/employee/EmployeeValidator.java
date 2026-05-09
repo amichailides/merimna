@@ -28,7 +28,7 @@ public class EmployeeValidator {
 
     public void validateForUpdate(Employee existing, EmployeeUpdateDTO dto) {
         if (!existing.isActive()) {
-            throw new EmployeeInactiveException();
+            throw new EmployeeInactiveException(existing.getPublicId());
         }
 
         boolean emailChanged = dto.contactEmail() != null && !dto.contactEmail().equalsIgnoreCase(existing.getContactEmail());
@@ -46,7 +46,10 @@ public class EmployeeValidator {
             );
         }
         if (terminationDate.isAfter(LocalDate.now())) {
-            throw new EmployeeTerminationDateInFutureException();
+            throw new EmployeeTerminationDateInFutureException(
+                    employee.getPublicId(),
+                    terminationDate
+            );
         }
     }
 
