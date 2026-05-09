@@ -28,7 +28,7 @@ public class EmployeePositionCode {
 
     private String normalizeAndValidate(String raw) {
         if (raw == null) {
-            throw new InvalidEmployeePositionCodeException("null");
+            throw new InvalidEmployeePositionCodeException(null);
         }
 
         String normalized = raw.trim().toUpperCase(Locale.ROOT);
