@@ -41,7 +41,10 @@ public class Allergy {
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
-            throw new AllergyAlreadyAssignedException();
+            throw new AllergyAlreadyAssignedException(
+                    this.beneficiary.getPublicId(),
+                    beneficiary.getPublicId()
+            );
         }
         this.beneficiary = beneficiary;
     }

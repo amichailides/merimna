@@ -51,7 +51,10 @@ public class Medication {
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
         if (this.beneficiary != null && !this.beneficiary.equals(beneficiary)) {
-            throw new MedicationAlreadyAssignedException();
+            throw new MedicationAlreadyAssignedException(
+                    this.beneficiary.getPublicId(),
+                    beneficiary.getPublicId()
+            );
         }
         this.beneficiary = beneficiary;
     }
