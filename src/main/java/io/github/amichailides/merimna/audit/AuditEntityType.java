@@ -5,5 +5,6 @@ public enum AuditEntityType {
     EMPLOYEE,
     EMPLOYEE_ASSIGNMENT,
     EMPLOYEE_PLACEMENT,
+    USER,
     AUTH
 }

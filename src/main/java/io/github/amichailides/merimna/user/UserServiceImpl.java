@@ -1,15 +1,19 @@
 package io.github.amichailides.merimna.user;
 
+import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.audit.event.UserUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
+import io.github.amichailides.merimna.user.audit.UserChangeDetector;
 import io.github.amichailides.merimna.user.dto.*;
 import io.github.amichailides.merimna.user.exception.InvalidCurrentPasswordException;
 import io.github.amichailides.merimna.user.exception.NewPasswordMustBeDifferentException;
 import io.github.amichailides.merimna.user.exception.UserNotFoundByEmailException;
 import io.github.amichailides.merimna.user.exception.UserNotFoundByPublicIdException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private final EmployeeRepository employeeRepository;
     private final UserMapper userMapper;
     private final UserValidator userValidator;
+    private final UserChangeDetector userChangeDetector;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -82,6 +88,15 @@ public class UserServiceImpl implements UserService {
         User user = getUserOrThrow(publicId);
 
         userValidator.validateForUpdate(dto, user);
+
+        EntityChangeSet changeSet = userChangeDetector.detectChanges(user, dto);
+
+        if (changeSet.hasChanges()) {
+            eventPublisher.publishEvent(
+                    UserUpdatedEvent.from(user, changeSet)
+            );
+        }
+
         userMapper.updateEntity(user, dto);
 
         return userMapper.toReadOnlyDTO(user);
