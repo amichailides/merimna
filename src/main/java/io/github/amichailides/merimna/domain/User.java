@@ -24,8 +24,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
-    private UUID publicId;
+    private UUID publicId = UUID.randomUUID();
 
     @Column(nullable = false, unique = true)
     private String username;
