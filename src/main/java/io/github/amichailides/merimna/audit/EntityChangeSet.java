@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.audit;
 
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +31,11 @@ public record EntityChangeSet(
 
         public <T> Builder track(String fieldName, T oldValue, T newValue) {
             if (!Objects.equals(oldValue, newValue)) {
-                changes.add(new FieldChange(fieldName, oldValue, newValue));
+                changes.add(new FieldChange(
+                        fieldName,
+                        normalizeValue(oldValue),
+                        normalizeValue(newValue)
+                ));
             }
             return this;
         }
@@ -40,6 +45,19 @@ public record EntityChangeSet(
                 track(fieldName, oldValue, newValue);
             }
             return this;
+        }
+
+        private Object normalizeValue(Object value) {
+            return switch (value) {
+                case null -> null;
+                case LocalDate localDate -> localDate.toString();
+                case LocalDateTime localDateTime -> localDateTime.toString();
+                case Instant instant -> instant.toString();
+                case OffsetDateTime offsetDateTime -> offsetDateTime.toString();
+                case ZonedDateTime zonedDateTime -> zonedDateTime.toString();
+                case Enum<?> enumValue -> enumValue.name();
+                default -> value;
+            };
         }
 
         public EntityChangeSet build() {

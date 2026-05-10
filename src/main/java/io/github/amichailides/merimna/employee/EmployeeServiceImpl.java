@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.audit.event.EmployeeTerminatedEvent;
@@ -8,6 +9,7 @@ import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;
 import io.github.amichailides.merimna.domain.User;
+import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
@@ -34,6 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeePositionRepository employeePositionRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final EmployeeChangeDetector employeeChangeDetector;
 
     @Override
     @Transactional
@@ -109,18 +112,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         // TODO(ADR-001): Support explicit null semantics in PATCH using JsonNullable
         // Currently null = no update
 
-        EmployeePosition position = dto.positionCode() != null
+        EmployeePosition newPosition  = dto.positionCode() != null
                 ? resolvePositionOrThrow(EmployeePositionCode.of(dto.positionCode()))
                 : null;
+
+        String newPositionCode = newPosition == null
+                ? null
+                : newPosition.getCode().getValue();
 
         Employee employee = getEmployeeOrThrow(publicId);
         employeeValidator.validateForUpdate(employee, dto);
 
-        employeeMapper.updateEntity(employee, dto, position);
+        EntityChangeSet changeSet = employeeChangeDetector.detectChanges(employee, dto, newPositionCode);
 
-        eventPublisher.publishEvent(
-                EmployeeUpdatedEvent.from(employee)
-        );
+        employeeMapper.updateEntity(employee, dto, newPosition );
+
+        if (changeSet.hasChanges()) {
+            eventPublisher.publishEvent(
+                    EmployeeUpdatedEvent.from(employee, changeSet)
+            );
+        }
 
         return employeeMapper.toDetailsDTO(employee);
     }
