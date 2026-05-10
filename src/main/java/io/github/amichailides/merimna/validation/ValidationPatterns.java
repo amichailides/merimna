@@ -29,6 +29,10 @@ public final class ValidationPatterns {
 
     // Username: ξεκινά με γράμμα και περιέχει μόνο λατινικά γράμματα, αριθμούς, τελεία, underscore ή παύλα.
     public static final String USERNAME = "^[a-zA-Z][a-zA-Z0-9._-]*$";
+
+    // Email: απλή μορφή email με τοπικό μέρος, @ και domain.
+    // Επιτρέπει λατινικά γράμματα, αριθμούς και βασικούς χαρακτήρες . _ % + - πριν το @.
+    public static final String EMAIL = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }
