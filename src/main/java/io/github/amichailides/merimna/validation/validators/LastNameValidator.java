@@ -6,9 +6,15 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class LastNameValidator implements ConstraintValidator<ValidLastName, String> {
+
+    @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank()) {
+        if (value == null) {
             return true;
+        }
+
+        if (value.isBlank()) {
+            return false;
         }
 
         return value.matches(ValidationPatterns.GREEK_LATIN_TEXT);
