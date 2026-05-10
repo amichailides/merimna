@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.validation.annotations.ValidEmail;
 import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
 import io.github.amichailides.merimna.validation.annotations.ValidLastName;
 import io.github.amichailides.merimna.validation.annotations.ValidMobile;
@@ -28,7 +29,7 @@ public record EmployeeCreateDTO(
 
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
         @NotBlank(message = "{email.required}", groups = FirstOrder.class)
-        @Email(message = "{email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(groups = SecondOrder.class)
         String contactEmail,
 
         @Schema(description = "Employee mobile number", example = "+306942318223")
@@ -42,8 +43,7 @@ public record EmployeeCreateDTO(
         AddressDTO address,
 
         @Schema(description = "Employee position code", example = "CAREGIVER")
-        @NotNull(message = "{employee.position.required}", groups = FirstOrder.class)
-        //TODO @Pattern
+        @NotBlank(message = "{employee.position.required}", groups = FirstOrder.class)
         String positionCode,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")

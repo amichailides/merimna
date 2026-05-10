@@ -1,13 +1,11 @@
 package io.github.amichailides.merimna.employee.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
-import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
-import io.github.amichailides.merimna.validation.annotations.ValidLastName;
-import io.github.amichailides.merimna.validation.annotations.ValidMobile;
+import io.github.amichailides.merimna.validation.annotations.*;
+import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 
@@ -24,9 +22,10 @@ public record EmployeeUpdateDTO(
         String lastName,
 
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
-        @Email(message = "{email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(groups = SecondOrder.class)
         String contactEmail,
 
+        @OptionalNotBlank(message = "{mobile.notBlank}", groups = FirstOrder.class)
         @Schema(description = "Employee mobile number", example = "+306942318223")
         @ValidMobile(groups = SecondOrder.class)
         String mobileNumber,
