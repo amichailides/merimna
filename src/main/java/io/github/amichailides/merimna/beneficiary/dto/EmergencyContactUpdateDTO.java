@@ -2,13 +2,9 @@ package io.github.amichailides.merimna.beneficiary.dto;
 
 import io.github.amichailides.merimna.address.dto.AddressUpdateDTO;
 import io.github.amichailides.merimna.domain.RelationshipType;
-import io.github.amichailides.merimna.validation.annotations.ValidFirstName;
-import io.github.amichailides.merimna.validation.annotations.ValidLandline;
-import io.github.amichailides.merimna.validation.annotations.ValidLastName;
-import io.github.amichailides.merimna.validation.annotations.ValidMobile;
+import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 
 
 public record EmergencyContactUpdateDTO(
@@ -26,7 +22,7 @@ public record EmergencyContactUpdateDTO(
         @ValidMobile(message = "{emergency.mobile.invalid}", groups = SecondOrder.class)
         String mobileNumber,
 
-        @Email(message = "{emergency.email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(message = "{emergency.email.invalid}", groups = SecondOrder.class)
         String email,
 
         @Valid

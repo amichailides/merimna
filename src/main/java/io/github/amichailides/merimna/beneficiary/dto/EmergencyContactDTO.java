@@ -9,13 +9,12 @@ import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.github.amichailides.merimna.validation.HasPhoneFields;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Schema(description = "Emergency contact person for the beneficiary. At least one phone number is required.")
-@AtLeastOnePhonePresent(message = "{contact.missing}", groups = FirstOrder.class)
+@AtLeastOnePhonePresent(groups = FirstOrder.class)
 @Builder
 public record EmergencyContactDTO(
         @Schema(description = "First name of the emergency contact", example = "Μαρία")
@@ -41,7 +40,7 @@ public record EmergencyContactDTO(
         String mobileNumber,
 
         @Schema(description = "Email address of the emergency contact", example = "maria@example.com")
-        @Email(message = "{emergency.email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(message = "{emergency.email.invalid}", groups = SecondOrder.class)
         String email,
 
         @Schema(description = "Residential address of the emergency contact")

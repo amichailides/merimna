@@ -6,11 +6,19 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class LandlineValidator implements ConstraintValidator<ValidLandline, String> {
+
+    @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank()) {
+        if (value == null) {
             return true;
         }
 
-        return value.matches(ValidationPatterns.PHONE) || value.matches(ValidationPatterns.MOBILE);
+        String normalized = value.trim();
+
+        if (normalized.isBlank()) {
+            return false;
+        }
+
+        return normalized.matches(ValidationPatterns.PHONE);
     }
 }
