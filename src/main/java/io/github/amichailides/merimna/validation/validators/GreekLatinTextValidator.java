@@ -19,8 +19,12 @@ public class GreekLatinTextValidator implements ConstraintValidator<ValidGreekLa
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank()) {
+        if (value == null) {
             return true;
+        }
+
+        if (value.isBlank()) {
+            return false;
         }
 
         int length = value.length();
@@ -33,5 +37,4 @@ public class GreekLatinTextValidator implements ConstraintValidator<ValidGreekLa
                 : ValidationPatterns.GREEK_LATIN_TEXT;
         return value.matches(pattern);
     }
-
 }

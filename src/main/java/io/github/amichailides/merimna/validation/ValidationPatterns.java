@@ -5,7 +5,7 @@ public final class ValidationPatterns {
     public static final String GREEK_LATIN_TEXT = "^[A-Za-zΑ-Ωα-ωΆ-ώ\\s-]+$";
 
     // Γράμματα, αριθμοί και στίξη (για οδηγίες, δόσεις, ml)
-    public static final String GREEK_LATIN_EXTENDED = "^[A-Za-zΑ-Ωα-ωΆ-ώ0-9\\s\\-.,()!\\:]+$";
+    public static final String GREEK_LATIN_EXTENDED = "^[A-Za-zΑ-Ωα-ωΆ-ώ0-9\\s\\-._,()!\\:/]+$";
 
     // Greek zip code (5 digits)
     public static final String POSTAL_CODE = "^[A-Z0-9\\s-]{3,10}$";
