@@ -4,18 +4,25 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.groups.Default;
 
 /**
- * Ορίζει τη σειριακή εκτέλεση των validation groups με λογική waterfall.
+ * Defines the sequential execution order of validation groups using a waterfall strategy.
  *
- * <p>Η επικύρωση εκτελείται ιεραρχικά και σταματά στην πρώτη ομάδα
- * που παράγει σφάλματα (short-circuit).</p>
+ * <p>Validation is executed group by group and stops at the first group that
+ * produces constraint violations.</p>
  *
  * <ul>
- *   <li>{@link Default}: Έλεγχος constraints χωρίς ρητό group, συνήθως για
- *   βασική παρουσία υποχρεωτικών πεδίων και nested DTO objects.</li>
- *   <li>{@link FirstOrder}: Έλεγχος πληρότητας και βασικών δομικών περιορισμών
- *   (π.χ. {@code @NotBlank}, {@code @NotNull}, {@code @Size}, {@code @Past}).</li>
- *   <li>{@link SecondOrder}: Έλεγχος σύνθετων κανόνων εγκυρότητας, patterns
- *   και custom validators (π.χ. {@code @ValidFirstName}, {@code @ValidAmka}).</li>
+ *   <li>{@link Default}: The standard Bean Validation group. In Merimna, this
+ *   group is not intentionally used for application DTO validation rules; it is
+ *   kept first as a fallback for constraints without an explicit group.</li>
+ *
+ *   <li>{@link FirstOrder}: Validates required input and basic structural guards,
+ *   such as missing nested objects, {@code @NotNull}, {@code @NotBlank},
+ *   {@code @OptionalNotBlank}, and class-level presence rules like
+ *   {@code @AtLeastOnePhonePresent}.</li>
+ *
+ *   <li>{@link SecondOrder}: Validates value correctness after the basic input
+ *   guards have passed, including patterns and custom validators such as
+ *   {@code @ValidFirstName}, {@code @ValidEmail}, {@code @ValidAmka},
+ *   {@code @ValidAfm}, and {@code @ValidGreekLatinText}.</li>
  * </ul>
  */
 @GroupSequence({Default.class, FirstOrder.class, SecondOrder.class})
