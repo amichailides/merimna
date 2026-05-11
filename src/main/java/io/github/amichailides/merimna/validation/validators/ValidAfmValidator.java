@@ -1,11 +1,11 @@
 package io.github.amichailides.merimna.validation.validators;
 
 import io.github.amichailides.merimna.validation.ValidationPatterns;
-import io.github.amichailides.merimna.validation.annotations.ValidEmail;
+import io.github.amichailides.merimna.validation.annotations.ValidAfm;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ValidEmailValidator implements ConstraintValidator<ValidEmail, String> {
+public class ValidAfmValidator implements ConstraintValidator<ValidAfm, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -15,10 +15,10 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
 
         String normalized = value.trim();
 
-        if (value.isBlank()) {
+        if (normalized.isBlank()) {
             return false;
         }
 
-        return normalized.matches(ValidationPatterns.EMAIL);
+        return normalized.matches(ValidationPatterns.AFM);
     }
 }

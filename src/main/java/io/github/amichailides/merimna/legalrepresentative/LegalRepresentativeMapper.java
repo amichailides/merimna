@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.legalrepresentative;
 
-import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeCreateDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.domain.LegalRepresentative;
@@ -26,7 +26,7 @@ public class LegalRepresentativeMapper {
                 .build();
     }
 
-    public LegalRepresentative toEntity(LegalRepresentativeDTO dto) {
+    public LegalRepresentative toEntity(LegalRepresentativeCreateDTO dto) {
         if (dto == null) return null;
 
         return LegalRepresentative.builder()

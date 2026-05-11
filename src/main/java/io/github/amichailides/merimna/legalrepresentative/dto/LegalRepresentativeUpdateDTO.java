@@ -3,11 +3,13 @@ package io.github.amichailides.merimna.legalrepresentative.dto;
 import io.github.amichailides.merimna.domain.LegalRepresentativeType;
 import io.github.amichailides.merimna.validation.annotations.*;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
-import jakarta.validation.constraints.Email;
 
 public record LegalRepresentativeUpdateDTO(
 
         LegalRepresentativeType type,
+
+        @ValidAfm(message = "{afm.invalid}", groups = SecondOrder.class)
+        String afm,
 
         @ValidFirstName(message = "{firstName.invalid}", groups = SecondOrder.class)
         String firstName,
@@ -21,9 +23,12 @@ public record LegalRepresentativeUpdateDTO(
         @ValidLandline(message = "{landline.invalid}", groups = SecondOrder.class)
         String landlinePhone,
 
-        @Email(message = "{email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(message = "{email.invalid}", groups = SecondOrder.class)
         String email,
 
-        @ValidGreekLatinText(max =500, message = "{legalRepresentative.notes.invalid}", groups = SecondOrder.class)
+        @ValidGreekLatinText(
+                max = 500,
+                message = "{legalRepresentative.notes.invalid}",
+                groups = SecondOrder.class)
         String notes
 ) {}

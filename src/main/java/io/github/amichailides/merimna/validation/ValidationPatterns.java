@@ -33,6 +33,9 @@ public final class ValidationPatterns {
     // Email: απλή μορφή email με τοπικό μέρος, @ και domain.
     // Επιτρέπει λατινικά γράμματα, αριθμούς και βασικούς χαρακτήρες . _ % + - πριν το @.
     public static final String EMAIL = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+    // AFM: ακριβώς 9 ψηφία.
+    public static final String AFM = "^\\d{9}$";
     private ValidationPatterns() {
         throw new AssertionError("Cannot instantiate constants class");
     }

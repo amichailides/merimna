@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.legalrepresentative;
 
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
-import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeCreateDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -24,7 +24,7 @@ public class LegalRepresentativeServiceImpl implements LegalRepresentativeServic
     private final LegalRepresentativeRepository legalRepresentativeRepository;
 
     @Transactional
-    public LegalRepresentativeReadOnlyDTO createLegalRepresentative(LegalRepresentativeDTO dto) {
+    public LegalRepresentativeReadOnlyDTO createLegalRepresentative(LegalRepresentativeCreateDTO dto) {
         LegalRepresentative legal = legalRepresentativeMapper.toEntity(dto);
         legalRepresentativeRepository.save(legal);
         return legalRepresentativeMapper.toReadOnlyDTO(legal);

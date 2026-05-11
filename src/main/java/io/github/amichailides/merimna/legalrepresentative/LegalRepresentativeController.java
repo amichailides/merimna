@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.legalrepresentative;
 
-import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeDTO;
+import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeCreateDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeReadOnlyDTO;
 import io.github.amichailides.merimna.legalrepresentative.dto.LegalRepresentativeUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
@@ -25,7 +25,7 @@ public class LegalRepresentativeController {
     @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<LegalRepresentativeReadOnlyDTO> createLegalRepresentative(
-            @Validated(ValidationGroupSequence.class) @RequestBody LegalRepresentativeDTO dto) {
+            @Validated(ValidationGroupSequence.class) @RequestBody LegalRepresentativeCreateDTO dto) {
 
         LegalRepresentativeReadOnlyDTO legal = legalRepresentativeService.createLegalRepresentative(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(legal);
