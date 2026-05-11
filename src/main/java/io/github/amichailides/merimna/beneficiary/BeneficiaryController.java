@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -183,7 +182,7 @@ public class BeneficiaryController {
             @ValidUUID(message = "{beneficiary.publicId.invalid}")
             String publicId,
 
-            @Valid
+            @Validated(ValidationGroupSequence.class)
             @RequestBody
             DischargeRequestDTO dto) {
 
@@ -191,88 +190,88 @@ public class BeneficiaryController {
         return ResponseEntity.ok(updated);
     }
 
-@Operation(summary = "Get beneficiaries", description = "Returns a paginated list of beneficiaries. When amka is provided, q is ignored.")
-@ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                useReturnTypeSchema = true
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "Validation error",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ValidationErrorResponse.class)
-                )
-        )
-})
-@PreAuthorize("hasAuthority('BENEFICIARY_READ')")
-@GetMapping
-public PageResponse<BeneficiaryListDTO> getBeneficiaries(
-        @Valid @ModelAttribute BeneficiarySearchDTO criteria,
-        @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
+    @Operation(summary = "Get beneficiaries", description = "Returns a paginated list of beneficiaries. When amka is provided, q is ignored.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            )
+    })
+    @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
+    @GetMapping
+    public PageResponse<BeneficiaryListDTO> getBeneficiaries(
+            @Validated(ValidationGroupSequence.class) @ModelAttribute BeneficiarySearchDTO criteria,
+            @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
-    Page<BeneficiaryListDTO> page = service.findBeneficiaries(criteria, pageable);
+        Page<BeneficiaryListDTO> page = service.findBeneficiaries(criteria, pageable);
 
-    return PageResponse.<BeneficiaryListDTO>builder()
-            .content(page.getContent())
-            .page(page.getNumber())
-            .size(page.getSize())
-            .totalElements(page.getTotalElements())
-            .totalPages(page.getTotalPages())
-            .build();
-}
+        return PageResponse.<BeneficiaryListDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
+    }
 
-@Operation(summary = "Change beneficiary house unit")
-@ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                useReturnTypeSchema = true
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "Validation error",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = ValidationErrorResponse.class)
-                )
-        ),
-        @ApiResponse(
-                responseCode = "404",
-                description = "Beneficiary or house unit not found",
-                content = @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = NotFoundErrorResponse.class)
-                )
-        )
-})
-@PatchMapping("/{publicId}/house-unit/{houseUnitPublicId}")
-@PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
-        @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-        @PathVariable
-        @NotBlank(message = "{beneficiary.publicId.required}")
-        @ValidUUID(message = "{beneficiary.publicId.invalid}")
-        String publicId,
+    @Operation(summary = "Change beneficiary house unit")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    useReturnTypeSchema = true
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Beneficiary or house unit not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = NotFoundErrorResponse.class)
+                    )
+            )
+    })
+    @PatchMapping("/{publicId}/house-unit/{houseUnitPublicId}")
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
+    public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
+            @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{beneficiary.publicId.required}")
+            @ValidUUID(message = "{beneficiary.publicId.invalid}")
+            String publicId,
 
 
-        @Parameter(description = "House unit public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-        @PathVariable
-        @NotBlank(message = "{houseUnit.publicId.required}")
-        @ValidUUID(message = "{houseUnit.publicId.invalid}")
-        String houseUnitPublicId) {
+            @Parameter(description = "House unit public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable
+            @NotBlank(message = "{houseUnit.publicId.required}")
+            @ValidUUID(message = "{houseUnit.publicId.invalid}")
+            String houseUnitPublicId) {
 
-    BeneficiaryListDTO updated = service.changeHouseUnit(UUID.fromString(publicId), UUID.fromString(houseUnitPublicId));
-    return ResponseEntity.ok(updated);
-}
+        BeneficiaryListDTO updated = service.changeHouseUnit(UUID.fromString(publicId), UUID.fromString(houseUnitPublicId));
+        return ResponseEntity.ok(updated);
+    }
 
-private URI buildLocationUri(Object id) {
-    return ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(id)
-            .toUri();
-}
+    private URI buildLocationUri(Object id) {
+        return ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+    }
 }
 
 

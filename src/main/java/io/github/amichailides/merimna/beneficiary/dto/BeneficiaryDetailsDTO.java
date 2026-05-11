@@ -62,6 +62,12 @@ public record BeneficiaryDetailsDTO(
         )
         String dischargedByEmployeeFullName,
 
+        @Schema(
+                description = "Public identifier of the assigned house unit",
+                example = "7d3a4b9e-4e78-4e9d-8a2d-21dcbf4a7f10"
+        )
+        UUID houseUnitPublicId,
+
         @Schema(description = "Assigned house unit code", example = "UNIT_A")
         String houseUnitCode,
 

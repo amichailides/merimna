@@ -24,7 +24,7 @@ public class HouseUnitValidator {
         validateCodeUniqueness(code);
     }
 
-    public void validateAssignmentForBeneficiary(HouseUnit houseUnit) {
+    public void ensureCanAcceptBeneficiary(HouseUnit houseUnit) {
         long count = beneficiaryRepository.countByHouseUnitAndIsActiveTrue(houseUnit);
 
         if (houseUnit.isFull(count)) {

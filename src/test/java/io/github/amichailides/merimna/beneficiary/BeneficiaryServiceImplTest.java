@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.common.error.ErrorCode;
@@ -152,7 +153,7 @@ class BeneficiaryServiceImplTest {
             verify(validator).validateForSave(createDto);
             verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
             verify(houseUnitAccessService).ensureCanAccess(houseUnit);
-            verify(houseUnitValidator).validateAssignmentForBeneficiary(houseUnit);
+            verify(houseUnitValidator).ensureCanAcceptBeneficiary(houseUnit);
             verify(beneficiaryMapper).toEntity(createDto, houseUnit);
             verify(beneficiaryRepository).save(entityFromMapper);
             verify(beneficiaryMapper).toDetailsDTO(savedEntity);
@@ -367,7 +368,9 @@ class BeneficiaryServiceImplTest {
             Beneficiary existing = defaultBeneficiary().build();
 
             BeneficiaryListDTO expectedDto = defaultListDTO()
-                    .houseUnit("UNIT_B")
+                    .houseUnitPublicId(newHouseUnitPublicId)
+                    .houseUnitCode("UNIT_B")
+                    .houseUnitDisplayName("Στέγη Β")
                     .build();
 
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
@@ -385,36 +388,34 @@ class BeneficiaryServiceImplTest {
 
             verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(houseUnitAccessService).ensureCanAccess(newHouseUnit);
-            verify(houseUnitValidator).validateAssignmentForBeneficiary(newHouseUnit);
+            verify(houseUnitValidator).ensureCanAcceptBeneficiary(newHouseUnit);
             verify(beneficiaryMapper).toListDTO(existing);
         }
 
         @Test
-        void shouldSkipHouseUnitChange_whenSameHouseUnitProvided() {
+        void shouldThrow_whenSameHouseUnitProvided() {
             HouseUnit sameHouseUnit = defaultHouseUnit().build();
 
             Beneficiary existing = defaultBeneficiary().build();
             HouseUnit originalHouseUnit = existing.getHouseUnit();
 
-            BeneficiaryListDTO expectedDto = defaultListDTO().build();
-
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.of(existing));
             when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
                     .thenReturn(Optional.of(sameHouseUnit));
-            when(beneficiaryMapper.toListDTO(existing))
-                    .thenReturn(expectedDto);
 
-            BeneficiaryListDTO result =
-                    beneficiaryService.changeHouseUnit(BENEFICIARY_PUBLIC_ID, HOUSE_UNIT_PUBLIC_ID);
+            assertThrows(
+                    BeneficiaryAlreadyInHouseUnitException.class,
+                    () -> beneficiaryService.changeHouseUnit(BENEFICIARY_PUBLIC_ID, HOUSE_UNIT_PUBLIC_ID)
+            );
 
-            assertEquals(expectedDto, result);
             assertSame(originalHouseUnit, existing.getHouseUnit());
 
             verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(houseUnitAccessService).ensureCanAccess(sameHouseUnit);
             verifyNoInteractions(houseUnitValidator);
-            verify(beneficiaryMapper).toListDTO(existing);
+            verifyNoInteractions(beneficiaryMapper);
+            verifyNoInteractions(eventPublisher);
         }
     }
 
@@ -465,7 +466,9 @@ class BeneficiaryServiceImplTest {
                 .publicId(BENEFICIARY_PUBLIC_ID)
                 .firstName("Joe")
                 .lastName("Doe")
-                .houseUnit("UNIT_A")
+                .houseUnitPublicId(HOUSE_UNIT_PUBLIC_ID)
+                .houseUnitCode("UNIT_A")
+                .houseUnitDisplayName("Στέγη Α")
                 .isActive(true);
     }
 

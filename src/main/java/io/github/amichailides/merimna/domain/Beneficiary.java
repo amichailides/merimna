@@ -187,14 +187,6 @@ public class Beneficiary {
 
     public void changeHouseUnit(HouseUnit targetHouseUnit) {
         ensureActive();
-
-        if (isAssignedTo(targetHouseUnit)) {
-            throw new BeneficiaryAlreadyInHouseUnitException(
-                    this.getPublicId(),
-                    targetHouseUnit.getPublicId()
-            );
-        }
-
         this.houseUnit = targetHouseUnit;
     }
 

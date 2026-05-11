@@ -49,6 +49,7 @@ public class BeneficiaryMapper {
                                 ? dischargedBy.getFirstName() + " " + dischargedBy.getLastName()
                                 : null
                 )
+                .houseUnitPublicId(entity.getHouseUnit().getPublicId())
                 .houseUnitCode(entity.getHouseUnit().getCode())
                 .houseUnitDisplayName(entity.getHouseUnit().getDisplayName())
                 .permanentAddress(addressMapper.toDTO(entity.getPermanentAddress()))
@@ -73,7 +74,9 @@ public class BeneficiaryMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .isActive(entity.isActive())
-                .houseUnit(entity.getHouseUnit().getCode())
+                .houseUnitPublicId(entity.getHouseUnit().getPublicId())
+                .houseUnitCode(entity.getHouseUnit().getCode())
+                .houseUnitDisplayName(entity.getHouseUnit().getDisplayName())
                 .build();
     }
 

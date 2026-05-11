@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryHouseUnitChangedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryUpdatedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
+import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.Employee;
@@ -66,7 +67,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .orElseThrow(() -> new HouseUnitNotFoundException(dto.houseUnitPublicId()));
 
         houseUnitAccessService.ensureCanAccess(houseUnit);
-        houseUnitValidator.validateAssignmentForBeneficiary(houseUnit);
+        houseUnitValidator.ensureCanAcceptBeneficiary(houseUnit);
 
         Beneficiary beneficiary = beneficiaryMapper.toEntity(dto, houseUnit);
         Beneficiary savedBeneficiary = beneficiaryRepository.save(beneficiary);
@@ -138,9 +139,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
             spec = spec.and(BeneficiarySpecifications.inHouseUnits(accessibleHouseUnits));
 
-            if (hasText(criteria.getHouseUnit())) {
+            if (criteria.getHouseUnitPublicId() != null) {
                 boolean hasAccess = accessibleHouseUnits.stream()
-                        .anyMatch(h -> criteria.getHouseUnit().equals(h.getCode()));
+                        .anyMatch(h -> criteria.getHouseUnitPublicId().equals(h.getPublicId()));
 
                 if (!hasAccess) {
                     throw new AccessDeniedException("No access to this house unit");
@@ -154,8 +155,9 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             spec = spec.and(BeneficiarySpecifications.globalSearch(criteria.getQ()));
         }
 
-        if (hasText(criteria.getHouseUnit())) {
-            spec = spec.and(BeneficiarySpecifications.hasHouseUnit(criteria.getHouseUnit()));
+        if (criteria.getHouseUnitPublicId() != null) {
+            spec = spec.and(BeneficiarySpecifications.hasHouseUnitPublicId(
+                    criteria.getHouseUnitPublicId()));
         }
 
         if (!criteria.isIncludeInactive()) {
@@ -178,10 +180,16 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         // TODO(#26): Revisit beneficiary house-unit transfer policy.
         // Current V1 policy requires access to both source and target house units
         houseUnitAccessService.ensureCanAccess(targetHouseUnit);
-
         HouseUnit sourceHouseUnit = beneficiary.getHouseUnit();
 
-        houseUnitValidator.validateAssignmentForBeneficiary(targetHouseUnit);
+        if (beneficiary.isAssignedTo(targetHouseUnit)) {
+            throw new BeneficiaryAlreadyInHouseUnitException(
+                    beneficiary.getPublicId(),
+                    targetHouseUnit.getPublicId()
+            );
+        }
+
+        houseUnitValidator.ensureCanAcceptBeneficiary(targetHouseUnit);
         beneficiary.changeHouseUnit(targetHouseUnit);
 
         eventPublisher.publishEvent(BeneficiaryHouseUnitChangedEvent.from(

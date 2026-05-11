@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Fuzzy αναζήτηση σε firstName, lastName και amka (partial match).
@@ -21,12 +22,13 @@ public class BeneficiarySpecifications {
 
     public static Specification<Beneficiary> globalSearch(String searchTerm) {
         return (root, query, cb) -> {
-            if (searchTerm == null || searchTerm.isEmpty()) return null;
+            if (searchTerm == null || searchTerm.isBlank()) {
+                return cb.conjunction();
+            }
 
             String cleanSearchTerm = stripAccents(searchTerm.toLowerCase());
             String pattern = "%" + cleanSearchTerm + "%";
 
-            // Normalize final sigma (ς) to σ for more consistent Greek text matching.
             return cb.or(
                     cb.like(
                             cb.function("replace", String.class,
@@ -43,17 +45,17 @@ public class BeneficiarySpecifications {
         };
     }
 
-    public static Specification<Beneficiary> hasHouseUnit(String code) {
+    public static Specification<Beneficiary> hasHouseUnitPublicId(UUID houseUnitPublicId) {
         return (root, query, cb) ->
-                code == null
-                        ? null
-                        : cb.equal(root.join("houseUnit").get("code"), code);
+                houseUnitPublicId == null
+                        ? cb.conjunction()
+                        : cb.equal(root.join("houseUnit").get("publicId"), houseUnitPublicId);
     }
 
     public static Specification<Beneficiary> hasAmka(String amka) {
         return (root, query, cb) ->
                 (amka == null || amka.isBlank())
-                        ? null
+                        ? cb.conjunction()
                         : cb.equal(root.get("amka"), amka);
     }
 

@@ -43,16 +43,16 @@ public record BeneficiaryCreateDTO(
         LocalDate dateOfBirth,
 
         @Schema(description = "Public identifier of the house unit the beneficiary is assigned to", example = "550e8400-e29b-41d4-a716-446655440000")
-        @NotNull(message = "{houseUnit.publicId.notNull}")
+        @NotNull(message = "{houseUnit.publicId.notNull}", groups = FirstOrder.class)
         UUID houseUnitPublicId,
 
         @Schema(description = "Permanent residential address of the beneficiary")
+        @NotNull(message = "{address.required}", groups = FirstOrder.class)
         @Valid
-        @NotNull(message = "{address.required}")
         AddressDTO permanentAddress,
 
         @Schema(description = "Emergency contact person for the beneficiary")
+        @NotNull(message = "{emergencyContact.required}", groups = FirstOrder.class)
         @Valid
-        @NotNull(message = "{emergencyContact.required}")
         EmergencyContactDTO emergencyContact
 ) {}
