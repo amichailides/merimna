@@ -7,26 +7,35 @@ import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
 public record HouseUnitUpdateDTO(
 
         @OptionalNotBlank(message = "{houseUnit.code.notBlank}", groups = FirstOrder.class)
-        @Pattern(regexp = ValidationPatterns.HOUSE_UNIT_CODE,
-                message = "{houseUnit.code.invalid}", groups = SecondOrder.class)
+        @Pattern(
+                regexp = ValidationPatterns.HOUSE_UNIT_CODE,
+                message = "{houseUnit.code.invalid}",
+                groups = SecondOrder.class
+        )
         String code,
 
+        @OptionalNotBlank(message = "{houseUnit.displayName.notBlank}", groups = FirstOrder.class)
         @ValidGreekLatinText(
                 extended = true,
                 max = 50,
-                message = "{houseUnit.displayName.invalid}", groups = SecondOrder.class)
+                message = "{houseUnit.displayName.invalid}",
+                groups = SecondOrder.class
+        )
         String displayName,
 
+        @OptionalNotBlank(message = "{houseUnit.address.notBlank}", groups = FirstOrder.class)
         @ValidGreekLatinText(
                 extended = true,
-                max = 255, message = "{houseUnit.address.invalid}", groups = SecondOrder.class)
+                max = 255,
+                message = "{houseUnit.address.invalid}",
+                groups = SecondOrder.class
+        )
         String address,
 
         @Positive(message = "{houseUnit.maxCapacity.positive}", groups = SecondOrder.class)

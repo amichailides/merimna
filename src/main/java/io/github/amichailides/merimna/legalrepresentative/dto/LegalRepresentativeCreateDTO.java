@@ -13,31 +13,31 @@ import lombok.Builder;
 @Builder
 public record LegalRepresentativeCreateDTO(
         @NotBlank(message = "{afm.required}", groups = FirstOrder.class)
-        @ValidAfm(message = "{afm.invalid}", groups = SecondOrder.class)
+        @ValidAfm(groups = SecondOrder.class)
         String afm,
 
-        @NotNull(message = "{legalRepresentative.required}", groups = FirstOrder.class )
+        @NotNull(message = "{legalRepresentative.required}", groups = FirstOrder.class)
         LegalRepresentativeType type,
 
         @NotBlank(message = "{firstName.required}", groups = FirstOrder.class)
-        @ValidFirstName(message = "{firstName.invalid}", groups = SecondOrder.class)
+        @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
         @NotBlank(message = "{lastName.required}", groups = FirstOrder.class)
-        @ValidLastName(message = "{lastName.invalid}", groups = SecondOrder.class)
+        @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
-        @ValidMobile(message = "{mobile.invalid}", groups = SecondOrder.class)
+        @ValidMobile(groups = SecondOrder.class)
         String mobileNumber,
 
-        @ValidLandline(message = "{landline.invalid}", groups = SecondOrder.class)
+        @ValidLandline(groups = SecondOrder.class)
         String landlinePhone,
 
-        @ValidEmail(message = "{email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(groups = SecondOrder.class)
         String email,
 
         @ValidGreekLatinText(
-                max =500,
+                max = 500,
                 message = "{legalRepresentative.notes.invalid}",
                 groups = SecondOrder.class)
         String notes

@@ -8,22 +8,22 @@ public record LegalRepresentativeUpdateDTO(
 
         LegalRepresentativeType type,
 
-        @ValidAfm(message = "{afm.invalid}", groups = SecondOrder.class)
+        @ValidAfm(groups = SecondOrder.class)
         String afm,
 
-        @ValidFirstName(message = "{firstName.invalid}", groups = SecondOrder.class)
+        @ValidFirstName(groups = SecondOrder.class)
         String firstName,
 
-        @ValidLastName(message = "{lastName.invalid}", groups = SecondOrder.class)
+        @ValidLastName(groups = SecondOrder.class)
         String lastName,
 
-        @ValidMobile(message = "{mobile.invalid}", groups = SecondOrder.class)
+        @ValidMobile(groups = SecondOrder.class)
         String mobileNumber,
 
-        @ValidLandline(message = "{landline.invalid}", groups = SecondOrder.class)
+        @ValidLandline(groups = SecondOrder.class)
         String landlinePhone,
 
-        @ValidEmail(message = "{email.invalid}", groups = SecondOrder.class)
+        @ValidEmail(groups = SecondOrder.class)
         String email,
 
         @ValidGreekLatinText(
