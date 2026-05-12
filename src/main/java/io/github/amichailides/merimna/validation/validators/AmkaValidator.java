@@ -6,11 +6,15 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class AmkaValidator implements ConstraintValidator<ValidAmka, String> {
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        // Αν είναι null, επιστρέφουμε true (γιατί το null το ελέγχει το @NotNull)
-        if (value == null || value.isBlank()) {
+        if (value == null) {
             return true;
+        }
+
+        if (value.isBlank()) {
+            return false;
         }
 
         return value.matches(ValidationPatterns.AMKA);
