@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.common.openapi.ConflictErrorResponse;
 import io.github.amichailides.merimna.common.openapi.NotFoundErrorResponse;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.common.openapi.ValidationErrorResponse;
-import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -32,7 +30,6 @@ import java.util.UUID;
 
 @Tag(name = "Beneficiaries", description = "Operations related to beneficiaries")
 @RestController
-@Validated
 @RequestMapping("/beneficiaries")
 @RequiredArgsConstructor
 public class BeneficiaryController {
@@ -101,16 +98,13 @@ public class BeneficiaryController {
             )
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @PatchMapping("/{publicId}")
+    @PatchMapping("/{beneficiaryPublicId}")
     public ResponseEntity<BeneficiaryDetailsDTO> updateBeneficiary(
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String publicId,
+            @PathVariable UUID beneficiaryPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody BeneficiaryUpdateDTO dto) {
 
-        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(UUID.fromString(publicId), dto);
+        BeneficiaryDetailsDTO beneficiary = service.updateBeneficiary(beneficiaryPublicId, dto);
         return ResponseEntity.ok(beneficiary);
     }
 
@@ -131,15 +125,12 @@ public class BeneficiaryController {
             )
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
-    @GetMapping("/{publicId}")
+    @GetMapping("/{beneficiaryPublicId}")
     public BeneficiaryDetailsDTO getById(
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String publicId) {
+            @PathVariable UUID beneficiaryPublicId) {
 
-        return service.findByPublicId(UUID.fromString(publicId));
+        return service.findByPublicId(beneficiaryPublicId);
     }
 
     // TODO(#5): Revisit discharge API design.
@@ -171,22 +162,19 @@ public class BeneficiaryController {
             )
     })
     @PreAuthorize("hasAuthority('BENEFICIARY_DISCHARGE')")
-    @PostMapping("/{publicId}/discharge")
+    @PostMapping("/{beneficiaryPublicId}/discharge")
     public ResponseEntity<BeneficiaryDetailsDTO> discharge(
             @Parameter(
                     description = "Beneficiary public identifier",
                     example = "550e8400-e29b-41d4-a716-446655440000"
             )
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String publicId,
+            @PathVariable UUID beneficiaryPublicId,
 
             @Validated(ValidationGroupSequence.class)
             @RequestBody
             DischargeRequestDTO dto) {
 
-        BeneficiaryDetailsDTO updated = service.discharge(UUID.fromString(publicId), dto);
+        BeneficiaryDetailsDTO updated = service.discharge(beneficiaryPublicId, dto);
         return ResponseEntity.ok(updated);
     }
 
@@ -245,23 +233,16 @@ public class BeneficiaryController {
                     )
             )
     })
-    @PatchMapping("/{publicId}/house-unit/{houseUnitPublicId}")
+    @PatchMapping("/{beneficiaryPublicId}/house-unit/{houseUnitPublicId}")
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     public ResponseEntity<BeneficiaryListDTO> changeHouseUnit(
             @Parameter(description = "Beneficiary public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String publicId,
-
+            @PathVariable UUID beneficiaryPublicId,
 
             @Parameter(description = "House unit public identifier", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable
-            @NotBlank(message = "{houseUnit.publicId.required}")
-            @ValidUUID(message = "{houseUnit.publicId.invalid}")
-            String houseUnitPublicId) {
+            @PathVariable UUID houseUnitPublicId) {
 
-        BeneficiaryListDTO updated = service.changeHouseUnit(UUID.fromString(publicId), UUID.fromString(houseUnitPublicId));
+        BeneficiaryListDTO updated = service.changeHouseUnit(beneficiaryPublicId, houseUnitPublicId);
         return ResponseEntity.ok(updated);
     }
 

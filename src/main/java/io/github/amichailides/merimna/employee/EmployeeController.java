@@ -2,9 +2,7 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.*;
-import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -22,7 +20,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/employees")
-@Validated
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService employeeService;
@@ -56,61 +53,49 @@ public class EmployeeController {
         );
     }
 
-    @GetMapping("/{publicId}")
+    @GetMapping("/{employeePublicId}")
     @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<EmployeeDetailsDTO> getEmployeeByPublicId(
-            @PathVariable
-            @NotBlank(message = "{employee.publicId.required}")
-            @ValidUUID(message = "{employee.publicId.invalid}")
-            String publicId) {
+            @PathVariable UUID employeePublicId) {
 
-        EmployeeDetailsDTO result = employeeService.getEmployeeByPublicId(UUID.fromString(publicId));
+        EmployeeDetailsDTO result = employeeService.getEmployeeByPublicId(employeePublicId);
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/{publicId}")
+    @PatchMapping("/{employeePublicId}")
     @PreAuthorize("hasAuthority('EMPLOYEE_UPDATE')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
-            @PathVariable
-            @NotBlank(message = "{employee.publicId.required}")
-            @ValidUUID(message = "{employee.publicId.invalid}")
-            String publicId,
+            @PathVariable UUID employeePublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeUpdateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.updateEmployee(UUID.fromString(publicId), dto);
+        EmployeeDetailsDTO result = employeeService.updateEmployee(employeePublicId, dto);
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{publicId}/terminate")
+    @PostMapping("/{employeePublicId}/terminate")
     @PreAuthorize("hasAuthority('EMPLOYEE_TERMINATE')")
     public ResponseEntity<EmployeeDetailsDTO> terminateEmployee(
-            @PathVariable
-            @NotBlank(message = "{employee.publicId.required}")
-            @ValidUUID(message = "{employee.publicId.invalid}")
-            String publicId,
+            @PathVariable UUID employeePublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody EmployeeTerminateDTO dto) {
 
-        EmployeeDetailsDTO result = employeeService.terminate(UUID.fromString(publicId), dto.terminationDate());
+        EmployeeDetailsDTO result = employeeService.terminate(employeePublicId, dto.terminationDate());
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{publicId}/reactivate")
+    @PostMapping("/{employeePublicId}/reactivate")
     @PreAuthorize("hasAuthority('EMPLOYEE_REACTIVATE')")
     public ResponseEntity<EmployeeDetailsDTO> reactivateEmployee(
-            @PathVariable
-            @NotBlank(message = "{employee.publicId.required}")
-            @ValidUUID(message = "{employee.publicId.invalid}")
-            String publicId) {
+            @PathVariable UUID employeePublicId) {
 
-        EmployeeDetailsDTO result = employeeService.reactivate(UUID.fromString(publicId));
+        EmployeeDetailsDTO result = employeeService.reactivate(employeePublicId);
         return ResponseEntity.ok(result);
     }
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(UUID employeePublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{publicId}")
+                .buildAndExpand(employeePublicId)
                 .toUri();
     }
 }

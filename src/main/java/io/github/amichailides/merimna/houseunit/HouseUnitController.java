@@ -3,9 +3,7 @@ package io.github.amichailides.merimna.houseunit;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
-import io.github.amichailides.merimna.validation.ValidationPatterns;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("house-units")
-@Validated
 @RequiredArgsConstructor
 public class HouseUnitController {
 
@@ -40,33 +37,33 @@ public class HouseUnitController {
 
         HouseUnitReadOnlyDTO houseUnit = houseUnitService.createHouseUnit(dto);
         return ResponseEntity
-                .created(buildLocationUri(houseUnit.publicId().toString()))
+                .created(buildLocationUri(houseUnit.publicId()))
                 .body(houseUnit);
     }
 
     @PreAuthorize("hasAuthority('HOUSE_UNIT_UPDATE')")
-    @PatchMapping("/{publicId}")
+    @PatchMapping("/{houseUnitPublicId}")
     public ResponseEntity<HouseUnitReadOnlyDTO> updateHouseUnit(
-            @PathVariable UUID publicId,
+            @PathVariable UUID houseUnitPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody HouseUnitUpdateDTO dto) {
 
-        HouseUnitReadOnlyDTO updated = houseUnitService.updateHouseUnit(publicId, dto);
+        HouseUnitReadOnlyDTO updated = houseUnitService.updateHouseUnit(houseUnitPublicId, dto);
         return ResponseEntity.ok(updated);
     }
 
     @PreAuthorize("hasAuthority('HOUSE_UNIT_READ')")
-    @GetMapping("/{publicId}")
+    @GetMapping("/{houseUnitPublicId}")
     public HouseUnitReadOnlyDTO getHouseUnit(
-            @PathVariable UUID publicId) {
+            @PathVariable UUID houseUnitPublicId) {
 
-        return houseUnitService.getHouseUnit(publicId);
+        return houseUnitService.getHouseUnit(houseUnitPublicId);
     }
 
-    private URI buildLocationUri(String publicId) {
+    private URI buildLocationUri(UUID houseUnitPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{code}")
-                .buildAndExpand(publicId)
+                .path("/{houseUnitPublicId}")
+                .buildAndExpand(houseUnitPublicId)
                 .toUri();
     }
 }

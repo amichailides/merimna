@@ -4,10 +4,8 @@ package io.github.amichailides.merimna.medication;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
-import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -30,13 +29,10 @@ public class MedicationController {
     @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
     @PostMapping
     public ResponseEntity<MedicationReadOnlyDTO> addMedication(
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String beneficiaryPublicId,
+            @PathVariable UUID beneficiaryPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody MedicationCreateDTO dto) {
 
-        MedicationReadOnlyDTO medication = medicationService.addMedication(UUID.fromString(beneficiaryPublicId), dto);
+        MedicationReadOnlyDTO medication = medicationService.addMedication(beneficiaryPublicId, dto);
 
         // TODO: When the frontend is integrated, expose the "Location" header in the CORS configuration
 
@@ -48,39 +44,30 @@ public class MedicationController {
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public List<MedicationReadOnlyDTO> getMedications(
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String beneficiaryPublicId) {
+            @PathVariable UUID beneficiaryPublicId) {
 
-        return medicationService.getMedicationsByBeneficiary(UUID.fromString(beneficiaryPublicId));
+        return medicationService.getMedicationsByBeneficiary(beneficiaryPublicId);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping("/{medicationId}")
     public MedicationReadOnlyDTO getMedication(
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String beneficiaryPublicId,
+            @PathVariable UUID beneficiaryPublicId,
             @PathVariable @Positive(message = "{medication.id.positive}") Long medicationId) {
 
-        return medicationService.getMedication(UUID.fromString(beneficiaryPublicId), medicationId);
+        return medicationService.getMedication(beneficiaryPublicId, medicationId);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PatchMapping("/{medicationId}")
     public ResponseEntity<MedicationReadOnlyDTO> updateMedication(
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String beneficiaryPublicId,
+            @PathVariable UUID beneficiaryPublicId,
             @PathVariable
             @Positive(message = "{medication.id.positive}")
             Long medicationId,
             @Validated(ValidationGroupSequence.class) @RequestBody MedicationUpdateDTO dto) {
 
-        MedicationReadOnlyDTO updated = medicationService.updateMedication(UUID.fromString(beneficiaryPublicId), medicationId, dto);
+        MedicationReadOnlyDTO updated = medicationService.updateMedication(beneficiaryPublicId, medicationId, dto);
 
         return ResponseEntity.ok(updated);
 
@@ -89,15 +76,12 @@ public class MedicationController {
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @DeleteMapping("/{medicationId}")
     public ResponseEntity<Void> deleteMedication (
-            @PathVariable
-            @NotBlank(message = "{beneficiary.publicId.required}")
-            @ValidUUID(message = "{beneficiary.publicId.invalid}")
-            String beneficiaryPublicId,
+            @PathVariable UUID beneficiaryPublicId,
             @PathVariable
             @Positive(message = "{medication.id.positive}")
             Long medicationId) {
 
-        medicationService.deleteMedication(UUID.fromString(beneficiaryPublicId), medicationId);
+        medicationService.deleteMedication(beneficiaryPublicId, medicationId);
 
         return ResponseEntity.noContent().build();
     }

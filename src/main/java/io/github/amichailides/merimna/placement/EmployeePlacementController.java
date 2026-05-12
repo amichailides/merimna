@@ -1,13 +1,11 @@
 package io.github.amichailides.merimna.placement;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
-import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
+import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementSearchDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementTerminateDTO;
-import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/placements")
-@Validated
 @RequiredArgsConstructor
 public class EmployeePlacementController {
 
@@ -37,26 +34,19 @@ public class EmployeePlacementController {
                 .body(placement);
     }
 
-    @GetMapping("/{publicId}")
+    @GetMapping("/{placementPublicId}")
     public EmployeePlacementReadOnlyDTO getPlacement(
-            @PathVariable
-            @NotBlank(message = "{placement.publicId.required}")
-            @ValidUUID(message = "{placement.publicId.invalid}")
-            String publicId) {
+            @PathVariable UUID placementPublicId) {
 
-        return placementService.getByPublicId(UUID.fromString(publicId));
+        return placementService.getByPublicId(placementPublicId);
     }
 
-    @PostMapping("/{publicId}/terminate")
+    @PostMapping("/{placementPublicId}/terminate")
     public ResponseEntity<Void> terminate(
-            @PathVariable
-            @NotBlank(message = "{placement.publicId.required}")
-            @ValidUUID(message = "{placement.publicId.invalid}")
-            String publicId,
-            @Validated(ValidationGroupSequence.class)
-            @RequestBody EmployeePlacementTerminateDTO dto) {
+            @PathVariable UUID placementPublicId,
+            @Validated(ValidationGroupSequence.class) @RequestBody EmployeePlacementTerminateDTO dto) {
 
-        placementService.terminate(UUID.fromString(publicId), dto);
+        placementService.terminate(placementPublicId, dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -78,11 +68,11 @@ public class EmployeePlacementController {
     }
 
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(UUID placementPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{placementPublicId}")
+                .buildAndExpand(placementPublicId)
                 .toUri();
     }
 }
