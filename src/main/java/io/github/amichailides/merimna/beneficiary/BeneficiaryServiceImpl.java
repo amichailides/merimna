@@ -2,10 +2,12 @@ package io.github.amichailides.merimna.beneficiary;
 
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
+import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.audit.event.BeneficiaryCreatedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryHouseUnitChangedEvent;
 import io.github.amichailides.merimna.audit.event.BeneficiaryUpdatedEvent;
+import io.github.amichailides.merimna.beneficiary.audit.BeneficiaryChangeDetector;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
@@ -46,6 +48,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final HouseUnitAccessService houseUnitAccessService;
     private final ApplicationEventPublisher eventPublisher;
     private final CurrentUserProvider currentUserProvider;
+    private final BeneficiaryChangeDetector beneficiaryChangeDetector;
 
     @Override
     @Transactional(readOnly = true)
@@ -112,9 +115,12 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         houseUnitAccessService.ensureCanAccess(beneficiary);
         beneficiaryValidator.validateForUpdate(beneficiary, dto);
 
+        EntityChangeSet changeSet = beneficiaryChangeDetector.detectChanges(beneficiary, dto);
+
         beneficiaryMapper.updateEntity(beneficiary, dto);
 
-        eventPublisher.publishEvent(BeneficiaryUpdatedEvent.from(beneficiary));
+        eventPublisher.publishEvent(
+                BeneficiaryUpdatedEvent.from(beneficiary, changeSet));
 
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
