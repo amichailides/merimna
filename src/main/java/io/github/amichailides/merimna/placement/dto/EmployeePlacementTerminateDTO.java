@@ -7,6 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Schema(description = "Request payload for terminating an employee placement.")
 @Builder
 public record EmployeePlacementTerminateDTO(
         @Schema(description = "End date of the placement", example = "2026-04-26")

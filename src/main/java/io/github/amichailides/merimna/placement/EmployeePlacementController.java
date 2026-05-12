@@ -62,7 +62,7 @@ public class EmployeePlacementController {
 
     @GetMapping
     public ResponseEntity<PageResponse<EmployeePlacementReadOnlyDTO>> getAllPlacements(
-            @Validated @ModelAttribute EmployeePlacementSearchDTO criteria,
+            @Validated(ValidationGroupSequence.class) @ModelAttribute EmployeePlacementSearchDTO criteria,
             Pageable pageable) {
 
         Page<EmployeePlacementReadOnlyDTO> page = placementService.getAllPlacements(criteria, pageable);
