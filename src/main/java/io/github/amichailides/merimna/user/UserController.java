@@ -3,12 +3,10 @@ package io.github.amichailides.merimna.user;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.user.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +35,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadOnlyDTO>> getAllUsers(
-            @ModelAttribute UserSearchDTO criteria,
+            @Validated(ValidationGroupSequence.class) @ModelAttribute UserSearchDTO criteria,
             Pageable pageable) {
 
         Page<UserReadOnlyDTO> page = userService.getAllUsers(criteria, pageable);
