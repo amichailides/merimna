@@ -98,8 +98,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .and(EmployeeSpecifications.hasPositionCode(criteria.positionCode()))
                 .and(EmployeeSpecifications.isActive(includeInactive ? null : true));
 
-        if (criteria.houseUnit() != null && !criteria.houseUnit().isBlank()) {
-            spec = spec.and(EmployeeSpecifications.belongsToHouseUnit(criteria.houseUnit()));
+        if (criteria.houseUnitPublicId() != null) {
+            spec = spec.and(EmployeeSpecifications.belongsToHouseUnitPublicId(
+                    criteria.houseUnitPublicId()));
         }
 
         return employeeRepository.findAll(spec, pageable)

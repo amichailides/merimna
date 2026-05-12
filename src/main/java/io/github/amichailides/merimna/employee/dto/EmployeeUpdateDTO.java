@@ -31,6 +31,7 @@ public record EmployeeUpdateDTO(
         String mobileNumber,
 
         @Schema(description = "Employee position code", example = "CAREGIVER")
+        @OptionalNotBlank(message = "{employee.positionCode.blank}", groups = FirstOrder.class)
         String positionCode,
 
         @Schema(description = "Employee hire date", example = "2026-02-23")

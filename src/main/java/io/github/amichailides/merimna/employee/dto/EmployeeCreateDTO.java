@@ -39,7 +39,7 @@ public record EmployeeCreateDTO(
 
         @Schema(description = "Employee residential address")
         @Valid
-        @NotNull(message = "{address.required}")
+        @NotNull(message = "{address.required}", groups = FirstOrder.class)
         AddressDTO address,
 
         @Schema(description = "Employee position code", example = "CAREGIVER")

@@ -4,7 +4,6 @@ import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.annotations.ValidUUID;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -42,7 +41,7 @@ public class EmployeeController {
     @GetMapping
     @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
     public ResponseEntity<PageResponse<EmployeeListDTO>> getAllEmployees(
-            @Valid @ModelAttribute EmployeeSearchDTO criteria,
+            @Validated(ValidationGroupSequence.class) @ModelAttribute EmployeeSearchDTO criteria,
             @ParameterObject @PageableDefault(size = 5, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
 
         Page<EmployeeListDTO> page = employeeService.getAllEmployees(criteria, pageable);
@@ -89,7 +88,7 @@ public class EmployeeController {
             @NotBlank(message = "{employee.publicId.required}")
             @ValidUUID(message = "{employee.publicId.invalid}")
             String publicId,
-            @RequestBody @Valid EmployeeTerminateDTO dto) {
+            @Validated(ValidationGroupSequence.class) @RequestBody EmployeeTerminateDTO dto) {
 
         EmployeeDetailsDTO result = employeeService.terminate(UUID.fromString(publicId), dto.terminationDate());
         return ResponseEntity.ok(result);
