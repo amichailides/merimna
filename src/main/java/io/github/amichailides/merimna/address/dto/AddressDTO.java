@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.address.dto;
 
+import io.github.amichailides.merimna.validation.annotations.OptionalNotBlank;
 import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText;
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
@@ -27,7 +28,7 @@ public record AddressDTO(
         String street,
 
         @Schema(description = "Street number", example = "12Α")
-        @NotBlank(message = "{address.number.required}", groups = FirstOrder.class)
+        @OptionalNotBlank(message = "{address.number.notBlank}", groups = FirstOrder.class)
         @Pattern(
                 regexp = ValidationPatterns.STREET_NUMBER,
                 message = "{address.number.invalid}",

@@ -37,7 +37,7 @@ public record LegalRepresentativeCreateDTO(
         String email,
 
         @ValidGreekLatinText(
-                max = 500,
+                extended = true,
                 message = "{legalRepresentative.notes.invalid}",
                 groups = SecondOrder.class)
         String notes
