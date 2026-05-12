@@ -4,14 +4,16 @@ import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
 import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
 import io.github.amichailides.merimna.security.auth.dto.RefreshRequest;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +32,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
-            @Valid @RequestBody LoginRequest request,
+            @Validated(ValidationGroupSequence.class) @RequestBody LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
 
