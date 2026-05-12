@@ -163,7 +163,6 @@ public class GlobalExceptionHandler {
                         request.getRequestURI()));
     }
 
-    // Για λάθη στο URL (π.χ. /api/beneficiaries/abc αντί για ID 123) -
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex,
@@ -171,28 +170,44 @@ public class GlobalExceptionHandler {
 
         String propertyName = ex.getName();
         Object providedValue = ex.getValue();
-
-        log.error("Type mismatch for parameter '{}': {}", propertyName, providedValue);
-
         Class<?> requiredType = ex.getRequiredType();
+
+        log.warn("Type mismatch for parameter '{}': {}", propertyName, providedValue);
+
         String detail;
 
-        if (requiredType != null && requiredType.isEnum()) {
-            String validValues = Arrays.stream(requiredType.getEnumConstants())
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "));
-
+        if (UUID.class.equals(requiredType)) {
+            detail = messageSource.getMessage(
+                    "error.request.parameter.invalidUuid",
+                    null,
+                    LocaleContextHolder.getLocale()
+            );
+        } else if (requiredType != null && requiredType.isEnum()) {
             detail = messageSource.getMessage(
                     "error.request.parameter.typeMismatchEnum",
-                    new Object[]{String.valueOf(providedValue), propertyName, validValues},
+                    null,
                     LocaleContextHolder.getLocale()
             );
         } else {
             detail = messageSource.getMessage(
                     "error.request.parameter.typeMismatch",
-                    new Object[]{String.valueOf(providedValue), propertyName},
+                    null,
                     LocaleContextHolder.getLocale()
             );
+        }
+
+        Map<String, Object> context = new LinkedHashMap<>();
+        context.put("parameter", propertyName);
+        context.put("providedValue", String.valueOf(providedValue));
+
+        if (requiredType != null) {
+            context.put("expectedType", requiredType.getSimpleName());
+
+            if (requiredType.isEnum()) {
+                context.put("validValues", Arrays.stream(requiredType.getEnumConstants())
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", ")));
+            }
         }
 
         return ResponseEntity
@@ -202,7 +217,9 @@ public class GlobalExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         detail,
-                        request.getRequestURI()));
+                        request.getRequestURI(),
+                        context
+                ));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
