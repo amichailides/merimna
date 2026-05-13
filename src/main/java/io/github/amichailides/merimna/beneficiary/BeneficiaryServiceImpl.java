@@ -117,6 +117,10 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         EntityChangeSet changeSet = beneficiaryChangeDetector.detectChanges(beneficiary, dto);
 
+        if (!changeSet.hasChanges()) {
+            return beneficiaryMapper.toDetailsDTO(beneficiary);
+        }
+
         beneficiaryMapper.updateEntity(beneficiary, dto);
 
         eventPublisher.publishEvent(

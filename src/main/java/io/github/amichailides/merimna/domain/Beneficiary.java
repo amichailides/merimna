@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryInactiveException;
 import io.github.amichailides.merimna.legalrepresentative.exception.LegalRepresentativeAlreadyAssignedException;
@@ -8,7 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import static java.util.Collections.unmodifiableSet;
 
