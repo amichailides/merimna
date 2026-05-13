@@ -10,7 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface AllergyRepository extends JpaRepository<Allergy, Long> {
-    Optional<Allergy> findByIdAndBeneficiaryId(Long allergyId, Long beneficiaryId);
+
+    Optional<Allergy> findByPublicId(UUID publicId);
 
     List<Allergy> findAllByBeneficiaryPublicId(UUID beneficiaryPublicId);
 

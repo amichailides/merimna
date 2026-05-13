@@ -4,11 +4,12 @@ import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.exception.BaseApplicationException;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class AllergyNotFoundException extends BaseApplicationException {
-    public AllergyNotFoundException(Long allergyId) {
+    public AllergyNotFoundException(UUID allergyPublicId) {
         super(ErrorCode.ALLERGY_NOT_FOUND, Map.of(
-                "allergyId", allergyId
+                "allergyPublicId", allergyPublicId
         ));
     }
 }

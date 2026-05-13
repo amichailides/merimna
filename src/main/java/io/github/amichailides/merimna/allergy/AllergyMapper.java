@@ -31,7 +31,7 @@ public class AllergyMapper {
         if (entity == null) return null;
 
         return new AllergyReadOnlyDTO(
-                entity.getId(),
+                entity.getPublicId(),
                 entity.getSubstance(),
                 entity.getSeverity(),
                 entity.getReaction()
@@ -42,7 +42,7 @@ public class AllergyMapper {
         Objects.requireNonNull(existing, "existing allergy must not be null");
         Objects.requireNonNull(dto, "allergy update dto must not be null");
 
-        updateIfNotBlank(dto.substance(), existing::setSubstance);
+        updateIfNotBlank(dto.substance(), value -> existing.setSubstance(normalize(value)));
         updateIfNotBlank(dto.reaction(), existing::setReaction);
         updateIfNotNull(dto.severity(), existing::setSeverity);
     }

@@ -5,7 +5,6 @@ import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,28 +33,28 @@ public class AllergyController {
         AllergyReadOnlyDTO allergy = allergyService.createAllergy(beneficiaryPublicId, dto);
 
         return ResponseEntity
-                .created(buildLocationUri(allergy.id()))
+                .created(buildLocationUri(allergy.publicId()))
                 .body(allergy);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @PatchMapping("/{allergyId}")
+    @PatchMapping("/{allergyPublicId}")
     public ResponseEntity<AllergyReadOnlyDTO> updateAllergy(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId,
+            @PathVariable UUID allergyPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody AllergyUpdateDTO dto) {
 
-        AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryPublicId, allergyId, dto);
+        AllergyReadOnlyDTO allergy = allergyService.updateAllergy(beneficiaryPublicId, allergyPublicId, dto);
         return ResponseEntity.ok(allergy);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @DeleteMapping("/{allergyId}")
+    @DeleteMapping("/{allergyPublicId}")
     public ResponseEntity<Void> deleteAllergy(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
+            @PathVariable UUID allergyPublicId) {
 
-        allergyService.deleteAllergy(beneficiaryPublicId, allergyId);
+        allergyService.deleteAllergy(beneficiaryPublicId, allergyPublicId);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,19 +67,19 @@ public class AllergyController {
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
-    @GetMapping("/{allergyId}")
-    public AllergyReadOnlyDTO getAllergyById(
+    @GetMapping("/{allergyPublicId}")
+    public AllergyReadOnlyDTO getAllergyByPublicId(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable @Positive(message = "{allergy.id.positive}") Long allergyId) {
+            @PathVariable UUID allergyPublicId) {
 
-        return allergyService.getAllergyById(beneficiaryPublicId, allergyId);
+        return allergyService.getAllergyByPublicId(beneficiaryPublicId, allergyPublicId);
     }
 
-    private URI buildLocationUri(Long id) {
+    private URI buildLocationUri(UUID allergyPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{allergyPublicId}")
+                .buildAndExpand(allergyPublicId)
                 .toUri();
     }
 }

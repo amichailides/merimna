@@ -37,7 +37,7 @@ class AllergyServiceImplTest {
 
     private static final UUID OWNER_BENEFICIARY_PUBLIC_ID = UUID.randomUUID();
     private static final UUID NON_OWNER_BENEFICIARY_PUBLIC_ID = UUID.randomUUID();
-    private static final Long ALLERGY_ID = 1L;
+    private static final UUID ALLERGY_PUBLIC_ID = UUID.randomUUID();
 
     @Mock
     private AllergyRepository allergyRepository;
@@ -63,12 +63,9 @@ class AllergyServiceImplTest {
             AllergyCreateDTO createDTO = defaultAllergyCreateDTO().build();
             Allergy allergyToSave = defaultAllergy().build();
             Allergy savedAllergy = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().build())
                     .build();
-            AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO()
-                    .id(ALLERGY_ID)
-                    .build();
+            AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO().build();
 
             when(beneficiaryRepository.findByPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(Optional.of(beneficiary));
             when(allergyMapper.toEntity(createDTO)).thenReturn(allergyToSave);
@@ -112,22 +109,20 @@ class AllergyServiceImplTest {
         @Test
         void shouldUpdateAndReturnDto_whenValidInputProvided() {
             Allergy existing = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().build())
                     .build();
             AllergyUpdateDTO updateDto = defaultAllergyUpdateDTO().build();
             AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO()
-                    .id(ALLERGY_ID)
                     .severity(AllergySeverity.HIGH)
                     .build();
 
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(existing));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(existing));
             when(allergyMapper.toDTO(existing)).thenReturn(expectedDto);
 
-            AllergyReadOnlyDTO result = allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID, updateDto);
+            AllergyReadOnlyDTO result = allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID, updateDto);
 
             assertEquals(expectedDto, result);
-            verify(allergyRepository).findById(ALLERGY_ID);
+            verify(allergyRepository).findByPublicId(ALLERGY_PUBLIC_ID);
             verify(allergyValidator).validateForUpdate(existing, updateDto);
             verify(allergyMapper).updateEntity(existing, updateDto);
             verify(allergyMapper).toDTO(existing);
@@ -137,11 +132,11 @@ class AllergyServiceImplTest {
         void shouldThrowException_whenAllergyNotFound() {
             AllergyUpdateDTO updateDto = defaultAllergyUpdateDTO().build();
 
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.empty());
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.empty());
 
             assertThrows(
                     AllergyNotFoundException.class,
-                    () -> allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID, updateDto)
+                    () -> allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID, updateDto)
             );
 
             verify(allergyValidator, never()).validateForUpdate(any(), any());
@@ -152,16 +147,15 @@ class AllergyServiceImplTest {
         @Test
         void shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
             Allergy existing = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().publicId(NON_OWNER_BENEFICIARY_PUBLIC_ID).build())
                     .build();
             AllergyUpdateDTO updateDto = defaultAllergyUpdateDTO().build();
 
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(existing));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(existing));
 
             assertThrows(
                     AllergyNotOwnedByBeneficiaryException.class,
-                    () -> allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID, updateDto)
+                    () -> allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID, updateDto)
             );
 
             verify(allergyValidator, never()).validateForUpdate(any(), any());
@@ -176,15 +170,13 @@ class AllergyServiceImplTest {
         @Test
         void shouldRemoveAllergy_whenBeneficiaryAndAllergyExist() {
             Beneficiary beneficiary = defaultBeneficiary().build();
-            Allergy allergy = defaultAllergy()
-                    .id(ALLERGY_ID)
-                    .build();
+            Allergy allergy = defaultAllergy().build();
             beneficiary.addAllergy(allergy);
 
             when(beneficiaryRepository.findByPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(Optional.of(beneficiary));
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(allergy));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(allergy));
 
-            allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID);
+            allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID);
 
             assertTrue(beneficiary.getAllergies().isEmpty());
             verify(allergyRepository, never()).delete(any());
@@ -196,10 +188,10 @@ class AllergyServiceImplTest {
 
             assertThrows(
                     BeneficiaryNotFoundByPublicIdException.class,
-                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID)
+                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID)
             );
 
-            verify(allergyRepository, never()).findById(any());
+            verify(allergyRepository, never()).findByPublicId(any());
         }
 
         @Test
@@ -207,11 +199,11 @@ class AllergyServiceImplTest {
             Beneficiary beneficiary = defaultBeneficiary().build();
 
             when(beneficiaryRepository.findByPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(Optional.of(beneficiary));
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.empty());
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.empty());
 
             assertThrows(
                     AllergyNotFoundException.class,
-                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID)
+                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID)
             );
         }
 
@@ -219,50 +211,46 @@ class AllergyServiceImplTest {
         void shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
             Beneficiary beneficiary = defaultBeneficiary().build();
             Allergy allergy = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().publicId(NON_OWNER_BENEFICIARY_PUBLIC_ID).build())
                     .build();
 
             when(beneficiaryRepository.findByPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(Optional.of(beneficiary));
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(allergy));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(allergy));
 
             assertThrows(
                     AllergyNotOwnedByBeneficiaryException.class,
-                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID)
+                    () -> allergyService.deleteAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID)
             );
         }
     }
 
     @Nested
-    class GetAllergyByIdTests {
+    class GetAllergyByPublicIdTests {
 
         @Test
         void shouldReturnDto_whenAllergyExistsAndBelongsToBeneficiary() {
             Allergy allergy = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().build())
                     .build();
-            AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO()
-                    .id(ALLERGY_ID)
-                    .build();
+            AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO().build();
 
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(allergy));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(allergy));
             when(allergyMapper.toDTO(allergy)).thenReturn(expectedDto);
 
-            AllergyReadOnlyDTO result = allergyService.getAllergyById(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID);
+            AllergyReadOnlyDTO result = allergyService.getAllergyByPublicId(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID);
 
             assertEquals(expectedDto, result);
-            verify(allergyRepository).findById(ALLERGY_ID);
+            verify(allergyRepository).findByPublicId(ALLERGY_PUBLIC_ID);
             verify(allergyMapper).toDTO(allergy);
         }
 
         @Test
         void shouldThrowException_whenAllergyNotFound() {
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.empty());
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.empty());
 
             assertThrows(
                     AllergyNotFoundException.class,
-                    () -> allergyService.getAllergyById(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID)
+                    () -> allergyService.getAllergyByPublicId(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID)
             );
 
             verify(allergyMapper, never()).toDTO(any());
@@ -271,15 +259,14 @@ class AllergyServiceImplTest {
         @Test
         void shouldThrowException_whenAllergyNotOwnedByBeneficiary() {
             Allergy allergy = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().publicId(NON_OWNER_BENEFICIARY_PUBLIC_ID).build())
                     .build();
 
-            when(allergyRepository.findById(ALLERGY_ID)).thenReturn(Optional.of(allergy));
+            when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(allergy));
 
             assertThrows(
                     AllergyNotOwnedByBeneficiaryException.class,
-                    () -> allergyService.getAllergyById(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_ID)
+                    () -> allergyService.getAllergyByPublicId(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID)
             );
 
             verify(allergyMapper, never()).toDTO(any());
@@ -292,12 +279,9 @@ class AllergyServiceImplTest {
         @Test
         void shouldReturnListDto_whenBeneficiaryExists() {
             Allergy allergy = defaultAllergy()
-                    .id(ALLERGY_ID)
                     .beneficiary(defaultBeneficiary().build())
                     .build();
-            AllergyReadOnlyDTO dto = defaultReadOnlyDTO()
-                    .id(ALLERGY_ID)
-                    .build();
+            AllergyReadOnlyDTO dto = defaultReadOnlyDTO().build();
 
             when(beneficiaryRepository.existsByPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(true);
             when(allergyRepository.findAllByBeneficiaryPublicId(OWNER_BENEFICIARY_PUBLIC_ID)).thenReturn(List.of(allergy));
@@ -340,6 +324,7 @@ class AllergyServiceImplTest {
 
     private Allergy.AllergyBuilder defaultAllergy() {
         return Allergy.builder()
+                .publicId(ALLERGY_PUBLIC_ID)
                 .substance("Γύρη / Pollen")
                 .severity(AllergySeverity.MEDIUM)
                 .reaction("Δυσκολία στην αναπνοή και φτέρνισμα");
@@ -389,6 +374,7 @@ class AllergyServiceImplTest {
 
     private AllergyReadOnlyDTO.AllergyReadOnlyDTOBuilder defaultReadOnlyDTO() {
         return AllergyReadOnlyDTO.builder()
+                .publicId(ALLERGY_PUBLIC_ID)
                 .substance("Γύρη / Pollen")
                 .severity(AllergySeverity.MEDIUM)
                 .reaction("Δυσκολία στην αναπνοή και φτέρνισμα");

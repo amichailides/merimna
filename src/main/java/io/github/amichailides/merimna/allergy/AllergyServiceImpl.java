@@ -40,8 +40,8 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public AllergyReadOnlyDTO updateAllergy(UUID beneficiaryPublicId, Long allergyId, AllergyUpdateDTO dto) {
-        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
+    public AllergyReadOnlyDTO updateAllergy(UUID beneficiaryPublicId, UUID allergyPublicId, AllergyUpdateDTO dto) {
+        Allergy allergy = getAllergyOrThrow(allergyPublicId, beneficiaryPublicId);
 
         allergyValidator.validateForUpdate(allergy, dto);
         allergyMapper.updateEntity(allergy, dto);
@@ -51,10 +51,10 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional
-    public void deleteAllergy(UUID beneficiaryPublicId, Long allergyId) {
+    public void deleteAllergy(UUID beneficiaryPublicId, UUID allergyPublicId) {
         Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
 
-        Allergy allergy = getAllergyOrThrow(allergyId, beneficiaryPublicId);
+        Allergy allergy = getAllergyOrThrow(allergyPublicId, beneficiaryPublicId);
 
         beneficiary.removeAllergy(allergy);
     }
@@ -75,8 +75,8 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     @Transactional(readOnly = true)
-    public AllergyReadOnlyDTO getAllergyById(UUID beneficiaryPublicId, Long allergyId) {
-        return allergyMapper.toDTO(getAllergyOrThrow(allergyId, beneficiaryPublicId));
+    public AllergyReadOnlyDTO getAllergyByPublicId(UUID beneficiaryPublicId, UUID allergyPublicId) {
+        return allergyMapper.toDTO(getAllergyOrThrow(allergyPublicId, beneficiaryPublicId));
     }
 
     private Beneficiary getBeneficiaryOrThrow(UUID publicId) {
@@ -84,12 +84,12 @@ public class AllergyServiceImpl implements AllergyService {
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(publicId));
     }
 
-    private Allergy getAllergyOrThrow(Long allergyId, UUID beneficiaryPublicId) {
-        Allergy allergy = allergyRepository.findById(allergyId)
-                .orElseThrow(() -> new AllergyNotFoundException(allergyId));
+    private Allergy getAllergyOrThrow(UUID allergyPublicId, UUID beneficiaryPublicId) {
+        Allergy allergy = allergyRepository.findByPublicId(allergyPublicId)
+                .orElseThrow(() -> new AllergyNotFoundException(allergyPublicId));
 
         if (!allergy.belongsTo(beneficiaryPublicId)) {
-            throw new AllergyNotOwnedByBeneficiaryException(allergyId, beneficiaryPublicId);
+            throw new AllergyNotOwnedByBeneficiaryException(allergyPublicId, beneficiaryPublicId);
         }
 
         return allergy;

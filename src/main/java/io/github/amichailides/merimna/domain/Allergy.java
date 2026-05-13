@@ -17,9 +17,14 @@ import java.util.UUID;
 public class Allergy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     @Setter(AccessLevel.NONE)
     private Long id;
+
+    @EqualsAndHashCode.Include
+    @Setter(AccessLevel.NONE)
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    @Builder.Default
+    private UUID publicId = UUID.randomUUID();
 
     @NonNull
     @Column(nullable = false)
@@ -54,7 +59,8 @@ public class Allergy {
     }
 
     public boolean belongsTo(UUID beneficiaryPublicId) {
-        return beneficiaryPublicId != null &&
-                beneficiaryPublicId.equals(this.beneficiary.getPublicId());
+        return beneficiary != null
+                && beneficiaryPublicId != null
+                && beneficiaryPublicId.equals(this.beneficiary.getPublicId());
     }
 }

@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AllergyNotOwnedByBeneficiaryException extends BaseDomainException {
-    public AllergyNotOwnedByBeneficiaryException(Long allergyId, UUID beneficiaryPublicId) {
+    public AllergyNotOwnedByBeneficiaryException(UUID allergyPublicId, UUID beneficiaryPublicId) {
         super(ErrorCode.ALLERGY_NOT_OWNED_BY_BENEFICIARY, Map.of(
-                "allergyId", allergyId,
+                "allergyPublicId", allergyPublicId,
                 "beneficiaryPublicId", beneficiaryPublicId
         ));
     }
