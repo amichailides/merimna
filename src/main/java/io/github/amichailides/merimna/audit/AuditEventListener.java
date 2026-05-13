@@ -1,17 +1,24 @@
 package io.github.amichailides.merimna.audit;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuditEventListener {
 
     private final AuditService auditService;
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void on(AuditableEvent event) {
-        auditService.record(event);
+        try {
+            auditService.record(event);
+        } catch (Exception ex) {
+            log.error("Failed to record audit event: {}", event.action(), ex);
+        }
     }
 }

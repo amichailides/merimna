@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.audit.event.UserCreatedEvent;
 import io.github.amichailides.merimna.audit.event.UserUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.User;
@@ -53,7 +54,12 @@ public class UserServiceImpl implements UserService {
                 .employee(employee)
                 .build();
 
-        return userMapper.toReadOnlyDTO(userRepository.save(user));
+
+        User savedUser = userRepository.save(user);
+        eventPublisher.publishEvent(
+                UserCreatedEvent.from(savedUser));
+
+        return userMapper.toReadOnlyDTO(savedUser);
     }
 
     @Override

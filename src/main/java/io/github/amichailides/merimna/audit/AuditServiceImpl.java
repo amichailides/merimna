@@ -2,6 +2,8 @@ package io.github.amichailides.merimna.audit;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -11,6 +13,7 @@ public class AuditServiceImpl implements AuditService{
     private final AuditContext auditContext;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void record(AuditableEvent event) {
         AuditLog auditLog = AuditLog.builder()
                 .action(event.action())

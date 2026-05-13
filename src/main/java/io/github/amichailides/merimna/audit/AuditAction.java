@@ -20,6 +20,7 @@ public enum AuditAction {
     PLACEMENT_CREATED(AuditEntityType.EMPLOYEE_PLACEMENT),
     PLACEMENT_TERMINATED(AuditEntityType.EMPLOYEE_PLACEMENT),
 
+    USER_CREATED(AuditEntityType.USER),
     USER_UPDATED(AuditEntityType.USER),
 
     AUTH_LOGIN_SUCCESS(AuditEntityType.AUTH),
