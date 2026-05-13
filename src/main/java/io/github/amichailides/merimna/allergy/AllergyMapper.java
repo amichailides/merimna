@@ -12,11 +12,6 @@ import java.util.function.Consumer;
 @Component
 public class AllergyMapper {
 
-    /**
-     * Μετατρέπει το DTO σε Entity για αποθήκευση.
-     * Το ID και ο Beneficiary δεν ορίζονται εδώ, καθώς το ID παράγεται από τη βάση
-     * και ο Beneficiary συγχρονίζεται μέσω της helper μεθόδου στην κλάση Beneficiary.
-     */
     public Allergy toEntity(AllergyCreateDTO dto) {
         if (dto == null) return null;
 
@@ -64,6 +59,4 @@ public class AllergyMapper {
                 ? null
                 : value.trim().toLowerCase();
     }
-
-
 }

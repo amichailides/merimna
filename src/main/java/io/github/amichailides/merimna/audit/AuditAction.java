@@ -8,6 +8,7 @@ public enum AuditAction {
     BENEFICIARY_HOUSE_UNIT_CHANGED(AuditEntityType.BENEFICIARY),
 
 
+    ALLERGY_UPDATED(AuditEntityType.ALLERGY),
     EMPLOYEE_CREATED(AuditEntityType.EMPLOYEE),
     EMPLOYEE_UPDATED(AuditEntityType.EMPLOYEE),
     EMPLOYEE_TERMINATED(AuditEntityType.EMPLOYEE),
