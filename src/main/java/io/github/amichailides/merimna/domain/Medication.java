@@ -16,6 +16,8 @@ import java.util.UUID;
 @Builder
 public class Medication {
 
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -69,5 +71,23 @@ public class Medication {
 
     void clearBeneficiary() {
         this.beneficiary = null;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.name = normalize(this.name);
+        this.dosage = normalize(this.dosage);
+        this.frequency = normalize(this.frequency);
+        this.administrationTimes = normalize(this.administrationTimes);
+        this.instructions = normalize(this.instructions);
+    }
+
+    private String normalize(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return value.trim().replaceAll(WHITESPACE_SEQUENCE, " ");
     }
 }

@@ -45,9 +45,7 @@ public class MedicationMapper {
         updateIfNotBlank(dto.dosage(), existing::setDosage);
         updateIfNotBlank(dto.frequency(), existing::setFrequency);
         updateIfNotBlank(dto.administrationTimes(), existing::setAdministrationTimes);
-
-        // Allow clearing instructions (empty string explicitly clears value)
-        if (dto.instructions() != null) existing.setInstructions(dto.instructions());
+        updateIfNotBlank(dto.instructions(), existing::setInstructions);
     }
 
     private void updateIfNotBlank(String newValue, Consumer<String> setter) {

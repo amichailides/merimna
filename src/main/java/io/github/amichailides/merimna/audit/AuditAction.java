@@ -9,6 +9,9 @@ public enum AuditAction {
 
 
     ALLERGY_UPDATED(AuditEntityType.ALLERGY),
+
+    MEDICATION_UPDATED(AuditEntityType.MEDICATION),
+
     EMPLOYEE_CREATED(AuditEntityType.EMPLOYEE),
     EMPLOYEE_UPDATED(AuditEntityType.EMPLOYEE),
     EMPLOYEE_TERMINATED(AuditEntityType.EMPLOYEE),
