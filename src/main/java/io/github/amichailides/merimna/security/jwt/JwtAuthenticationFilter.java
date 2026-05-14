@@ -63,15 +63,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (ExpiredJwtException ex) {
-            log.warn("JWT expired: {}", ex.getMessage());
+            log.debug("Expired JWT used for request {}", request.getRequestURI());
             request.setAttribute(SecurityConstants.AUTH_ERROR_CODE_ATTR, ErrorCode.TOKEN_EXPIRED);
+
         } catch (SignatureException | MalformedJwtException ex) {
-            log.error("Invalid JWT signature/format: {}", ex.getMessage());
+            log.warn("Invalid JWT used for request {}: {}",
+                    request.getRequestURI(),
+                    ex.getClass().getSimpleName());
             request.setAttribute(SecurityConstants.AUTH_ERROR_CODE_ATTR, ErrorCode.TOKEN_INVALID);
+
         } catch (JwtException ex) {
-            log.error("General JWT error: {}", ex.getMessage());
+            log.warn("JWT authentication failed for request {}: {}",
+                    request.getRequestURI(),
+                    ex.getClass().getSimpleName());
             request.setAttribute(SecurityConstants.AUTH_ERROR_CODE_ATTR, ErrorCode.AUTHENTICATION_FAILED);
         }
+
         filterChain.doFilter(request, response);
     }
 }
