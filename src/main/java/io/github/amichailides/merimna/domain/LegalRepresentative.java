@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
+
 // TODO: v2 (#4) - Add AMKA, ID number, court decision metadata, and basic sensitive-data handling for LegalRepresentative.
 @Entity
 @Table(name = "legal_representatives")
@@ -16,6 +18,9 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class LegalRepresentative {
+
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -43,4 +48,11 @@ public class LegalRepresentative {
     @Builder.Default
     private Set<Beneficiary> beneficiaries = new HashSet<>();
 
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.firstName = normalize(this.firstName);
+        this.lastName = normalize(this.lastName);
+        this.notes = normalize(this.notes);
+    }
 }

@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
+
 @Entity
 @Getter
 @Setter
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Builder
 @Table(name = "house_units")
 public class HouseUnit {
+
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +47,22 @@ public class HouseUnit {
 
     public boolean isFull(long beneficiaryCount) {
         return beneficiaryCount >= maxCapacity;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.code = normalizeCode(this.code);
+        this.displayName = normalize(this.displayName);
+        this.address = normalize(this.address);
+    }
+
+    private String normalizeCode(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return value.trim().toUpperCase();
     }
 }
 

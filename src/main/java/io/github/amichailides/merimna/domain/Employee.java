@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -146,5 +148,14 @@ public class Employee {
                 .forEach(accessible::add);
 
         return accessible;
+    }
+
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.firstName = normalize(this.firstName);
+        this.lastName = normalize(this.lastName);
     }
 }

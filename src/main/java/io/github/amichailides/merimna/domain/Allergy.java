@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
 
 @Entity
 @Table(name = "allergies")
@@ -15,8 +16,6 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class Allergy {
-
-    private static final String WHITESPACE_SEQUENCE = "\\s+";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,13 +71,5 @@ public class Allergy {
     private void normalizeFields() {
         this.substance = normalize(this.substance);
         this.reaction = normalize(this.reaction);
-    }
-
-    private String normalize(String value) {
-        if (value == null) {
-            return null;
-        }
-
-        return value.trim().replaceAll(WHITESPACE_SEQUENCE, " ");
     }
 }

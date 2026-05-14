@@ -3,6 +3,8 @@ package io.github.amichailides.merimna.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
+
 @Embeddable
 @Getter
 @Setter
@@ -37,4 +39,12 @@ public class EmergencyContact {
     })
     private Address address;
 
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.firstName = normalize(this.firstName);
+        this.lastName = normalize(this.lastName);
+    }
 }

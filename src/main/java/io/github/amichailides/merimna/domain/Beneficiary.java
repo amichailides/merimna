@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
+
 import static java.util.Collections.unmodifiableSet;
 
 @Entity
@@ -205,5 +207,15 @@ public class Beneficiary {
 
     public boolean isNotAssignedTo(HouseUnit houseUnit) {
         return !this.houseUnit.getPublicId().equals(houseUnit.getPublicId());
+    }
+
+    private static final String WHITESPACE_SEQUENCE = "\\s+";
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeFields() {
+        this.firstName = normalize(this.firstName);
+        this.lastName = normalize(this.lastName);
+        this.dischargeReason = normalize(this.dischargeReason);
     }
 }
