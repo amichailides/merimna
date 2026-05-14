@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.medication;
 
+import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
@@ -12,76 +13,94 @@ import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MedicationServiceImpl implements MedicationService{
+public class MedicationServiceImpl implements MedicationService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final MedicationMapper medicationMapper;
     private final MedicationRepository medicationRepository;
+    private final HouseUnitAccessService houseUnitAccessService;
 
+    @Override
     @Transactional
-    public MedicationReadOnlyDTO addMedication (UUID beneficiaryPublicId, MedicationCreateDTO dto) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+    public MedicationReadOnlyDTO addMedication(UUID beneficiaryPublicId, MedicationCreateDTO dto) {
+        Beneficiary beneficiary = getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
 
         Medication medication = medicationMapper.toEntity(dto);
         beneficiary.addMedication(medication);
-        medicationRepository.save(medication); // για να πάρει id
+        medicationRepository.save(medication);
+
         return medicationMapper.toDTO(medication);
     }
 
+    @Override
     @Transactional
     public MedicationReadOnlyDTO updateMedication(
             UUID beneficiaryPublicId,
-            Long medicationId,
+            UUID medicationPublicId,
             MedicationUpdateDTO dto) {
 
-        Medication existing = getMedicationOrThrow(medicationId, beneficiaryPublicId);
+        getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
+        Medication existing = getMedicationOrThrow(medicationPublicId, beneficiaryPublicId);
 
         // TODO(#14): MedicationValidator - business rules (e.g. drug interactions,
         // max dosage based on age/weight, or inactive beneficiary restrictions)
         medicationMapper.updateEntity(existing, dto);
-        return medicationMapper.toDTO(existing); // managed λόγω @Transactional
 
+        return medicationMapper.toDTO(existing);
     }
 
+    @Override
     @Transactional
-    public void deleteMedication (UUID beneficiaryPublicId, Long medicationId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
-        Medication medication = getMedicationOrThrow(medicationId, beneficiaryPublicId);
+    public void deleteMedication(UUID beneficiaryPublicId, UUID medicationPublicId) {
+        Beneficiary beneficiary = getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
+        Medication medication = getMedicationOrThrow(medicationPublicId, beneficiaryPublicId);
 
         beneficiary.removeMedication(medication);
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public MedicationReadOnlyDTO getMedication(UUID beneficiaryPublicId, Long medicationId) {
+    public MedicationReadOnlyDTO getMedicationByPublicId(UUID beneficiaryPublicId, UUID medicationPublicId) {
+        getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
 
-        return medicationMapper.toDTO(getMedicationOrThrow(medicationId, beneficiaryPublicId));
+        return medicationMapper.toDTO(getMedicationOrThrow(medicationPublicId, beneficiaryPublicId));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId) {
-        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+        getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
 
-        return beneficiary.getMedications().stream()
+        return medicationRepository.findAllByBeneficiaryPublicId(beneficiaryPublicId)
+                .stream()
                 .map(medicationMapper::toDTO)
                 .toList();
     }
 
-    private Beneficiary getBeneficiaryOrThrow (UUID beneficiaryPublicId) {
-        return  beneficiaryRepository.findByPublicId(beneficiaryPublicId)
+    private Beneficiary getBeneficiaryOrThrow(UUID beneficiaryPublicId) {
+        return beneficiaryRepository.findByPublicId(beneficiaryPublicId)
                 .orElseThrow(() -> new BeneficiaryNotFoundByPublicIdException(beneficiaryPublicId));
     }
 
-    private Medication getMedicationOrThrow(Long medicationId, UUID beneficiaryPublicId) {
-        return medicationRepository.findByIdAndBeneficiaryPublicId(medicationId, beneficiaryPublicId)
+    private Beneficiary getAccessibleBeneficiaryOrThrow(UUID beneficiaryPublicId) {
+        Beneficiary beneficiary = getBeneficiaryOrThrow(beneficiaryPublicId);
+        houseUnitAccessService.ensureCanAccess(beneficiary);
+
+        return beneficiary;
+    }
+
+    private Medication getMedicationOrThrow(UUID medicationPublicId, UUID beneficiaryPublicId) {
+        return medicationRepository.findMedicationByPublicIdAndBeneficiaryPublicId(medicationPublicId, beneficiaryPublicId)
                 .orElseThrow(() -> {
-                    if (!medicationRepository.existsById(medicationId)) {
-                        return new MedicationNotFoundException(medicationId);
+                    if (!medicationRepository.existsByPublicId(medicationPublicId)) {
+                        return new MedicationNotFoundException(medicationPublicId);
                     }
-                    return new MedicationNotOwnedByBeneficiaryException(medicationId, beneficiaryPublicId);
+                    return new MedicationNotOwnedByBeneficiaryException(medicationPublicId, beneficiaryPublicId);
                 });
     }
 }

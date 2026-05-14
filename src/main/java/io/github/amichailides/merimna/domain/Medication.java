@@ -4,6 +4,8 @@ import io.github.amichailides.merimna.medication.exception.MedicationAlreadyAssi
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "medications")
 @Getter
@@ -16,8 +18,13 @@ public class Medication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @EqualsAndHashCode.Include
-    Long id;
+    @Setter(AccessLevel.NONE)
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    @Builder.Default
+    private UUID publicId = UUID.randomUUID();
 
     @NonNull
     @Column(nullable = false)
@@ -32,10 +39,11 @@ public class Medication {
     private String frequency;
 
     /*
-     * Logic: Οι ώρες αποθηκεύονται ως String (π.χ. "08:00, 20:00") για να είναι
-     * συμβατές με το database mapping των ElementCollections.
-     * TODO: Στο μέλλον μπορεί να μετατραπεί σε List<LocalTime> μέσω AttributeConverter
-     * για την υποστήριξη push notifications στο mobile app.
+     * Administration times are stored as a comma-separated String
+     * to keep the current ElementCollection database mapping simple.
+     *
+     * TODO: Consider replacing this with List<LocalTime> and an AttributeConverter
+     * if medication reminders or mobile push notifications require time-aware logic.
      */
     @NonNull
     @Column(nullable = false)

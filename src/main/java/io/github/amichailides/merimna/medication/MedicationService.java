@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MedicationService {
-    MedicationReadOnlyDTO addMedication (UUID beneficiaryPublicId, MedicationCreateDTO dto);
+    MedicationReadOnlyDTO addMedication(UUID beneficiaryPublicId, MedicationCreateDTO dto);
 
-    MedicationReadOnlyDTO updateMedication(UUID beneficiaryPublicId, Long medicationId, MedicationUpdateDTO dto);
+    MedicationReadOnlyDTO updateMedication(UUID beneficiaryPublicId, UUID medicationPublicId, MedicationUpdateDTO dto);
 
-    void deleteMedication (UUID beneficiaryPublicId, Long medicationId);
+    void deleteMedication(UUID beneficiaryPublicId, UUID medicationPublicId);
 
-    MedicationReadOnlyDTO getMedication(UUID beneficiaryPublicId, Long medicationId);
+    MedicationReadOnlyDTO getMedicationByPublicId(UUID beneficiaryPublicId, UUID medicationPublicId);
 
     List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId);
 }

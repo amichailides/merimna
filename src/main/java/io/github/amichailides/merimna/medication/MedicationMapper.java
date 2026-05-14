@@ -28,7 +28,7 @@ public class MedicationMapper {
         if (entity == null) return null;
 
         return new MedicationReadOnlyDTO(
-                entity.getId(),
+                entity.getPublicId(),
                 entity.getName(),
                 entity.getDosage(),
                 entity.getFrequency(),

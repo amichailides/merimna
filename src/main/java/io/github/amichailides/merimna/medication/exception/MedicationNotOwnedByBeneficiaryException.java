@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MedicationNotOwnedByBeneficiaryException extends BaseDomainException {
-    public MedicationNotOwnedByBeneficiaryException(Long medicationId, UUID beneficiaryPublicId) {
+    public MedicationNotOwnedByBeneficiaryException(UUID medicationPublicId, UUID beneficiaryPublicId) {
         super(ErrorCode.MEDICATION_NOT_OWNED_BY_BENEFICIARY, Map.of(
-                "medicationId", medicationId,
+                "medicationPublicId", medicationPublicId,
                 "beneficiaryPublicId", beneficiaryPublicId
         ));
     }

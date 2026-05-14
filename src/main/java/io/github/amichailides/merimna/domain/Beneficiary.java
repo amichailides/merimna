@@ -124,8 +124,9 @@ public class Beneficiary {
     }
 
     public void removeMedication(@NonNull Medication medication) {
-        this.medications.remove(medication);
-        medication.clearBeneficiary();
+        if (this.medications.remove(medication)) {
+            medication.clearBeneficiary();
+        }
     }
 
     public Set<Medication> getMedications() {

@@ -1,12 +1,10 @@
 package io.github.amichailides.merimna.medication;
 
-
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +24,7 @@ import java.util.UUID;
 public class MedicationController {
     private final MedicationService medicationService;
 
-    @PreAuthorize("hasAuthority('BENEFICIARY_CREATE')")
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
     @PostMapping
     public ResponseEntity<MedicationReadOnlyDTO> addMedication(
             @PathVariable UUID beneficiaryPublicId,
@@ -37,7 +35,7 @@ public class MedicationController {
         // TODO: When the frontend is integrated, expose the "Location" header in the CORS configuration
 
         return ResponseEntity
-                .created(buildLocationUri(medication.id()))
+                .created(buildLocationUri(medication.publicId()))
                 .body(medication);
     }
 
@@ -50,47 +48,46 @@ public class MedicationController {
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
-    @GetMapping("/{medicationId}")
-    public MedicationReadOnlyDTO getMedication(
+    @GetMapping("/{medicationPublicId}")
+    public MedicationReadOnlyDTO getMedicationByPublicId(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable @Positive(message = "{medication.id.positive}") Long medicationId) {
+            @PathVariable UUID medicationPublicId) {
 
-        return medicationService.getMedication(beneficiaryPublicId, medicationId);
+        return medicationService.getMedicationByPublicId(beneficiaryPublicId, medicationPublicId);
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @PatchMapping("/{medicationId}")
+    @PatchMapping("/{medicationPublicId}")
     public ResponseEntity<MedicationReadOnlyDTO> updateMedication(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable
-            @Positive(message = "{medication.id.positive}")
-            Long medicationId,
+            @PathVariable UUID medicationPublicId,
             @Validated(ValidationGroupSequence.class) @RequestBody MedicationUpdateDTO dto) {
 
-        MedicationReadOnlyDTO updated = medicationService.updateMedication(beneficiaryPublicId, medicationId, dto);
+        MedicationReadOnlyDTO updated = medicationService.updateMedication(
+                beneficiaryPublicId,
+                medicationPublicId,
+                dto
+        );
 
         return ResponseEntity.ok(updated);
-
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @DeleteMapping("/{medicationId}")
-    public ResponseEntity<Void> deleteMedication (
+    @DeleteMapping("/{medicationPublicId}")
+    public ResponseEntity<Void> deleteMedication(
             @PathVariable UUID beneficiaryPublicId,
-            @PathVariable
-            @Positive(message = "{medication.id.positive}")
-            Long medicationId) {
+            @PathVariable UUID medicationPublicId) {
 
-        medicationService.deleteMedication(beneficiaryPublicId, medicationId);
+        medicationService.deleteMedication(beneficiaryPublicId, medicationPublicId);
 
         return ResponseEntity.noContent().build();
     }
 
-    private URI buildLocationUri(Object id) {
+    private URI buildLocationUri(UUID medicationPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
+                .path("/{medicationPublicId}")
+                .buildAndExpand(medicationPublicId)
                 .toUri();
     }
 }
