@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>Μετατρέπει τα exceptions σε {@link ApiResponse}.
+ * Converts application exceptions into standardized {@link ApiResponse} error responses.
  */
 @Slf4j
 @RestControllerAdvice
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
 
         String detail = translate(ex.getErrorCode().getMessageKey(), ex.getArgs());
 
-        // Μετατροπή των error keys σε μηνύματα (i18n)
+        // Localize validation error keys before returning them in the API response.
         Map<String, List<String>> localizedErrors = ex.getValidationErrors().entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -92,7 +92,9 @@ public class GlobalExceptionHandler {
 
         HttpStatus status = ErrorCode.DATABASE_ERROR.getStatus();
 
-        log.error("Database integrity violation: {}", ex.getMostSpecificCause().getMessage());
+        log.error("Database integrity violation while processing {}: {}",
+                request.getRequestURI(),
+                ex.getMostSpecificCause().getMessage());
 
         String detail = translate(ErrorCode.DATABASE_ERROR.getMessageKey());
 
@@ -100,8 +102,8 @@ public class GlobalExceptionHandler {
                 .status(status)
                 .body(ApiResponse.error(
                         ErrorCode.DATABASE_ERROR,
-                        HttpStatus.CONFLICT.value(),
-                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        status.value(),
+                        status.getReasonPhrase(),
                         detail,
                         request.getRequestURI()
                 ));
@@ -125,7 +127,7 @@ public class GlobalExceptionHandler {
             errors.computeIfAbsent("_global", k -> new ArrayList<>()).add(message);
         });
 
-        log.warn("Validation failed for {}: {}", request.getRequestURI(), errors);
+        log.debug("Validation failed for {}: {}", request.getRequestURI(), errors);
 
         ErrorCode code = ErrorCode.VALIDATION_FAILED;
 
@@ -141,16 +143,17 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // TODO: [Refactor] Εδώ μπορούμε να αναβαθμίσουμε τον Handler
-    // χρησιμοποιώντας το InvalidFormatException του Jackson.
-    // Σκοπός: Να εξάγουμε το συγκεκριμένο πεδίο (fieldName) και την άκυρη τιμή (invalidValue)
-    // ώστε το μήνυμα να λέει: "Η τιμή 'abc' δεν είναι έγκυρη για το πεδίο 'houseUnit'".
-    // Χρήσιμα tools: formatException.getPath(), formatException.getValue().
+    // TODO: [Refactor] Improve this handler by inspecting Jackson's InvalidFormatException.
+    // Goal: extract the exact field name and rejected value from the request body,
+    // so the response can say which field is invalid and what value was provided.
+    // Useful APIs: formatException.getPath(), formatException.getValue().
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
 
-        log.error("JSON parse error: {}", ex.getMessage());
+        log.warn("Invalid request body for {}: {}",
+                request.getRequestURI(),
+                ex.getMostSpecificCause().getMessage());
         String detail = translate(ErrorCode.INVALID_INPUT.getMessageKey());
 
         return ResponseEntity
@@ -227,13 +230,15 @@ public class GlobalExceptionHandler {
             ConstraintViolationException ex,
             HttpServletRequest request) {
 
-        // LinkedHashMap για να κρατήσουμε τη σειρά των σφαλμάτων
+        // Preserve validation error order in the API response.
         Map<String, List<String>> errors = new LinkedHashMap<>();
 
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
             String propertyPath = violation.getPropertyPath().toString();
-            // Καθαρισμός: Από "getByAmka.amka" κρατάμε ό,τι είναι μετά την τελευταία τελεία -> "amka"
+
+            // Keep only the actual parameter/field name from paths like "getByAmka.amka".
             String fieldName = propertyPath.substring(propertyPath.lastIndexOf('.') + 1);
+
             String message = violation.getMessage();
 
             errors.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(message);
@@ -284,7 +289,7 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
-        log.error("Unexpected error occurred: ", ex);
+        log.error("Unexpected error while processing {}", request.getRequestURI(), ex);
 
         String detail = translate(ErrorCode.INTERNAL_SERVER_ERROR.getMessageKey());
 
@@ -304,14 +309,10 @@ public class GlobalExceptionHandler {
             AccessDeniedException ex,
             HttpServletRequest request) {
 
+        log.warn("Access denied for request {}", request.getRequestURI());
         ErrorCode errorCode = ErrorCode.FORBIDDEN;
 
-        String detail = messageSource.getMessage(
-                errorCode.getMessageKey(),
-                null,
-                "Δεν έχετε δικαίωμα πρόσβασης σε αυτόν τον πόρο",
-                request.getLocale()
-        );
+        String detail = translate(errorCode.getMessageKey());
 
         return ResponseEntity
                 .status(errorCode.getStatus())
@@ -325,10 +326,6 @@ public class GlobalExceptionHandler {
     }
 
 
-    /**
-     * Helper μέθοδος για να τραβάμε μεταφράσεις από το messages.properties.
-     * Χρησιμοποιεί το LocaleContextHolder για να καταλάβει αυτόματα τη γλώσσα του χρήστη.
-     */
     private String translate(String key, Object... args) {
         return messageSource.getMessage(
                 key,
