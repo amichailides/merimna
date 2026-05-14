@@ -1,10 +1,10 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.audit.event.EmployeeCreatedEvent;
-import io.github.amichailides.merimna.audit.event.EmployeeReactivatedEvent;
-import io.github.amichailides.merimna.audit.event.EmployeeTerminatedEvent;
-import io.github.amichailides.merimna.audit.event.EmployeeUpdatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeReactivatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePosition;
 import io.github.amichailides.merimna.domain.EmployeePositionCode;

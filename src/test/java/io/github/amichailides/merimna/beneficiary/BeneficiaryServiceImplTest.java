@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
-import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;

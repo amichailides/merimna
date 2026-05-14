@@ -1,41 +1,39 @@
-package io.github.amichailides.merimna.audit.event;
+package io.github.amichailides.merimna.allergy.event;
 
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.domain.Medication;
+import io.github.amichailides.merimna.domain.Allergy;
 
 import java.util.Map;
 import java.util.UUID;
 
-public record MedicationUpdatedEvent(
-        UUID medicationPublicId,
+public record AllergyUpdatedEvent(
+        UUID allergyPublicId,
         UUID beneficiaryPublicId,
         EntityChangeSet changeSet
 ) implements AuditableEvent {
 
-    public static MedicationUpdatedEvent of(
-            Medication medication,
+    public static AllergyUpdatedEvent of(
+            Allergy allergy,
             UUID beneficiaryPublicId,
-            EntityChangeSet changeSet
-    ) {
-        return new MedicationUpdatedEvent(
-                medication.getPublicId(),
+            EntityChangeSet changeSet) {
+        return new AllergyUpdatedEvent(
+                allergy.getPublicId(),
                 beneficiaryPublicId,
                 changeSet
         );
     }
 
     @Override
-    public AuditAction action() {
-        return AuditAction.MEDICATION_UPDATED;
+    public AuditAction action () {
+        return AuditAction.ALLERGY_UPDATED;
     }
 
     @Override
     public UUID entityPublicId() {
-        return medicationPublicId;
+        return allergyPublicId;
     }
-
     @Override
     public Map<String, Object> metadata() {
         return Map.of(

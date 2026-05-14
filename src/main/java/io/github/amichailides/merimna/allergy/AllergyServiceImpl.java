@@ -7,7 +7,7 @@ import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotOwnedByBeneficiaryException;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.audit.event.AllergyUpdatedEvent;
+import io.github.amichailides.merimna.allergy.event.AllergyUpdatedEvent;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Allergy;
 import io.github.amichailides.merimna.domain.Beneficiary;
@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.EventListener;
 import java.util.List;
 import java.util.UUID;
 

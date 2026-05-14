@@ -1,9 +1,9 @@
 package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.audit.AuditContext;
-import io.github.amichailides.merimna.audit.event.AuthLoginFailedEvent;
-import io.github.amichailides.merimna.audit.event.AuthLoginSuccessEvent;
-import io.github.amichailides.merimna.audit.event.AuthLogoutEvent;
+import io.github.amichailides.merimna.security.event.AuthLoginFailedEvent;
+import io.github.amichailides.merimna.security.event.AuthLoginSuccessEvent;
+import io.github.amichailides.merimna.security.event.AuthLogoutEvent;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.exception.BaseApplicationException;
 import io.github.amichailides.merimna.security.jwt.JwtService;

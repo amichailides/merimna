@@ -4,9 +4,9 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
-import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCancelledEvent;
-import io.github.amichailides.merimna.audit.event.EmployeeAssignmentCreatedEvent;
-import io.github.amichailides.merimna.audit.event.EmployeeAssignmentTerminatedEvent;
+import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCancelledEvent;
+import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
+import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;

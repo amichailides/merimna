@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.audit.event;
+package io.github.amichailides.merimna.placement.event;
 
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
-public record EmployeePlacementTerminatedEvent(
+public record EmployeePlacementCreatedEvent(
         UUID placementPublicId,
         UUID employeePublicId,
         UUID houseUnitPublicId,
@@ -16,8 +16,8 @@ public record EmployeePlacementTerminatedEvent(
         LocalDate endDate
 ) implements AuditableEvent {
 
-    public static EmployeePlacementTerminatedEvent from(EmployeePlacement placement) {
-        return new EmployeePlacementTerminatedEvent(
+    public static EmployeePlacementCreatedEvent from(EmployeePlacement placement) {
+        return new EmployeePlacementCreatedEvent(
                 placement.getPublicId(),
                 placement.getEmployee().getPublicId(),
                 placement.getHouseUnit().getPublicId(),
@@ -33,7 +33,7 @@ public record EmployeePlacementTerminatedEvent(
 
     @Override
     public AuditAction action() {
-        return AuditAction.PLACEMENT_TERMINATED;
+        return AuditAction.PLACEMENT_CREATED;
     }
 
     @Override

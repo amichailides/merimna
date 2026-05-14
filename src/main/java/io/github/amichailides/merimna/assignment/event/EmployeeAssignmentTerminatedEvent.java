@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.audit.event;
+package io.github.amichailides.merimna.assignment.event;
 
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
-public record EmployeeAssignmentCancelledEvent(
+public record EmployeeAssignmentTerminatedEvent(
         UUID assignmentPublicId,
         UUID employeePublicId,
         UUID houseUnitPublicId,
@@ -16,8 +16,8 @@ public record EmployeeAssignmentCancelledEvent(
         LocalDate endDate
 ) implements AuditableEvent {
 
-    public static EmployeeAssignmentCancelledEvent from(EmployeeAssignment assignment) {
-        return new EmployeeAssignmentCancelledEvent(
+    public static EmployeeAssignmentTerminatedEvent from(EmployeeAssignment assignment) {
+        return new EmployeeAssignmentTerminatedEvent(
                 assignment.getPublicId(),
                 assignment.getEmployee().getPublicId(),
                 assignment.getHouseUnit().getPublicId(),
@@ -33,7 +33,7 @@ public record EmployeeAssignmentCancelledEvent(
 
     @Override
     public AuditAction action() {
-        return AuditAction.ASSIGNMENT_CANCELLED;
+        return AuditAction.ASSIGNMENT_TERMINATED;
     }
 
     @Override

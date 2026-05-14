@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.audit.event;
+package io.github.amichailides.merimna.assignment.event;
 
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;

@@ -3,10 +3,10 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.audit.event.BeneficiaryCreatedEvent;
-import io.github.amichailides.merimna.audit.event.BeneficiaryDischargedEvent;
-import io.github.amichailides.merimna.audit.event.BeneficiaryHouseUnitChangedEvent;
-import io.github.amichailides.merimna.audit.event.BeneficiaryUpdatedEvent;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryCreatedEvent;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryDischargedEvent;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryHouseUnitChangedEvent;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryUpdatedEvent;
 import io.github.amichailides.merimna.beneficiary.audit.BeneficiaryChangeDetector;
 import io.github.amichailides.merimna.beneficiary.dto.*;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;

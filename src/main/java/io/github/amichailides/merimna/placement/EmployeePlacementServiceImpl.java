@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.placement;
 
-import io.github.amichailides.merimna.audit.event.EmployeePlacementCreatedEvent;
-import io.github.amichailides.merimna.audit.event.EmployeePlacementTerminatedEvent;
+import io.github.amichailides.merimna.placement.event.EmployeePlacementCreatedEvent;
+import io.github.amichailides.merimna.placement.event.EmployeePlacementTerminatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static io.github.amichailides.merimna.placement.EmployeePlacementSpecifications.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Service

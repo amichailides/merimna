@@ -1,13 +1,13 @@
-package io.github.amichailides.merimna.audit.event;
+package io.github.amichailides.merimna.placement.event;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-final class EmployeeAssignmentEventMetadata {
+final class EmployeePlacementEventMetadata {
 
-    private EmployeeAssignmentEventMetadata() {
+    private EmployeePlacementEventMetadata() {
     }
 
     static Map<String, Object> of(

@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.medication;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.audit.event.MedicationUpdatedEvent;
+import io.github.amichailides.merimna.medication.event.MedicationUpdatedEvent;
 import io.github.amichailides.merimna.medication.audit.MedicationChangeDetector;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
