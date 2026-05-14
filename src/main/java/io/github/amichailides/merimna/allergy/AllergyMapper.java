@@ -16,7 +16,7 @@ public class AllergyMapper {
         if (dto == null) return null;
 
         return Allergy.builder()
-                .substance(normalize(dto.substance()))
+                .substance(dto.substance())
                 .severity(dto.severity())
                 .reaction(dto.reaction())
                 .build();
@@ -37,7 +37,7 @@ public class AllergyMapper {
         Objects.requireNonNull(existing, "existing allergy must not be null");
         Objects.requireNonNull(dto, "allergy update dto must not be null");
 
-        updateIfNotBlank(dto.substance(), value -> existing.setSubstance(normalize(value)));
+        updateIfNotBlank(dto.substance(), existing::setSubstance);
         updateIfNotBlank(dto.reaction(), existing::setReaction);
         updateIfNotNull(dto.severity(), existing::setSeverity);
     }
@@ -52,11 +52,5 @@ public class AllergyMapper {
         if (newValue != null && !newValue.isBlank()) {
             setter.accept(newValue);
         }
-    }
-
-    private String normalize(String value) {
-        return value == null
-                ? null
-                : value.trim().toLowerCase();
     }
 }
