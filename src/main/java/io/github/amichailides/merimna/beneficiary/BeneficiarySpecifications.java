@@ -2,6 +2,9 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.domain.Beneficiary;
 import io.github.amichailides.merimna.domain.HouseUnit;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
@@ -26,20 +29,11 @@ public class BeneficiarySpecifications {
                 return cb.conjunction();
             }
 
-            String cleanSearchTerm = stripAccents(searchTerm.toLowerCase());
-            String pattern = "%" + cleanSearchTerm + "%";
+            String pattern = "%" + stripAccents(searchTerm.toLowerCase()) + "%";
 
             return cb.or(
-                    cb.like(
-                            cb.function("replace", String.class,
-                                    cb.function("unaccent", String.class, cb.lower(root.get("firstName"))),
-                                    cb.literal("ς"), cb.literal("σ")),
-                            pattern),
-                    cb.like(
-                            cb.function("replace", String.class,
-                                    cb.function("unaccent", String.class, cb.lower(root.get("lastName"))),
-                                    cb.literal("ς"), cb.literal("σ")),
-                            pattern),
+                    searchLike(cb, cb.function("unaccent", String.class, cb.lower(root.get("firstName"))), pattern),
+                    searchLike(cb, cb.function("unaccent", String.class, cb.lower(root.get("lastName"))), pattern),
                     cb.like(root.get("amka"), pattern)
             );
         };
@@ -83,5 +77,12 @@ public class BeneficiarySpecifications {
         String normalized = Normalizer.normalize(s.toLowerCase(), Normalizer.Form.NFD);
         return normalized.replaceAll("\\p{M}", "")
                 .replace('ς', 'σ');
+    }
+
+    private static Predicate searchLike(CriteriaBuilder cb, Expression<String> field, String pattern) {
+        return cb.like(
+                cb.function("replace", String.class, field, cb.literal("ς"), cb.literal("σ")),
+                pattern
+        );
     }
 }
