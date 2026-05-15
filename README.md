@@ -2,18 +2,18 @@
 
 ## Overview
 
-**Merimna** (meaning "care" in Greek) is a Spring Boot REST API for managing
-supported living structures for people with disabilities.
+In supported living environments, important information about residents, staff responsibilities, house units, and
+care-related records can become scattered across paper forms, shared folders, spreadsheets, and informal communication.
+That can create gaps in accountability, consistency, and access control.
 
-The project is inspired by real supported living environments, where staff need clear
-records, reliable updates, and straightforward workflows around care-related information.
-It focuses on data consistency, explicit domain rules, and controlled state transitions.
+Inspired by real supported living workflows, **Merimna** is a Spring Boot REST API that models these operations in a
+structured way, with explicit domain rules, controlled access, and traceability for sensitive changes.
 
 ## Key Features & Architecture
 
 - **Authentication & authorization:** Stateless JWT authentication with short-lived access tokens and database-backed
-  opaque refresh tokens, transported via HttpOnly cookies for browser clients or request body fallback for non-browser
-  clients, with method-level access control via Spring Security annotations and permissions derived from each employee's
+  opaque refresh tokens. Browser clients can use HttpOnly cookies, while non-browser clients can fall back to request
+  body tokens. Method-level access control is enforced through Spring Security permissions derived from each employee's
   position.
 
 - **Placement-aware access control:** Active placements temporarily extend an employee's access to beneficiary records
@@ -31,6 +31,10 @@ It focuses on data consistency, explicit domain rules, and controlled state tran
 
 - **Centralized error handling:** Domain and validation exceptions are mapped by a global `@RestControllerAdvice` to
   consistent `ApiResponse` error payloads with stable `ErrorCode` values.
+
+- **Audit logging:** Important domain and user-management actions are captured through application events and persisted
+  as structured audit records, making sensitive changes traceable while keeping audit concerns centralized instead of
+  scattered across services.
 
 - **Domain validation:** Custom validation annotations and validation group sequencing enforce domain rules while
   reducing noisy error output.
@@ -56,14 +60,14 @@ to keep the development workflow structured and the project's evolution visible.
 - **Security:** Spring Security 7.x, JWT, Argon2 password hashing
 - **Data Persistence:** Spring Data JPA, PostgreSQL, Flyway
 - **Build Tool:** Maven
-- **Utilities:** Lombok
+- **Containerization:** Docker, Docker Compose
 - **API Documentation:** Springdoc OpenAPI
 - **Validation Engine:** Jakarta Bean Validation (Hibernate Validator)
 
 ## API Overview
 
-The API is centered around the `Beneficiary` aggregate, alongside employee management,
-assignments, placements, and user administration.
+The API covers core supported-living workflows, including beneficiary management, employee administration, assignments,
+temporary placements, user accounts, and supporting reference data.
 
 ### Authentication
 
@@ -138,24 +142,24 @@ After starting the application locally, API documentation is available at:
 
 ### Prerequisites
 
-- **Java 21** or higher
-- **Maven 3.9+**
-- **PostgreSQL 15+**
+- **Docker & Docker Compose**
 
-### Installation & Configuration
+### Run Locally
 
 1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/amichailides/merimna.git
-   cd merimna
-   ```
-2. **Configure the database:**
-    * Set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD`.
-    * Flyway migrations run automatically on startup.
-3. **Run the application:**
-   ```bash
-   mvn spring-boot:run
-   ```
+
+```bash
+git clone https://github.com/amichailides/merimna.git
+cd merimna
+```
+
+2. **Start the application:**
+
+```bash
+docker compose up --build
+```
+
+The API will be available at `http://localhost:8080`.
 
 ## Future Vision
 
@@ -163,6 +167,6 @@ After starting the application locally, API documentation is available at:
   notes.
 - **Authorization testing:** Expand integration tests for placement-aware access control and other critical security
   flows.
-- **Audit logging:** Introduce structured audit logs for sensitive data changes and access-related events.
+- **Audit expansion:** Extend audit coverage to additional domain events and sensitive data operations.
 - **Staff dashboard:** Build a frontend application focused on common staff workflows in supported living environments.
 - **Refresh token hardening:** Add refresh token rotation and bulk revocation on password changes or user deactivation.
