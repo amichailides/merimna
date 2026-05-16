@@ -5,5 +5,6 @@ public enum RevocationReason {
     PASSWORD_CHANGE,
     USER_DEACTIVATION,
     ADMIN_REVOKE,
-    ROTATED
+    ROTATED,
+    REUSE_DETECTED
 }

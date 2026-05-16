@@ -4,9 +4,11 @@ import io.github.amichailides.merimna.domain.RefreshToken;
 import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.RefreshTokenGenerator;
+import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.exception.InvalidRefreshTokenException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService{
@@ -23,6 +26,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     private final RefreshTokenGenerator refreshTokenGenerator;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
+    private final RefreshTokenRevocationService refreshTokenRevocationService;
 
     @Override
     @Transactional
@@ -48,24 +52,52 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public User validateAndGetUser(String rawRefreshToken) {
+    @Transactional
+    public RefreshTokenRotationResult rotateToken(String rawRefreshToken, String userAgent, String ipAddress) {
+        Instant now = Instant.now();
+
         String tokenHash = hash(rawRefreshToken);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(tokenHash)
+        RefreshToken existing = refreshTokenRepository.findByTokenHash(tokenHash)
                 .orElseThrow(InvalidRefreshTokenException::new);
 
-        if (!refreshToken.isUsable()) {
+        ensureCanRotate(existing, now);
+
+        String newRawToken = refreshTokenGenerator.generate();
+
+        RefreshToken newToken = RefreshToken.builder()
+                .tokenHash(hash(newRawToken))
+                .user(existing.getUser())
+                .expiresAt(now.plus(securityProperties.getRefreshToken().getExpiration()))
+                .userAgent(userAgent)
+                .ipAddress(ipAddress)
+                .build();
+
+        refreshTokenRepository.save(newToken);
+
+        existing.revoke(RevocationReason.ROTATED, newToken.getPublicId());
+
+        return new RefreshTokenRotationResult(existing.getUser(), newRawToken);
+    }
+
+    private void ensureCanRotate(RefreshToken existing, Instant now) {
+        if (existing.isRevoked()) {
+            if (existing.wasRotated()) {
+                refreshTokenRevocationService.revokeAllActiveTokensForReuseDetection(
+                        existing.getUser(),
+                        now
+                );
+            }
             throw new InvalidRefreshTokenException();
         }
 
-        User user = refreshToken.getUser();
-
-        if (!user.isActive()) {
+        if (existing.isExpired()) {
             throw new InvalidRefreshTokenException();
         }
 
-        return user;
+        if (!existing.getUser().isActive()) {
+            throw new InvalidRefreshTokenException();
+        }
     }
 
     @Override
@@ -75,16 +107,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
         refreshTokenRepository.findByTokenHash(refreshTokenHash )
                 .ifPresent(token -> token.revoke(RevocationReason.LOGOUT));
-    }
-
-    @Override
-    @Transactional
-    public void revokeAllUserTokens(User user, RevocationReason reason) {
-        refreshTokenRepository.revokeAllActiveTokensForUser(
-                user.getId(),
-                reason,
-                Instant.now()
-        );
     }
 
     private String hash(String rawToken) {

@@ -56,13 +56,31 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(
-            @RequestBody(required = false) RefreshRequest request,
-            HttpServletRequest httpRequest) {
+            @RequestBody(required = false) RefreshRequest refreshRequest,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse) {
 
-        String refreshToken = extractRefreshToken(httpRequest,
-                request != null ? request.refreshToken() : null);
+        String refreshToken = extractRefreshToken(
+                httpRequest,
+                refreshRequest != null ? refreshRequest.refreshToken() : null
+        );
 
-        return ResponseEntity.ok(authService.refresh(refreshToken));
+        String userAgent = httpRequest.getHeader("User-Agent");
+        String ipAddress = httpRequest.getRemoteAddr();
+
+        AuthResponse authResponse = authService.refresh(refreshToken, userAgent, ipAddress);
+
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", authResponse.refreshToken())
+                .httpOnly(true)
+                .secure(securityProperties.getRefreshToken().isSecureCookie())
+                .sameSite("Strict")
+                .path("/api/auth")
+                .maxAge(securityProperties.getRefreshToken().getExpiration())
+                .build();
+
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/logout")
@@ -80,15 +98,16 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    private String extractRefreshToken(HttpServletRequest request, String bodyToken) {
-        if (request.getCookies() != null) {
-            return Arrays.stream(request.getCookies())
-                    .filter(c -> "refresh_token".equals(c.getName()))
+    private String extractRefreshToken(HttpServletRequest httpRequest, String bodyRefreshToken) {
+        if (httpRequest.getCookies() != null) {
+            return Arrays.stream(httpRequest.getCookies())
+                    .filter(cookie -> "refresh_token".equals(cookie.getName()))
                     .map(Cookie::getValue)
                     .findFirst()
-                    .orElse(bodyToken);
+                    .orElse(bodyRefreshToken);
         }
-        return bodyToken;
+
+        return bodyRefreshToken;
     }
 
     private void clearRefreshTokenCookie(HttpServletResponse httpResponse) {

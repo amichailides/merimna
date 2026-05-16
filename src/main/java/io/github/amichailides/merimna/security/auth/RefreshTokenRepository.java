@@ -18,13 +18,14 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     @Modifying
     @Query("""
-            UPDATE RefreshToken rt
-            SET rt.revokedAt = :now, rt.revocationReason = :reason
-            WHERE rt.user.id = :userId
-            AND rt.revokedAt IS NULL
-            AND rt.expiresAt > :now
-            """)
-    void revokeAllActiveTokensForUser(
+    UPDATE RefreshToken t
+    SET t.revokedAt = :now,
+        t.revocationReason = :reason
+    WHERE t.user.id = :userId
+      AND t.revokedAt IS NULL
+      AND t.expiresAt > :now
+""")
+    int revokeAllActiveTokensForUser(
             @Param("userId") Long userId,
             @Param("reason") RevocationReason reason,
             @Param("now") Instant now

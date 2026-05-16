@@ -45,7 +45,6 @@ public class RefreshToken {
     @Column(name = "revocation_reason")
     private RevocationReason revocationReason;
 
-    // rotation-ready, unused in V1
     @Column(name = "replaced_by_token_public_id")
     private UUID replacedByTokenPublicId;
 
@@ -81,5 +80,19 @@ public class RefreshToken {
 
         this.revokedAt = Instant.now();
         this.revocationReason = reason;
+    }
+
+    public void revoke(RevocationReason reason, UUID replacedByTokenPublicId) {
+        if (isRevoked()) {
+            return;
+        }
+
+        this.revokedAt = Instant.now();
+        this.revocationReason = reason;
+        this.replacedByTokenPublicId = replacedByTokenPublicId;
+    }
+
+    public boolean wasRotated() {
+        return replacedByTokenPublicId != null;
     }
 }

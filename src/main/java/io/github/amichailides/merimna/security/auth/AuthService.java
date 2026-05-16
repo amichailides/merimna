@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.audit.AuditContext;
+import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
 import io.github.amichailides.merimna.security.event.AuthLoginFailedEvent;
 import io.github.amichailides.merimna.security.event.AuthLoginSuccessEvent;
 import io.github.amichailides.merimna.security.event.AuthLogoutEvent;
@@ -35,6 +36,7 @@ public class AuthService {
     private final ApplicationEventPublisher eventPublisher;
     private final AuditContext auditContext;
 
+    @Transactional
     public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -66,12 +68,12 @@ public class AuthService {
         }
     }
 
-    public AuthResponse refresh(String rawRefreshToken) {
-        User user = refreshTokenService.validateAndGetUser(rawRefreshToken);
-        String accessToken = jwtService.generateToken(user);
+    @Transactional
+    public AuthResponse refresh(String rawRefreshToken, String userAgent, String ipAddress) {
+        RefreshTokenRotationResult rotation = refreshTokenService.rotateToken(rawRefreshToken, userAgent, ipAddress);
+        String accessToken = jwtService.generateToken(rotation.user());
 
-        // TODO #29: Rotate refresh token on refresh and detect reuse of replaced tokens.
-        return new AuthResponse(accessToken, rawRefreshToken);
+        return new AuthResponse(accessToken, rotation.newRawRefreshToken());
     }
 
     @Transactional
