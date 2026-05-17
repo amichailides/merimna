@@ -29,7 +29,8 @@ public enum AuditAction {
     AUTH_LOGIN_SUCCESS(AuditEntityType.AUTH),
     AUTH_LOGIN_FAILED(AuditEntityType.AUTH),
     AUTH_LOGOUT(AuditEntityType.AUTH),
-    AUTH_REFRESH_TOKEN_REUSE_DETECTED(AuditEntityType.AUTH);
+    AUTH_REFRESH_TOKEN_REUSE_DETECTED(AuditEntityType.AUTH),
+    AUTH_PASSWORD_CHANGED(AuditEntityType.AUTH);
 
     private final AuditEntityType entityType;
 
