@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security.refresh;
+package io.github.amichailides.merimna.security.token;
 
 import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
@@ -6,7 +6,7 @@ import java.util.Base64;
 
 
 @Component
-public class RefreshTokenGenerator {
+public class OpaqueTokenGenerator {
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 

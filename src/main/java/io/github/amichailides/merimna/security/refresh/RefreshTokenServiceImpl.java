@@ -5,33 +5,32 @@ import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.exception.InvalidRefreshTokenException;
+import io.github.amichailides.merimna.security.token.OpaqueTokenGenerator;
+import io.github.amichailides.merimna.security.token.TokenHasher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.HexFormat;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenServiceImpl implements RefreshTokenService{
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    private final RefreshTokenGenerator refreshTokenGenerator;
+    private final OpaqueTokenGenerator opaqueTokenGenerator;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
     private final RefreshTokenReuseDetectionService refreshTokenReuseDetectionService;
+    private final TokenHasher tokenHasher;
 
     @Override
     @Transactional
     public String createRefreshToken(User user, String userAgent, String ipAddress) {
-        String rawToken = refreshTokenGenerator.generate();
+        String rawToken = opaqueTokenGenerator.generate();
 
-        String tokenHash = hash(rawToken);
+        String tokenHash = tokenHasher.hash(rawToken);
 
         Instant now = Instant.now();
         Instant expiresAt = now.plus(securityProperties.getRefreshToken().getExpiration());
@@ -54,17 +53,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     public RefreshTokenRotationResult rotateToken(String rawRefreshToken, String userAgent, String ipAddress) {
         Instant now = Instant.now();
 
-        String tokenHash = hash(rawRefreshToken);
+        String tokenHash = tokenHasher.hash(rawRefreshToken);
 
         RefreshToken existing = refreshTokenRepository.findByTokenHash(tokenHash)
                 .orElseThrow(InvalidRefreshTokenException::new);
 
         ensureCanRotate(existing, now);
 
-        String newRawToken = refreshTokenGenerator.generate();
+        String newRawToken = opaqueTokenGenerator.generate();
 
         RefreshToken newToken = RefreshToken.builder()
-                .tokenHash(hash(newRawToken))
+                .tokenHash(tokenHasher.hash(newRawToken))
                 .user(existing.getUser())
                 .expiresAt(now.plus(securityProperties.getRefreshToken().getExpiration()))
                 .userAgent(userAgent)
@@ -99,19 +98,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Override
     @Transactional
     public void revokeToken(String rawRefreshToken) {
-        String refreshTokenHash = hash(rawRefreshToken);
+        String refreshTokenHash = tokenHasher.hash(rawRefreshToken);
 
-        refreshTokenRepository.findByTokenHash(refreshTokenHash )
+        refreshTokenRepository.findByTokenHash(refreshTokenHash)
                 .ifPresent(token -> token.revoke(RevocationReason.LOGOUT));
-    }
-
-    private String hash(String rawToken) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(hashBytes);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 not available", e);
-        }
     }
 }
