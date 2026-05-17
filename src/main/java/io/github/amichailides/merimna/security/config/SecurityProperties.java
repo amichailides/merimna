@@ -18,6 +18,7 @@ public class SecurityProperties {
     private String secret;
     private AccessToken accessToken = new AccessToken();
     private RefreshToken refreshToken = new RefreshToken();
+    private PasswordReset passwordReset = new PasswordReset();
 
     @Getter
     @Setter
@@ -30,5 +31,11 @@ public class SecurityProperties {
     public static class RefreshToken {
         private Duration expiration;
         private boolean secureCookie = true; // για application-dev
+    }
+
+    @Getter
+    @Setter
+    public static class PasswordReset {
+        private Duration expiration = Duration.ofMinutes(30);
     }
 }
