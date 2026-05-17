@@ -11,10 +11,10 @@ structured way, with explicit domain rules, controlled access, and traceability 
 
 ## Key Features & Architecture
 
-- **Authentication & authorization:** Stateless JWT authentication with short-lived access tokens and database-backed
-  opaque refresh tokens. Browser clients can use HttpOnly cookies, while non-browser clients can fall back to request
-  body tokens. Method-level access control is enforced through Spring Security permissions derived from each employee's
-  position.
+- **Authentication & authorization:** Stateless JWT authentication with short-lived access tokens and rotating,
+  database-backed opaque refresh tokens. Logout invalidates the submitted refresh token, while password changes and
+  refresh token reuse detection revoke all active refresh tokens for the affected user. Browser clients can use HttpOnly
+  cookies, while non-browser clients can fall back to request body tokens.
 
 - **Placement-aware access control:** Active placements temporarily extend an employee's access to beneficiary records
   of another house unit, with scope resolved at runtime from active assignments and placements.
@@ -32,9 +32,9 @@ structured way, with explicit domain rules, controlled access, and traceability 
 - **Centralized error handling:** Domain and validation exceptions are mapped by a global `@RestControllerAdvice` to
   consistent `ApiResponse` error payloads with stable `ErrorCode` values.
 
-- **Audit logging:** Important domain and user-management actions are captured through application events and persisted
-  as structured audit records, making sensitive changes traceable while keeping audit concerns centralized instead of
-  scattered across services.
+- **Audit logging:** Important domain, user-management, and security-sensitive authentication events are captured through
+  application events and persisted as structured audit records, making sensitive changes traceable while keeping audit
+  concerns centralized instead of scattered across services.
 
 - **Domain validation:** Custom validation annotations and validation group sequencing enforce domain rules while
   reducing noisy error output.
@@ -169,4 +169,4 @@ The API will be available at `http://localhost:8080`.
   flows.
 - **Audit expansion:** Extend audit coverage to additional domain events and sensitive data operations.
 - **Staff dashboard:** Build a frontend application focused on common staff workflows in supported living environments.
-- **Refresh token hardening:** Add refresh token rotation and bulk revocation on password changes or user deactivation.
+- **Refresh token hardening:** Expand bulk refresh token revocation flows, such as password changes and user deactivation.
