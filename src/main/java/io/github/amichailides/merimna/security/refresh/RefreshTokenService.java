@@ -1,7 +1,6 @@
-package io.github.amichailides.merimna.security.auth;
+package io.github.amichailides.merimna.security.refresh;
 
 import io.github.amichailides.merimna.domain.User;
-import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
 
 public interface RefreshTokenService {
 

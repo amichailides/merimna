@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.audit.AuditContext;
-import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
+import io.github.amichailides.merimna.security.refresh.RefreshTokenRotationResult;
 import io.github.amichailides.merimna.security.event.AuthLoginFailedEvent;
 import io.github.amichailides.merimna.security.event.AuthLoginSuccessEvent;
 import io.github.amichailides.merimna.security.event.AuthLogoutEvent;
@@ -14,6 +14,7 @@ import io.github.amichailides.merimna.security.exception.AccountDisabledExceptio
 import io.github.amichailides.merimna.security.exception.AccountLockedException;
 import io.github.amichailides.merimna.security.exception.AuthenticationFailedException;
 import io.github.amichailides.merimna.security.exception.InvalidCredentialsException;
+import io.github.amichailides.merimna.security.refresh.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.*;

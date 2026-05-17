@@ -1,6 +1,8 @@
 package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.domain.RevocationReason;
+import io.github.amichailides.merimna.security.refresh.RefreshTokenRevocationService;
 import io.github.amichailides.merimna.user.event.UserCreatedEvent;
 import io.github.amichailides.merimna.user.event.UserUpdatedEvent;
 import io.github.amichailides.merimna.domain.Employee;
@@ -22,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -35,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserValidator userValidator;
     private final UserChangeDetector userChangeDetector;
     private final ApplicationEventPublisher eventPublisher;
+    private final RefreshTokenRevocationService refreshTokenRevocationService;
 
     @Override
     @Transactional
@@ -111,6 +115,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changePassword(String email, ChangePasswordDTO dto) {
+        Instant now = Instant.now();
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundByEmailException::new);
 
@@ -123,6 +129,12 @@ public class UserServiceImpl implements UserService {
 
         String encoded = passwordEncoder.encode(dto.newPassword());
         user.setEncodedPassword(encoded);
+
+        refreshTokenRevocationService.revokeAllActiveTokensForUser(
+                user,
+                RevocationReason.PASSWORD_CHANGE,
+                now
+        );
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security.auth;
+package io.github.amichailides.merimna.security.refresh;
 
 import io.github.amichailides.merimna.domain.RefreshToken;
 import io.github.amichailides.merimna.domain.RevocationReason;

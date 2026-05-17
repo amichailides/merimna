@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security.auth.dto;
+package io.github.amichailides.merimna.security.refresh;
 
 import io.github.amichailides.merimna.domain.User;
 

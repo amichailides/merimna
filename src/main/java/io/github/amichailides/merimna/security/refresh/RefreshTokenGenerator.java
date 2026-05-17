@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.security;
+package io.github.amichailides.merimna.security.refresh;
 
 import org.springframework.stereotype.Component;
 import java.security.SecureRandom;

@@ -1,17 +1,12 @@
-package io.github.amichailides.merimna.security.auth;
+package io.github.amichailides.merimna.security.refresh;
 
 import io.github.amichailides.merimna.domain.RefreshToken;
 import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
-import io.github.amichailides.merimna.security.RefreshTokenGenerator;
-import io.github.amichailides.merimna.security.RefreshTokenReuseDetectionService;
-import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
-import io.github.amichailides.merimna.security.event.RefreshTokenReuseDetectedEvent;
 import io.github.amichailides.merimna.security.exception.InvalidRefreshTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
