@@ -4,11 +4,14 @@ import io.github.amichailides.merimna.domain.RefreshToken;
 import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.RefreshTokenGenerator;
+import io.github.amichailides.merimna.security.RefreshTokenReuseDetectionService;
 import io.github.amichailides.merimna.security.auth.dto.RefreshTokenRotationResult;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import io.github.amichailides.merimna.security.event.RefreshTokenReuseDetectedEvent;
 import io.github.amichailides.merimna.security.exception.InvalidRefreshTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +29,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     private final RefreshTokenGenerator refreshTokenGenerator;
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
-    private final RefreshTokenRevocationService refreshTokenRevocationService;
+    private final RefreshTokenReuseDetectionService refreshTokenReuseDetectionService;
 
     @Override
     @Transactional
@@ -83,11 +86,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     private void ensureCanRotate(RefreshToken existing, Instant now) {
         if (existing.isRevoked()) {
             if (existing.wasRotated()) {
-                refreshTokenRevocationService.revokeAllActiveTokensForReuseDetection(
-                        existing.getUser(),
-                        now
-                );
+                refreshTokenReuseDetectionService.handleReuseDetected(existing, now);
             }
+
             throw new InvalidRefreshTokenException();
         }
 

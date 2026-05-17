@@ -7,7 +7,6 @@ public enum AuditAction {
     BENEFICIARY_DISCHARGED(AuditEntityType.BENEFICIARY),
     BENEFICIARY_HOUSE_UNIT_CHANGED(AuditEntityType.BENEFICIARY),
 
-
     ALLERGY_UPDATED(AuditEntityType.ALLERGY),
 
     MEDICATION_UPDATED(AuditEntityType.MEDICATION),
@@ -29,7 +28,8 @@ public enum AuditAction {
 
     AUTH_LOGIN_SUCCESS(AuditEntityType.AUTH),
     AUTH_LOGIN_FAILED(AuditEntityType.AUTH),
-    AUTH_LOGOUT(AuditEntityType.AUTH);
+    AUTH_LOGOUT(AuditEntityType.AUTH),
+    AUTH_REFRESH_TOKEN_REUSE_DETECTED(AuditEntityType.AUTH);
 
     private final AuditEntityType entityType;
 
