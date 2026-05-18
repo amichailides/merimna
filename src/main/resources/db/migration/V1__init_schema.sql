@@ -337,6 +337,7 @@ create table refresh_tokens
         check (revocation_reason in (
                                      'LOGOUT',
                                      'PASSWORD_CHANGE',
+                                     'PASSWORD_RESET',
                                      'USER_DEACTIVATION',
                                      'ADMIN_REVOKE',
                                      'ROTATED',

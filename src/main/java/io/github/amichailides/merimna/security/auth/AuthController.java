@@ -1,9 +1,9 @@
 package io.github.amichailides.merimna.security.auth;
 
-import io.github.amichailides.merimna.security.auth.dto.AuthResponse;
-import io.github.amichailides.merimna.security.auth.dto.LoginRequest;
-import io.github.amichailides.merimna.security.auth.dto.RefreshRequest;
+import io.github.amichailides.merimna.common.response.ApiResponse;
+import io.github.amichailides.merimna.security.auth.dto.*;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import io.github.amichailides.merimna.security.passwordreset.PasswordResetService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +29,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final SecurityProperties securityProperties;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
@@ -94,6 +95,24 @@ public class AuthController {
 
         authService.logout(refreshToken);
         clearRefreshTokenCookie(httpResponse);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(
+            @Validated(ValidationGroupSequence.class) @RequestBody ForgotPasswordRequest request
+    ) {
+        passwordResetService.requestPasswordReset(request.email());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(
+            @Validated(ValidationGroupSequence.class) @RequestBody ResetPasswordRequest request
+    ) {
+        passwordResetService.resetPassword(request.token(), request.newPassword());
 
         return ResponseEntity.noContent().build();
     }
