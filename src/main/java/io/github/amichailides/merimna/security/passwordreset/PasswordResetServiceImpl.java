@@ -1,6 +1,6 @@
 package io.github.amichailides.merimna.security.passwordreset;
 
-import io.github.amichailides.merimna.domain.RevocationReason;
+import io.github.amichailides.merimna.security.refresh.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.event.UserPasswordResetEvent;

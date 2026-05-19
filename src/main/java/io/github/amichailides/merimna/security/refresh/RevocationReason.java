@@ -1,4 +1,4 @@
-package io.github.amichailides.merimna.domain;
+package io.github.amichailides.merimna.security.refresh;
 
 public enum RevocationReason {
     LOGOUT,

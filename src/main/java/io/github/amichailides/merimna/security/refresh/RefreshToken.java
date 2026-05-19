@@ -1,5 +1,6 @@
-package io.github.amichailides.merimna.domain;
+package io.github.amichailides.merimna.security.refresh;
 
+import io.github.amichailides.merimna.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 

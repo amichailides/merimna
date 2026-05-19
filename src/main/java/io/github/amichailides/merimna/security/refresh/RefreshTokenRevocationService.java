@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.security.refresh;
 
-import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

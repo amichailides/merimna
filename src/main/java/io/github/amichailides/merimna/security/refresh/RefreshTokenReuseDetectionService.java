@@ -1,7 +1,5 @@
 package io.github.amichailides.merimna.security.refresh;
 
-import io.github.amichailides.merimna.domain.RefreshToken;
-import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.security.event.RefreshTokenReuseDetectedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

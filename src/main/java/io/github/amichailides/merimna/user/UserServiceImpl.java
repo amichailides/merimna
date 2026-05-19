@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.user;
 
 import io.github.amichailides.merimna.audit.EntityChangeSet;
-import io.github.amichailides.merimna.domain.RevocationReason;
+import io.github.amichailides.merimna.security.refresh.RevocationReason;
 import io.github.amichailides.merimna.security.event.AuthPasswordChangedEvent;
 import io.github.amichailides.merimna.security.refresh.RefreshTokenRevocationService;
 import io.github.amichailides.merimna.user.event.UserCreatedEvent;

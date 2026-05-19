@@ -2,7 +2,7 @@ package io.github.amichailides.merimna.security.event;
 
 import io.github.amichailides.merimna.audit.AuditAction;
 import io.github.amichailides.merimna.audit.AuditableEvent;
-import io.github.amichailides.merimna.domain.RefreshToken;
+import io.github.amichailides.merimna.security.refresh.RefreshToken;
 
 import java.util.Map;
 import java.util.UUID;

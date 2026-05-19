@@ -1,7 +1,5 @@
 package io.github.amichailides.merimna.security.refresh;
 
-import io.github.amichailides.merimna.domain.RefreshToken;
-import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.exception.InvalidRefreshTokenException;

@@ -1,7 +1,5 @@
 package io.github.amichailides.merimna.security.refresh;
 
-import io.github.amichailides.merimna.domain.RefreshToken;
-import io.github.amichailides.merimna.domain.RevocationReason;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
