@@ -52,6 +52,8 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/refresh",
                                 "/auth/logout",
+                                "/auth/forgot-password",
+                                "/auth/reset-password",
                                 "/scalar/**",
                                 "/v3/api-docs/**",
                                 "/error"

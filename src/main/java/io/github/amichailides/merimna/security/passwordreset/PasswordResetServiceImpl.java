@@ -3,12 +3,14 @@ package io.github.amichailides.merimna.security.passwordreset;
 import io.github.amichailides.merimna.domain.RevocationReason;
 import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import io.github.amichailides.merimna.security.event.UserPasswordResetEvent;
 import io.github.amichailides.merimna.security.exception.InvalidPasswordResetTokenException;
 import io.github.amichailides.merimna.security.refresh.RefreshTokenRevocationService;
 import io.github.amichailides.merimna.security.token.OpaqueTokenGenerator;
 import io.github.amichailides.merimna.security.token.TokenHasher;
 import io.github.amichailides.merimna.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final PasswordResetTokenDeliveryService deliveryService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRevocationService refreshTokenRevocationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -77,6 +80,9 @@ public class PasswordResetServiceImpl implements PasswordResetService {
                 RevocationReason.PASSWORD_RESET,
                 now
         );
+
+        eventPublisher.publishEvent(
+                UserPasswordResetEvent.from(user));
     }
 }
 
