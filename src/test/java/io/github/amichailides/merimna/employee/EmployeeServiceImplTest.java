@@ -9,6 +9,7 @@ import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.user.UserRepository;
@@ -26,8 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,6 +62,9 @@ class EmployeeServiceImplTest {
 
     private static final LocalDate EMPLOYEE_HIRE_DATE =
             LocalDate.of(2026, 2, 23);
+
+    private static final LocalDate TERMINATION_DATE =
+            LocalDate.of(2026, 5, 20);
 
     @Nested
     class CreateEmployeeTests {
@@ -139,6 +142,38 @@ class EmployeeServiceImplTest {
         }
     }
 
+    @Nested
+    class TerminateEmployeeTests {
+
+        @Test
+        void shouldTerminateEmployee() {
+
+            Employee employee = defaultEmployee().build();
+            EmployeeDetailsDTO expected = terminatedEmployeeDetailsDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(userRepository.findByEmployeePublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.terminate(EMPLOYEE_PUBLIC_ID, TERMINATION_DATE);
+
+            assertEquals(expected, result);
+            assertFalse(employee.isActive());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeValidator).validateForTerminate(employee, TERMINATION_DATE);
+            verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeTerminatedEvent.class));
+        }
+    }
+
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
                 .firstName("Γεώργιος")
@@ -154,13 +189,30 @@ class EmployeeServiceImplTest {
     private Employee.EmployeeBuilder defaultEmployee() {
         return Employee.builder()
                 .publicId(EMPLOYEE_PUBLIC_ID)
-                .firstName("Γιωργος")
-                .lastName("Παπαδοπουλος")
+                .firstName("Γεώργιος")
+                .lastName("Παπαδόπουλος")
                 .contactEmail("g.papadopoulos@merimna.gr")
                 .mobileNumber("+30690367123")
                 .address(defaultAddress())
                 .hireDate(EMPLOYEE_HIRE_DATE)
                 .isActive(true);
+    }
+
+    private EmployeeDetailsDTO terminatedEmployeeDetailsDTO() {
+        return EmployeeDetailsDTO.builder()
+                .publicId(EMPLOYEE_PUBLIC_ID)
+                .firstName("Γεώργιος")
+                .lastName("Παπαδόπουλος")
+                .contactEmail("g.papadopoulos@merimna.gr")
+                .mobileNumber("+306942318223")
+                .positionCode("CAREGIVER")
+                .positionDisplayName("Caregiver")
+                .assignments(List.of())
+                .activePlacement(null)
+                .hireDate(EMPLOYEE_HIRE_DATE)
+                .address(defaultAddressDTO())
+                .active(false)
+                .build();
     }
 
     private EmployeePosition.EmployeePositionBuilder defaultEmployeePosition() {
