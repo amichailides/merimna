@@ -35,6 +35,15 @@ public class HouseUnitAccessService {
         }
     }
 
+    /**
+     * Resolves the house units that should limit beneficiary access for the current user.
+     *
+     * <p>Returns {@link Optional#empty()} when the current user has unrestricted access,
+     * meaning no house-unit filter should be applied.</p>
+     *
+     * <p>Returns a set of accessible house units for restricted users, based on their
+     * active assignments and placements.</p>
+     */
     public Optional<Set<HouseUnit>> resolveHouseUnitScope() {
         if (isUnrestricted()) {
             return Optional.empty();

@@ -31,11 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-
-/**
- * Υλοποίηση με business validation μέσω του {@link BeneficiaryValidator}
- * και βελτιστοποιημένα {@code readOnly = true} transactions.
- */
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryServiceImpl implements BeneficiaryService {
@@ -129,10 +124,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryMapper.toDetailsDTO(beneficiary);
     }
 
-    /**
-     * <p>Όλα τα κριτήρια συνδυάζονται με AND.
-     * Εξαίρεση: αν υπάρχει {@code amka}, το {@code q} αγνοείται.</p>
-     */
     @Override
     @Transactional(readOnly = true)
     public Page<BeneficiaryListDTO> findBeneficiaries(
@@ -159,6 +150,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             }
         }
 
+        // AMKA is an exact lookup and takes precedence over the global search query.
         if (hasText(criteria.getAmka())) {
             spec = spec.and(BeneficiarySpecifications.hasAmka(criteria.getAmka()));
         } else if (hasText(criteria.getQ())) {
