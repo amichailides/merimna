@@ -10,6 +10,7 @@ import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
 import io.github.amichailides.merimna.user.UserRepository;
@@ -171,6 +172,24 @@ class EmployeeServiceImplTest {
             verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
             verify(employeeMapper).toDetailsDTO(employee);
             verify(eventPublisher).publishEvent(any(EmployeeTerminatedEvent.class));
+        }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> employeeService.terminate(EMPLOYEE_PUBLIC_ID, TERMINATION_DATE)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(employeeValidator);
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(employeeMapper);
+            verifyNoInteractions(eventPublisher);
         }
     }
 
