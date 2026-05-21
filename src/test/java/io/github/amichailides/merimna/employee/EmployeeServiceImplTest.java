@@ -1,10 +1,7 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
-import io.github.amichailides.merimna.domain.Address;
-import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeePosition;
-import io.github.amichailides.merimna.domain.EmployeePositionCode;
+import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
@@ -66,6 +63,9 @@ class EmployeeServiceImplTest {
 
     private static final LocalDate TERMINATION_DATE =
             LocalDate.of(2026, 5, 20);
+
+    private static final UUID USER_PUBLIC_ID =
+            UUID.fromString("22222222-2222-2222-2222-222222222222");
 
     @Nested
     class CreateEmployeeTests {
@@ -191,6 +191,39 @@ class EmployeeServiceImplTest {
             verifyNoInteractions(employeeMapper);
             verifyNoInteractions(eventPublisher);
         }
+
+        @Test
+        void shouldDeactivateLinkedUser_whenEmployeeHasUserAccount() {
+            Employee employee = defaultEmployee().build();
+
+            User user = defaultUser()
+                    .employee(employee)
+                    .build();
+
+            EmployeeDetailsDTO expected = terminatedEmployeeDetailsDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(userRepository.findByEmployeePublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(user));
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.terminate(EMPLOYEE_PUBLIC_ID, TERMINATION_DATE);
+
+            assertEquals(expected, result);
+            assertFalse(employee.isActive());
+            assertFalse(user.isActive());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeValidator).validateForTerminate(employee, TERMINATION_DATE);
+            verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeTerminatedEvent.class));
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
@@ -274,5 +307,15 @@ class EmployeeServiceImplTest {
                 .city("Αθήνα")
                 .zipCode("11361")
                 .build();
+    }
+
+    private User.UserBuilder defaultUser() {
+        return User.builder()
+                .publicId(USER_PUBLIC_ID)
+                .username("gpapadopoulos")
+                .email("g.papadopoulos@merimna.gr")
+                .password("encoded-password")
+                .role(Role.ADMIN)
+                .active(true);
     }
 }
