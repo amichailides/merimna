@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
@@ -226,6 +227,36 @@ class EmployeeServiceImplTest {
         }
     }
 
+    @Nested
+    class ReactivateEmployeeTests {
+
+        @Test
+        void shouldReactivateEmployee() {
+            Employee employee = terminatedEmployee();
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(userRepository.findByEmployeePublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.reactivate(EMPLOYEE_PUBLIC_ID);
+
+            assertEquals(expected, result);
+            assertTrue(employee.isActive());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeReactivatedEvent.class));
+        }
+    }
+
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
                 .firstName("Γεώργιος")
@@ -317,5 +348,11 @@ class EmployeeServiceImplTest {
                 .password("encoded-password")
                 .role(Role.ADMIN)
                 .active(true);
+    }
+
+    private Employee terminatedEmployee() {
+        Employee employee = defaultEmployee().build();
+        employee.terminate(TERMINATION_DATE);
+        return employee;
     }
 }
