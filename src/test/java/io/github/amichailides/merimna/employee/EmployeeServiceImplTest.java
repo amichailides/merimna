@@ -288,6 +288,23 @@ class EmployeeServiceImplTest {
             verify(employeeMapper).toDetailsDTO(employee);
             verify(eventPublisher).publishEvent(any(EmployeeReactivatedEvent.class));
         }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> employeeService.reactivate(EMPLOYEE_PUBLIC_ID)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(employeeMapper);
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
