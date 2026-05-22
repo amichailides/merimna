@@ -255,6 +255,39 @@ class EmployeeServiceImplTest {
             verify(employeeMapper).toDetailsDTO(employee);
             verify(eventPublisher).publishEvent(any(EmployeeReactivatedEvent.class));
         }
+
+        @Test
+        void shouldReactivateLinkedUser_whenEmployeeHasUserAccount() {
+            Employee employee = terminatedEmployee();
+
+            User user = defaultUser()
+                    .employee(employee)
+                    .active(false)
+                    .build();
+
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(userRepository.findByEmployeePublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(user));
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.reactivate(EMPLOYEE_PUBLIC_ID);
+
+            assertEquals(expected, result);
+            assertTrue(employee.isActive());
+            assertTrue(user.isActive());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeReactivatedEvent.class));
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
