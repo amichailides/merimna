@@ -307,6 +307,30 @@ class EmployeeServiceImplTest {
         }
     }
 
+    @Nested
+    class GetEmployeeByPublicIdTests {
+
+        @Test
+        void shouldGetEmployeeByPublicId() {
+            Employee employee = defaultEmployee().build();
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            when(employeeRepository.findWithDetailsByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.getEmployeeByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            assertEquals(expected, result);
+
+            verify(employeeRepository).findWithDetailsByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeMapper).toDetailsDTO(employee);
+        }
+    }
+
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
                 .firstName("Γεώργιος")
