@@ -1,13 +1,16 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
+import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
+import io.github.amichailides.merimna.employee.event.EmployeeUpdatedEvent;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
@@ -345,6 +348,45 @@ class EmployeeServiceImplTest {
         }
     }
 
+    @Nested
+    class UpdateEmployeeTests {
+
+        @Test
+        void shouldUpdateEmployee_whenChangesDetected() {
+            EmployeeUpdateDTO dto = defaultEmployeeUpdateDTO();
+
+            Employee employee = defaultEmployee().build();
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            EntityChangeSet changeSet = EntityChangeSet.builder()
+                    .track("firstName", "Γεώργιος", dto.firstName())
+                    .build();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(employeeChangeDetector.detectChanges(employee, dto, null))
+                    .thenReturn(changeSet);
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.updateEmployee(EMPLOYEE_PUBLIC_ID, dto);
+
+            assertEquals(expected, result);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeValidator).validateForUpdate(employee, dto);
+            verify(employeeChangeDetector).detectChanges(employee, dto, null);
+            verify(employeeMapper).updateEntity(employee, dto, null);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeUpdatedEvent.class));
+
+            verifyNoInteractions(employeePositionRepository);
+        }
+    }
+
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
                 .firstName("Γεώργιος")
@@ -442,5 +484,17 @@ class EmployeeServiceImplTest {
         Employee employee = defaultEmployee().build();
         employee.terminate(TERMINATION_DATE);
         return employee;
+    }
+
+    private EmployeeUpdateDTO defaultEmployeeUpdateDTO() {
+        return EmployeeUpdateDTO.builder()
+                .firstName("Κωνσταντίνος")
+                .lastName(null)
+                .contactEmail(null)
+                .mobileNumber(null)
+                .positionCode(null)
+                .hireDate(null)
+                .address(null)
+                .build();
     }
 }
