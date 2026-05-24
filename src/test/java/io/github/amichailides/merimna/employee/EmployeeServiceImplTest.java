@@ -329,6 +329,20 @@ class EmployeeServiceImplTest {
             verify(employeeRepository).findWithDetailsByPublicId(EMPLOYEE_PUBLIC_ID);
             verify(employeeMapper).toDetailsDTO(employee);
         }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            when(employeeRepository.findWithDetailsByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> employeeService.getEmployeeByPublicId(EMPLOYEE_PUBLIC_ID)
+            );
+
+            verify(employeeRepository).findWithDetailsByPublicId(EMPLOYEE_PUBLIC_ID);
+            verifyNoInteractions(employeeMapper);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
