@@ -462,6 +462,30 @@ class EmployeeServiceImplTest {
             verify(employeeMapper).toDetailsDTO(employee);
             verify(eventPublisher).publishEvent(any(EmployeeUpdatedEvent.class));
         }
+
+        @Test
+        void shouldThrowException_whenNewPositionMissing() {
+            EmployeeUpdateDTO dto = defaultEmployeeUpdateDTOWithPosition();
+
+            EmployeePositionCode newPositionCode =
+                    EmployeePositionCode.of(dto.positionCode());
+
+            when(employeePositionRepository.findByCode(newPositionCode))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeePositionNotFoundByCodeException.class,
+                    () -> employeeService.updateEmployee(EMPLOYEE_PUBLIC_ID, dto)
+            );
+
+            verify(employeePositionRepository).findByCode(newPositionCode);
+
+            verifyNoInteractions(employeeRepository);
+            verifyNoInteractions(employeeValidator);
+            verifyNoInteractions(employeeChangeDetector);
+            verifyNoInteractions(employeeMapper);
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
