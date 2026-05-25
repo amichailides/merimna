@@ -385,6 +385,39 @@ class EmployeeServiceImplTest {
 
             verifyNoInteractions(employeePositionRepository);
         }
+
+        @Test
+        void shouldUpdateEmployee_withoutPublishingEvent_whenNoChangesDetected() {
+            EmployeeUpdateDTO dto = noChangesEmployeeUpdateDTO();
+
+            Employee employee = defaultEmployee().build();
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            EntityChangeSet changeSet = EntityChangeSet.builder().build();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(employeeChangeDetector.detectChanges(employee, dto, null))
+                    .thenReturn(changeSet);
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.updateEmployee(EMPLOYEE_PUBLIC_ID, dto);
+
+            assertEquals(expected, result);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeValidator).validateForUpdate(employee, dto);
+            verify(employeeChangeDetector).detectChanges(employee, dto, null);
+            verify(employeeMapper).updateEntity(employee, dto, null);
+            verify(employeeMapper).toDetailsDTO(employee);
+
+            verifyNoInteractions(eventPublisher);
+            verifyNoInteractions(employeePositionRepository);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
@@ -494,6 +527,18 @@ class EmployeeServiceImplTest {
                 .mobileNumber(null)
                 .positionCode(null)
                 .hireDate(null)
+                .address(null)
+                .build();
+    }
+
+    private EmployeeUpdateDTO noChangesEmployeeUpdateDTO() {
+        return EmployeeUpdateDTO.builder()
+                .firstName("Γεώργιος")
+                .lastName("Παπαδόπουλος")
+                .contactEmail("g.papadopoulos@merimna.gr")
+                .mobileNumber("+30690367123")
+                .positionCode(null)
+                .hireDate(EMPLOYEE_HIRE_DATE)
                 .address(null)
                 .build();
     }
