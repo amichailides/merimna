@@ -418,6 +418,50 @@ class EmployeeServiceImplTest {
             verifyNoInteractions(eventPublisher);
             verifyNoInteractions(employeePositionRepository);
         }
+
+        @Test
+        void shouldUpdateEmployee_whenPositionCodeProvided() {
+            EmployeeUpdateDTO dto = defaultEmployeeUpdateDTOWithPosition();
+
+            EmployeePositionCode newPositionCode = EmployeePositionCode.of(dto.positionCode());
+
+            EmployeePosition newPosition = defaultEmployeePosition()
+                    .code(newPositionCode)
+                    .displayName("Social Worker")
+                    .build();
+
+            Employee employee = defaultEmployee().build();
+            EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
+
+            EntityChangeSet changeSet = EntityChangeSet.builder()
+                    .track("positionCode", "CAREGIVER", dto.positionCode())
+                    .build();
+
+            when(employeePositionRepository.findByCode(newPositionCode))
+                    .thenReturn(Optional.of(newPosition));
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(employeeChangeDetector.detectChanges(employee, dto, dto.positionCode()))
+                    .thenReturn(changeSet);
+
+            when(employeeMapper.toDetailsDTO(employee))
+                    .thenReturn(expected);
+
+            EmployeeDetailsDTO result =
+                    employeeService.updateEmployee(EMPLOYEE_PUBLIC_ID, dto);
+
+            assertEquals(expected, result);
+
+            verify(employeePositionRepository).findByCode(newPositionCode);
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(employeeValidator).validateForUpdate(employee, dto);
+            verify(employeeChangeDetector).detectChanges(employee, dto, dto.positionCode());
+            verify(employeeMapper).updateEntity(employee, dto, newPosition);
+            verify(employeeMapper).toDetailsDTO(employee);
+            verify(eventPublisher).publishEvent(any(EmployeeUpdatedEvent.class));
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
@@ -540,6 +584,12 @@ class EmployeeServiceImplTest {
                 .positionCode(null)
                 .hireDate(EMPLOYEE_HIRE_DATE)
                 .address(null)
+                .build();
+    }
+
+    private EmployeeUpdateDTO defaultEmployeeUpdateDTOWithPosition() {
+        return EmployeeUpdateDTO.builder()
+                .positionCode("SOCIAL_WORKER")
                 .build();
     }
 }
