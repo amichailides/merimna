@@ -486,6 +486,26 @@ class EmployeeServiceImplTest {
             verifyNoInteractions(employeeMapper);
             verifyNoInteractions(eventPublisher);
         }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            EmployeeUpdateDTO dto = defaultEmployeeUpdateDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> employeeService.updateEmployee(EMPLOYEE_PUBLIC_ID, dto)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(employeeValidator);
+            verifyNoInteractions(employeeChangeDetector);
+            verifyNoInteractions(employeeMapper);
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
