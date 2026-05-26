@@ -71,6 +71,26 @@ class EmployeeServiceImplTest {
     private static final UUID USER_PUBLIC_ID =
             UUID.fromString("22222222-2222-2222-2222-222222222222");
 
+    private static final String DEFAULT_FIRST_NAME = "Γεώργιος";
+    private static final String DEFAULT_LAST_NAME = "Παπαδόπουλος";
+    private static final String UPDATED_FIRST_NAME = "Κωνσταντίνος";
+
+    private static final String DEFAULT_EMAIL = "g.papadopoulos@merimna.gr";
+    private static final String DEFAULT_MOBILE = "+30690367123";
+
+    private static final String DEFAULT_POSITION_CODE = "CAREGIVER";
+    private static final String DEFAULT_POSITION_DISPLAY_NAME = "Caregiver";
+    private static final String UPDATED_POSITION_CODE = "SOCIAL_WORKER";
+    private static final String UPDATED_POSITION_DISPLAY_NAME = "Social Worker";
+
+    private static final String DEFAULT_STREET = "Αγίου Μελετίου";
+    private static final String DEFAULT_STREET_NUMBER = "23";
+    private static final String DEFAULT_CITY = "Αθήνα";
+    private static final String DEFAULT_ZIP_CODE = "11361";
+
+    private static final String DEFAULT_USERNAME = "gpapadopoulos";
+    private static final String DEFAULT_PASSWORD = "encoded-password";
+
     @Nested
     class CreateEmployeeTests {
 
@@ -359,7 +379,7 @@ class EmployeeServiceImplTest {
             EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
 
             EntityChangeSet changeSet = EntityChangeSet.builder()
-                    .track("firstName", "Γεώργιος", dto.firstName())
+                    .track("firstName", DEFAULT_FIRST_NAME, dto.firstName())
                     .build();
 
             when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
@@ -427,14 +447,14 @@ class EmployeeServiceImplTest {
 
             EmployeePosition newPosition = defaultEmployeePosition()
                     .code(newPositionCode)
-                    .displayName("Social Worker")
+                    .displayName(UPDATED_POSITION_DISPLAY_NAME)
                     .build();
 
             Employee employee = defaultEmployee().build();
             EmployeeDetailsDTO expected = defaultEmployeeDetailsDTO();
 
             EntityChangeSet changeSet = EntityChangeSet.builder()
-                    .track("positionCode", "CAREGIVER", dto.positionCode())
+                    .track("positionCode", DEFAULT_POSITION_CODE, dto.positionCode())
                     .build();
 
             when(employeePositionRepository.findByCode(newPositionCode))
@@ -510,12 +530,12 @@ class EmployeeServiceImplTest {
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
-                .firstName("Γεώργιος")
-                .lastName("Παπαδόπουλος")
-                .contactEmail("g.papadopoulos@merimna.gr")
-                .mobileNumber("+306942318223")
+                .firstName(DEFAULT_FIRST_NAME)
+                .lastName(DEFAULT_LAST_NAME)
+                .contactEmail(DEFAULT_EMAIL)
+                .mobileNumber(DEFAULT_MOBILE)
                 .address(defaultAddressDTO())
-                .positionCode("CAREGIVER")
+                .positionCode(DEFAULT_POSITION_CODE)
                 .hireDate(EMPLOYEE_HIRE_DATE)
                 .build();
     }
@@ -523,80 +543,71 @@ class EmployeeServiceImplTest {
     private Employee.EmployeeBuilder defaultEmployee() {
         return Employee.builder()
                 .publicId(EMPLOYEE_PUBLIC_ID)
-                .firstName("Γεώργιος")
-                .lastName("Παπαδόπουλος")
-                .contactEmail("g.papadopoulos@merimna.gr")
-                .mobileNumber("+30690367123")
+                .firstName(DEFAULT_FIRST_NAME)
+                .lastName(DEFAULT_LAST_NAME)
+                .contactEmail(DEFAULT_EMAIL)
+                .mobileNumber(DEFAULT_MOBILE)
                 .address(defaultAddress())
                 .hireDate(EMPLOYEE_HIRE_DATE)
                 .isActive(true);
     }
 
+    private EmployeeDetailsDTO defaultEmployeeDetailsDTO() {
+        return employeeDetailsDTO(true);
+    }
+
     private EmployeeDetailsDTO terminatedEmployeeDetailsDTO() {
+        return employeeDetailsDTO(false);
+    }
+
+    private EmployeeDetailsDTO employeeDetailsDTO(boolean active) {
         return EmployeeDetailsDTO.builder()
                 .publicId(EMPLOYEE_PUBLIC_ID)
-                .firstName("Γεώργιος")
-                .lastName("Παπαδόπουλος")
-                .contactEmail("g.papadopoulos@merimna.gr")
-                .mobileNumber("+306942318223")
-                .positionCode("CAREGIVER")
-                .positionDisplayName("Caregiver")
+                .firstName(DEFAULT_FIRST_NAME)
+                .lastName(DEFAULT_LAST_NAME)
+                .contactEmail(DEFAULT_EMAIL)
+                .mobileNumber(DEFAULT_MOBILE)
+                .positionCode(DEFAULT_POSITION_CODE)
+                .positionDisplayName(DEFAULT_POSITION_DISPLAY_NAME)
                 .assignments(List.of())
                 .activePlacement(null)
                 .hireDate(EMPLOYEE_HIRE_DATE)
                 .address(defaultAddressDTO())
-                .active(false)
+                .active(active)
                 .build();
     }
 
     private EmployeePosition.EmployeePositionBuilder defaultEmployeePosition() {
         return EmployeePosition.builder()
-                .code(EmployeePositionCode.of("CAREGIVER"))
-                .displayName("Caregiver")
+                .code(EmployeePositionCode.of(DEFAULT_POSITION_CODE))
+                .displayName(DEFAULT_POSITION_DISPLAY_NAME)
                 .requiresExclusivePlacement(false);
-    }
-
-    private EmployeeDetailsDTO defaultEmployeeDetailsDTO() {
-        return EmployeeDetailsDTO.builder()
-                .publicId(EMPLOYEE_PUBLIC_ID)
-                .firstName("Γιωργος")
-                .lastName("Παπαδοπουλος")
-                .contactEmail("g.papadopoulos@merimna.gr")
-                .mobileNumber("+30690367123")
-                .positionCode("CAREGIVER")
-                .positionDisplayName("Caregiver")
-                .assignments(List.of())
-                .activePlacement(null)
-                .hireDate(EMPLOYEE_HIRE_DATE)
-                .address(defaultAddressDTO())
-                .active(true)
-                .build();
     }
 
     private AddressDTO defaultAddressDTO() {
         return AddressDTO.builder()
-                .street("Αγίου Μελετίου")
-                .streetNumber("23")
-                .city("Αθήνα")
-                .zipCode("11361")
+                .street(DEFAULT_STREET)
+                .streetNumber(DEFAULT_STREET_NUMBER)
+                .city(DEFAULT_CITY)
+                .zipCode(DEFAULT_ZIP_CODE)
                 .build();
     }
 
     private Address defaultAddress() {
         return Address.builder()
-                .street("Αγίου Μελετίου")
-                .streetNumber("23")
-                .city("Αθήνα")
-                .zipCode("11361")
+                .street(DEFAULT_STREET)
+                .streetNumber(DEFAULT_STREET_NUMBER)
+                .city(DEFAULT_CITY)
+                .zipCode(DEFAULT_ZIP_CODE)
                 .build();
     }
 
     private User.UserBuilder defaultUser() {
         return User.builder()
                 .publicId(USER_PUBLIC_ID)
-                .username("gpapadopoulos")
-                .email("g.papadopoulos@merimna.gr")
-                .password("encoded-password")
+                .username(DEFAULT_USERNAME)
+                .email(DEFAULT_EMAIL)
+                .password(DEFAULT_PASSWORD)
                 .role(Role.ADMIN)
                 .active(true);
     }
@@ -609,31 +620,23 @@ class EmployeeServiceImplTest {
 
     private EmployeeUpdateDTO defaultEmployeeUpdateDTO() {
         return EmployeeUpdateDTO.builder()
-                .firstName("Κωνσταντίνος")
-                .lastName(null)
-                .contactEmail(null)
-                .mobileNumber(null)
-                .positionCode(null)
-                .hireDate(null)
-                .address(null)
+                .firstName(UPDATED_FIRST_NAME)
                 .build();
     }
 
     private EmployeeUpdateDTO noChangesEmployeeUpdateDTO() {
         return EmployeeUpdateDTO.builder()
-                .firstName("Γεώργιος")
-                .lastName("Παπαδόπουλος")
-                .contactEmail("g.papadopoulos@merimna.gr")
-                .mobileNumber("+30690367123")
-                .positionCode(null)
+                .firstName(DEFAULT_FIRST_NAME)
+                .lastName(DEFAULT_LAST_NAME)
+                .contactEmail(DEFAULT_EMAIL)
+                .mobileNumber(DEFAULT_MOBILE)
                 .hireDate(EMPLOYEE_HIRE_DATE)
-                .address(null)
                 .build();
     }
 
     private EmployeeUpdateDTO defaultEmployeeUpdateDTOWithPosition() {
         return EmployeeUpdateDTO.builder()
-                .positionCode("SOCIAL_WORKER")
+                .positionCode(UPDATED_POSITION_CODE)
                 .build();
     }
 }
