@@ -4,9 +4,7 @@ import io.github.amichailides.merimna.address.dto.AddressDTO;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
-import io.github.amichailides.merimna.employee.dto.EmployeeCreateDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
-import io.github.amichailides.merimna.employee.dto.EmployeeUpdateDTO;
+import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
@@ -19,10 +17,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -528,6 +532,48 @@ class EmployeeServiceImplTest {
         }
     }
 
+    @Nested
+    class GetAllEmployeesTests {
+
+        @Test
+        void shouldGetAllEmployees() {
+            EmployeeSearchDTO criteria = new EmployeeSearchDTO(
+                    null,
+                    null,
+                    null,
+                    false
+            );
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            Employee employee = defaultEmployee().build();
+            EmployeeListDTO listDTO = defaultEmployeeListDTO();
+
+            Page<Employee> employeePage =
+                    new PageImpl<>(List.of(employee), pageable, 1);
+
+            when(employeeRepository.findAll(
+                    ArgumentMatchers.<Specification<Employee>>any(),
+                    eq(pageable)
+            )).thenReturn(employeePage);
+
+            when(employeeMapper.toListDTO(employee))
+                    .thenReturn(listDTO);
+
+            Page<EmployeeListDTO> result =
+                    employeeService.getAllEmployees(criteria, pageable);
+
+            assertEquals(1, result.getTotalElements());
+            assertEquals(listDTO, result.getContent().getFirst());
+
+            verify(employeeRepository).findAll(
+                    ArgumentMatchers.<Specification<Employee>>any(),
+                    eq(pageable)
+            );
+            verify(employeeMapper).toListDTO(employee);
+        }
+    }
+
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
         return EmployeeCreateDTO.builder()
                 .firstName(DEFAULT_FIRST_NAME)
@@ -637,6 +683,16 @@ class EmployeeServiceImplTest {
     private EmployeeUpdateDTO defaultEmployeeUpdateDTOWithPosition() {
         return EmployeeUpdateDTO.builder()
                 .positionCode(UPDATED_POSITION_CODE)
+                .build();
+    }
+
+    private EmployeeListDTO defaultEmployeeListDTO() {
+        return EmployeeListDTO.builder()
+                .publicId(EMPLOYEE_PUBLIC_ID)
+                .firstName(DEFAULT_FIRST_NAME)
+                .lastName(DEFAULT_LAST_NAME)
+                .positionCode(DEFAULT_POSITION_CODE)
+                .active(true)
                 .build();
     }
 }
