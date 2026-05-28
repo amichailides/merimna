@@ -572,6 +572,39 @@ class EmployeeServiceImplTest {
             );
             verify(employeeMapper).toListDTO(employee);
         }
+
+        @Test
+        void shouldReturnEmptyPage_whenNoEmployeesFound() {
+            EmployeeSearchDTO criteria = new EmployeeSearchDTO(
+                    null,
+                    null,
+                    null,
+                    false
+            );
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            Page<Employee> emptyPage =
+                    new PageImpl<>(List.of(), pageable, 0);
+
+            when(employeeRepository.findAll(
+                    ArgumentMatchers.<Specification<Employee>>any(),
+                    eq(pageable)
+            )).thenReturn(emptyPage);
+
+            Page<EmployeeListDTO> result =
+                    employeeService.getAllEmployees(criteria, pageable);
+
+            assertTrue(result.isEmpty());
+            assertEquals(0, result.getTotalElements());
+
+            verify(employeeRepository).findAll(
+                    ArgumentMatchers.<Specification<Employee>>any(),
+                    eq(pageable)
+            );
+
+            verifyNoMoreInteractions(employeeMapper);
+        }
     }
 
     private EmployeeCreateDTO defaultEmployeeCreateDTO() {
