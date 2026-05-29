@@ -7,6 +7,7 @@ import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -158,6 +159,32 @@ class EmployeeAssignmentServiceImplTest {
             verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
 
             verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentRepository);
+            verifyNoInteractions(assignmentMapper);
+            verifyNoInteractions(eventPublisher);
+        }
+
+        @Test
+        void shouldThrowException_whenHouseUnitMissing() {
+            EmployeeAssignmentCreateDTO dto = defaultCreateDTO();
+
+            Employee employee = defaultEmployee().build();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    HouseUnitNotFoundException.class,
+                    () -> assignmentService.create(EMPLOYEE_PUBLIC_ID, dto)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
+
             verifyNoInteractions(assignmentPolicy);
             verifyNoInteractions(assignmentRepository);
             verifyNoInteractions(assignmentMapper);
