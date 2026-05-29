@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,9 +21,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeAssignmentServiceImplTest {
@@ -140,6 +141,27 @@ class EmployeeAssignmentServiceImplTest {
             assertEquals(HOUSE_UNIT_PUBLIC_ID, event.houseUnitPublicId());
             assertEquals(START_DATE, event.startDate());
             assertEquals(END_DATE, event.endDate());
+        }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            EmployeeAssignmentCreateDTO dto = defaultCreateDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> assignmentService.create(EMPLOYEE_PUBLIC_ID, dto)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentRepository);
+            verifyNoInteractions(assignmentMapper);
+            verifyNoInteractions(eventPublisher);
         }
     }
 
