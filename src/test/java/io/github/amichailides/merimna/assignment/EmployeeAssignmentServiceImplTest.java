@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.assignment;
 
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
+import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCancelledEvent;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
@@ -80,6 +81,9 @@ class EmployeeAssignmentServiceImplTest {
     private static final String HOUSE_UNIT_CODE = "UNIT_A";
     private static final String HOUSE_UNIT_DISPLAY_NAME = "House Unit A";
     private static final String HOUSE_UNIT_ADDRESS = "Πατησίων 100";
+
+    private static final LocalDate PAST_START_DATE =
+            LocalDate.of(2026, 5, 1);
 
     @Nested
     class CreateAssignmentTests {
@@ -230,7 +234,43 @@ class EmployeeAssignmentServiceImplTest {
         }
     }
 
-    private EmployeeAssignmentCreateDTO defaultCreateDTO() {
+    @Nested
+    class CancelAssignmentTests {
+
+        @Test
+        void shouldCancelAssignment() {
+            Employee employee = defaultEmployee().build();
+            HouseUnit houseUnit = defaultHouseUnit().build();
+
+            EmployeeAssignment assignment =
+                    EmployeeAssignment.create(
+                            employee,
+                            houseUnit,
+                            PAST_START_DATE,
+                            END_DATE
+                    );
+
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.of(assignment));
+
+            assignmentService.cancel(EMPLOYEE_PUBLIC_ID, ASSIGNMENT_PUBLIC_ID);
+
+            assertEquals(EmployeeAssignmentStatus.CANCELLED, assignment.getStatus());
+            assertEquals(LocalDate.now(), assignment.getEndDate());
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verify(eventPublisher).publishEvent(any(EmployeeAssignmentCancelledEvent.class));
+        }
+
+    }
+
+        private EmployeeAssignmentCreateDTO defaultCreateDTO() {
         return new EmployeeAssignmentCreateDTO(
                 HOUSE_UNIT_PUBLIC_ID,
                 START_DATE,
