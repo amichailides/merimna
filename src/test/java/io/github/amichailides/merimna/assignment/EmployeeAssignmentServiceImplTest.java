@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyD
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
+import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
@@ -186,6 +187,43 @@ class EmployeeAssignmentServiceImplTest {
             verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
 
             verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentRepository);
+            verifyNoInteractions(assignmentMapper);
+            verifyNoInteractions(eventPublisher);
+        }
+
+        @Test
+        void shouldThrowException_whenPolicyRejectsAssignment() {
+            EmployeeAssignmentCreateDTO dto = defaultCreateDTO();
+
+            Employee employee = defaultEmployee().build();
+            HouseUnit houseUnit = defaultHouseUnit().build();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
+                    .thenReturn(Optional.of(houseUnit));
+
+            doThrow(new EmployeeInactiveException(EMPLOYEE_PUBLIC_ID))
+                    .when(assignmentPolicy)
+                    .validateForCreate(employee, houseUnit, START_DATE, END_DATE);
+
+            assertThrows(
+                    EmployeeInactiveException.class,
+                    () -> assignmentService.create(EMPLOYEE_PUBLIC_ID, dto)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
+
+            verify(assignmentPolicy).validateForCreate(
+                    employee,
+                    houseUnit,
+                    START_DATE,
+                    END_DATE
+            );
+
             verifyNoInteractions(assignmentRepository);
             verifyNoInteractions(assignmentMapper);
             verifyNoInteractions(eventPublisher);
