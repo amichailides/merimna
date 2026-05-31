@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCancelledEvent;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
+import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentTerminatedEvent;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
@@ -299,7 +300,42 @@ class EmployeeAssignmentServiceImplTest {
         );
     }
 
-    private Employee.EmployeeBuilder defaultEmployee() {
+    @Nested
+    class TerminateAssignmentTests {
+
+        @Test
+        void shouldTerminateAssignment() {
+            Employee employee = defaultEmployee().build();
+            HouseUnit houseUnit = defaultHouseUnit().build();
+
+            EmployeeAssignment assignment =
+                    EmployeeAssignment.create(
+                            employee,
+                            houseUnit,
+                            PAST_START_DATE,
+                            END_DATE
+                    );
+
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.of(assignment));
+
+            assignmentService.terminate(EMPLOYEE_PUBLIC_ID, ASSIGNMENT_PUBLIC_ID);
+
+            assertEquals(EmployeeAssignmentStatus.TERMINATED, assignment.getStatus());
+            assertEquals(LocalDate.now(), assignment.getEndDate());
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verify(eventPublisher).publishEvent(any(EmployeeAssignmentTerminatedEvent.class));
+        }
+    }
+
+        private Employee.EmployeeBuilder defaultEmployee() {
         return Employee.builder()
                 .publicId(EMPLOYEE_PUBLIC_ID)
                 .firstName(DEFAULT_FIRST_NAME)
