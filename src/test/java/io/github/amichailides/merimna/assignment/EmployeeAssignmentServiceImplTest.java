@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCancelledEvent;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
+import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
@@ -266,6 +267,26 @@ class EmployeeAssignmentServiceImplTest {
             );
 
             verify(eventPublisher).publishEvent(any(EmployeeAssignmentCancelledEvent.class));
+        }
+
+        @Test
+        void shouldThrowException_whenAssignmentMissing() {
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.empty());
+
+            assertThrows(
+                    AssignmentNotFoundException.class,
+                    () -> assignmentService.cancel(EMPLOYEE_PUBLIC_ID, ASSIGNMENT_PUBLIC_ID)
+            );
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verifyNoInteractions(eventPublisher);
         }
 
     }
