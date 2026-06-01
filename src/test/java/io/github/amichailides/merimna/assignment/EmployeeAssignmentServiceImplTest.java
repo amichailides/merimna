@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCancell
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentCreatedEvent;
 import io.github.amichailides.merimna.assignment.event.EmployeeAssignmentTerminatedEvent;
 import io.github.amichailides.merimna.assignment.exception.AssignmentNotFoundException;
+import io.github.amichailides.merimna.assignment.exception.AssignmentTerminationNotAllowedException;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
@@ -353,6 +354,37 @@ class EmployeeAssignmentServiceImplTest {
 
             verifyNoInteractions(eventPublisher);
         }
+
+        @Test
+        void shouldThrowException_whenEmployeeInactive() {
+            Employee employee = inactiveEmployee();
+            HouseUnit houseUnit = defaultHouseUnit().build();
+
+            EmployeeAssignment assignment =
+                    EmployeeAssignment.create(
+                            employee,
+                            houseUnit,
+                            PAST_START_DATE,
+                            END_DATE
+                    );
+
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.of(assignment));
+
+            assertThrows(
+                    AssignmentTerminationNotAllowedException.class,
+                    () -> assignmentService.terminate(EMPLOYEE_PUBLIC_ID, ASSIGNMENT_PUBLIC_ID)
+            );
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
         private Employee.EmployeeBuilder defaultEmployee() {
@@ -391,6 +423,12 @@ class EmployeeAssignmentServiceImplTest {
                 .status(EmployeeAssignmentStatus.ACTIVE)
                 .startDate(START_DATE)
                 .endDate(END_DATE)
+                .build();
+    }
+
+    private Employee inactiveEmployee() {
+        return defaultEmployee()
+                .isActive(false)
                 .build();
     }
 }
