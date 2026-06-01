@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -383,6 +384,39 @@ class EmployeeAssignmentServiceImplTest {
                     EMPLOYEE_PUBLIC_ID
             );
 
+            verifyNoInteractions(eventPublisher);
+        }
+    }
+
+    @Nested
+    class GetAllAssignmentsTests {
+
+        @Test
+        void shouldGetAllAssignments_whenViewAll() {
+            Employee employee = defaultEmployee().build();
+            EmployeeAssignmentReadOnlyDTO expected = defaultReadOnlyDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(assignmentRepository.findAssignmentsByEmployeePublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(List.of(expected));
+
+            List<EmployeeAssignmentReadOnlyDTO> result =
+                    assignmentService.getAllAssignments(
+                            EMPLOYEE_PUBLIC_ID,
+                            EmployeeAssignmentView.ALL
+                    );
+
+            assertEquals(1, result.size());
+            assertEquals(expected, result.getFirst());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(assignmentRepository).findAssignmentsByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentMapper);
             verifyNoInteractions(eventPublisher);
         }
     }
