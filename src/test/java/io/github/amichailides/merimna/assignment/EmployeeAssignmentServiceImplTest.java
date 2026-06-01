@@ -333,6 +333,26 @@ class EmployeeAssignmentServiceImplTest {
 
             verify(eventPublisher).publishEvent(any(EmployeeAssignmentTerminatedEvent.class));
         }
+
+        @Test
+        void shouldThrowException_whenAssignmentMissing() {
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.empty());
+
+            assertThrows(
+                    AssignmentNotFoundException.class,
+                    () -> assignmentService.terminate(EMPLOYEE_PUBLIC_ID, ASSIGNMENT_PUBLIC_ID)
+            );
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
         private Employee.EmployeeBuilder defaultEmployee() {
