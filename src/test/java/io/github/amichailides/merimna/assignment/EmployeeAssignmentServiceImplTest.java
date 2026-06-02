@@ -419,6 +419,40 @@ class EmployeeAssignmentServiceImplTest {
             verifyNoInteractions(assignmentMapper);
             verifyNoInteractions(eventPublisher);
         }
+
+        @Test
+        void shouldGetActiveAssignments_whenViewActive() {
+            Employee employee = defaultEmployee().build();
+            EmployeeAssignmentReadOnlyDTO expected = defaultReadOnlyDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(assignmentRepository.findAssignmentsByEmployeePublicIdAndStatus(
+                    EMPLOYEE_PUBLIC_ID,
+                    EmployeeAssignmentStatus.ACTIVE
+            )).thenReturn(List.of(expected));
+
+            List<EmployeeAssignmentReadOnlyDTO> result =
+                    assignmentService.getAllAssignments(
+                            EMPLOYEE_PUBLIC_ID,
+                            EmployeeAssignmentView.ACTIVE
+                    );
+
+            assertEquals(1, result.size());
+            assertEquals(expected, result.getFirst());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(assignmentRepository).findAssignmentsByEmployeePublicIdAndStatus(
+                    EMPLOYEE_PUBLIC_ID,
+                    EmployeeAssignmentStatus.ACTIVE
+            );
+
+            verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentMapper);
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
         private Employee.EmployeeBuilder defaultEmployee() {
