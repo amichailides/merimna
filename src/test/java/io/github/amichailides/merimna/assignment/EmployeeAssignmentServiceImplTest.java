@@ -511,6 +511,58 @@ class EmployeeAssignmentServiceImplTest {
         }
     }
 
+    @Nested
+    class GetAssignmentByPublicIdTests {
+
+        @Test
+        void shouldGetAssignmentByPublicId() {
+            Employee employee = defaultEmployee().build();
+            HouseUnit houseUnit = defaultHouseUnit().build();
+
+            EmployeeAssignment assignment =
+                    EmployeeAssignment.create(
+                            employee,
+                            houseUnit,
+                            PAST_START_DATE,
+                            END_DATE
+                    );
+
+            EmployeeAssignmentReadOnlyDTO expected = defaultReadOnlyDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.of(assignment));
+
+            when(assignmentMapper.toDTO(assignment))
+                    .thenReturn(expected);
+
+            EmployeeAssignmentReadOnlyDTO result =
+                    assignmentService.getAssignmentByPublicId(
+                            EMPLOYEE_PUBLIC_ID,
+                            ASSIGNMENT_PUBLIC_ID
+                    );
+
+            assertEquals(expected, result);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verify(assignmentMapper).toDTO(assignment);
+
+            verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(eventPublisher);
+        }
+    }
+
         private Employee.EmployeeBuilder defaultEmployee() {
         return Employee.builder()
                 .publicId(EMPLOYEE_PUBLIC_ID)
