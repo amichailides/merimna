@@ -1,14 +1,12 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeReactivatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeTerminatedEvent;
 import io.github.amichailides.merimna.employee.event.EmployeeUpdatedEvent;
-import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.EmployeePosition;
-import io.github.amichailides.merimna.domain.EmployeePositionCode;
-import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
@@ -20,11 +18,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -37,6 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final EmployeeChangeDetector employeeChangeDetector;
+    private final HouseUnitAccessService houseUnitAccessService;
 
     @Override
     @Transactional
@@ -98,15 +99,38 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .and(EmployeeSpecifications.hasPositionCode(criteria.positionCode()))
                 .and(EmployeeSpecifications.isActive(includeInactive ? null : true));
 
-        if (criteria.houseUnitPublicId() != null) {
-            spec = spec.and(EmployeeSpecifications.belongsToHouseUnitPublicId(
-                    criteria.houseUnitPublicId()));
+        Optional<Set<HouseUnit>> houseUnitScope =
+                houseUnitAccessService.resolveHouseUnitScope();
+
+        if (houseUnitScope.isPresent()) {
+            Set<HouseUnit> accessibleHouseUnits = houseUnitScope.get();
+
+            if (criteria.houseUnitPublicId() != null) {
+                boolean hasAccess = accessibleHouseUnits.stream()
+                        .anyMatch(h -> criteria.houseUnitPublicId().equals(h.getPublicId()));
+
+                if (!hasAccess) {
+                    throw new AccessDeniedException(
+                            "Employee search scope violation: attempted access to houseUnit "
+                                    + criteria.houseUnitPublicId()
+                    );
+                }
+
+                spec = spec.and(EmployeeSpecifications.belongsToHouseUnitPublicId(
+                        criteria.houseUnitPublicId()));
+            } else {
+                spec = spec.and(EmployeeSpecifications.belongsToHouseUnits(accessibleHouseUnits));
+            }
+        } else {
+            if (criteria.houseUnitPublicId() != null) {
+                spec = spec.and(EmployeeSpecifications.belongsToHouseUnitPublicId(
+                        criteria.houseUnitPublicId()));
+            }
         }
 
         return employeeRepository.findAll(spec, pageable)
                 .map(employeeMapper::toListDTO);
     }
-
     @Override
     @Transactional
     public EmployeeDetailsDTO updateEmployee(UUID publicId, EmployeeUpdateDTO dto) {

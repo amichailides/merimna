@@ -309,7 +309,8 @@ public class GlobalExceptionHandler {
             AccessDeniedException ex,
             HttpServletRequest request) {
 
-        log.warn("Access denied for request {}", request.getRequestURI());
+        log.warn("Access denied for request {} : {}", request.getRequestURI(), ex.getMessage());
+
         ErrorCode errorCode = ErrorCode.FORBIDDEN;
 
         String detail = translate(errorCode.getMessageKey());

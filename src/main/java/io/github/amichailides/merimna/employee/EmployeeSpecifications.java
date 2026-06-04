@@ -1,12 +1,17 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.EmployeeAssignment;
+import io.github.amichailides.merimna.domain.HouseUnit;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.text.Normalizer;
+import java.util.Set;
 import java.util.UUID;
 
 public class EmployeeSpecifications {
@@ -60,6 +65,24 @@ public class EmployeeSpecifications {
                 active == null
                         ? cb.conjunction()
                         : cb.equal(root.get("isActive"), active);
+    }
+
+    public static Specification<Employee> belongsToHouseUnits(Set<HouseUnit> houseUnits) {
+        return (root, query, cb) -> {
+            if (houseUnits == null || houseUnits.isEmpty()) {
+                return cb.disjunction();
+            }
+
+            query.distinct(true);
+
+            Join<Employee, EmployeeAssignment> assignmentJoin =
+                    root.joinSet("assignments");
+
+            return cb.and(
+                    assignmentJoin.get("houseUnit").in(houseUnits),
+                    cb.equal(assignmentJoin.get("status"), EmployeeAssignmentStatus.ACTIVE)
+            );
+        };
     }
 
     private static String stripAccents(String s) {
