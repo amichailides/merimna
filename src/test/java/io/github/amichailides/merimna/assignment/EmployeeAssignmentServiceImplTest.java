@@ -583,6 +583,39 @@ class EmployeeAssignmentServiceImplTest {
             verifyNoInteractions(assignmentMapper);
             verifyNoInteractions(eventPublisher);
         }
+
+        @Test
+        void shouldThrowException_whenAssignmentMissing() {
+            Employee employee = defaultEmployee().build();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(assignmentRepository.findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            )).thenReturn(Optional.empty());
+
+            assertThrows(
+                    AssignmentNotFoundException.class,
+                    () -> assignmentService.getAssignmentByPublicId(
+                            EMPLOYEE_PUBLIC_ID,
+                            ASSIGNMENT_PUBLIC_ID
+                    )
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verify(assignmentRepository).findByPublicIdAndEmployee_PublicId(
+                    ASSIGNMENT_PUBLIC_ID,
+                    EMPLOYEE_PUBLIC_ID
+            );
+
+            verifyNoInteractions(houseUnitRepository);
+            verifyNoInteractions(assignmentPolicy);
+            verifyNoInteractions(assignmentMapper);
+            verifyNoInteractions(eventPublisher);
+        }
     }
 
         private Employee.EmployeeBuilder defaultEmployee() {
