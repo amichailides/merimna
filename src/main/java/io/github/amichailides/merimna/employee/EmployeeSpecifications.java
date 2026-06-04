@@ -24,7 +24,8 @@ public class EmployeeSpecifications {
             return cb.or(
                     searchLike(cb, cb.function("unaccent", String.class, cb.lower(root.get("firstName"))), pattern),
                     searchLike(cb, cb.function("unaccent", String.class, cb.lower(root.get("lastName"))), pattern),
-                    cb.like(cb.lower(root.get("contactEmail")), pattern),
+                    cb.like(cb.lower(cb.function("SPLIT_PART", String.class,
+                            root.get("contactEmail"), cb.literal("@"), cb.literal(1))), pattern),
                     cb.like(root.get("mobileNumber"), pattern)
             );
         };

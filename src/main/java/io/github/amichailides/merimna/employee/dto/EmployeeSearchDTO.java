@@ -12,7 +12,7 @@ import java.util.UUID;
 public record EmployeeSearchDTO(
         @Schema(description = "Free-text search (first name, last name, email)", example = "giannis")
         @OptionalNotBlank(message = "{employee.searchTerm.blank}", groups = FirstOrder.class)
-        @Size(min = 2, max = 100, message = "{employee.searchTerm.size}", groups = SecondOrder.class)
+        @Size(min = 1, max = 100, message = "{employee.searchTerm.size}", groups = SecondOrder.class)
         String q,
 
         @Schema(description = "Employee position code", example = "CAREGIVER")
