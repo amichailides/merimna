@@ -31,7 +31,10 @@ public class HouseUnitAccessService {
         Employee employee = currentUserProvider.getCurrentEmployee();
 
         if (!scopeService.canAccess(employee, houseUnit)) {
-            throw new AccessDeniedException("No access to this house unit");
+            throw new AccessDeniedException(
+                    "House unit scope violation: attempted access to houseUnit "
+                            + houseUnit.getPublicId()
+            );
         }
     }
 
