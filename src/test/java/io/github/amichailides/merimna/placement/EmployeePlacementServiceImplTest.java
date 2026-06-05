@@ -8,6 +8,7 @@ import io.github.amichailides.merimna.domain.PlacementReason;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementNotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class EmployeePlacementServiceImplTest {
@@ -86,6 +87,18 @@ class EmployeePlacementServiceImplTest {
 
             verify(placementRepository).findByPublicId(PLACEMENT_PUBLIC_ID);
             verify(placementMapper).toReadOnlyDTO(placement);
+        }
+
+        @Test
+        void shouldThrowException_whenPlacementMissing() {
+            when(placementRepository.findByPublicId(PLACEMENT_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> placementService.getByPublicId(PLACEMENT_PUBLIC_ID))
+                    .isInstanceOf(EmployeePlacementNotFoundException.class);
+
+            verify(placementRepository).findByPublicId(PLACEMENT_PUBLIC_ID);
+            verifyNoInteractions(placementMapper);
         }
     }
 
