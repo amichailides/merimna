@@ -7,13 +7,17 @@ import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.domain.PlacementReason;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
+import io.github.amichailides.merimna.placement.event.EmployeePlacementCreatedEvent;
 import io.github.amichailides.merimna.placement.exception.EmployeePlacementNotFoundException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDate;
@@ -24,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)
 class EmployeePlacementServiceImplTest {
 
     @Mock
@@ -102,6 +106,55 @@ class EmployeePlacementServiceImplTest {
         }
     }
 
+    @Nested
+    class CreateTests {
+
+        @Test
+        void shouldCreatePlacement() {
+            Employee employee = defaultEmployee();
+            HouseUnit houseUnit = defaultHouseUnit();
+            EmployeePlacementCreateDTO dto = defaultCreateDTO();
+            EmployeePlacementReadOnlyDTO expectedDto = defaultReadOnlyDTO();
+            ArgumentCaptor<EmployeePlacement> placementCaptor =
+                    ArgumentCaptor.forClass(EmployeePlacement.class);
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
+                    .thenReturn(Optional.of(houseUnit));
+            when(placementRepository.save(any(EmployeePlacement.class)))
+                    .thenAnswer(invocation -> {
+                        EmployeePlacement placement = invocation.getArgument(0);
+                        placement.setId(PLACEMENT_ID);
+                        placement.setPublicId(PLACEMENT_PUBLIC_ID);
+                        return placement;
+                    });
+            when(placementMapper.toReadOnlyDTO(any(EmployeePlacement.class)))
+                    .thenReturn(expectedDto);
+
+            EmployeePlacementReadOnlyDTO result = placementService.create(dto);
+
+            assertThat(result).isEqualTo(expectedDto);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
+            verify(placementValidator).validateForCreate(employee, dto);
+            verify(placementRepository).save(placementCaptor.capture());
+
+            EmployeePlacement savedPlacement = placementCaptor.getValue();
+
+            assertThat(savedPlacement.getEmployee()).isEqualTo(employee);
+            assertThat(savedPlacement.getHouseUnit()).isEqualTo(houseUnit);
+            assertThat(savedPlacement.getStartDate()).isEqualTo(START_DATE);
+            assertThat(savedPlacement.getEndDate()).isEqualTo(END_DATE);
+            assertThat(savedPlacement.getReason()).isEqualTo(PLACEMENT_REASON);
+            assertThat(employee.getPlacements()).contains(savedPlacement);
+
+            verify(eventPublisher).publishEvent(any(EmployeePlacementCreatedEvent.class));
+            verify(placementMapper).toReadOnlyDTO(savedPlacement);
+        }
+    }
+
     private static EmployeePlacement defaultPlacement() {
         EmployeePlacement placement = EmployeePlacement.create(
                 defaultEmployee(),
@@ -152,5 +205,13 @@ class EmployeePlacementServiceImplTest {
                 .build();
     }
 
-
+    private static EmployeePlacementCreateDTO defaultCreateDTO() {
+        return new EmployeePlacementCreateDTO(
+                EMPLOYEE_PUBLIC_ID,
+                HOUSE_UNIT_PUBLIC_ID,
+                START_DATE,
+                END_DATE,
+                PLACEMENT_REASON
+        );
+    }
 }
