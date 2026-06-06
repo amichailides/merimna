@@ -34,5 +34,3 @@ build/
 
 ### Local environment variables ###
 .env
-
-frontend/
