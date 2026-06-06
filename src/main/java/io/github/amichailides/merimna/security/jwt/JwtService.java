@@ -1,5 +1,6 @@
 package io.github.amichailides.merimna.security.jwt;
 
+import io.github.amichailides.merimna.domain.User;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -24,9 +25,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(user.getUsername())
+                .claim("userPublicId", user.getPublicId().toString())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() +
                         securityProperties.getAccessToken().getExpiration().toMillis()))
