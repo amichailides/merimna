@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.domain.EmployeePlacement;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.domain.PlacementReason;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
+import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
@@ -152,6 +153,26 @@ class EmployeePlacementServiceImplTest {
 
             verify(eventPublisher).publishEvent(any(EmployeePlacementCreatedEvent.class));
             verify(placementMapper).toReadOnlyDTO(savedPlacement);
+        }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            EmployeePlacementCreateDTO dto = defaultCreateDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> placementService.create(dto))
+                    .isInstanceOf(EmployeeNotFoundByPublicIdException.class);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verifyNoInteractions(
+                    houseUnitRepository,
+                    placementValidator,
+                    placementRepository,
+                    eventPublisher,
+                    placementMapper
+            );
         }
     }
 
