@@ -8,6 +8,7 @@ import io.github.amichailides.merimna.domain.PlacementReason;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
+import io.github.amichailides.merimna.houseunit.exception.HouseUnitNotFoundException;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO;
 import io.github.amichailides.merimna.placement.event.EmployeePlacementCreatedEvent;
@@ -168,6 +169,29 @@ class EmployeePlacementServiceImplTest {
             verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
             verifyNoInteractions(
                     houseUnitRepository,
+                    placementValidator,
+                    placementRepository,
+                    eventPublisher,
+                    placementMapper
+            );
+        }
+
+        @Test
+        void shouldThrowException_whenHouseUnitMissing() {
+            Employee employee = defaultEmployee();
+            EmployeePlacementCreateDTO dto = defaultCreateDTO();
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+            when(houseUnitRepository.findByPublicId(HOUSE_UNIT_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> placementService.create(dto))
+                    .isInstanceOf(HouseUnitNotFoundException.class);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitRepository).findByPublicId(HOUSE_UNIT_PUBLIC_ID);
+            verifyNoInteractions(
                     placementValidator,
                     placementRepository,
                     eventPublisher,
