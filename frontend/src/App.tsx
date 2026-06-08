@@ -1,12 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { RoleBasedRedirect } from './auth/RoleBasedRedirect'
+import { LoginPage } from './pages/LoginPage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<div>Login page</div>} />
+         <Route path="/login" element={<LoginPage />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/" element={<RoleBasedRedirect />} />
