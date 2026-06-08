@@ -14,3 +14,7 @@ export async function loginUser(credentials: LoginRequest): Promise<LoginRespons
 
   return response.data
 }
+
+export async function logoutUser(): Promise<void> {
+  await axiosInstance.post('/auth/logout')
+}
