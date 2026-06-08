@@ -2,7 +2,7 @@ export type Role = 'ADMIN' | 'STAFF'
 
 export type AuthUser = {
   publicId: string
-  username: string
+  email: string
   role: Role
   employeePublicId?: string
 }

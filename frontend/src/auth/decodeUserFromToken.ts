@@ -15,7 +15,7 @@ export function decodeUserFromToken(token: string): AuthUser {
 
   return {
     publicId: payload.userPublicId,
-    username: payload.sub,
+    email: payload.sub,
     role: payload.role,
     employeePublicId: payload.employeePublicId,
   }
