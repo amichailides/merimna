@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/auth/useAuth'
 
 const loginSchema = z.object({
     email: z.email('Invalid email address'),
@@ -21,6 +23,9 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 
 export function LoginPage() {
+    const navigate = useNavigate()
+    const {login} = useAuth()
+
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -28,6 +33,12 @@ export function LoginPage() {
             password: '',
         },
     })
+
+    async function onSubmit(values: LoginFormValues) {
+        await login(values)
+        navigate('/', { replace: true })
+    }
+
     return (
         <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md">
@@ -39,7 +50,7 @@ export function LoginPage() {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
