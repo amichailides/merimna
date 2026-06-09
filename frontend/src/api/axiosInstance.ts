@@ -12,9 +12,9 @@ export const axiosInstance = axios.create({
     withCredentials: true,
 })
 
-const refreshClient = axios.create({
-    baseURL: 'http://localhost:8080/api',
-    withCredentials: true,
+export const refreshClient = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
 })
 
 axiosInstance.interceptors.request.use((config) => {
