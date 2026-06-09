@@ -4,27 +4,30 @@ import { RoleBasedRedirect } from './auth/RoleBasedRedirect'
 import { LoginPage } from './pages/LoginPage'
 import { useEffect } from 'react'
 import { useAuth } from './auth/useAuth'
+import { AppLayout } from "@/layouts/AppLayout";
 
 function App() {
   const { initializeAuth } = useAuth()
 
   useEffect(() => {
     initializeAuth()
-  }, [initializeAuth])
-  
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
+  }, [])
 
-        <Route element={<RequireAuth />}>
+  return (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<RequireAuth />}>
+        <Route element={<AppLayout />}>
           <Route path="/" element={<RoleBasedRedirect />} />
           <Route path="/dashboard" element={<div>Staff dashboard</div>} />
           <Route path="/admin/dashboard" element={<div>Admin dashboard</div>} />
         </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+      </Route>
+    </Routes>
+  </BrowserRouter>
+);
 }
 
 export default App
