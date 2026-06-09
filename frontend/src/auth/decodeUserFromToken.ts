@@ -9,12 +9,11 @@ type JwtPayload = {
   exp: number
   iat: number
 }
-
 export function decodeUserFromToken(token: string): AuthUser {
   const payload = jwtDecode<JwtPayload>(token)
 
   return {
-    publicId: payload.userPublicId,
+    userPublicId: payload.userPublicId,
     email: payload.sub,
     role: payload.role,
     employeePublicId: payload.employeePublicId,

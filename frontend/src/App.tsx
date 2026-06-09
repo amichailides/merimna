@@ -1,30 +1,17 @@
-import { useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { RoleBasedRedirect } from './auth/RoleBasedRedirect'
 import { LoginPage } from './pages/LoginPage'
-import { useAuthStore } from './stores/authStore'
-import { refreshAccessToken } from './api/authApi'
-import { decodeUserFromToken } from './auth/decodeUserFromToken'
+import { useEffect } from 'react'
+import { useAuth } from './auth/useAuth'
 
 function App() {
+  const { initializeAuth } = useAuth()
+
   useEffect(() => {
-    async function initializeAuth() {
-      try {
-        const response = await refreshAccessToken()
-        const user = decodeUserFromToken(response.accessToken)
-
-        useAuthStore.getState().setAuth(response.accessToken, user)
-      } catch {
-        useAuthStore.getState().clearAuth()
-      } finally {
-        useAuthStore.getState().setAuthLoading(false)
-      }
-    }
-
     initializeAuth()
-  }, [])
-
+  }, [initializeAuth])
+  
   return (
     <BrowserRouter>
       <Routes>
