@@ -23,6 +23,7 @@ Each ADR records:
 | [ADR-005](ADR-005-centralized-error-handling.md)                             | Centralized Error Handling and ErrorCode-driven API Responses      | Accepted | 2026-03-05 |
 | [ADR-006](ADR-006-refresh-token-transport-strategy.md)                       | Hybrid Refresh Token Transport for Browser and Non-Browser Clients | Accepted | 2026-05-01 |
 | [ADR-007](ADR-007-exception-classification-and-validation-error-strategy.md) | Exception Classification and Validation Error Strategy             | Accepted | 2026-05-07 |
+| [ADR-008](ADR-008-permission-aware-frontend-authorization.md)                | Permission-Aware Frontend Authorization                            | Accepted | 2026-06-09 |
 
 ---
 
