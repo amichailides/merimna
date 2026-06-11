@@ -1,16 +1,8 @@
-import { axiosInstance, refreshClient  } from './axiosInstance'
+import { axiosInstance, refreshClient } from './axiosInstance'
+import type { AuthResponse, LoginRequest } from './types'
 
-export type LoginRequest = {
-  email: string
-  password: string
-}
-
-export type LoginResponse = {
-  accessToken: string
-}
-
-export async function loginUser(credentials: LoginRequest): Promise<LoginResponse> {
-  const response = await axiosInstance.post<LoginResponse>('/auth/login', credentials)
+export async function loginUser(credentials: LoginRequest): Promise<AuthResponse> {
+  const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials)
 
   return response.data
 }
@@ -19,9 +11,8 @@ export async function logoutUser(): Promise<void> {
   await axiosInstance.post('/auth/logout')
 }
 
-
-export async function refreshAccessToken(): Promise<LoginResponse> {
-  const response = await refreshClient.post<LoginResponse>('/auth/refresh')
+export async function refreshAccessToken(): Promise<AuthResponse> {
+  const response = await refreshClient.post<AuthResponse>('/auth/refresh')
 
   return response.data
 }

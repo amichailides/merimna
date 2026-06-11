@@ -1,7 +1,8 @@
-import { loginUser, logoutUser, refreshAccessToken, type LoginRequest } from '../api/authApi'
+import { loginUser, logoutUser, refreshAccessToken } from '../api/authApi'
 import { decodeUserFromToken } from './decodeUserFromToken'
 import { useAuthStore } from '../stores/authStore'
 import type { Permission } from './permissions'
+import type { LoginRequest } from '../api/types'
 
 export function useAuth() {
   const accessToken = useAuthStore((state) => state.accessToken)
