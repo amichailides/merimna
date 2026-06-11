@@ -6,9 +6,11 @@ type JwtPayload = {
   role: Role
   userPublicId: string
   employeePublicId?: string
+  permissions?: string[]
   exp: number
   iat: number
 }
+
 export function decodeUserFromToken(token: string): AuthUser {
   const payload = jwtDecode<JwtPayload>(token)
 
@@ -17,5 +19,6 @@ export function decodeUserFromToken(token: string): AuthUser {
     email: payload.sub,
     role: payload.role,
     employeePublicId: payload.employeePublicId,
+    permissions: payload.permissions ?? [],
   }
 }

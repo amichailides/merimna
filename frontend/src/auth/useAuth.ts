@@ -1,7 +1,7 @@
 import { loginUser, logoutUser, refreshAccessToken, type LoginRequest } from '../api/authApi'
 import { decodeUserFromToken } from './decodeUserFromToken'
 import { useAuthStore } from '../stores/authStore'
-
+import type { Permission } from './permissions'
 
 export function useAuth() {
   const accessToken = useAuthStore((state) => state.accessToken)
@@ -10,8 +10,6 @@ export function useAuth() {
   const clearAuth = useAuthStore((state) => state.clearAuth)
   const isAuthLoading = useAuthStore((state) => state.isAuthLoading)
   const setAuthLoading = useAuthStore((state) => state.setAuthLoading)
-
-
 
   const login = async (credentials: LoginRequest) => {
     const response = await loginUser(credentials)
@@ -29,17 +27,21 @@ export function useAuth() {
   }
 
   const initializeAuth = async () => {
-  try {
-    const response = await refreshAccessToken()
-    const user = decodeUserFromToken(response.accessToken)
+    try {
+      const response = await refreshAccessToken()
+      const user = decodeUserFromToken(response.accessToken)
 
-    setAuth(response.accessToken, user)
-  } catch {
-    clearAuth()
-  } finally {
-    setAuthLoading(false)
+      setAuth(response.accessToken, user)
+    } catch {
+      clearAuth()
+    } finally {
+      setAuthLoading(false)
+    }
   }
-}
+
+  const hasPermission = (permission: Permission) => {
+    return user?.permissions.includes(permission) ?? false
+  }
 
   return {
     accessToken,
@@ -49,5 +51,6 @@ export function useAuth() {
     logout,
     isAuthLoading,
     initializeAuth,
+    hasPermission,
   }
 }

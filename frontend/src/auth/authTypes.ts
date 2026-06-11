@@ -5,4 +5,5 @@ export type AuthUser = {
   email: string
   role: Role
   employeePublicId?: string
+  permissions: string[]
 }
