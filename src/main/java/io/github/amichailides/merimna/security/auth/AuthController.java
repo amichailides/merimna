@@ -1,6 +1,5 @@
 package io.github.amichailides.merimna.security.auth;
 
-import io.github.amichailides.merimna.common.response.ApiResponse;
 import io.github.amichailides.merimna.security.auth.dto.*;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.passwordreset.PasswordResetService;
@@ -8,9 +7,9 @@ import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -65,6 +64,10 @@ public class AuthController {
                 httpRequest,
                 refreshRequest != null ? refreshRequest.refreshToken() : null
         );
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         String userAgent = httpRequest.getHeader("User-Agent");
         String ipAddress = httpRequest.getRemoteAddr();
