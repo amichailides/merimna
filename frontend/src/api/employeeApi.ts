@@ -6,13 +6,23 @@ import type {
   PageResponseEmployeeListDTO,
 } from './types'
 
+type EmployeePageParams = {
+  page?: number
+  size?: number
+  sort?: string
+}
+
 export async function getEmployees(
-  criteria?: EmployeeSearchDTO
+  criteria?: EmployeeSearchDTO,
+  pageParams?: EmployeePageParams
 ): Promise<PageResponseEmployeeListDTO> {
   const response = await axiosInstance.get<PageResponseEmployeeListDTO>(
     '/employees',
     {
-      params: criteria,
+      params: {
+        ...criteria,
+        ...pageParams
+      },   
     }
   )
 
