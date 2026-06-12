@@ -7,11 +7,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Service
@@ -30,6 +33,7 @@ public class JwtService {
                 .subject(user.getUsername())
                 .claim("userPublicId", user.getPublicId().toString())
                 .claim("role", user.getRole().name())
+                .claim("permissions", extractPermissions(user))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() +
                         securityProperties.getAccessToken().getExpiration().toMillis()))
@@ -57,5 +61,14 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         return claimsResolver.apply(claims);
+    }
+
+    private List<String> extractPermissions(User user) {
+        return user.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(Objects::nonNull)
+                .filter(authority -> !authority.startsWith("ROLE_"))
+                .toList();
     }
 }

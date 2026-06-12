@@ -2,14 +2,12 @@ package io.github.amichailides.merimna.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -58,10 +56,20 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    @NonNull
+    public  Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        if (role == Role.ADMIN) {
+            EnumSet.allOf(Permission.class)
+                    .stream()
+                    .map(permission -> new SimpleGrantedAuthority(permission.name()))
+                    .forEach(authorities::add);
+
+            return authorities;
+        }
 
         if (employee != null && employee.getPosition() != null) {
             employee.getPosition().getPermissions()
