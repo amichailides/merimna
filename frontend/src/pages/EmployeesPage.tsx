@@ -1,4 +1,6 @@
-import { useEmployees } from "@/api/useEmployees";
+import { useEmployees } from '@/api/useEmployees'
+import { EmployeeListCard } from '@/components/employees/EmployeeListCard'
+import { EmployeeListPagination } from '@/components/employees/EmployeeListPagination'
 
 export function EmployeesPage() {
     const {
@@ -6,63 +8,60 @@ export function EmployeesPage() {
         loading,
         error,
         page,
+        size,
         totalPages,
         totalElements,
-        goToNextPage,
-        goToPreviousPage,
+        changePagination,
     } = useEmployees()
 
     if (loading) {
         return <p>Loading Employees...</p>
     }
 
-    if (error) return <p>{error}</p>
+    if (error) {
+        return <p>{error}</p>
+    }
 
     return (
         <main className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-semibold text-slate-900">
-                    Employees
-                </h1>
-                <p className="text-sm text-slate-500">
-                    Manage employees and staff access.
-                </p>
-            </div>
-
-            <div>
-                <p>Total employees: {totalElements}</p>
-
+            <section className="flex items-start justify-between gap-4">
                 <div>
-                    {employees.map((employee) => (
-                        <div key={employee.publicId}>
-                            <div>
-                                {employee.firstName} {employee.lastName}
-                            </div>
+                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+                        Employees
+                    </h1>
 
-                            <div>
-                                {employee.positionCode}
-                            </div>
-
-                            <div>
-                                {employee.active ? 'Active' : 'Inactive'}
-                            </div>
-                        </div>
-                    ))}
+                    <p className="mt-1 text-sm text-slate-500">
+                        Manage employees and staff access.
+                    </p>
                 </div>
-                <div>
-                    <button onClick={goToPreviousPage}>
-                        Previous
-                    </button>
 
-                    <span>
-                        Page {page + 1} of {totalPages}
-                    </span>
+                <div className="rounded-lg border bg-white px-4 py-3 text-right shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                        Total
+                    </p>
 
-                    <button onClick={goToNextPage}>
-                        Next
-                    </button>
+                    <p className="text-2xl font-semibold text-slate-900">
+                        {totalElements}
+                    </p>
                 </div>
-            </div>
+            </section>
+
+            <section className="space-y-3">
+                {employees.map((employee) => (
+                    <EmployeeListCard
+                        key={employee.publicId}
+                        employee={employee}
+                    />
+                ))}
+            </section>
+
+            <EmployeeListPagination
+                page={page}
+                size={size}
+                totalElements={totalElements}
+                totalPages={totalPages}
+                onPaginationChange={changePagination}
+            />
         </main>
     )
 }

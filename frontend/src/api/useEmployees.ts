@@ -15,8 +15,7 @@ type UseEmployeesResult = {
     size: number
     totalElements: number
     totalPages: number
-    goToNextPage: () => void
-    goToPreviousPage: () => void
+    changePagination: (page: number, size: number) => void
 }
 
 export function useEmployees(): UseEmployeesResult {
@@ -24,28 +23,13 @@ export function useEmployees(): UseEmployeesResult {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [page, setPage] = useState(0)
-    const [size, setSize] = useState(5)
+    const [size, setSize] = useState(10)
     const [totalElements, setTotalElements] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
 
-    function goToNextPage() {
-        setPage((currentPage) => {
-            if (currentPage >= totalPages - 1) {
-                return currentPage
-            }
-
-            return currentPage + 1
-        })
-    }
-
-    function goToPreviousPage() {
-        setPage((currentPage) => {
-            if (currentPage <= 0) {
-                return currentPage
-            }
-
-            return currentPage - 1
-        })
+    function changePagination(newPage: number, newSize: number) {
+        setPage(newPage)
+        setSize(newSize)
     }
 
     useEffect(() => {
@@ -58,9 +42,8 @@ export function useEmployees(): UseEmployeesResult {
                     page,
                     size,
                 })
+
                 setEmployees(data.content ?? [])
-                setPage(data.page ?? 0)
-                setSize(data.size ?? 5)
                 setTotalElements(data.totalElements ?? 0)
                 setTotalPages(data.totalPages ?? 0)
             } catch {
@@ -81,7 +64,6 @@ export function useEmployees(): UseEmployeesResult {
         size,
         totalElements,
         totalPages,
-        goToNextPage,
-        goToPreviousPage,
+        changePagination,
     }
 }
