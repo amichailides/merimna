@@ -4,6 +4,8 @@ import { useAuthStore } from '../stores/authStore'
 import type { Permission } from './permissions'
 import type { LoginRequest } from '../api/types'
 
+let initializeAuthPromise: Promise<void> | null = null
+
 export function useAuth() {
   const accessToken = useAuthStore((state) => state.accessToken)
   const user = useAuthStore((state) => state.user)
@@ -28,16 +30,25 @@ export function useAuth() {
   }
 
   const initializeAuth = async () => {
-    try {
-      const response = await refreshAccessToken()
-      const user = decodeUserFromToken(response.accessToken)
-
-      setAuth(response.accessToken, user)
-    } catch {
-      clearAuth()
-    } finally {
-      setAuthLoading(false)
+    if (initializeAuthPromise) {
+      return initializeAuthPromise
     }
+
+    initializeAuthPromise = (async () => {
+      try {
+        const response = await refreshAccessToken()
+        const user = decodeUserFromToken(response.accessToken)
+
+        setAuth(response.accessToken, user)
+      } catch {
+        clearAuth()
+      } finally {
+        setAuthLoading(false)
+        initializeAuthPromise = null
+      }
+    })()
+
+    return initializeAuthPromise
   }
 
   const hasPermission = (permission: Permission) => {
