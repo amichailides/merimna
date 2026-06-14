@@ -92,12 +92,19 @@ public class EmployeeServiceImpl implements EmployeeService {
             EmployeeSearchDTO criteria,
             Pageable pageable) {
 
-        boolean includeInactive = Boolean.TRUE.equals(criteria.includeInactive());
+        EmployeeStatusFilter status =
+                criteria.status() == null ? EmployeeStatusFilter.ACTIVE : criteria.status();
+
+        Boolean activeFilter = switch (status) {
+            case ALL -> null;
+            case ACTIVE -> true;
+            case INACTIVE -> false;
+        };
 
         Specification<Employee> spec = Specification.where(
                         EmployeeSpecifications.globalSearch(criteria.q()))
                 .and(EmployeeSpecifications.hasPositionCode(criteria.positionCode()))
-                .and(EmployeeSpecifications.isActive(includeInactive ? null : true));
+                .and(EmployeeSpecifications.isActive(activeFilter));
 
         Optional<Set<HouseUnit>> houseUnitScope =
                 houseUnitAccessService.resolveHouseUnitScope();
@@ -131,6 +138,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAll(spec, pageable)
                 .map(employeeMapper::toListDTO);
     }
+
     @Override
     @Transactional
     public EmployeeDetailsDTO updateEmployee(UUID publicId, EmployeeUpdateDTO dto) {

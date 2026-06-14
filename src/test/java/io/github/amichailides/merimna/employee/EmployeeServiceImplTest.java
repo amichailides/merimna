@@ -541,7 +541,7 @@ class EmployeeServiceImplTest {
                     null,
                     null,
                     null,
-                    false
+                    EmployeeStatusFilter.ACTIVE
             );
 
             Pageable pageable = PageRequest.of(0, 10);
@@ -579,7 +579,7 @@ class EmployeeServiceImplTest {
                     null,
                     null,
                     null,
-                    false
+                    EmployeeStatusFilter.ACTIVE
             );
 
             Pageable pageable = PageRequest.of(0, 10);

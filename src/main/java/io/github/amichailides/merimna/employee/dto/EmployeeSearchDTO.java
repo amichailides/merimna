@@ -25,6 +25,6 @@ public record EmployeeSearchDTO(
         )
         UUID houseUnitPublicId,
 
-        @Schema(description = "Include inactive employees", example = "false")
-        Boolean includeInactive
+        @Schema(description = "Filter by employee status", example = "ACTIVE")
+        EmployeeStatusFilter status
 ) {}
