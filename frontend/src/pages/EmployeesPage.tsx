@@ -3,6 +3,7 @@ import { ListPagination } from '@/components/common/ListPagination'
 import { EmployeeListRow } from '@/components/employees/EmployeeListRow'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { EmployeeListFilters } from '@/components/employees/EmployeeListFilters'
 
 export function EmployeesPage() {
     const {
@@ -41,6 +42,8 @@ export function EmployeesPage() {
                     + Add employee
                 </Button>
             </section>
+
+            <EmployeeListFilters />
 
             <Card>
                 <CardContent className="p-0">
