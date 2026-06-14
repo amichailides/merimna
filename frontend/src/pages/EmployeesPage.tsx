@@ -1,6 +1,8 @@
 import { useEmployees } from '@/api/useEmployees'
-import { EmployeeListCard } from '@/components/employees/EmployeeListCard'
 import { ListPagination } from '@/components/common/ListPagination'
+import { EmployeeListRow } from '@/components/employees/EmployeeListRow'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 export function EmployeesPage() {
     const {
@@ -35,25 +37,21 @@ export function EmployeesPage() {
                     </p>
                 </div>
 
-                <div className="rounded-lg border bg-white px-4 py-3 text-right shadow-sm">
-                    <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                        Total
-                    </p>
-
-                    <p className="text-2xl font-semibold text-slate-900">
-                        {totalElements}
-                    </p>
-                </div>
+                <Button type="button">
+                    + Add employee
+                </Button>
             </section>
 
-            <section className="space-y-3">
-                {employees.map((employee) => (
-                    <EmployeeListCard
-                        key={employee.publicId}
-                        employee={employee}
-                    />
-                ))}
-            </section>
+            <Card>
+                <CardContent className="p-0">
+                    {employees.map((employee) => (
+                        <EmployeeListRow
+                            key={employee.publicId}
+                            employee={employee}
+                        />
+                    ))}
+                </CardContent>
+            </Card>
 
             <ListPagination
                 page={page}
