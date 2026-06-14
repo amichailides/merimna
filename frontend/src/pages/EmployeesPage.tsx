@@ -23,7 +23,7 @@ export function EmployeesPage() {
     }
 
     return (
-        <main className="space-y-6">
+        <main className="max-w-5xl space-y-6">
             <section className="flex items-start justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight text-slate-900">

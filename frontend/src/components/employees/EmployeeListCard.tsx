@@ -9,14 +9,14 @@ type EmployeeCardProps = {
 export function EmployeeListCard({ employee }: EmployeeCardProps) {
     return (
         <Card>
-            <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-4">
+            <CardContent className="px-4 py-2.5">
+                <div className="flex items-center justify-between gap-4">
                     <div>
-                        <h2 className="font-medium text-slate-900">
+                        <h2 className="text-sm font-medium leading-5 text-slate-900">
                             {employee.firstName} {employee.lastName}
                         </h2>
 
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-0.5 text-xs leading-4 text-slate-500">
                             {employee.positionCode}
                         </p>
                     </div>
