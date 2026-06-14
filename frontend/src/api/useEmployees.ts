@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import { getEmployees } from './employeeApi'
 
@@ -32,6 +32,16 @@ export function useEmployees(criteria?: EmployeeSearchDTO): UseEmployeesResult {
         setPage(newPage)
         setSize(newSize)
     }
+
+    const isFirstRender = useRef(true)
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false
+            return
+        }
+        setPage(0)
+    }, [criteria])
 
     useEffect(() => {
         async function loadEmployees() {

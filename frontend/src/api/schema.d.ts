@@ -1454,6 +1454,11 @@ export interface components {
              */
             positionCode: string;
             /**
+             * @description Employee position display name
+             * @example Caregiver
+             */
+            positionDisplayName: string;
+            /**
              * @description Indicates whether the employee is active
              * @example true
              */

@@ -60,7 +60,10 @@ export function EmployeesPage() {
                     </p>
                 </div>
 
-                <Button type="button">
+                <Button
+                    type="button"
+                    className="bg-teal-700 text-white hover:bg-teal-800"
+                >
                     + Add employee
                 </Button>
             </section>
@@ -72,7 +75,7 @@ export function EmployeesPage() {
                 onStatusChange={setStatus}
             />
 
-            <Card>
+            <Card className="overflow-hidden border-slate-200 bg-white shadow-sm">
                 <CardContent className="p-0">
                     {employees.length === 0 && loading ? (
                         <p className="px-4 py-6 text-sm text-slate-500">
@@ -92,16 +95,18 @@ export function EmployeesPage() {
                             ))}
                         </div>
                     )}
+
+                    <div className="border-t border-slate-200 px-4 py-3">
+                        <ListPagination
+                            page={page}
+                            size={size}
+                            totalElements={totalElements}
+                            totalPages={totalPages}
+                            onPaginationChange={changePagination}
+                        />
+                    </div>
                 </CardContent>
             </Card>
-
-            <ListPagination
-                page={page}
-                size={size}
-                totalElements={totalElements}
-                totalPages={totalPages}
-                onPaginationChange={changePagination}
-            />
         </main>
     )
 }

@@ -27,21 +27,21 @@ export function EmployeeListFilters({
     onStatusChange,
 }: EmployeeListFiltersProps) {
     return (
-        <div className="flex flex-col gap-3 rounded-lg border bg-white p-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
             <div className="relative flex-1">
                 <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
                 <Input
                     type="search"
                     placeholder="Search employees..."
-                    className="pl-9"
+                    className="pl-9 focus-visible:ring-2 focus-visible:ring-teal-500/25 focus-visible:border-teal-400"
                     value={searchTerm}
                     onChange={(event) => onSearchTermChange(event.target.value)}
                 />
             </div>
 
             <Select value={status} onValueChange={onStatusChange}>
-                <SelectTrigger className="w-full sm:w-40">
+                <SelectTrigger className="w-full focus:ring-teal-600 sm:w-40">
                     <SelectValue placeholder="Status" />
                 </SelectTrigger>
 

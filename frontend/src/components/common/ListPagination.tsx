@@ -37,9 +37,11 @@ export function ListPagination({
     const isLastPage = page >= totalPages - 1 || totalPages === 0
 
     return (
-        <div className="flex w-full flex-col gap-3 rounded-lg border bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-                <Label className="whitespace-nowrap text-sm">Rows per page</Label>
+                <Label className="whitespace-nowrap text-sm text-slate-500">
+                    Rows per page
+                </Label>
 
                 <Select
                     value={size.toString()}
@@ -59,7 +61,7 @@ export function ListPagination({
 
             <div className="flex items-center justify-between gap-3 sm:justify-end">
                 <span className="whitespace-nowrap text-sm text-slate-500">
-                    {startItem}-{endItem} of {totalElements}
+                    Showing {startItem}-{endItem} of {totalElements}
                 </span>
 
                 <Pagination className="w-auto">
@@ -71,6 +73,7 @@ export function ListPagination({
                                 variant="ghost"
                                 size="icon"
                                 disabled={isFirstPage}
+                                className="text-slate-600 hover:bg-teal-50 hover:text-teal-800"
                                 onClick={() => onPaginationChange(page - 1, size)}
                             >
                                 <ChevronLeftIcon className="h-4 w-4" />
@@ -84,6 +87,7 @@ export function ListPagination({
                                 variant="ghost"
                                 size="icon"
                                 disabled={isLastPage}
+                                className="text-slate-600 hover:bg-teal-50 hover:text-teal-800"
                                 onClick={() => onPaginationChange(page + 1, size)}
                             >
                                 <ChevronRightIcon className="h-4 w-4" />
