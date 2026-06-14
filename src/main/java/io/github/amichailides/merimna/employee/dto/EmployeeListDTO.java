@@ -36,6 +36,13 @@ public record EmployeeListDTO(
         String positionCode,
 
         @Schema(
+                description = "Employee position display name",
+                example = "Caregiver",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        String positionDisplayName,
+
+        @Schema(
                 description = "Indicates whether the employee is active",
                 example = "true",
                 requiredMode = Schema.RequiredMode.REQUIRED

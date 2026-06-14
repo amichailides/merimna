@@ -54,6 +54,7 @@ public class EmployeeMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .positionCode(entity.getPosition().getCode().getValue())
+                .positionDisplayName(entity.getPosition().getDisplayName())
                 .active(entity.isActive())
                 .build();
     }
