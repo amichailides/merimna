@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
-type EmployeeListPaginationProps = {
+type ListPaginationProps = {
     page: number
     size: number
     totalElements: number
@@ -23,13 +23,13 @@ type EmployeeListPaginationProps = {
     onPaginationChange: (page: number, size: number) => void
 }
 
-export function EmployeeListPagination({
+export function ListPagination({
     page,
     size,
     totalElements,
     totalPages,
     onPaginationChange,
-}: EmployeeListPaginationProps) {
+}: ListPaginationProps) {
     const startItem = totalElements === 0 ? 0 : page * size + 1
     const endItem = Math.min((page + 1) * size, totalElements)
 

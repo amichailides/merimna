@@ -1,6 +1,7 @@
 import type { EmployeeListDTO } from '@/api/types'
-import { Card, CardContent } from '@/components/ui/card'
+
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 
 type EmployeeCardProps = {
     employee: EmployeeListDTO

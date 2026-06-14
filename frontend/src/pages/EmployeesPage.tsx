@@ -1,6 +1,6 @@
 import { useEmployees } from '@/api/useEmployees'
 import { EmployeeListCard } from '@/components/employees/EmployeeListCard'
-import { EmployeeListPagination } from '@/components/employees/EmployeeListPagination'
+import { ListPagination } from '@/components/common/ListPagination'
 
 export function EmployeesPage() {
     const {
@@ -55,7 +55,7 @@ export function EmployeesPage() {
                 ))}
             </section>
 
-            <EmployeeListPagination
+            <ListPagination
                 page={page}
                 size={size}
                 totalElements={totalElements}
