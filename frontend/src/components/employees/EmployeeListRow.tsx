@@ -3,6 +3,7 @@ import type { EmployeeListDTO } from '@/api/types'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
 
 type EmployeeListRowProps = {
     employee: EmployeeListDTO
@@ -43,12 +44,15 @@ export function EmployeeListRow({ employee }: EmployeeListRowProps) {
             </Badge>
 
             <Button
+                asChild
                 type="button"
                 variant="ghost"
                 size="sm"
                 className="text-slate-600 hover:bg-teal-50 hover:text-teal-800"
             >
-                View
+                <Link to={`/admin/employees/${employee.publicId}`}>
+                    View
+                </Link>
             </Button>
         </div>
     )

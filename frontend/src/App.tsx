@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { useAuth } from './auth/useAuth'
 import { AppLayout } from "@/layouts/AppLayout";
 import { EmployeesPage } from './pages/EmployeesPage'
+import { EmployeeDetailsPage } from './pages/EmployeeDetailsPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<div>Staff dashboard</div>} />
           <Route path="/admin/dashboard" element={<div>Admin dashboard</div>} />
           <Route path='/admin/employees' element={<EmployeesPage />} />
+          <Route path='/admin/employees/:publicId' element={<EmployeeDetailsPage />} />
         </Route>
       </Route>
     </Routes>
