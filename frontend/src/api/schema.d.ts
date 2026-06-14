@@ -1425,10 +1425,11 @@ export interface components {
              */
             houseUnitPublicId?: string;
             /**
-             * @description Include inactive employees
-             * @example false
+             * @description Filter by employee status
+             * @example ACTIVE
+             * @enum {string}
              */
-            includeInactive?: boolean;
+            status?: "ALL" | "ACTIVE" | "INACTIVE";
         };
         EmployeeListDTO: {
             /**

@@ -1,11 +1,37 @@
+import { useEffect, useMemo, useState } from 'react'
+
 import { useEmployees } from '@/api/useEmployees'
+import type { EmployeeSearchDTO } from '@/api/types'
 import { ListPagination } from '@/components/common/ListPagination'
+import { EmployeeListFilters } from '@/components/employees/EmployeeListFilters'
 import { EmployeeListRow } from '@/components/employees/EmployeeListRow'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { EmployeeListFilters } from '@/components/employees/EmployeeListFilters'
 
 export function EmployeesPage() {
+    const [searchTerm, setSearchTerm] = useState('')
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+    const [status, setStatus] =
+        useState<NonNullable<EmployeeSearchDTO['status']>>('ACTIVE')
+
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm)
+        }, 300)
+
+        return () => {
+            window.clearTimeout(timeoutId)
+        }
+    }, [searchTerm])
+
+    const criteria = useMemo<EmployeeSearchDTO>(
+        () => ({
+            q: debouncedSearchTerm.trim() || undefined,
+            status,
+        }),
+        [debouncedSearchTerm, status]
+    )
+
     const {
         employees,
         loading,
@@ -15,11 +41,7 @@ export function EmployeesPage() {
         totalPages,
         totalElements,
         changePagination,
-    } = useEmployees()
-
-    if (loading) {
-        return <p>Loading Employees...</p>
-    }
+    } = useEmployees(criteria)
 
     if (error) {
         return <p>{error}</p>
@@ -43,16 +65,33 @@ export function EmployeesPage() {
                 </Button>
             </section>
 
-            <EmployeeListFilters />
+            <EmployeeListFilters
+                searchTerm={searchTerm}
+                status={status}
+                onSearchTermChange={setSearchTerm}
+                onStatusChange={setStatus}
+            />
 
             <Card>
                 <CardContent className="p-0">
-                    {employees.map((employee) => (
-                        <EmployeeListRow
-                            key={employee.publicId}
-                            employee={employee}
-                        />
-                    ))}
+                    {employees.length === 0 && loading ? (
+                        <p className="px-4 py-6 text-sm text-slate-500">
+                            Loading employees...
+                        </p>
+                    ) : employees.length === 0 ? (
+                        <p className="px-4 py-6 text-sm text-slate-500">
+                            No employees found.
+                        </p>
+                    ) : (
+                        <div className={loading ? 'opacity-60' : undefined}>
+                            {employees.map((employee) => (
+                                <EmployeeListRow
+                                    key={employee.publicId}
+                                    employee={employee}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

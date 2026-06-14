@@ -9,7 +9,23 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
-export function EmployeeListFilters() {
+import type { EmployeeSearchDTO } from '@/api/types'
+
+type EmployeeStatusFilter = NonNullable<EmployeeSearchDTO['status']>
+
+type EmployeeListFiltersProps = {
+    searchTerm: string
+    status: EmployeeStatusFilter
+    onSearchTermChange: (value: string) => void
+    onStatusChange: (value: EmployeeStatusFilter) => void
+}
+
+export function EmployeeListFilters({
+    searchTerm,
+    status,
+    onSearchTermChange,
+    onStatusChange,
+}: EmployeeListFiltersProps) {
     return (
         <div className="flex flex-col gap-3 rounded-lg border bg-white p-4 sm:flex-row sm:items-center">
             <div className="relative flex-1">
@@ -19,19 +35,20 @@ export function EmployeeListFilters() {
                     type="search"
                     placeholder="Search employees..."
                     className="pl-9"
-                    disabled
+                    value={searchTerm}
+                    onChange={(event) => onSearchTermChange(event.target.value)}
                 />
             </div>
 
-            <Select disabled defaultValue="all">
+            <Select value={status} onValueChange={onStatusChange}>
                 <SelectTrigger className="w-full sm:w-40">
                     <SelectValue placeholder="Status" />
                 </SelectTrigger>
 
                 <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="ALL">All</SelectItem>
+                    <SelectItem value="ACTIVE">Active</SelectItem>
+                    <SelectItem value="INACTIVE">Inactive</SelectItem>
                 </SelectContent>
             </Select>
         </div>

@@ -4,6 +4,7 @@ import { getEmployees } from './employeeApi'
 
 import type {
     EmployeeListDTO,
+    EmployeeSearchDTO,
     PageResponseEmployeeListDTO,
 } from './types'
 
@@ -18,7 +19,7 @@ type UseEmployeesResult = {
     changePagination: (page: number, size: number) => void
 }
 
-export function useEmployees(): UseEmployeesResult {
+export function useEmployees(criteria?: EmployeeSearchDTO): UseEmployeesResult {
     const [employees, setEmployees] = useState<EmployeeListDTO[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -38,7 +39,7 @@ export function useEmployees(): UseEmployeesResult {
             setError(null)
 
             try {
-                const data: PageResponseEmployeeListDTO = await getEmployees(undefined, {
+                const data: PageResponseEmployeeListDTO = await getEmployees(criteria, {
                     page,
                     size,
                 })
@@ -54,7 +55,7 @@ export function useEmployees(): UseEmployeesResult {
         }
 
         loadEmployees()
-    }, [page, size])
+    }, [criteria, page, size])
 
     return {
         employees,
