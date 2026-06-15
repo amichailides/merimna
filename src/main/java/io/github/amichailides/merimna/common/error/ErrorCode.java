@@ -124,7 +124,8 @@ public enum ErrorCode {
     EMPLOYEE_PLACEMENT_NOT_FOUND("EMPLOYEE_PLACEMENT_NOT_FOUND", HttpStatus.NOT_FOUND, "error.employeePlacement.notFound"),
     EMPLOYEE_PLACEMENT_ALREADY_CLOSED("EMPLOYEE_PLACEMENT_ALREADY_CLOSED", HttpStatus.CONFLICT, "error.employeePlacement.alreadyClosed"),
     EMPLOYEE_PLACEMENT_OVERLAP("EMPLOYEE_PLACEMENT_OVERLAP", HttpStatus.CONFLICT, "error.employeePlacement.overlap"),
-    EMPLOYEE_PLACEMENT_INVALID_END_DATE("EMPLOYEE_PLACEMENT_INVALID_END_DATE", HttpStatus.UNPROCESSABLE_CONTENT, "error.employeePlacement.invalidEndDate");
+    EMPLOYEE_PLACEMENT_INVALID_END_DATE("EMPLOYEE_PLACEMENT_INVALID_END_DATE", HttpStatus.UNPROCESSABLE_CONTENT, "error.employeePlacement.invalidEndDate"),
+    EMPLOYEE_PLACEMENT_SAME_AS_ACTIVE_ASSIGNMENT("EMPLOYEE_PLACEMENT_SAME_AS_ACTIVE_ASSIGNMENT", HttpStatus.CONFLICT, "error.employeePlacement.sameAsActiveAssignment");
 
     private final String code;           // για logging και debugging
     private final HttpStatus status;     // για Web layer
