@@ -32,6 +32,41 @@ export function EmployeeDetailsCard({ employee }: EmployeeDetailsCardProps) {
                     <DetailItem label="Hire date" value={employee.hireDate} />
                     <DetailItem label="Position code" value={employee.positionCode} />
                 </dl>
+
+                {employee.activePlacement && (
+                    <div className="mt-6 border-t pt-6">
+                        <h3 className="text-sm font-semibold text-slate-900">
+                            Current placement
+                        </h3>
+
+                        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                            <DetailItem
+                                label="House unit"
+                                value={employee.activePlacement.houseUnitDisplayName}
+                            />
+
+                            <DetailItem
+                                label="Reason"
+                                value={employee.activePlacement.reasonDisplayName}
+                            />
+
+                            <DetailItem
+                                label="Start date"
+                                value={employee.activePlacement.startDate}
+                            />
+
+                            <DetailItem
+                                label="End date"
+                                value={employee.activePlacement.endDate}
+                            />
+
+                            <DetailItem
+                                label="Active"
+                                value={employee.activePlacement.active ? 'Yes' : 'No'}
+                            />
+                        </dl>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

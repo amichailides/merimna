@@ -623,6 +623,7 @@ export interface components {
             endDate?: string;
             /** @enum {string} */
             reason?: "TEMPORARY_COVERAGE";
+            reasonDisplayName?: string;
             active?: boolean;
         };
         /** @description Request payload for terminating an employee placement. */
