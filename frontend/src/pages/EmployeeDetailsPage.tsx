@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
+
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { EmployeeDetailsCard } from '@/components/employees/EmployeeDetailsCard'
 
 
 
@@ -21,11 +22,8 @@ export function EmployeeDetailsPage() {
     }
 
     return (
-        <Card>
-            <CardHeader>EmployeeDetails</CardHeader>
-            <CardContent>
-                {employee?.firstName}
-            </CardContent>
-        </Card>
+        <div className="space-y-6">
+            <EmployeeDetailsCard employee={employee} />
+        </div>
     )
 }
