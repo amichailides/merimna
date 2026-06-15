@@ -14,5 +14,6 @@ public record EmployeePlacementReadOnlyDTO(
         LocalDate startDate,
         LocalDate endDate,
         PlacementReason reason,
+        String reasonDisplayName,
         boolean active
 ) {}

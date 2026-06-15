@@ -18,6 +18,7 @@ public class EmployeePlacementMapper {
                 .startDate(p.getStartDate())
                 .endDate(p.getEndDate())
                 .reason(p.getReason())
+                .reasonDisplayName(p.getReason().getDisplayName())
                 .active(p.isActive(LocalDate.now()))
                 .build();
     }
