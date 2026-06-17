@@ -23,7 +23,7 @@ export function EmployeeDetailsState({
                 size="sm"
                 className="-ml-2 text-slate-600 hover:bg-teal-50 hover:text-teal-800"
             >
-                <Link to="/admin/employees">← Back to employees</Link>
+                <Link to="/employees">← Back to employees</Link>
             </Button>
 
             <Card className="border-slate-200 bg-white shadow-sm">

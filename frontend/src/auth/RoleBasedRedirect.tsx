@@ -12,14 +12,5 @@ export function RoleBasedRedirect() {
     return <Navigate to="/login" replace />
   }
 
-  switch (user.role) {
-    case 'ADMIN':
-      return <Navigate to="/admin/dashboard" replace />
-
-    case 'STAFF':
-      return <Navigate to="/dashboard" replace />
-
-    default:
-      return <Navigate to="/dashboard" replace />
-  }
+  return <Navigate to="/dashboard" replace />
 }

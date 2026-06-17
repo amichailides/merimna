@@ -50,7 +50,7 @@ export function EmployeeDetailsPage() {
                 size="sm"
                 className="-ml-2 text-slate-600 hover:bg-teal-50 hover:text-teal-800"
             >
-                <Link to="/admin/employees">← Back to employees</Link>
+                <Link to="/employees">← Back to employees</Link>
             </Button>
 
             <div>

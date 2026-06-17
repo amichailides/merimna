@@ -50,7 +50,7 @@ export function EmployeeListRow({ employee }: EmployeeListRowProps) {
                 size="sm"
                 className="text-slate-600 hover:bg-teal-50 hover:text-teal-800"
             >
-                <Link to={`/admin/employees/${employee.publicId}`}>
+                <Link to={`/employees/${employee.publicId}`}>
                     View
                 </Link>
             </Button>
