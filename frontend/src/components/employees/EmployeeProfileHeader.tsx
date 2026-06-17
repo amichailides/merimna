@@ -1,100 +1,81 @@
 import type { EmployeeDetailsDTO } from '@/api/types'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { CalendarDays, Mail, MapPin , Phone } from 'lucide-react'
+import { CalendarDays, Mail, MapPin, Phone } from 'lucide-react'
+import { formatAddress } from '@/lib/formatAddress'
+import { formatDate } from '@/lib/formatDate'
 
 type EmployeeProfileHeaderProps = {
     employee: EmployeeDetailsDTO
 }
 
 function getInitials(firstName?: string, lastName?: string) {
-    const initials = `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase()
-
-    return initials || '?'
+    return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?'
 }
 
-function formatAddress(address: EmployeeDetailsDTO['address']) {
-    if (!address) {
-        return null
-    }
-
-    const streetLine = [address.street, address.streetNumber]
-        .filter(Boolean)
-        .join(' ')
-
-    const cityLine = [address.city, address.zipCode]
-        .filter(Boolean)
-        .join(', ')
-
-    return [streetLine, cityLine].filter(Boolean).join(', ') || null
-}
+const dot = <span className="text-slate-400">·</span>
 
 export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) {
     const addressLine = formatAddress(employee.address)
 
     return (
-        <Card className="border-slate-200 bg-gradient-to-br from-white to-teal-50/40 py-0 shadow-sm">
-            <CardContent className="flex items-start justify-between gap-6 p-7">
-                <div className="flex min-w-0 items-start gap-4">
-                    <Avatar className="h-16 w-16 border border-teal-200 bg-teal-100 text-teal-800 shadow-sm ring-4 ring-white">
-                        <AvatarFallback className="bg-teal-50 text-base font-semibold text-teal-700">
-                            {getInitials(employee.firstName, employee.lastName)}
-                        </AvatarFallback>
-                    </Avatar>
+        <div className="flex items-start gap-5 pb-5 border-b border-slate-100">
+            {/* Avatar */}
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-teal-100 text-[15px] font-semibold text-teal-700">
+                {getInitials(employee.firstName, employee.lastName)}
+            </div>
 
-                    <div className="min-w-0">
-                        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                            {employee.firstName} {employee.lastName}
-                        </h1>
-
-                        <p className="mt-1 text-sm font-semibold text-teal-700">
-                            {employee.positionDisplayName}
-                        </p>
-
-                        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-600">
-                            {employee.contactEmail && (
-                                <span className="flex items-center gap-1.5">
-                                    <Mail className="h-4 w-4 text-slate-400" />
-                                    {employee.contactEmail}
-                                </span>
-                            )}
-
-                            {employee.mobileNumber && (
-                                <span className="flex items-center gap-1.5">
-                                    <Phone className="h-4 w-4 text-slate-400" />
-                                    {employee.mobileNumber}
-                                </span>
-                            )}
-
-                            {employee.hireDate && (
-                                <span className="flex items-center gap-1.5">
-                                    <CalendarDays className="h-4 w-4 text-slate-400" />
-                                    Hired on {employee.hireDate}
-                                </span>
-                            )}
-                        </div>
-
-                        {addressLine && (
-                            <div className="mt-2 flex items-center gap-1.5 text-sm text-slate-600">
-                                <MapPin  className="h-4 w-4 shrink-0 text-slate-400" />
-                                <span className="truncate">{addressLine}</span>
-                            </div>
-                        )}
-                    </div>
+            {/* Info */}
+            <div className="min-w-0 pt-1">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-[18px] font-semibold text-slate-950 leading-tight">
+                        {employee.firstName} {employee.lastName}
+                    </h1>
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${employee.active
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-slate-100 text-slate-500'
+                        }`}>
+                        {employee.active ? 'Active' : 'Inactive'}
+                    </span>
                 </div>
 
-                <Badge
-                    variant="outline"
-                    className={
-                        employee.active
-                            ? 'border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700'
-                            : 'border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600'
-                    }
-                >
-                    {employee.active ? 'Active' : 'Inactive'}
-                </Badge>
-            </CardContent>
-        </Card>
+                <p className="mt-0.5 text-[13px] font-medium text-teal-700">
+                    {employee.positionDisplayName}
+                </p>
+
+                <div className="mt-2.5 space-y-1">
+                    <div className="flex items-center gap-3">
+                        {employee.contactEmail && (
+                            <span className="flex items-center gap-1.5 text-[12px] text-slate-500">
+                                <Mail size={11} className="text-slate-400" />
+                                {employee.contactEmail}
+                            </span>
+                        )}
+                        {employee.mobileNumber && (
+                            <>
+                                {dot}
+                                <span className="flex items-center gap-1.5 text-[12px] text-slate-500">
+                                    <Phone size={11} className="text-slate-400" />
+                                    {employee.mobileNumber}
+                                </span>
+                            </>
+                        )}
+                        {employee.hireDate && (
+                            <>
+                                {dot}
+                                <span className="flex items-center gap-1.5 text-[12px] text-slate-500">
+                                    <CalendarDays size={11} className="text-slate-400" />
+                                    Hired {formatDate(employee.hireDate)}
+                                </span>
+                            </>
+                        )}
+                    </div>
+                    {addressLine && (
+                        <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
+                            <MapPin size={11} className="text-slate-400" />
+                            {addressLine}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
     )
 }

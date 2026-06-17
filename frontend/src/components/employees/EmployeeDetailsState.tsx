@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { ArrowLeft } from 'lucide-react'
 
 type EmployeeDetailsStateProps = {
     icon: ReactNode
@@ -16,29 +14,26 @@ export function EmployeeDetailsState({
     description,
 }: EmployeeDetailsStateProps) {
     return (
-        <div className="space-y-6">
-            <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="-ml-2 text-slate-600 hover:bg-teal-50 hover:text-teal-800"
+        <div className="space-y-5">
+            <Link
+                to="/employees"
+                className="inline-flex items-center gap-1.5 text-[13px] text-slate-500 hover:text-slate-950 transition-colors"
             >
-                <Link to="/employees">← Back to employees</Link>
-            </Button>
+                <ArrowLeft size={13} />
+                Back to employees
+            </Link>
 
-            <Card className="border-slate-200 bg-white shadow-sm">
-                <CardContent className="flex min-h-[260px] flex-col items-center justify-center px-6 py-12 text-center">
-                    <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-                        {icon}
-                    </div>
-
-                    <h2 className="text-base font-semibold text-slate-900">{title}</h2>
-
-                    <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+            <div className="flex items-center gap-3 py-12 text-center flex-col">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                    {icon}
+                </div>
+                <div>
+                    <p className="text-[13px] font-semibold text-slate-900">{title}</p>
+                    <p className="mt-1 text-[12px] text-slate-400 max-w-sm">
                         {description}
                     </p>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     )
 }

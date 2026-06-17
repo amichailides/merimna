@@ -1,11 +1,4 @@
 import type { ReactNode } from 'react'
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
 
 type EmployeeInfoCardProps = {
     title: string
@@ -23,32 +16,26 @@ export function EmployeeInfoCard({
     icon,
 }: EmployeeInfoCardProps) {
     return (
-        <Card className={`rounded-xl border-slate-200 bg-white shadow-sm ${className ?? ''}`}>
-            <CardHeader className="pb-3">
-                <div className="flex items-start gap-3">
-                    {icon && (
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700 ring-1 ring-teal-100">
-                            {icon}
-                        </div>
+        <div className={`space-y-3 ${className ?? ''}`}>
+            <div className="flex items-center gap-2">
+                {icon && (
+                    <span className="text-slate-400">
+                        {icon}
+                    </span>
+                )}
+                <div>
+                    <p className="text-[13px] font-semibold text-slate-900">
+                        {title}
+                    </p>
+                    {description && (
+                        <p className="text-[11px] text-slate-400">
+                            {description}
+                        </p>
                     )}
-
-                    <div>
-                        <CardTitle className="text-base font-semibold text-slate-900">
-                            {title}
-                        </CardTitle>
-
-                        {description && (
-                            <CardDescription className="mt-1 text-sm text-slate-500">
-                                {description}
-                            </CardDescription>
-                        )}
-                    </div>
                 </div>
-            </CardHeader>
+            </div>
 
-            <CardContent className="pt-0">
-                {children}
-            </CardContent>
-        </Card>
+            {children}
+        </div>
     )
 }

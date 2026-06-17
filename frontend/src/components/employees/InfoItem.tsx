@@ -7,12 +7,12 @@ type InfoItemProps = {
 
 export function InfoItem({ label, value }: InfoItemProps) {
     return (
-        <div className="space-y-1">
-            <p className="text-xs font-medium text-slate-500">
+        <div className="space-y-0.5">
+            <p className="text-[11px] font-medium text-slate-400">
                 {label}
             </p>
 
-            <div className="text-sm font-medium text-slate-700">
+            <div className="text-[13px] font-medium text-slate-900">
                 {value || '—'}
             </div>
         </div>
