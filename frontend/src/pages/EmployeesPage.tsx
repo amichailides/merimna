@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Plus } from 'lucide-react'
 
 import { useEmployees } from '@/api/useEmployees'
 import type { EmployeeSearchDTO } from '@/api/types'
@@ -6,7 +7,6 @@ import { ListPagination } from '@/components/common/ListPagination'
 import { EmployeeListFilters } from '@/components/employees/EmployeeListFilters'
 import { EmployeeListRow } from '@/components/employees/EmployeeListRow'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 
 export function EmployeesPage() {
     const [searchTerm, setSearchTerm] = useState('')
@@ -15,13 +15,10 @@ export function EmployeesPage() {
         useState<NonNullable<EmployeeSearchDTO['status']>>('ACTIVE')
 
     useEffect(() => {
-        const timeoutId = window.setTimeout(() => {
+        const id = window.setTimeout(() => {
             setDebouncedSearchTerm(searchTerm)
         }, 300)
-
-        return () => {
-            window.clearTimeout(timeoutId)
-        }
+        return () => window.clearTimeout(id)
     }, [searchTerm])
 
     const criteria = useMemo<EmployeeSearchDTO>(
@@ -44,27 +41,28 @@ export function EmployeesPage() {
     } = useEmployees(criteria)
 
     if (error) {
-        return <p>{error}</p>
+        return <p className="text-[13px] text-slate-400">{error}</p>
     }
 
     return (
-        <main className="max-w-5xl space-y-6">
+        <main className="max-w-3xl space-y-4">
             <section className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+                    <h1 className="text-[18px] font-medium text-slate-900">
                         Employees
                     </h1>
-
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-0.5 text-[13px] text-slate-400">
                         Manage employees and staff access.
                     </p>
                 </div>
 
                 <Button
                     type="button"
-                    className="bg-teal-700 text-white hover:bg-teal-800"
+                    size="sm"
+                    className="h-8 gap-1.5 bg-teal-700 px-3 text-[13px] font-medium text-white hover:bg-teal-800"
                 >
-                    + Add employee
+                    <Plus className="h-4 w-4 shrink-0" />
+                    Add employee
                 </Button>
             </section>
 
@@ -75,38 +73,34 @@ export function EmployeesPage() {
                 onStatusChange={setStatus}
             />
 
-            <Card className="overflow-hidden border-slate-200 bg-white shadow-sm">
-                <CardContent className="p-0">
-                    {employees.length === 0 && loading ? (
-                        <p className="px-4 py-6 text-sm text-slate-500">
-                            Loading employees...
-                        </p>
-                    ) : employees.length === 0 ? (
-                        <p className="px-4 py-6 text-sm text-slate-500">
-                            No employees found.
-                        </p>
-                    ) : (
-                        <div className={loading ? 'opacity-60' : undefined}>
-                            {employees.map((employee) => (
-                                <EmployeeListRow
-                                    key={employee.publicId}
-                                    employee={employee}
-                                />
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="border-t border-slate-200 px-4 py-3">
-                        <ListPagination
-                            page={page}
-                            size={size}
-                            totalElements={totalElements}
-                            totalPages={totalPages}
-                            onPaginationChange={changePagination}
+            <div className={loading ? 'opacity-60 pointer-events-none' : undefined}>
+                {employees.length === 0 && loading ? (
+                    <p className="py-6 text-[13px] text-slate-400">
+                        Loading employees...
+                    </p>
+                ) : employees.length === 0 ? (
+                    <p className="py-6 text-[13px] text-slate-400">
+                        No employees found.
+                    </p>
+                ) : (
+                    employees.map((employee) => (
+                        <EmployeeListRow
+                            key={employee.publicId}
+                            employee={employee}
                         />
-                    </div>
-                </CardContent>
-            </Card>
+                    ))
+                )}
+            </div>
+
+            <div className="border-t border-slate-100 pt-3">
+                <ListPagination
+                    page={page}
+                    size={size}
+                    totalElements={totalElements}
+                    totalPages={totalPages}
+                    onPaginationChange={changePagination}
+                />
+            </div>
         </main>
     )
 }
