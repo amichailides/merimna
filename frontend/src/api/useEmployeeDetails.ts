@@ -1,12 +1,11 @@
-import type { EmployeeDetailsDTO } from './types'
 import { useEffect, useState } from 'react'
+
 import { getEmployeeByPublicId } from './employeeApi'
-
-
+import type { EmployeeDetailsDTO } from './types'
 
 export function useEmployeeDetails(publicId: string | undefined) {
     const [employee, setEmployee] = useState<EmployeeDetailsDTO | null>(null)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
@@ -28,14 +27,13 @@ export function useEmployeeDetails(publicId: string | undefined) {
                 setEmployee(data)
             } catch {
                 setEmployee(null)
-                setError("Failed to load employee details")
+                setError('Failed to load employee details')
             } finally {
                 setLoading(false)
             }
-
         }
-        loadEmployee()
 
+        loadEmployee()
     }, [publicId])
 
     return {

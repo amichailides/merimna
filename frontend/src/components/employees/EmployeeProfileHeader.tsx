@@ -2,28 +2,48 @@ import type { EmployeeDetailsDTO } from '@/api/types'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Mail, Phone, CalendarDays } from 'lucide-react'
+import { CalendarDays, Mail, MapPin , Phone } from 'lucide-react'
 
 type EmployeeProfileHeaderProps = {
     employee: EmployeeDetailsDTO
 }
 
 function getInitials(firstName?: string, lastName?: string) {
-    return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase()
+    const initials = `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase()
+
+    return initials || '?'
+}
+
+function formatAddress(address: EmployeeDetailsDTO['address']) {
+    if (!address) {
+        return null
+    }
+
+    const streetLine = [address.street, address.streetNumber]
+        .filter(Boolean)
+        .join(' ')
+
+    const cityLine = [address.city, address.zipCode]
+        .filter(Boolean)
+        .join(', ')
+
+    return [streetLine, cityLine].filter(Boolean).join(', ') || null
 }
 
 export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) {
+    const addressLine = formatAddress(employee.address)
+
     return (
         <Card className="border-slate-200 bg-gradient-to-br from-white to-teal-50/40 py-0 shadow-sm">
             <CardContent className="flex items-start justify-between gap-6 p-7">
-                <div className="flex items-start gap-4">
+                <div className="flex min-w-0 items-start gap-4">
                     <Avatar className="h-16 w-16 border border-teal-200 bg-teal-100 text-teal-800 shadow-sm ring-4 ring-white">
                         <AvatarFallback className="bg-teal-50 text-base font-semibold text-teal-700">
                             {getInitials(employee.firstName, employee.lastName)}
                         </AvatarFallback>
                     </Avatar>
 
-                    <div>
+                    <div className="min-w-0">
                         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
                             {employee.firstName} {employee.lastName}
                         </h1>
@@ -54,6 +74,13 @@ export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) 
                                 </span>
                             )}
                         </div>
+
+                        {addressLine && (
+                            <div className="mt-2 flex items-center gap-1.5 text-sm text-slate-600">
+                                <MapPin  className="h-4 w-4 shrink-0 text-slate-400" />
+                                <span className="truncate">{addressLine}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -1,28 +1,45 @@
 import { Link, useParams } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
+import { AlertCircle, Loader2, UserX } from 'lucide-react'
 
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
-import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
-import { EmployeeCurrentPlacementCard } from '@/components/employees/EmployeeCurrentPlacementCard'
+import { Button } from '@/components/ui/button'
 import { EmployeeAssignmentCard } from '@/components/employees/EmployeeAssignmentCard'
-import { EmployeeAddressCard } from '@/components/employees/EmployeeAddressCard'
-
-
+import { EmployeeCurrentPlacementCard } from '@/components/employees/EmployeeCurrentPlacementCard'
+import { EmployeeDetailsState } from '@/components/employees/EmployeeDetailsState'
+import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
 
 export function EmployeeDetailsPage() {
     const { publicId } = useParams()
     const { employee, loading, error } = useEmployeeDetails(publicId)
 
     if (loading) {
-        return <div>Loading Employee...</div>
+        return (
+            <EmployeeDetailsState
+                icon={<Loader2 className="size-5 animate-spin" />}
+                title="Loading employee"
+                description="Please wait while the employee details are being loaded."
+            />
+        )
     }
 
     if (error) {
-        return <div>{error}</div>
+        return (
+            <EmployeeDetailsState
+                icon={<AlertCircle className="size-5" />}
+                title="Could not load employee"
+                description={error}
+            />
+        )
     }
 
     if (!employee) {
-        return <div>Employee not found.</div>
+        return (
+            <EmployeeDetailsState
+                icon={<UserX className="size-5" />}
+                title="Employee not found"
+                description="The employee you are looking for does not exist or may no longer be available."
+            />
+        )
     }
 
     return (
@@ -48,24 +65,18 @@ export function EmployeeDetailsPage() {
 
             <EmployeeProfileHeader employee={employee} />
 
-            <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
                 {employee.activePlacement ? (
-                    <div className="grid gap-6 lg:grid-cols-2">
+                    <>
                         <EmployeeCurrentPlacementCard placement={employee.activePlacement} />
                         <EmployeeAssignmentCard assignments={employee.assignments} />
-                    </div>
+                    </>
                 ) : (
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        <EmployeeAssignmentCard
-                            assignments={employee.assignments}
-                            isCurrentWorkingUnit
-                        />
-                    </div>
+                    <EmployeeAssignmentCard
+                        assignments={employee.assignments}
+                        isCurrentWorkingUnit
+                    />
                 )}
-
-                <div className="grid gap-6 lg:grid-cols-2">
-                    <EmployeeAddressCard address={employee.address} />
-                </div>
             </div>
         </div>
     )
