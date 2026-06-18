@@ -15,7 +15,7 @@ export function EmployeeListRow({ employee }: EmployeeListRowProps) {
     return (
         <Link
             to={`/employees/${employee.publicId}`}
-            className="group flex items-center gap-3.5 px-1.5 py-3 border-b border-slate-100 last:border-b-0 rounded-md transition-all duration-150 hover:bg-teal-50/50 hover:translate-x-0.5"
+            className="group flex items-center gap-3.5 py-3 border-b border-slate-100 last:border-b-0 rounded-md transition-all duration-150 hover:bg-teal-50/50 hover:translate-x-0.5"
         >
             <div
                 className={`
@@ -47,8 +47,8 @@ export function EmployeeListRow({ employee }: EmployeeListRowProps) {
             </div>
 
             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${employee.active
-                    ? 'bg-emerald-50 text-emerald-700'
-                    : 'bg-slate-100 text-slate-500'
+                ? 'bg-emerald-50 text-emerald-700'
+                : 'bg-slate-100 text-slate-500'
                 }`}>
                 {employee.active && (
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
