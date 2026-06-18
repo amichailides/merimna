@@ -7,10 +7,12 @@ import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionCreat
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionReadOnlyDTO;
 import io.github.amichailides.merimna.exception.ConflictValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,5 +35,14 @@ public class EmployeePositionServiceImpl implements EmployeePositionService {
         EmployeePosition position = positionMapper.toEntity(dto, code);
         EmployeePosition saved = positionRepository.save(position);
         return positionMapper.toReadDTO(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EmployeePositionReadOnlyDTO> getPositions() {
+        return positionRepository.findAll(Sort.by("displayName"))
+                .stream()
+                .map(positionMapper::toReadDTO)
+                .toList();
     }
 }

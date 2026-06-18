@@ -5,11 +5,11 @@ import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionReadO
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/employee-positions")
@@ -25,5 +25,11 @@ public class EmployeePositionController {
 
         EmployeePositionReadOnlyDTO result = positionService.create(dto);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public List<EmployeePositionReadOnlyDTO> getPositions() {
+        return positionService.getPositions();
     }
 }
