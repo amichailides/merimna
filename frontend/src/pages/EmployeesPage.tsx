@@ -26,6 +26,9 @@ export function EmployeesPage() {
         ? (searchParams.get('status') as EmployeeStatusFilter)
         : 'ACTIVE'
 
+    const positionCode = searchParams.get('positionCode') ?? undefined
+    const houseUnitPublicId = searchParams.get('houseUnitPublicId') ?? undefined
+
     useEffect(() => {
         const id = window.setTimeout(() => {
             setDebouncedSearchTerm(searchTerm)
@@ -50,12 +53,40 @@ export function EmployeesPage() {
         })
     }
 
+    function handlePositionCodeChange(value: string | undefined) {
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            if (value) next.set('positionCode', value)
+            else next.delete('positionCode')
+            return next
+        })
+    }
+
+    function handleHouseUnitPublicIdChange(value: string | undefined) {
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            if (value) next.set('houseUnitPublicId', value)
+            else next.delete('houseUnitPublicId')
+            return next
+        })
+    }
+    function handleClearFilters() {
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            next.delete('positionCode')
+            next.delete('houseUnitPublicId')
+            return next
+        })
+    }
+
     const criteria = useMemo<EmployeeSearchDTO>(
         () => ({
             q: debouncedSearchTerm.trim() || undefined,
             status,
+            positionCode,
+            houseUnitPublicId,
         }),
-        [debouncedSearchTerm, status]
+        [debouncedSearchTerm, status, positionCode, houseUnitPublicId]
     )
 
     const {
@@ -98,8 +129,13 @@ export function EmployeesPage() {
             <EmployeeListFilters
                 searchTerm={searchTerm}
                 status={status}
+                positionCode={positionCode}
+                houseUnitPublicId={houseUnitPublicId}
                 onSearchTermChange={setSearchTerm}
                 onStatusChange={handleStatusChange}
+                onPositionCodeChange={handlePositionCodeChange}
+                onHouseUnitPublicIdChange={handleHouseUnitPublicIdChange}
+                onClearFilters={handleClearFilters}
             />
 
             <div className={loading ? 'opacity-60 pointer-events-none' : undefined}>

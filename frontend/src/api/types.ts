@@ -8,4 +8,5 @@ export type EmployeeDetailsDTO = components['schemas']['EmployeeDetailsDTO']
 export type EmployeeSearchDTO = components['schemas']['EmployeeSearchDTO']
 export type PageResponseEmployeeListDTO =
   components['schemas']['PageResponseEmployeeListDTO']
-  
+export type EmployeePositionReadOnlyDTO = components['schemas']['EmployeePositionReadOnlyDTO']
+export type HouseUnitReadOnlyDTO = components['schemas']['HouseUnitReadOnlyDTO']
