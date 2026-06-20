@@ -3,6 +3,13 @@ import { Search, SlidersHorizontal, X } from 'lucide-react'
 import { usePositions } from '@/api/usePositions'
 import { useHouseUnits } from '@/api/useHouseUnits'
 import { Input } from '@/components/ui/input'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
 import type { EmployeeSearchDTO } from '@/api/types'
 
 type EmployeeStatusFilter = NonNullable<EmployeeSearchDTO['status']>
@@ -41,8 +48,6 @@ export function EmployeeListFilters({
 
     const activeFiltersCount = [positionCode, houseUnitPublicId].filter(Boolean).length
     const [filtersOpen, setFiltersOpen] = useState(activeFiltersCount > 0)
-
-
 
     return (
         <div className="space-y-2">
@@ -90,7 +95,7 @@ export function EmployeeListFilters({
                 >
                     <SlidersHorizontal className="h-3.5 w-3.5" />
                     Filters
-                    {activeFiltersCount > 0 && (
+                    {!filtersOpen && activeFiltersCount > 0 && (
                         <span className="ml-0.5 text-teal-600 font-medium">
                             · {activeFiltersCount}
                         </span>
@@ -102,34 +107,54 @@ export function EmployeeListFilters({
                 <div className="flex items-center gap-6 pt-0.5">
                     <div className="flex items-center gap-2">
                         <span className="text-[11px] text-slate-400">Position</span>
-                        <select
-                            value={positionCode ?? ''}
-                            onChange={(e) => onPositionCodeChange(e.target.value || undefined)}
-                            className="h-7 px-2 text-[12px] text-slate-700 bg-slate-50 border border-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500/30 focus:border-teal-400"
+                        <Select
+                            value={positionCode ?? 'ALL_POSITIONS'}
+                            onValueChange={(v) => onPositionCodeChange(v === 'ALL_POSITIONS' ? undefined : v)}
                         >
-                            <option value="">All positions</option>
-                            {positions.map((p) => (
-                                <option key={p.code} value={p.code}>
-                                    {p.displayName}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectTrigger className="h-7 text-[12px] border-slate-100 bg-slate-50 focus:ring-1 focus:ring-teal-500/30 min-w-[130px]">
+                                <SelectValue placeholder="All positions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL_POSITIONS">All positions</SelectItem>
+                                {positions.map((p) => {
+                                    if (!p.code) {
+                                        return null
+                                    }
+
+                                    return (
+                                        <SelectItem key={p.code} value={p.code}>
+                                            {p.displayName ?? p.code}
+                                        </SelectItem>
+                                    )
+                                })}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <span className="text-[11px] text-slate-400">House unit</span>
-                        <select
-                            value={houseUnitPublicId ?? ''}
-                            onChange={(e) => onHouseUnitPublicIdChange(e.target.value || undefined)}
-                            className="h-7 px-2 text-[12px] text-slate-700 bg-slate-50 border border-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500/30 focus:border-teal-400"
+                        <Select
+                            value={houseUnitPublicId ?? 'ALL_UNITS'}
+                            onValueChange={(v) => onHouseUnitPublicIdChange(v === 'ALL_UNITS' ? undefined : v)}
                         >
-                            <option value="">All house units</option>
-                            {houseUnits.map((h) => (
-                                <option key={String(h.publicId)} value={String(h.publicId)}>
-                                    {h.displayName}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectTrigger className="h-7 text-[12px] border-slate-100 bg-slate-50 focus:ring-1 focus:ring-teal-500/30 min-w-[130px]">
+                                <SelectValue placeholder="All house units" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL_UNITS">All house units</SelectItem>
+                                {houseUnits.map((h) => {
+                                    if (!h.publicId) {
+                                        return null
+                                    }
+
+                                    return (
+                                        <SelectItem key={h.publicId} value={h.publicId}>
+                                            {h.displayName ?? h.code ?? h.publicId}
+                                        </SelectItem>
+                                    )
+                                })}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {activeFiltersCount > 0 && (
