@@ -23,6 +23,31 @@ public class HouseUnitAccessService {
         ensureCanAccess(beneficiary.getHouseUnit());
     }
 
+    public void ensureCanAccess(Employee subjectEmployee) {
+        if (isUnrestricted()) {
+            return;
+        }
+
+        Employee currentEmployee = currentUserProvider.getCurrentEmployee();
+        Set<HouseUnit> accessibleHouseUnits =
+                scopeService.getAccessibleHouseUnits(currentEmployee);
+
+        boolean hasAccess = subjectEmployee.getAccessibleHouseUnits(java.time.LocalDate.now()).stream()
+                .map(HouseUnit::getPublicId)
+                .anyMatch(subjectHouseUnitPublicId ->
+                        accessibleHouseUnits.stream()
+                                .map(HouseUnit::getPublicId)
+                                .anyMatch(subjectHouseUnitPublicId::equals)
+                );
+
+        if (!hasAccess) {
+            throw new AccessDeniedException(
+                    "Employee scope violation: attempted access to employee "
+                            + subjectEmployee.getPublicId()
+            );
+        }
+    }
+
     public void ensureCanAccess(HouseUnit houseUnit) {
         if (isUnrestricted()) {
             return;

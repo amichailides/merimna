@@ -18,6 +18,8 @@ public interface EmployeeService {
 
     EmployeeDetailsDTO getEmployeeByPublicId(UUID publicId);
 
+    Page<EmployeeActivityDTO> getEmployeeActivity(UUID publicId, Pageable pageable);
+
     EmployeeDetailsDTO updateEmployee(UUID publicId, EmployeeUpdateDTO dto);
 
     EmployeeDetailsDTO reactivate(UUID publicId);

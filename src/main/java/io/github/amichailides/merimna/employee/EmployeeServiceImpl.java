@@ -1,6 +1,8 @@
 package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
+import io.github.amichailides.merimna.audit.AuditLog;
+import io.github.amichailides.merimna.audit.AuditLogRepository;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.event.EmployeeCreatedEvent;
@@ -38,6 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ApplicationEventPublisher eventPublisher;
     private final EmployeeChangeDetector employeeChangeDetector;
     private final HouseUnitAccessService houseUnitAccessService;
+    private final AuditLogRepository auditLogRepository;
 
     @Override
     @Transactional
@@ -175,7 +178,32 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findWithDetailsByPublicId(publicId)
                 .orElseThrow(() -> new EmployeeNotFoundByPublicIdException(publicId));
 
+        houseUnitAccessService.ensureCanAccess(employee);
+
         return employeeMapper.toDetailsDTO(employee);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EmployeeActivityDTO> getEmployeeActivity(UUID publicId, Pageable pageable) {
+        Employee employee = getEmployeeOrThrow(publicId);
+
+        houseUnitAccessService.ensureCanAccess(employee);
+
+        return auditLogRepository
+                .findBySubjectEmployeePublicId(publicId, pageable)
+                .map(this::toEmployeeActivityDTO);
+    }
+
+    private EmployeeActivityDTO toEmployeeActivityDTO(AuditLog auditLog) {
+        return new EmployeeActivityDTO(
+                auditLog.getPublicId(),
+                auditLog.getAction(),
+                auditLog.getEntityType(),
+                auditLog.getEntityPublicId(),
+                auditLog.getOccurredAt(),
+                auditLog.getMetadata()
+        );
     }
 
     private Employee getEmployeeOrThrow(UUID publicId) {

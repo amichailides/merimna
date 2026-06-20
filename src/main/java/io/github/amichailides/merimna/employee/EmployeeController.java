@@ -62,6 +62,24 @@ public class EmployeeController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/{employeePublicId}/activity")
+    @PreAuthorize("hasAuthority('EMPLOYEE_ACTIVITY_READ')")
+    public ResponseEntity<PageResponse<EmployeeActivityDTO>> getEmployeeActivity(
+            @PathVariable UUID employeePublicId,
+            @ParameterObject @PageableDefault(size = 5, sort = "occurredAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<EmployeeActivityDTO> page = employeeService.getEmployeeActivity(employeePublicId, pageable);
+
+        return ResponseEntity.ok(PageResponse.<EmployeeActivityDTO>builder()
+                .content(page.getContent())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build()
+        );
+    }
+
     @PatchMapping("/{employeePublicId}")
     @PreAuthorize("hasAuthority('EMPLOYEE_UPDATE')")
     public ResponseEntity<EmployeeDetailsDTO> updateEmployee(
