@@ -29,6 +29,11 @@ public record EmployeeUpdatedEvent(
     public UUID entityPublicId() {
         return employeePublicId;
     }
+    @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
+
 
     @Override
     public Map<String, Object> metadata() {

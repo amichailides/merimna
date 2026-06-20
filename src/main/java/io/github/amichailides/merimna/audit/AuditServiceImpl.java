@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class AuditServiceImpl implements AuditService{
+public class AuditServiceImpl implements AuditService {
 
     private final AuditLogRepository auditLogRepository;
     private final AuditContext auditContext;
@@ -25,6 +25,7 @@ public class AuditServiceImpl implements AuditService{
                 .employeePublicId(event.actorEmployeePublicId() != null
                         ? event.actorEmployeePublicId()
                         : auditContext.getEmployeePublicId())
+                .subjectEmployeePublicId(event.subjectEmployeePublicId())
                 .ipAddress(auditContext.getIpAddress())
                 .userAgent(auditContext.getUserAgent())
                 .outcome(AuditOutcome.SUCCESS)

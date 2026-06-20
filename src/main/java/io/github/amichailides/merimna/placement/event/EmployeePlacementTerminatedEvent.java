@@ -32,6 +32,11 @@ public record EmployeePlacementTerminatedEvent(
     }
 
     @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
+
+    @Override
     public AuditAction action() {
         return AuditAction.PLACEMENT_TERMINATED;
     }

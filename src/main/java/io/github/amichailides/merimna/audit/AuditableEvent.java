@@ -17,6 +17,10 @@ public interface AuditableEvent {
         return null;
     }
 
+    default UUID subjectEmployeePublicId() {
+        return null;
+    }
+
     default Map<String, Object> metadata() {
         return Map.of();
     }

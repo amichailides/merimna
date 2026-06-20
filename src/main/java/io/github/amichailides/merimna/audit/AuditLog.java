@@ -44,6 +44,9 @@ public class AuditLog {
     @Column(name = "employee_public_id", updatable = false)
     private UUID employeePublicId;
 
+    @Column(name = "subject_employee_public_id", updatable = false)
+    private UUID subjectEmployeePublicId;
+
     @Column(name = "ip_address", length = 100, updatable = false)
     private String ipAddress;
 

@@ -23,4 +23,9 @@ public record EmployeeCreatedEvent(
     public UUID entityPublicId() {
         return employeePublicId;
     }
+
+    @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
 }

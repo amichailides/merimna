@@ -25,4 +25,9 @@ public record EmployeeReactivatedEvent(
     public AuditAction action() {
         return AuditAction.EMPLOYEE_REACTIVATED;
     }
+
+    @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
 }

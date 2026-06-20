@@ -37,6 +37,11 @@ public record EmployeeAssignmentCreatedEvent(
     }
 
     @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
+
+    @Override
     public Map<String, Object> metadata() {
         return EmployeeAssignmentEventMetadata.of(
                 employeePublicId,

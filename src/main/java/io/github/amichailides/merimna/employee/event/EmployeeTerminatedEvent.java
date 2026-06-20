@@ -36,4 +36,9 @@ public record EmployeeTerminatedEvent(
                 "terminationDate", terminationDate.toString()
         );
     }
+
+    @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
 }

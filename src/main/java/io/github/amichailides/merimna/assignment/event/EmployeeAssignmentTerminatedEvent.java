@@ -32,6 +32,11 @@ public record EmployeeAssignmentTerminatedEvent(
     }
 
     @Override
+    public UUID subjectEmployeePublicId() {
+        return employeePublicId;
+    }
+
+    @Override
     public AuditAction action() {
         return AuditAction.ASSIGNMENT_TERMINATED;
     }
