@@ -12,6 +12,8 @@ public record EmployeeAssignmentCreatedEvent(
         UUID assignmentPublicId,
         UUID employeePublicId,
         UUID houseUnitPublicId,
+        String houseUnitCode,
+        String houseUnitDisplayName,
         LocalDate startDate,
         LocalDate endDate
 ) implements AuditableEvent {
@@ -21,6 +23,8 @@ public record EmployeeAssignmentCreatedEvent(
                 assignment.getPublicId(),
                 assignment.getEmployee().getPublicId(),
                 assignment.getHouseUnit().getPublicId(),
+                assignment.getHouseUnit().getCode(),
+                assignment.getHouseUnit().getDisplayName(),
                 assignment.getStartDate(),
                 assignment.getEndDate()
         );
@@ -46,6 +50,8 @@ public record EmployeeAssignmentCreatedEvent(
         return EmployeeAssignmentEventMetadata.of(
                 employeePublicId,
                 houseUnitPublicId,
+                houseUnitCode,
+                houseUnitDisplayName,
                 startDate,
                 endDate
         );

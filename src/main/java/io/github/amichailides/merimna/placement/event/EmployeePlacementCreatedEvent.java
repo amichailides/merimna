@@ -12,8 +12,12 @@ public record EmployeePlacementCreatedEvent(
         UUID placementPublicId,
         UUID employeePublicId,
         UUID houseUnitPublicId,
+        String houseUnitCode,
+        String houseUnitDisplayName,
         LocalDate startDate,
-        LocalDate endDate
+        LocalDate endDate,
+        String reasonCode,
+        String reasonDisplayName
 ) implements AuditableEvent {
 
     public static EmployeePlacementCreatedEvent from(EmployeePlacement placement) {
@@ -21,8 +25,12 @@ public record EmployeePlacementCreatedEvent(
                 placement.getPublicId(),
                 placement.getEmployee().getPublicId(),
                 placement.getHouseUnit().getPublicId(),
+                placement.getHouseUnit().getCode(),
+                placement.getHouseUnit().getDisplayName(),
                 placement.getStartDate(),
-                placement.getEndDate()
+                placement.getEndDate(),
+                placement.getReason().name(),
+                placement.getReason().getDisplayName()
         );
     }
 
@@ -46,8 +54,12 @@ public record EmployeePlacementCreatedEvent(
         return EmployeePlacementEventMetadata.of(
                 employeePublicId,
                 houseUnitPublicId,
+                houseUnitCode,
+                houseUnitDisplayName,
                 startDate,
-                endDate
+                endDate,
+                reasonCode,
+                reasonDisplayName
         );
     }
 }

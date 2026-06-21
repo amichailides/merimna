@@ -13,14 +13,18 @@ final class EmployeeAssignmentEventMetadata {
     static Map<String, Object> of(
             UUID employeePublicId,
             UUID houseUnitPublicId,
+            String houseUnitCode,
+            String houseUnitDisplayName,
             LocalDate startDate,
             LocalDate endDate
     ) {
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("employeePublicId", employeePublicId);
         metadata.put("houseUnitPublicId", houseUnitPublicId);
-        metadata.put("startDate", startDate.toString());
-        metadata.put("endDate", endDate != null ? endDate.toString() : null);
+        metadata.put("houseUnitCode", houseUnitCode);
+        metadata.put("houseUnitDisplayName", houseUnitDisplayName);
+        metadata.put("startDate", startDate);
+        metadata.put("endDate", endDate);
         return metadata;
     }
 }
