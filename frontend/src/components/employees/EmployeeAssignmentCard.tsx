@@ -28,7 +28,7 @@ export function EmployeeAssignmentCard({
             ) : (
                 <div className="space-y-3 pl-5">
                     <div className="min-h-[40px]">
-                        <p className="text-[13px] font-semibold text-slate-950">
+                        <p className="text-[13px] font-medium text-slate-700">
                             {activeAssignment.houseUnitDisplayName}
                         </p>
                         {isCurrentWorkingUnit && (

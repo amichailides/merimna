@@ -12,7 +12,7 @@ export function InfoItem({ label, value }: InfoItemProps) {
                 {label}
             </p>
 
-            <div className="text-[13px] font-medium text-slate-900">
+            <div className="text-[13px] text-slate-600">
                 {value || '—'}
             </div>
         </div>

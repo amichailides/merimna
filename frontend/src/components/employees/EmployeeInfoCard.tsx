@@ -24,7 +24,7 @@ export function EmployeeInfoCard({
                     </span>
                 )}
                 <div>
-                    <p className="text-[13px] font-semibold text-slate-900">
+                    <p className="text-[13px] font-medium text-slate-900">
                         {title}
                     </p>
                     {description && (

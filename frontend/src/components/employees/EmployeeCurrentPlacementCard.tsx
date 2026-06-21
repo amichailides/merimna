@@ -22,7 +22,7 @@ export function EmployeeCurrentPlacementCard({
             ) : (
                 <div className="space-y-3 pl-5">
                     <div className="min-h-[40px]">
-                        <p className="text-[13px] font-semibold text-slate-950">
+                        <p className="text-[13px] font-medium text-slate-700">
                             {placement.houseUnitDisplayName}
                         </p>
                         <p className="text-[12px] text-slate-500 mt-0.5">
