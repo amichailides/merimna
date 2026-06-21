@@ -66,7 +66,7 @@ public class EmployeeController {
     @PreAuthorize("hasAuthority('EMPLOYEE_ACTIVITY_READ')")
     public ResponseEntity<PageResponse<EmployeeActivityDTO>> getEmployeeActivity(
             @PathVariable UUID employeePublicId,
-            @ParameterObject @PageableDefault(size = 5, sort = "occurredAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 3, sort = "occurredAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<EmployeeActivityDTO> page = employeeService.getEmployeeActivity(employeePublicId, pageable);
 

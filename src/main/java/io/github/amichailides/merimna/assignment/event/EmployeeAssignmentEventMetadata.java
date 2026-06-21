@@ -23,8 +23,8 @@ final class EmployeeAssignmentEventMetadata {
         metadata.put("houseUnitPublicId", houseUnitPublicId);
         metadata.put("houseUnitCode", houseUnitCode);
         metadata.put("houseUnitDisplayName", houseUnitDisplayName);
-        metadata.put("startDate", startDate);
-        metadata.put("endDate", endDate);
+        metadata.put("startDate", startDate != null ? startDate.toString() : null);
+        metadata.put("endDate", endDate != null ? endDate.toString() : null);
         return metadata;
     }
 }
