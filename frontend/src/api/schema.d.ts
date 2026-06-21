@@ -187,7 +187,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["getPositions"];
         put?: never;
         post: operations["create_3"];
         delete?: never;
@@ -557,6 +557,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/employees/{employeePublicId}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getEmployeeActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -843,13 +859,13 @@ export interface components {
              */
             requiresExclusivePlacement?: boolean;
             /** @description Permissions granted to this employee position. */
-            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
+            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
         };
         EmployeePositionReadOnlyDTO: {
             code?: string;
             displayName?: string;
             requiresExclusivePlacement?: boolean;
-            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
+            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
         };
         BeneficiaryCreateDTO: {
             /**
@@ -1476,6 +1492,54 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
+        /** @description Recent activity about an employee */
+        EmployeeActivityDTO: {
+            /**
+             * Format: uuid
+             * @description Audit log public identifier
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            publicId?: string;
+            /**
+             * @description Audit action that occurred
+             * @example EMPLOYEE_UPDATED
+             * @enum {string}
+             */
+            action?: "BENEFICIARY_CREATED" | "BENEFICIARY_UPDATED" | "BENEFICIARY_DISCHARGED" | "BENEFICIARY_HOUSE_UNIT_CHANGED" | "ALLERGY_UPDATED" | "MEDICATION_UPDATED" | "EMPLOYEE_CREATED" | "EMPLOYEE_UPDATED" | "EMPLOYEE_TERMINATED" | "EMPLOYEE_REACTIVATED" | "ASSIGNMENT_CREATED" | "ASSIGNMENT_TERMINATED" | "ASSIGNMENT_CANCELLED" | "PLACEMENT_CREATED" | "PLACEMENT_TERMINATED" | "USER_CREATED" | "USER_UPDATED" | "AUTH_LOGIN_SUCCESS" | "AUTH_LOGIN_FAILED" | "AUTH_LOGOUT" | "AUTH_REFRESH_TOKEN_REUSE_DETECTED" | "AUTH_PASSWORD_CHANGED" | "AUTH_PASSWORD_RESET";
+            /**
+             * @description Type of domain entity affected by the action
+             * @example EMPLOYEE
+             * @enum {string}
+             */
+            entityType?: "BENEFICIARY" | "ALLERGY" | "MEDICATION" | "EMPLOYEE" | "EMPLOYEE_ASSIGNMENT" | "EMPLOYEE_PLACEMENT" | "USER" | "AUTH";
+            /**
+             * Format: uuid
+             * @description Public identifier of the domain entity that changed
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            entityPublicId?: string;
+            /**
+             * Format: date-time
+             * @description Timestamp when the activity occurred
+             * @example 2026-06-20T12:30:00Z
+             */
+            occurredAt?: string;
+            /** @description Event-specific structured metadata */
+            metadata?: {
+                [key: string]: unknown;
+            };
+        };
+        PageResponseEmployeeActivityDTO: {
+            content?: components["schemas"]["EmployeeActivityDTO"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         BeneficiarySearchDTO: {
             /**
              * @description Global search term (firstName, lastName, AMKA partial match). Ignored if amka is provided.
@@ -1894,6 +1958,26 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    getPositions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EmployeePositionReadOnlyDTO"][];
+                };
             };
         };
     };
@@ -2849,6 +2933,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["EmployeeAssignmentReadOnlyDTO"];
+                };
+            };
+        };
+    };
+    getEmployeeActivity: {
+        parameters: {
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path: {
+                employeePublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseEmployeeActivityDTO"];
                 };
             };
         };
