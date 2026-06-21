@@ -61,27 +61,38 @@ export function EmployeeDetailsPage() {
 
             <EmployeeProfileHeader employee={employee} />
 
-            <div className="grid max-w-3xl gap-8 lg:grid-cols-2 ml-[4.5rem]">
-                {employee.activePlacement ? (
-                    <>
+            {employee.activePlacement ? (
+                <>
+                    <div className="ml-[4.5rem] grid max-w-3xl items-start gap-8 lg:grid-cols-2">
                         <EmployeeCurrentPlacementCard placement={employee.activePlacement} />
+
                         <EmployeeAssignmentCard assignments={employee.assignments} />
-                    </>
-                ) : (
+                    </div>
+
+                    {employee.publicId && (
+                        <div className="ml-[4.5rem] mt-6">
+                            <EmployeeRecentActivitySection
+                                activities={activities}
+                                loading={activityLoading}
+                                error={activityError}
+                            />
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className="ml-[4.5rem] grid max-w-3xl items-start gap-8 lg:grid-cols-2">
                     <EmployeeAssignmentCard
                         assignments={employee.assignments}
                         isCurrentWorkingUnit
                     />
-                )}
-            </div>
 
-            {employee.publicId && (
-                 <div className="ml-[4.5rem] mt-6">
-                    <EmployeeRecentActivitySection
-                        activities={activities}
-                        loading={activityLoading}
-                        error={activityError}
-                    />
+                    {employee.publicId && (
+                        <EmployeeRecentActivitySection
+                            activities={activities}
+                            loading={activityLoading}
+                            error={activityError}
+                        />
+                    )}
                 </div>
             )}
         </div>
