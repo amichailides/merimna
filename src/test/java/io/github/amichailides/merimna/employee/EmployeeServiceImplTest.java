@@ -1,7 +1,8 @@
 package io.github.amichailides.merimna.employee;
 
+import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
-import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.audit.*;
 import io.github.amichailides.merimna.domain.*;
 import io.github.amichailides.merimna.employee.audit.EmployeeChangeDetector;
 import io.github.amichailides.merimna.employee.dto.*;
@@ -22,14 +23,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,6 +59,12 @@ class EmployeeServiceImplTest {
 
     @Mock
     private EmployeeChangeDetector employeeChangeDetector;
+
+    @Mock
+    private AuditLogRepository auditLogRepository;
+
+    @Mock
+    private HouseUnitAccessService houseUnitAccessService;
 
     @InjectMocks
     private EmployeeServiceImpl employeeService;
@@ -604,6 +610,116 @@ class EmployeeServiceImplTest {
             );
 
             verifyNoMoreInteractions(employeeMapper);
+        }
+    }
+
+    @Nested
+    class GetEmployeeActivityTests {
+
+        @Test
+        void shouldGetEmployeeActivity() {
+            Employee employee = defaultEmployee().build();
+
+            Pageable pageable = PageRequest.of(
+                    0,
+                    5,
+                    Sort.by(Sort.Direction.DESC, "occurredAt")
+            );
+
+            UUID olderActivityPublicId =
+                    UUID.fromString("33333333-3333-3333-3333-333333333333");
+
+            UUID newerActivityPublicId =
+                    UUID.fromString("44444444-4444-4444-4444-444444444444");
+
+            AuditLog olderLog = AuditLog.builder()
+                    .publicId(olderActivityPublicId)
+                    .action(AuditAction.EMPLOYEE_CREATED)
+                    .entityType(AuditEntityType.EMPLOYEE)
+                    .entityPublicId(EMPLOYEE_PUBLIC_ID)
+                    .subjectEmployeePublicId(EMPLOYEE_PUBLIC_ID)
+                    .occurredAt(Instant.parse("2026-06-20T10:00:00Z"))
+                    .outcome(AuditOutcome.SUCCESS)
+                    .metadata(Map.of(
+                            "firstName", DEFAULT_FIRST_NAME,
+                            "lastName", DEFAULT_LAST_NAME
+                    ))
+                    .build();
+
+            AuditLog newerLog = AuditLog.builder()
+                    .publicId(newerActivityPublicId)
+                    .action(AuditAction.EMPLOYEE_UPDATED)
+                    .entityType(AuditEntityType.EMPLOYEE)
+                    .entityPublicId(EMPLOYEE_PUBLIC_ID)
+                    .subjectEmployeePublicId(EMPLOYEE_PUBLIC_ID)
+                    .occurredAt(Instant.parse("2026-06-21T10:00:00Z"))
+                    .outcome(AuditOutcome.SUCCESS)
+                    .metadata(Map.of(
+                            "changes", List.of(Map.of(
+                                    "fieldName", "mobileNumber",
+                                    "oldValue", "+30690367123",
+                                    "newValue", "+30690367124"
+                            ))
+                    ))
+                    .build();
+
+            Page<AuditLog> auditLogPage =
+                    new PageImpl<>(List.of(newerLog, olderLog), pageable, 2);
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            when(auditLogRepository.findBySubjectEmployeePublicId(
+                    EMPLOYEE_PUBLIC_ID,
+                    pageable
+            )).thenReturn(auditLogPage);
+
+            Page<EmployeeActivityDTO> result =
+                    employeeService.getEmployeeActivity(EMPLOYEE_PUBLIC_ID, pageable);
+
+            assertEquals(2, result.getTotalElements());
+            assertEquals(2, result.getContent().size());
+
+            EmployeeActivityDTO first = result.getContent().getFirst();
+            EmployeeActivityDTO second = result.getContent().get(1);
+
+            assertEquals(newerActivityPublicId, first.publicId());
+            assertEquals(AuditAction.EMPLOYEE_UPDATED, first.action());
+            assertEquals(AuditEntityType.EMPLOYEE, first.entityType());
+            assertEquals(EMPLOYEE_PUBLIC_ID, first.entityPublicId());
+            assertEquals(Instant.parse("2026-06-21T10:00:00Z"), first.occurredAt());
+            assertTrue(first.metadata().containsKey("changes"));
+
+            assertEquals(olderActivityPublicId, second.publicId());
+            assertEquals(AuditAction.EMPLOYEE_CREATED, second.action());
+            assertEquals(AuditEntityType.EMPLOYEE, second.entityType());
+            assertEquals(EMPLOYEE_PUBLIC_ID, second.entityPublicId());
+            assertEquals(Instant.parse("2026-06-20T10:00:00Z"), second.occurredAt());
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitAccessService).ensureCanAccess(employee);
+            verify(auditLogRepository).findBySubjectEmployeePublicId(
+                    EMPLOYEE_PUBLIC_ID,
+                    pageable
+            );
+        }
+
+        @Test
+        void shouldThrowException_whenEmployeeMissing() {
+            Pageable pageable = PageRequest.of(0, 5);
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.empty());
+
+            assertThrows(
+                    EmployeeNotFoundByPublicIdException.class,
+                    () -> employeeService.getEmployeeActivity(EMPLOYEE_PUBLIC_ID, pageable)
+            );
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+
+            verifyNoInteractions(houseUnitAccessService);
+            verifyNoInteractions(auditLogRepository);
         }
     }
 
