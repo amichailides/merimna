@@ -8,6 +8,36 @@ import { EmployeeRecentActivitySection } from '@/components/employees/EmployeeRe
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
 import { useEmployeeActivity } from '@/api/useEmployeeActivity'
 
+function formatAddress(address: unknown) {
+    if (!address || typeof address !== 'object') {
+        return '—'
+    }
+
+    const values = Object.values(address as Record<string, string | null | undefined>)
+        .filter((value): value is string => Boolean(value && value.trim()))
+
+    return values.length > 0 ? values.join(', ') : '—'
+}
+
+function DetailItem({
+    label,
+    value,
+}: {
+    label: string
+    value?: string | null
+}) {
+    return (
+        <div className="space-y-1">
+            <dt className="text-[12px] text-slate-500">
+                {label}
+            </dt>
+            <dd className="text-[13px] leading-5 text-slate-900">
+                {value || '—'}
+            </dd>
+        </div>
+    )
+}
+
 export function EmployeeDetailsPage() {
     const { publicId } = useParams<{ publicId: string }>()
 
@@ -40,7 +70,7 @@ export function EmployeeDetailsPage() {
     }
 
     return (
-        <div className="max-w-4xl space-y-6">
+        <div className="max-w-6xl space-y-7">
             <Link
                 to="/employees"
                 className="inline-flex items-center gap-1.5 text-[13px] text-slate-500 transition-colors hover:text-slate-950"
@@ -49,38 +79,103 @@ export function EmployeeDetailsPage() {
                 Back to employees
             </Link>
 
-            <div className="relative min-h-[38rem]">
-                {/* <div className="absolute left-[4.5rem] top-[4.25rem] bottom-0 hidden border-l border-slate-100 sm:block" /> */}
+            <EmployeeProfileHeader employee={employee} />
 
-                <EmployeeProfileHeader employee={employee} />
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                <main className="space-y-10 sm:pl-[4.5rem]">
+                    <section className="max-w-md space-y-5">
+                        <div className="border-b border-slate-100 pb-3">
+                            <h2 className="text-[13px] font-medium text-slate-700">
+                                Work location
+                            </h2>
+                        </div>
 
-                <div className="pt-6 sm:ml-[4.5rem]">
-                    <div className="pl-5 sm:pl-6">
-                        <div className="grid max-w-3xl items-start gap-8 lg:grid-cols-2">
-                            <EmployeeAssignmentCard
-                                assignments={employee.assignments}
-                                isCurrentWorkingUnit={!employee.activePlacement}
-                            />
+                        <div className="space-y-7">
+                            {employee.activePlacement ? (
+                                <>
+                                    <EmployeeCurrentPlacementCard
+                                        placement={employee.activePlacement}
+                                    />
 
-                            {employee.activePlacement && (
-                                <EmployeeCurrentPlacementCard
-                                    placement={employee.activePlacement}
+                                    <div className="border-t border-slate-100 pt-6">
+                                        <EmployeeAssignmentCard
+                                            assignments={employee.assignments}
+                                            isCurrentWorkingUnit={false}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <EmployeeAssignmentCard
+                                    assignments={employee.assignments}
+                                    isCurrentWorkingUnit
                                 />
                             )}
-
-                            {employee.publicId && (
-                                <div className="rounded-lg bg-slate-50/20 px-4 py-3 shadow-[inset_1px_0_0_theme(colors.slate.200),inset_0_-1px_0_theme(colors.slate.200)]">
-                                    <EmployeeRecentActivitySection
-                                        activities={activities}
-                                        loading={activityLoading}
-                                        error={activityError}
-                                    />
-                                </div>
-                            )}
                         </div>
+                    </section>
+
+                    {employee.publicId && (
+                        <section>
+                            <EmployeeRecentActivitySection
+                                activities={activities}
+                                loading={activityLoading}
+                                error={activityError}
+                            />
+                        </section>
+                    )}
+                </main>
+
+                <aside className="border-l border-slate-100 pl-5 pt-8">
+                    <div className="space-y-8">
+                        <section className="space-y-4">
+                            <h2 className="text-[13px] font-medium text-slate-700">
+                                Contact
+                            </h2>
+
+                            <dl className="space-y-4">
+                                <DetailItem
+                                    label="Email"
+                                    value={employee.contactEmail}
+                                />
+
+                                <DetailItem
+                                    label="Mobile"
+                                    value={employee.mobileNumber}
+                                />
+
+                                <DetailItem
+                                    label="Address"
+                                    value={formatAddress(employee.address)}
+                                />
+                            </dl>
+                        </section>
+
+                        <div className="border-t border-slate-100" />
+
+                        <section className="space-y-4">
+                            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                Employment
+                            </h2>
+
+                            <dl className="space-y-4">
+                                <DetailItem
+                                    label="Position"
+                                    value={employee.positionDisplayName}
+                                />
+
+                                <DetailItem
+                                    label="Hire date"
+                                    value={employee.hireDate}
+                                />
+
+                                <DetailItem
+                                    label="Status"
+                                    value={employee.active ? 'Active' : 'Inactive'}
+                                />
+                            </dl>
+                        </section>
                     </div>
-                </div>
+                </aside>
             </div>
-        </div>
+        </div >
     )
 }
