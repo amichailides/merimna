@@ -1,6 +1,5 @@
 import type { EmployeeDetailsDTO } from '@/api/types'
 import { EmployeeInfoCard } from './EmployeeInfoCard'
-import { InfoItem } from './InfoItem'
 import { Briefcase } from 'lucide-react'
 import { formatDate } from '@/lib/formatDate'
 
@@ -24,22 +23,35 @@ export function EmployeeAssignmentCard({
             icon={<Briefcase size={13} className="text-slate-500" />}
         >
             {!activeAssignment ? (
-                <p className="text-[13px] text-slate-400 pl-5">No active assignment</p>
+                <p className="pl-5 text-[13px] text-slate-400">
+                    No active assignment
+                </p>
             ) : (
                 <div className="space-y-3 pl-5">
                     <div className="min-h-[40px]">
                         <p className="text-[13px] font-medium text-slate-700">
                             {activeAssignment.houseUnitDisplayName}
                         </p>
+
                         {isCurrentWorkingUnit && (
-                            <p className="text-[12px] text-slate-500 mt-0.5">
+                            <p className="mt-0.5 text-[12px] text-slate-500">
                                 Current working unit
                             </p>
                         )}
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <InfoItem label="Start date" value={formatDate(activeAssignment.startDate)} />
-                        <InfoItem label="End date" value={formatDate(activeAssignment.endDate)} />
+
+                    <div>
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                            Period
+                        </p>
+
+                        <p className="mt-1 text-[13px] text-slate-600">
+                            {formatDate(activeAssignment.startDate)}
+                            <span className="mx-2 text-slate-300">→</span>
+                            {activeAssignment.endDate
+                                ? formatDate(activeAssignment.endDate)
+                                : 'Open-ended'}
+                        </p>
                     </div>
                 </div>
             )}

@@ -1,56 +1,46 @@
 import { Link, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Loader2, UserX } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
-import { useEmployeeDetails } from '@/api/useEmployeeDetails'
-import { useEmployeeActivity } from '@/api/useEmployeeActivity'
+import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
 import { EmployeeAssignmentCard } from '@/components/employees/EmployeeAssignmentCard'
 import { EmployeeCurrentPlacementCard } from '@/components/employees/EmployeeCurrentPlacementCard'
-import { EmployeeDetailsState } from '@/components/employees/EmployeeDetailsState'
-import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
 import { EmployeeRecentActivitySection } from '@/components/employees/EmployeeRecentActivitySection'
+import { useEmployeeDetails } from '@/api/useEmployeeDetails'
+import { useEmployeeActivity } from '@/api/useEmployeeActivity'
 
 export function EmployeeDetailsPage() {
-    const { publicId } = useParams()
-    const { employee, loading, error } = useEmployeeDetails(publicId)
+    const { publicId } = useParams<{ publicId: string }>()
+
+    const {
+        employee,
+        loading,
+        error,
+    } = useEmployeeDetails(publicId)
 
     const {
         activities,
         loading: activityLoading,
         error: activityError,
-    } = useEmployeeActivity(employee?.publicId)
+    } = useEmployeeActivity(publicId)
 
     if (loading) {
         return (
-            <EmployeeDetailsState
-                icon={<Loader2 className="size-4 animate-spin" />}
-                title="Loading employee"
-                description="Please wait while the employee details are being loaded."
-            />
+            <div className="text-[13px] text-slate-500">
+                Loading employee…
+            </div>
         )
     }
 
-    if (error) {
+    if (error || !employee) {
         return (
-            <EmployeeDetailsState
-                icon={<AlertCircle className="size-4" />}
-                title="Could not load employee"
-                description={error}
-            />
-        )
-    }
-
-    if (!employee) {
-        return (
-            <EmployeeDetailsState
-                icon={<UserX className="size-4" />}
-                title="Employee not found"
-                description="The employee you are looking for does not exist or may no longer be available."
-            />
+            <div className="text-[13px] text-slate-500">
+                {error ?? 'Employee not found'}
+            </div>
         )
     }
 
     return (
-        <div className="space-y-6">
+        <div className="max-w-4xl space-y-6">
             <Link
                 to="/employees"
                 className="inline-flex items-center gap-1.5 text-[13px] text-slate-500 transition-colors hover:text-slate-950"
@@ -59,42 +49,38 @@ export function EmployeeDetailsPage() {
                 Back to employees
             </Link>
 
-            <EmployeeProfileHeader employee={employee} />
+            <div className="relative min-h-[38rem]">
+                {/* <div className="absolute left-[4.5rem] top-[4.25rem] bottom-0 hidden border-l border-slate-100 sm:block" /> */}
 
-            {employee.activePlacement ? (
-                <>
-                    <div className="ml-[4.5rem] grid max-w-3xl items-start gap-8 lg:grid-cols-2">
-                        <EmployeeCurrentPlacementCard placement={employee.activePlacement} />
+                <EmployeeProfileHeader employee={employee} />
 
-                        <EmployeeAssignmentCard assignments={employee.assignments} />
-                    </div>
-
-                    {employee.publicId && (
-                        <div className="ml-[4.5rem] mt-6">
-                            <EmployeeRecentActivitySection
-                                activities={activities}
-                                loading={activityLoading}
-                                error={activityError}
+                <div className="pt-6 sm:ml-[4.5rem]">
+                    <div className="pl-5 sm:pl-6">
+                        <div className="grid max-w-3xl items-start gap-8 lg:grid-cols-2">
+                            <EmployeeAssignmentCard
+                                assignments={employee.assignments}
+                                isCurrentWorkingUnit={!employee.activePlacement}
                             />
-                        </div>
-                    )}
-                </>
-            ) : (
-                <div className="ml-[4.5rem] grid max-w-3xl items-start gap-8 lg:grid-cols-2">
-                    <EmployeeAssignmentCard
-                        assignments={employee.assignments}
-                        isCurrentWorkingUnit
-                    />
 
-                    {employee.publicId && (
-                        <EmployeeRecentActivitySection
-                            activities={activities}
-                            loading={activityLoading}
-                            error={activityError}
-                        />
-                    )}
+                            {employee.activePlacement && (
+                                <EmployeeCurrentPlacementCard
+                                    placement={employee.activePlacement}
+                                />
+                            )}
+
+                            {employee.publicId && (
+                                <div className="rounded-lg bg-slate-50/20 px-4 py-3 shadow-[inset_1px_0_0_theme(colors.slate.200),inset_0_-1px_0_theme(colors.slate.200)]">
+                                    <EmployeeRecentActivitySection
+                                        activities={activities}
+                                        loading={activityLoading}
+                                        error={activityError}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            )}
+            </div>
         </div>
     )
 }

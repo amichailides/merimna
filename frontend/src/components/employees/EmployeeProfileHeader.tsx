@@ -17,7 +17,7 @@ export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) 
     const addressLine = formatAddress(employee.address)
 
     return (
-        <div className="flex items-start gap-5 pb-5 border-b border-slate-100">
+        <div className="flex items-start gap-5 border-b border-slate-100 pb-5 sm:gap-10">
             {/* Avatar */}
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-teal-100 text-[15px] font-semibold text-teal-700">
                 {getInitials(employee.firstName, employee.lastName)}
