@@ -37,17 +37,19 @@ export function AppLayout() {
     : '??'
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-
+    <div className="flex min-h-screen flex-col bg-[#f7f7f5]">
       {/* Topbar — full width */}
-      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between bg-slate-100 px-4">
+      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between bg-[#f7f7f5] px-4">
         <div className="flex w-56 shrink-0 items-center gap-2.5">
           <MerimnaLogo className="text-teal-600" />
           <div className="flex flex-col leading-none">
-            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }} className="text-[14px] font-semibold text-slate-950">
+            <span
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              className="text-[14px] font-semibold text-slate-950"
+            >
               Merimna
             </span>
-            <span className="text-[10px] text-slate-400 mt-0.5">
+            <span className="mt-0.5 text-[10px] text-slate-400">
               Care Management
             </span>
           </div>
@@ -55,7 +57,7 @@ export function AppLayout() {
 
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 rounded-md px-2 py-1 text-[13px] text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-950"
+          className="flex items-center gap-2 rounded-md px-2 py-1 text-[13px] text-slate-600 transition-colors hover:bg-white/70 hover:text-slate-950"
         >
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-100 text-[10px] font-semibold text-teal-700">
             {initials}
@@ -65,15 +67,16 @@ export function AppLayout() {
         </button>
       </header>
 
-      <div className="flex flex-1 bg-slate-100 relative">
+      <div className="relative flex flex-1 bg-[#f7f7f5]">
         {/* Sidebar */}
-        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 flex-col bg-slate-100 md:flex">
+        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 flex-col bg-[#f7f7f5] md:flex">
           <nav className="flex-1 overflow-y-auto px-3 pt-5 pb-3">
             {navGroups.map((group, idx) => (
               <div key={group.label} className={cn(idx > 0 && 'mt-5')}>
                 <p className="mb-1 px-2 text-[11px] font-medium text-slate-400">
                   {group.label}
                 </p>
+
                 <div>
                   {group.items.map((item: NavItem) => (
                     <NavLink
@@ -83,8 +86,8 @@ export function AppLayout() {
                         cn(
                           'flex items-center gap-2 rounded-md px-2 py-[5px] text-[13px] transition-colors',
                           isActive
-                            ? 'bg-slate-200 font-medium text-slate-950'
-                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+                            ? 'bg-white font-medium text-slate-950 shadow-sm ring-1 ring-slate-200/70'
+                            : 'text-slate-600 hover:bg-white/70 hover:text-slate-950'
                         )
                       }
                     >
@@ -105,10 +108,12 @@ export function AppLayout() {
         </aside>
 
         {/* Main */}
-        <div className="flex-1 bg-white rounded-tl-lg overflow-hidden">
-          <main className="px-6 py-5">
-            <Outlet />
-          </main>
+        <div className="flex-1 bg-[#f7f7f5] px-3 pb-3 pt-2">
+          <div className="min-h-[calc(100vh-5rem)] overflow-hidden rounded-xl border border-slate-200/70 bg-white">
+            <main className="px-6 py-5">
+              <Outlet />
+            </main>
+          </div>
         </div>
       </div>
     </div>
