@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -719,6 +720,35 @@ class EmployeeServiceImplTest {
             verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
 
             verifyNoInteractions(houseUnitAccessService);
+            verifyNoInteractions(auditLogRepository);
+        }
+
+        @Test
+        void shouldThrowAccessDeniedException_whenEmployeeActivityAccessDenied() {
+            Employee employee = defaultEmployee().build();
+            Pageable pageable = PageRequest.of(0, 5);
+
+            AccessDeniedException accessDenied =
+                    new AccessDeniedException(
+                            "Employee scope violation: attempted access to employee "
+                                    + EMPLOYEE_PUBLIC_ID
+                    );
+
+            when(employeeRepository.findByPublicId(EMPLOYEE_PUBLIC_ID))
+                    .thenReturn(Optional.of(employee));
+
+            doThrow(accessDenied)
+                    .when(houseUnitAccessService).ensureCanAccess(employee);
+
+            AccessDeniedException result = assertThrows(
+                    AccessDeniedException.class,
+                    () -> employeeService.getEmployeeActivity(EMPLOYEE_PUBLIC_ID, pageable)
+            );
+
+            assertSame(accessDenied, result);
+
+            verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
+            verify(houseUnitAccessService).ensureCanAccess(employee);
             verifyNoInteractions(auditLogRepository);
         }
     }

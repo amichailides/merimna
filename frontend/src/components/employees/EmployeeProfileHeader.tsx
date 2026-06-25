@@ -10,7 +10,7 @@ function getInitials(firstName?: string, lastName?: string) {
 
 export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) {
     return (
-        <div className="flex items-center justify-between gap-6 border-b border-slate-100 pb-6">
+        <div className="flex items-center justify-between gap-6 pb-6">
             <div className="flex items-center gap-5">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-teal-50 text-[15px] font-semibold text-teal-700">
                     {getInitials(employee.firstName, employee.lastName)}

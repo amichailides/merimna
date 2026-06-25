@@ -2,11 +2,12 @@ import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 
 import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
-import { EmployeeAssignmentCard } from '@/components/employees/EmployeeAssignmentCard'
-import { EmployeeCurrentPlacementCard } from '@/components/employees/EmployeeCurrentPlacementCard'
 import { EmployeeRecentActivitySection } from '@/components/employees/EmployeeRecentActivitySection'
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
 import { useEmployeeActivity } from '@/api/useEmployeeActivity'
+import { EmployeeWorkDetailsSection } from '@/components/employees/EmployeeWorkDetailsSection'
+
+const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
 
 function formatAddress(address: unknown) {
     if (!address || typeof address !== 'object') {
@@ -22,17 +23,31 @@ function formatAddress(address: unknown) {
 function DetailItem({
     label,
     value,
+    href,
 }: {
     label: string
     value?: string | null
+    href?: string
 }) {
+    const content = value || '—'
+
     return (
-        <div className="space-y-1">
-            <dt className="text-[12px] text-slate-500">
+        <div className="space-y-1.5">
+            <dt className="text-[11px] font-medium text-slate-400">
                 {label}
             </dt>
-            <dd className="text-[13px] leading-5 text-slate-900">
-                {value || '—'}
+
+            <dd className="text-[13px] leading-5 text-slate-950">
+                {href && value ? (
+                    <a
+                        href={href}
+                        className="transition-colors hover:text-teal-700"
+                    >
+                        {content}
+                    </a>
+                ) : (
+                    content
+                )}
             </dd>
         </div>
     )
@@ -79,39 +94,41 @@ export function EmployeeDetailsPage() {
                 Back to employees
             </Link>
 
-            <EmployeeProfileHeader employee={employee} />
+            <div className="border-b border-slate-200">
+                <EmployeeProfileHeader employee={employee} />
+
+                <div className="mt-4 flex items-center gap-6 sm:pl-[4.5rem]">
+                    {PROFILE_TABS.map((tab) => {
+                        const active = tab === 'Overview'
+
+                        return (
+                            <button
+                                key={tab}
+                                type="button"
+                                className={[
+                                    'relative pb-3 text-[13px] font-medium transition-colors',
+                                    active
+                                        ? 'text-slate-950'
+                                        : 'text-slate-500 hover:text-slate-800',
+                                ].join(' ')}
+                            >
+                                {tab}
+
+                                {active && (
+                                    <span className="absolute inset-x-0 -bottom-px h-px bg-slate-950" />
+                                )}
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>
 
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
                 <main className="space-y-10 sm:pl-[4.5rem]">
-                    <section className="max-w-md space-y-5">
-                        <div className="border-b border-slate-100 pb-3">
-                            <h2 className="text-[13px] font-medium text-slate-700">
-                                Work location
-                            </h2>
-                        </div>
-
-                        <div className="space-y-7">
-                            {employee.activePlacement ? (
-                                <>
-                                    <EmployeeCurrentPlacementCard
-                                        placement={employee.activePlacement}
-                                    />
-
-                                    <div className="border-t border-slate-100 pt-6">
-                                        <EmployeeAssignmentCard
-                                            assignments={employee.assignments}
-                                            isCurrentWorkingUnit={false}
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <EmployeeAssignmentCard
-                                    assignments={employee.assignments}
-                                    isCurrentWorkingUnit
-                                />
-                            )}
-                        </div>
-                    </section>
+                    <EmployeeWorkDetailsSection
+                        assignments={employee.assignments}
+                        placement={employee.activePlacement}
+                    />
 
                     {employee.publicId && (
                         <section>
@@ -124,8 +141,8 @@ export function EmployeeDetailsPage() {
                     )}
                 </main>
 
-                <aside className="border-l border-slate-100 pl-5 pt-8">
-                    <div className="space-y-8">
+                <aside className="pt-[3.75rem]">
+                    <div className="space-y-8 border-l border-slate-100 pl-5">
                         <section className="space-y-4">
                             <h2 className="text-[13px] font-medium text-slate-700">
                                 Contact
@@ -135,11 +152,13 @@ export function EmployeeDetailsPage() {
                                 <DetailItem
                                     label="Email"
                                     value={employee.contactEmail}
+                                    href={employee.contactEmail ? `mailto:${employee.contactEmail}` : undefined}
                                 />
 
                                 <DetailItem
                                     label="Mobile"
                                     value={employee.mobileNumber}
+                                    href={employee.mobileNumber ? `tel:${employee.mobileNumber}` : undefined}
                                 />
 
                                 <DetailItem
@@ -152,7 +171,7 @@ export function EmployeeDetailsPage() {
                         <div className="border-t border-slate-100" />
 
                         <section className="space-y-4">
-                            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                            <h2 className="text-[13px] font-medium text-slate-700">
                                 Employment
                             </h2>
 
@@ -176,6 +195,6 @@ export function EmployeeDetailsPage() {
                     </div>
                 </aside>
             </div>
-        </div >
+        </div>
     )
 }
