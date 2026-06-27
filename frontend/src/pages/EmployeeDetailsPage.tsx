@@ -32,21 +32,21 @@ function DetailItem({
     const content = value || '—'
 
     return (
-        <div className="space-y-1.5">
-            <dt className="text-[11px] font-medium text-slate-400">
+        <div className="space-y-1">
+            <dt className="text-[12px] text-slate-500">
                 {label}
             </dt>
 
-            <dd className="text-[13px] leading-5 text-slate-950">
+            <dd className="min-w-0 text-[13px] leading-5 text-slate-900">
                 {href && value ? (
                     <a
                         href={href}
-                        className="transition-colors hover:text-teal-700"
+                        className="break-words transition-colors hover:text-slate-950"
                     >
                         {content}
                     </a>
                 ) : (
-                    content
+                    <span className="break-words">{content}</span>
                 )}
             </dd>
         </div>
@@ -94,37 +94,39 @@ export function EmployeeDetailsPage() {
                 Back to employees
             </Link>
 
-            <div className="border-b border-slate-200">
+            <div>
                 <EmployeeProfileHeader employee={employee} />
 
-                <div className="mt-4 flex items-center gap-6 sm:pl-[4.5rem]">
-                    {PROFILE_TABS.map((tab) => {
-                        const active = tab === 'Overview'
+                <div className="mt-3 border-b border-slate-200">
+                    <div className="flex items-center gap-6">
+                        {PROFILE_TABS.map((tab) => {
+                            const active = tab === 'Overview'
 
-                        return (
-                            <button
-                                key={tab}
-                                type="button"
-                                className={[
-                                    'relative pb-3 text-[13px] font-medium transition-colors',
-                                    active
-                                        ? 'text-slate-950'
-                                        : 'text-slate-500 hover:text-slate-800',
-                                ].join(' ')}
-                            >
-                                {tab}
+                            return (
+                                <button
+                                    key={tab}
+                                    type="button"
+                                    className={[
+                                        'relative pb-3 text-sm leading-none transition-colors',
+                                        active
+                                            ? 'font-semibold text-slate-950'
+                                            : 'font-medium text-[#586579] hover:text-slate-900',
+                                    ].join(' ')}
+                                >
+                                    {tab}
 
-                                {active && (
-                                    <span className="absolute inset-x-0 -bottom-px h-px bg-slate-950" />
-                                )}
-                            </button>
-                        )
-                    })}
+                                    {active && (
+                                        <span className="absolute inset-x-0 -bottom-px h-[2px] rounded-full bg-teal-500" />
+                                    )}
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-                <main className="space-y-10 sm:pl-[4.5rem]">
+                <main className="space-y-10">
                     <EmployeeWorkDetailsSection
                         assignments={employee.assignments}
                         placement={employee.activePlacement}
@@ -184,11 +186,6 @@ export function EmployeeDetailsPage() {
                                 <DetailItem
                                     label="Hire date"
                                     value={employee.hireDate}
-                                />
-
-                                <DetailItem
-                                    label="Status"
-                                    value={employee.active ? 'Active' : 'Inactive'}
                                 />
                             </dl>
                         </section>

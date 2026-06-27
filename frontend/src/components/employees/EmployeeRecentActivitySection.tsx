@@ -47,8 +47,8 @@ interface Props {
 
 export function EmployeeRecentActivitySection({ activities, loading, error }: Props) {
     return (
-        <section className="max-w-xl space-y-3">
-            <div className="border-b border-slate-100 pb-3">
+        <section className="max-w-xl space-y-4">
+            <div>
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <Clock size={13} className="text-slate-400" />

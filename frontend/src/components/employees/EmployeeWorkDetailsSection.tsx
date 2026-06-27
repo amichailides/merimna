@@ -42,34 +42,32 @@ function WorkContextItem({
 }) {
     return (
         <div className="flex gap-3">
-            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-slate-400">
+            <div className="mt-[1px] flex h-3 w-4 shrink-0 items-center justify-center text-slate-400">
                 {icon}
             </div>
 
-            <div className="min-w-0 space-y-2">
+            <div className="min-w-0 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-[13px] font-medium text-slate-800">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-slate-500">
                         {label}
                     </p>
 
                     {badge && (
-                        <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-medium text-teal-700">
+                        <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-medium leading-none text-teal-700">
                             {badge}
                         </span>
                     )}
                 </div>
 
-                <div className="space-y-1">
-                    <p className="text-[14px] font-medium text-slate-950">
-                        {title}
-                    </p>
+                <p className="text-[14.5px] font-semibold leading-5 text-slate-950/90">
+                    {title}
+                </p>
 
-                    {description && (
-                        <p className="text-[13px] leading-5 text-slate-500">
-                            {description}
-                        </p>
-                    )}
-                </div>
+                {description && (
+                    <p className="text-[13px] leading-5 text-slate-500/70">
+                        {description}
+                    </p>
+                )}
             </div>
         </div>
     )
@@ -98,19 +96,16 @@ export function EmployeeWorkDetailsSection({
     const currentUnitName = placement
         ? placement.houseUnitDisplayName ?? 'Unknown unit'
         : activeAssignment?.houseUnitDisplayName ?? null
-
     return (
         <section className="max-w-md space-y-5">
-            <div className="border-b border-slate-100 pb-3">
-                <h2 className="text-[13px] font-medium text-slate-700">
-                    Work context
-                </h2>
-            </div>
+            <h2 className="text-[13px] font-medium text-slate-700">
+                Work context
+            </h2>
 
             <div className="space-y-7">
                 {currentUnitName ? (
                     <WorkContextItem
-                        icon={<MapPin size={13} strokeWidth={1.75} />}
+                        icon={<MapPin size={14} strokeWidth={1.75} />}
                         label="Current work location"
                         badge={placement ? 'Temporary placement' : 'Official assignment'}
                         title={currentUnitName}
@@ -150,16 +145,16 @@ export function EmployeeWorkDetailsSection({
                         )
                     ) : (
                         <div className="flex gap-3">
-                            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-slate-400">
+                            <div className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center text-slate-400">
                                 <BriefcaseBusiness size={13} strokeWidth={1.75} />
                             </div>
 
-                            <div className="min-w-0 space-y-1">
-                                <p className="text-[13px] font-medium text-slate-800">
+                            <div className="min-w-0 space-y-1.5">
+                                <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-slate-400">
                                     Official home unit
                                 </p>
 
-                                <p className="text-[13px] font-medium text-slate-600">
+                                <p className="text-[13px] font-medium leading-5 text-slate-700">
                                     {activeAssignment?.houseUnitDisplayName ?? 'Unknown unit'}
                                 </p>
 
