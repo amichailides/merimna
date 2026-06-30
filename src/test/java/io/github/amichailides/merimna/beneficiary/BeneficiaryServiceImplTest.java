@@ -2,8 +2,11 @@ package io.github.amichailides.merimna.beneficiary;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.address.dto.AddressDTO;
+import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.beneficiary.audit.BeneficiaryChangeDetector;
 import io.github.amichailides.merimna.beneficiary.event.BeneficiaryDischargedEvent;
 import io.github.amichailides.merimna.beneficiary.dto.*;
+import io.github.amichailides.merimna.beneficiary.event.BeneficiaryUpdatedEvent;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInHouseUnitException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryAlreadyInactiveException;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
@@ -65,6 +68,9 @@ class BeneficiaryServiceImplTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private BeneficiaryChangeDetector beneficiaryChangeDetector;
 
     @InjectMocks
     private BeneficiaryServiceImpl beneficiaryService;
@@ -188,9 +194,14 @@ class BeneficiaryServiceImplTest {
                     .firstName("UpdatedName")
                     .build();
             BeneficiaryDetailsDTO expectedDto = defaultDetailsDTO().build();
+            EntityChangeSet changeSet = mock(EntityChangeSet.class);
 
             when(beneficiaryRepository.findByPublicId(BENEFICIARY_PUBLIC_ID))
                     .thenReturn(Optional.of(existing));
+            when(beneficiaryChangeDetector.detectChanges(existing, updateDto))
+                    .thenReturn(changeSet);
+            when(changeSet.hasChanges())
+                    .thenReturn(true);
             when(beneficiaryMapper.toDetailsDTO(existing))
                     .thenReturn(expectedDto);
 
@@ -199,7 +210,9 @@ class BeneficiaryServiceImplTest {
             assertEquals(expectedDto, result);
             verify(houseUnitAccessService).ensureCanAccess(existing);
             verify(validator).validateForUpdate(existing, updateDto);
+            verify(beneficiaryChangeDetector).detectChanges(existing, updateDto);
             verify(beneficiaryMapper).updateEntity(existing, updateDto);
+            verify(eventPublisher).publishEvent(any(BeneficiaryUpdatedEvent.class));
             verify(beneficiaryMapper).toDetailsDTO(existing);
             verify(beneficiaryRepository, never()).save(any());
         }

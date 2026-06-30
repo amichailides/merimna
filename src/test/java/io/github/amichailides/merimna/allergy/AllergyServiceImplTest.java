@@ -1,10 +1,13 @@
 package io.github.amichailides.merimna.allergy;
 
+import io.github.amichailides.merimna.allergy.audit.AllergyChangeDetector;
 import io.github.amichailides.merimna.allergy.dto.AllergyCreateDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyReadOnlyDTO;
 import io.github.amichailides.merimna.allergy.dto.AllergyUpdateDTO;
+import io.github.amichailides.merimna.allergy.event.AllergyUpdatedEvent;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotFoundException;
 import io.github.amichailides.merimna.allergy.exception.AllergyNotOwnedByBeneficiaryException;
+import io.github.amichailides.merimna.audit.EntityChangeSet;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import io.github.amichailides.merimna.beneficiary.exception.BeneficiaryNotFoundByPublicIdException;
 import io.github.amichailides.merimna.domain.Address;
@@ -21,6 +24,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +54,12 @@ class AllergyServiceImplTest {
 
     @Mock
     private AllergyValidator allergyValidator;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private AllergyChangeDetector allergyChangeDetector;
 
     @InjectMocks
     private AllergyServiceImpl allergyService;
@@ -115,16 +125,25 @@ class AllergyServiceImplTest {
             AllergyReadOnlyDTO expectedDto = defaultReadOnlyDTO()
                     .severity(AllergySeverity.HIGH)
                     .build();
+            EntityChangeSet changeSet = mock(EntityChangeSet.class);
 
             when(allergyRepository.findByPublicId(ALLERGY_PUBLIC_ID)).thenReturn(Optional.of(existing));
+            when(allergyChangeDetector.detectChanges(existing, updateDto)).thenReturn(changeSet);
+            when(changeSet.hasChanges()).thenReturn(true);
             when(allergyMapper.toDTO(existing)).thenReturn(expectedDto);
 
-            AllergyReadOnlyDTO result = allergyService.updateAllergy(OWNER_BENEFICIARY_PUBLIC_ID, ALLERGY_PUBLIC_ID, updateDto);
+            AllergyReadOnlyDTO result = allergyService.updateAllergy(
+                    OWNER_BENEFICIARY_PUBLIC_ID,
+                    ALLERGY_PUBLIC_ID,
+                    updateDto
+            );
 
             assertEquals(expectedDto, result);
             verify(allergyRepository).findByPublicId(ALLERGY_PUBLIC_ID);
             verify(allergyValidator).validateForUpdate(existing, updateDto);
+            verify(allergyChangeDetector).detectChanges(existing, updateDto);
             verify(allergyMapper).updateEntity(existing, updateDto);
+            verify(eventPublisher).publishEvent(any(AllergyUpdatedEvent.class));
             verify(allergyMapper).toDTO(existing);
         }
 
