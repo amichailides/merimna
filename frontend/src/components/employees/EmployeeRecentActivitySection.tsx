@@ -1,18 +1,19 @@
 import {
-    Activity,
     AlertCircle,
-    ArrowRightLeft,
-    Building2,
-    Clock,
     Loader2,
-    RefreshCw,
-    UserCog,
-    UserMinus,
-    UserPlus,
 } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import type { EmployeeActivityDTO } from '@/api/types'
+import {
+    Timeline,
+    TimelineContent,
+    TimelineDate,
+    TimelineHeader,
+    TimelineIndicator,
+    TimelineItem,
+    TimelineSeparator,
+    TimelineTitle,
+} from '@/components/reui/timeline'
 import {
     formatActivitySubtitle,
     formatActivityTimestamp,
@@ -20,16 +21,16 @@ import {
 
 type AuditAction = NonNullable<EmployeeActivityDTO['action']>
 
-const ACTION_META: Partial<Record<AuditAction, { label: string; icon: typeof Activity }>> = {
-    EMPLOYEE_CREATED: { label: 'Employee created', icon: UserPlus },
-    EMPLOYEE_UPDATED: { label: 'Employee updated', icon: UserCog },
-    EMPLOYEE_TERMINATED: { label: 'Employment terminated', icon: UserMinus },
-    EMPLOYEE_REACTIVATED: { label: 'Employee reactivated', icon: RefreshCw },
-    ASSIGNMENT_CREATED: { label: 'Assignment created', icon: Building2 },
-    ASSIGNMENT_TERMINATED: { label: 'Assignment terminated', icon: Building2 },
-    ASSIGNMENT_CANCELLED: { label: 'Assignment cancelled', icon: Building2 },
-    PLACEMENT_CREATED: { label: 'Placement started', icon: ArrowRightLeft },
-    PLACEMENT_TERMINATED: { label: 'Placement ended', icon: ArrowRightLeft },
+const ACTION_META: Partial<Record<AuditAction, { label: string }>> = {
+    EMPLOYEE_CREATED: { label: 'Employee created' },
+    EMPLOYEE_UPDATED: { label: 'Employee updated' },
+    EMPLOYEE_TERMINATED: { label: 'Employment terminated' },
+    EMPLOYEE_REACTIVATED: { label: 'Employee reactivated' },
+    ASSIGNMENT_CREATED: { label: 'Assignment created' },
+    ASSIGNMENT_TERMINATED: { label: 'Assignment terminated' },
+    ASSIGNMENT_CANCELLED: { label: 'Assignment cancelled' },
+    PLACEMENT_CREATED: { label: 'Placement started' },
+    PLACEMENT_TERMINATED: { label: 'Placement ended' },
 }
 
 function humanizeAction(action: string): string {
@@ -49,26 +50,14 @@ export function EmployeeRecentActivitySection({ activities, loading, error }: Pr
     return (
         <section className="max-w-xl space-y-4">
             <div>
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <Clock size={13} className="text-slate-400" />
+                <div className="flex items-center gap-2">
 
-                        <h2 className="text-[13px] font-medium text-slate-900">
-                            Recent activity
-                        </h2>
-                    </div>
-
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled
-                        className="h-auto px-1 py-0 text-[11px] font-normal text-slate-400"
-                    >
-                        View full history
-                    </Button>
+                    <h2 className="text-[13px] font-medium text-slate-700">
+                        Recent activity
+                    </h2>
                 </div>
 
-                <p className="mt-1 pl-5 text-[11px] text-slate-400">
+                <p className="mt-1 text-[12px] text-slate-400">
                     Latest changes and updates related to this employee.
                 </p>
             </div>
@@ -94,52 +83,56 @@ export function EmployeeRecentActivitySection({ activities, loading, error }: Pr
             )}
 
             {!loading && !error && activities.length > 0 && (
-                <div className="mt-3 space-y-3 pl-5">
-                    {activities.map(activity => {
+                <Timeline defaultValue={0} className="mt-4">
+                    {activities.map((activity, index) => {
                         const action = activity.action
 
                         const meta = action
                             ? ACTION_META[action] ?? {
                                 label: humanizeAction(action),
-                                icon: Activity,
                             }
                             : {
                                 label: 'Activity recorded',
-                                icon: Activity,
                             }
 
-                        const Icon = meta.icon
                         const subtitle = formatActivitySubtitle(activity)
 
                         return (
-                            <div
+                            <TimelineItem
                                 key={activity.publicId}
-                                className="grid grid-cols-[1rem_minmax(0,1fr)] items-start gap-3"
+                                step={index + 1}
+                                className="ms-7"
                             >
-                                <Icon
-                                    size={12}
-                                    className="mt-0.5 text-slate-400"
-                                />
-
-                                <div className="min-w-0">
-                                    <p className="text-[13px] font-medium text-slate-900">
+                                <TimelineHeader>
+                                    <TimelineTitle className="text-[14.5px] font-semibold leading-5 text-slate-950/80">
                                         {meta.label}
-                                    </p>
+                                    </TimelineTitle>
 
                                     {subtitle && (
-                                        <p className="mt-0.5 text-[12px] leading-5 text-slate-500">
+                                        <TimelineContent className="text-[13px] leading-5 text-slate-500">
                                             {subtitle}
-                                        </p>
+                                        </TimelineContent>
                                     )}
 
-                                    <time className="mt-0.5 block text-[11px] text-slate-400">
+                                    <TimelineDate className="mb-0 text-[12px] font-normal leading-5 text-slate-400">
                                         {formatActivityTimestamp(activity.occurredAt)}
-                                    </time>
-                                </div>
-                            </div>
+                                    </TimelineDate>
+                                </TimelineHeader>
+
+                                <TimelineIndicator
+                                    className={[
+                                        'size-2 border mt-[5px]',
+                                        index === 0
+                                            ? 'border-teal-500 bg-teal-500'
+                                            : 'border-slate-300 bg-white',
+                                    ].join(' ')}
+                                />
+
+                                <TimelineSeparator className="w-px bg-slate-100 h-[calc(100%-6.5px)] translate-y-[14px]" />
+                            </TimelineItem>
                         )
                     })}
-                </div>
+                </Timeline>
             )}
         </section>
     )

@@ -59,12 +59,12 @@ function WorkContextItem({
                     )}
                 </div>
 
-                <p className="text-[14.5px] font-semibold leading-5 text-slate-950/90">
+                <p className="text-[14.5px] font-semibold leading-5 text-slate-950/80">
                     {title}
                 </p>
 
                 {description && (
-                    <p className="text-[13px] leading-5 text-slate-500/70">
+                    <p className="text-[13px] leading-5 text-slate-500">
                         {description}
                     </p>
                 )}
@@ -102,10 +102,10 @@ export function EmployeeWorkDetailsSection({
                 Work context
             </h2>
 
-            <div className="space-y-7">
+            <div className="space-y-6">
                 {currentUnitName ? (
                     <WorkContextItem
-                        icon={<MapPin size={14} strokeWidth={1.75} />}
+                        icon={<MapPin size={15} strokeWidth={1.75} />}
                         label="Current work location"
                         badge={placement ? 'Temporary placement' : 'Official assignment'}
                         title={currentUnitName}
@@ -119,52 +119,41 @@ export function EmployeeWorkDetailsSection({
                     />
                 ) : (
                     <WorkContextItem
-                        icon={<MapPin size={13} strokeWidth={1.75} />}
+                        icon={<MapPin size={15} strokeWidth={1.75} />}
                         label="Current work location"
                         title="No current work unit"
                         description="This employee does not have an active assignment or placement."
                     />
                 )}
 
-                <div className="pt-2">
-                    {placement ? (
-                        activeAssignment ? (
-                            <WorkContextItem
-                                icon={<BriefcaseBusiness size={13} strokeWidth={1.75} />}
-                                label="Official home unit"
-                                title={activeAssignment.houseUnitDisplayName ?? 'Unknown unit'}
-                                description={getAssignmentDescription(activeAssignment)}
-                            />
-                        ) : (
-                            <WorkContextItem
-                                icon={<BriefcaseBusiness size={13} strokeWidth={1.75} />}
-                                label="Official home unit"
-                                title="No active assignment"
-                                description="There is no official home unit assigned to this employee."
-                            />
-                        )
+                {placement ? (
+                    activeAssignment ? (
+                        <WorkContextItem
+                            icon={<BriefcaseBusiness size={15} strokeWidth={1.75} />}
+                            label="Official home unit"
+                            title={activeAssignment.houseUnitDisplayName ?? 'Unknown unit'}
+                            description={getAssignmentDescription(activeAssignment)}
+                        />
                     ) : (
-                        <div className="flex gap-3">
-                            <div className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center text-slate-400">
-                                <BriefcaseBusiness size={13} strokeWidth={1.75} />
-                            </div>
-
-                            <div className="min-w-0 space-y-1.5">
-                                <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-slate-400">
-                                    Official home unit
-                                </p>
-
-                                <p className="text-[13px] font-medium leading-5 text-slate-700">
-                                    {activeAssignment?.houseUnitDisplayName ?? 'Unknown unit'}
-                                </p>
-
-                                <p className="text-[12px] leading-5 text-slate-400">
-                                    Same unit as current work location.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                        <WorkContextItem
+                            icon={<BriefcaseBusiness size={15} strokeWidth={1.75} />}
+                            label="Official home unit"
+                            title="No active assignment"
+                            description="There is no official home unit assigned to this employee."
+                        />
+                    )
+                ) : (
+                    <WorkContextItem
+                        icon={<BriefcaseBusiness size={15} strokeWidth={1.75} />}
+                        label="Official home unit"
+                        title={activeAssignment?.houseUnitDisplayName ?? 'No active assignment'}
+                        description={
+                            activeAssignment
+                                ? 'Same unit as current work location.'
+                                : undefined
+                        }
+                    />
+                )}
             </div>
         </section>
     )

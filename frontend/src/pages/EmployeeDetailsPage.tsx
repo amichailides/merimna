@@ -109,7 +109,7 @@ export function EmployeeDetailsPage() {
                                     className={[
                                         'relative pb-3 text-sm leading-none transition-colors',
                                         active
-                                            ? 'font-semibold text-slate-950'
+                                            ? 'font-medium text-slate-900'
                                             : 'font-medium text-[#586579] hover:text-slate-900',
                                     ].join(' ')}
                                 >
@@ -126,11 +126,13 @@ export function EmployeeDetailsPage() {
             </div>
 
             <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-                <main className="space-y-10">
+                <main className="space-y-8">
                     <EmployeeWorkDetailsSection
                         assignments={employee.assignments}
                         placement={employee.activePlacement}
                     />
+
+                    <div className="max-w-xl border-t border-slate-100" />
 
                     {employee.publicId && (
                         <section>
