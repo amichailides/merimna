@@ -110,7 +110,7 @@ export function AppLayout() {
         {/* Main */}
         <div className="flex-1 bg-[#f7f7f5] px-3 pb-3 pt-2">
           <div className="min-h-[calc(100vh-5rem)] overflow-hidden rounded-xl border border-slate-200/70 bg-white">
-            <main className="px-6 py-5">
+            <main className="px-10 py-5">
               <Outlet />
             </main>
           </div>
