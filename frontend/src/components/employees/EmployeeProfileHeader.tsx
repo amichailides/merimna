@@ -1,4 +1,5 @@
 import type { EmployeeDetailsDTO } from '@/api/types'
+import { Pencil } from 'lucide-react'
 
 type EmployeeProfileHeaderProps = {
     employee: EmployeeDetailsDTO
@@ -24,8 +25,8 @@ export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) 
 
                         <span
                             className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${employee.active
-                                    ? 'bg-teal-50 text-teal-700'
-                                    : 'bg-slate-100 text-slate-500'
+                                ? 'bg-teal-50 text-teal-700'
+                                : 'bg-slate-100 text-slate-500'
                                 }`}
                         >
                             {employee.active ? 'Active' : 'Inactive'}
@@ -41,8 +42,9 @@ export function EmployeeProfileHeader({ employee }: EmployeeProfileHeaderProps) 
             <div className="flex items-center gap-2">
                 <button
                     type="button"
-                    className="rounded-md border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
                 >
+                    <Pencil size={13} strokeWidth={2.25} className="text-slate-500" />
                     Edit
                 </button>
             </div>
