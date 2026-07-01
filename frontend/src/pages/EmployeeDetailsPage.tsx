@@ -6,52 +6,9 @@ import { EmployeeRecentActivitySection } from '@/components/employees/EmployeeRe
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
 import { useEmployeeActivity } from '@/api/useEmployeeActivity'
 import { EmployeeWorkDetailsSection } from '@/components/employees/EmployeeWorkDetailsSection'
+import { EmployeeMetadataRail } from '@/components/employees/EmployeeMetadataRail'
 
 const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
-
-function formatAddress(address: unknown) {
-    if (!address || typeof address !== 'object') {
-        return '—'
-    }
-
-    const values = Object.values(address as Record<string, string | null | undefined>)
-        .filter((value): value is string => Boolean(value && value.trim()))
-
-    return values.length > 0 ? values.join(', ') : '—'
-}
-
-function DetailItem({
-    label,
-    value,
-    href,
-}: {
-    label: string
-    value?: string | null
-    href?: string
-}) {
-    const content = value || '—'
-
-    return (
-        <div className="space-y-1">
-            <dt className="text-[12px] text-slate-500">
-                {label}
-            </dt>
-
-            <dd className="min-w-0 text-[13px] leading-5 text-slate-900">
-                {href && value ? (
-                    <a
-                        href={href}
-                        className="break-words transition-colors hover:text-slate-950"
-                    >
-                        {content}
-                    </a>
-                ) : (
-                    <span className="break-words">{content}</span>
-                )}
-            </dd>
-        </div>
-    )
-}
 
 export function EmployeeDetailsPage() {
     const { publicId } = useParams<{ publicId: string }>()
@@ -145,54 +102,7 @@ export function EmployeeDetailsPage() {
                     )}
                 </main>
 
-                <aside className="pt-[3.75rem]">
-                    <div className="space-y-8 border-l border-slate-100 pl-5">
-                        <section className="space-y-4">
-                            <h2 className="text-[13px] font-medium text-slate-700">
-                                Contact
-                            </h2>
-
-                            <dl className="space-y-4">
-                                <DetailItem
-                                    label="Email"
-                                    value={employee.contactEmail}
-                                    href={employee.contactEmail ? `mailto:${employee.contactEmail}` : undefined}
-                                />
-
-                                <DetailItem
-                                    label="Mobile"
-                                    value={employee.mobileNumber}
-                                    href={employee.mobileNumber ? `tel:${employee.mobileNumber}` : undefined}
-                                />
-
-                                <DetailItem
-                                    label="Address"
-                                    value={formatAddress(employee.address)}
-                                />
-                            </dl>
-                        </section>
-
-                        <div className="border-t border-slate-100" />
-
-                        <section className="space-y-4">
-                            <h2 className="text-[13px] font-medium text-slate-700">
-                                Employment
-                            </h2>
-
-                            <dl className="space-y-4">
-                                <DetailItem
-                                    label="Position"
-                                    value={employee.positionDisplayName}
-                                />
-
-                                <DetailItem
-                                    label="Hire date"
-                                    value={employee.hireDate}
-                                />
-                            </dl>
-                        </section>
-                    </div>
-                </aside>
+                <EmployeeMetadataRail employee={employee} />
             </div>
         </div>
     )

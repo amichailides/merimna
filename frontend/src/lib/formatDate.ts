@@ -1,5 +1,9 @@
 export function formatDate(date: string | null | undefined): string {
     if (!date) return '—'
-    const [year, month, day] = date.split('-')
-    return `${parseInt(day)}-${parseInt(month)}-${year}`
+
+    return new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(date))
 }

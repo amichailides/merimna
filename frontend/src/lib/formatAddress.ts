@@ -5,9 +5,11 @@ type AddressLike = {
     zipCode?: string | null
 }
 
-export function formatAddress(address: AddressLike | null | undefined) {
-    if (!address) return null
+export function formatAddress(address: AddressLike | null | undefined): string {
+    if (!address) return '—'
+
     const streetLine = [address.street, address.streetNumber].filter(Boolean).join(' ')
     const cityLine = [address.city, address.zipCode].filter(Boolean).join(' ')
-    return [streetLine, cityLine].filter(Boolean).join(', ') || null
+
+    return [streetLine, cityLine].filter(Boolean).join(', ') || '—'
 }

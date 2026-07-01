@@ -59,7 +59,7 @@ function WorkContextItem({
                     )}
                 </div>
 
-                <p className="text-[14.5px] font-semibold leading-5 text-slate-950/80">
+                <p className="text-[14px] font-semibold leading-5 text-slate-950/80">
                     {title}
                 </p>
 
