@@ -725,6 +725,12 @@ export interface components {
              */
             lastName?: string;
             /**
+             * Format: date
+             * @description Employee date of birth
+             * @example 1988-04-12
+             */
+            dateOfBirth?: string;
+            /**
              * @description Employee email address
              * @example g.papadopoulos@merimna.gr
              */
@@ -747,6 +753,16 @@ export interface components {
              * @example 2026-02-23
              */
             hireDate?: string;
+            /**
+             * @description Emergency contact full name
+             * @example Μαρία Παπαδοπούλου
+             */
+            emergencyContactName?: string;
+            /**
+             * @description Emergency contact phone number
+             * @example +306971112233
+             */
+            emergencyContactPhoneNumber?: string;
         };
         EmployeeAssignmentReadOnlyDTO: {
             /** Format: uuid */
@@ -779,6 +795,12 @@ export interface components {
              */
             lastName: string;
             /**
+             * Format: date
+             * @description Employee date of birth
+             * @example 1988-04-12
+             */
+            dateOfBirth: string;
+            /**
              * @description Employee email address
              * @example g.papadopoulos@merimna.gr
              */
@@ -788,6 +810,8 @@ export interface components {
              * @example +306942318223
              */
             mobileNumber: string;
+            /** @description Employee residential address */
+            address: components["schemas"]["AddressDTO"];
             /**
              * @description Employee position code
              * @example CAREGIVER
@@ -816,8 +840,16 @@ export interface components {
              * @example 2026-02-23
              */
             hireDate: string;
-            /** @description Employee residential address */
-            address: components["schemas"]["AddressDTO"];
+            /**
+             * @description Emergency contact full name
+             * @example Μαρία Παπαδοπούλου
+             */
+            emergencyContactName: string;
+            /**
+             * @description Emergency contact phone number
+             * @example +306971112233
+             */
+            emergencyContactPhoneNumber: string;
             /**
              * @description Indicates whether the employee is active
              * @example true
@@ -1230,6 +1262,12 @@ export interface components {
              */
             lastName?: string;
             /**
+             * Format: date
+             * @description Employee date of birth
+             * @example 1988-04-12
+             */
+            dateOfBirth?: string;
+            /**
              * @description Employee email address
              * @example g.papadopoulos@merimna.gr
              */
@@ -1250,6 +1288,16 @@ export interface components {
              * @example 2026-02-23
              */
             hireDate?: string;
+            /**
+             * @description Emergency contact full name
+             * @example Μαρία Παπαδοπούλου
+             */
+            emergencyContactName?: string;
+            /**
+             * @description Emergency contact phone number
+             * @example +306971112233
+             */
+            emergencyContactPhoneNumber?: string;
             /** @description Employee residential address */
             address?: components["schemas"]["AddressUpdateDTO"];
         };

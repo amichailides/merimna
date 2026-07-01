@@ -9,7 +9,10 @@ import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -26,6 +29,11 @@ public record EmployeeCreateDTO(
         @NotBlank(message = "{lastName.required}", groups = FirstOrder.class)
         @ValidLastName(groups = SecondOrder.class)
         String lastName,
+
+        @Schema(description = "Employee date of birth", example = "1988-04-12")
+        @NotNull(message = "{employee.dateOfBirth.required}", groups = FirstOrder.class)
+        @Past(message = "{employee.dateOfBirth.past}", groups = SecondOrder.class)
+        LocalDate dateOfBirth,
 
         @Schema(description = "Employee email address", example = "g.papadopoulos@merimna.gr")
         @NotBlank(message = "{email.required}", groups = FirstOrder.class)
@@ -49,5 +57,14 @@ public record EmployeeCreateDTO(
         @Schema(description = "Employee hire date", example = "2026-02-23")
         @NotNull(message = "{employee.hireDate.required}", groups = FirstOrder.class)
         @PastOrPresent(message = "{employee.hireDate.pastOrPresent}", groups = SecondOrder.class)
-        LocalDate hireDate
+        LocalDate hireDate,
+
+        @Schema(description = "Emergency contact full name", example = "Μαρία Παπαδοπούλου")
+        @NotBlank(message = "{employee.emergencyContactName.required}", groups = FirstOrder.class)
+        String emergencyContactName,
+
+        @Schema(description = "Emergency contact phone number", example = "+306971112233")
+        @NotBlank(message = "{employee.emergencyContactPhoneNumber.required}", groups = FirstOrder.class)
+        @ValidMobile(groups = SecondOrder.class)
+        String emergencyContactPhoneNumber
 ) {}

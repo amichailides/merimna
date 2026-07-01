@@ -34,12 +34,15 @@ public class EmployeeMapper {
                 .publicId(entity.getPublicId())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
+                .dateOfBirth(entity.getDateOfBirth())
                 .contactEmail(entity.getContactEmail())
                 .mobileNumber(entity.getMobileNumber())
                 .address(addressMapper.toDTO(entity.getAddress()))
                 .positionCode(entity.getPosition().getCode().getValue())
                 .positionDisplayName(entity.getPosition().getDisplayName())
                 .hireDate(entity.getHireDate())
+                .emergencyContactName(entity.getEmergencyContactName())
+                .emergencyContactPhoneNumber(entity.getEmergencyContactPhoneNumber())
                 .assignments(resolveAssignments(entity))
                 .activePlacement(resolveActivePlacement(entity))
                 .active(entity.isActive())
@@ -65,11 +68,14 @@ public class EmployeeMapper {
         return Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
+                .dateOfBirth(dto.dateOfBirth())
                 .contactEmail(dto.contactEmail())
                 .mobileNumber(dto.mobileNumber())
                 .address(addressMapper.toEntity(dto.address()))
                 .position(position)
                 .hireDate(dto.hireDate())
+                .emergencyContactName(dto.emergencyContactName())
+                .emergencyContactPhoneNumber(dto.emergencyContactPhoneNumber())
                 .build();
     }
 
@@ -79,10 +85,13 @@ public class EmployeeMapper {
 
         if (dto.firstName() != null) existing.setFirstName(dto.firstName());
         if (dto.lastName() != null) existing.setLastName(dto.lastName());
+        if (dto.dateOfBirth() != null) existing.setDateOfBirth(dto.dateOfBirth());
         if (dto.contactEmail() != null) existing.setContactEmail(dto.contactEmail());
         if (dto.mobileNumber() != null) existing.setMobileNumber(dto.mobileNumber());
         if (position != null) existing.changePosition(position);
         if (dto.hireDate() != null) existing.setHireDate(dto.hireDate());
+        if (dto.emergencyContactName() != null) existing.setEmergencyContactName(dto.emergencyContactName());
+        if (dto.emergencyContactPhoneNumber() != null) existing.setEmergencyContactPhoneNumber(dto.emergencyContactPhoneNumber());
         if (dto.address() != null) addressMapper.updateEntity(existing.getAddress(), dto.address());
     }
 

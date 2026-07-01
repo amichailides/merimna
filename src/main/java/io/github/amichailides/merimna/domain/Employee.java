@@ -38,6 +38,9 @@ public class Employee {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
     @Column(nullable = false, unique = true)
     private String contactEmail;
 
@@ -54,6 +57,12 @@ public class Employee {
 
     @Column(nullable = false)
     private LocalDate hireDate;
+
+    @Column(nullable = false)
+    private String emergencyContactName;
+
+    @Column(nullable = false)
+    private String emergencyContactPhoneNumber;
 
     @Setter(AccessLevel.NONE)
     @Builder.Default

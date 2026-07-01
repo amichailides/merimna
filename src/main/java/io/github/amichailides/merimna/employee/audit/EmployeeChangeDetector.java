@@ -11,10 +11,17 @@ public class EmployeeChangeDetector {
         EntityChangeSet.Builder builder = EntityChangeSet.builder()
                 .trackIfPresent("firstName", employee.getFirstName(), dto.firstName())
                 .trackIfPresent("lastName", employee.getLastName(), dto.lastName())
+                .trackIfPresent("dateOfBirth", employee.getDateOfBirth(), dto.dateOfBirth())
                 .trackIfPresent("contactEmail", employee.getContactEmail(), dto.contactEmail())
                 .trackIfPresent("mobileNumber", employee.getMobileNumber(), dto.mobileNumber())
                 .trackIfPresent("positionCode", employee.getPosition().getCode().getValue(), newPositionCode)
-                .trackIfPresent("hireDate", employee.getHireDate(), dto.hireDate());
+                .trackIfPresent("hireDate", employee.getHireDate(), dto.hireDate())
+                .trackIfPresent("emergencyContactName", employee.getEmergencyContactName(), dto.emergencyContactName())
+                .trackIfPresent(
+                        "emergencyContactPhoneNumber",
+                        employee.getEmergencyContactPhoneNumber(),
+                        dto.emergencyContactPhoneNumber()
+                );
 
         if (dto.address() != null) {
             builder

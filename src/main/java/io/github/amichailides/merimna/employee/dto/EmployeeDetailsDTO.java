@@ -34,6 +34,13 @@ public record EmployeeDetailsDTO(
         String lastName,
 
         @Schema(
+                description = "Employee date of birth",
+                example = "1988-04-12",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        LocalDate dateOfBirth,
+
+        @Schema(
                 description = "Employee email address",
                 example = "g.papadopoulos@merimna.gr",
                 requiredMode = Schema.RequiredMode.REQUIRED
@@ -46,6 +53,12 @@ public record EmployeeDetailsDTO(
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
         String mobileNumber,
+
+        @Schema(
+                description = "Employee residential address",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        AddressDTO address,
 
         @Schema(
                 description = "Employee position code",
@@ -83,10 +96,18 @@ public record EmployeeDetailsDTO(
         LocalDate hireDate,
 
         @Schema(
-                description = "Employee residential address",
+                description = "Emergency contact full name",
+                example = "Μαρία Παπαδοπούλου",
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
-        AddressDTO address,
+        String emergencyContactName,
+
+        @Schema(
+                description = "Emergency contact phone number",
+                example = "+306971112233",
+                requiredMode = Schema.RequiredMode.REQUIRED
+        )
+        String emergencyContactPhoneNumber,
 
         @Schema(
                 description = "Indicates whether the employee is active",
