@@ -97,7 +97,7 @@ export function EmployeeWorkDetailsSection({
         ? placement.houseUnitDisplayName ?? 'Unknown unit'
         : activeAssignment?.houseUnitDisplayName ?? null
     return (
-        <section className="max-w-md space-y-5">
+        <section className="max-w-xl space-y-5">
             <h2 className="text-[13px] font-medium text-slate-700">
                 Work context
             </h2>
