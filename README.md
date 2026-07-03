@@ -1,4 +1,4 @@
-# Merimna — Supported Living Management API
+# Merimna — Supported Living Management Platform
 
 ## Overview
 
@@ -6,44 +6,70 @@ In supported living environments, important information about residents, staff r
 care-related records can become scattered across paper forms, shared folders, spreadsheets, and informal communication.
 That can create gaps in accountability, consistency, and access control.
 
-Inspired by real supported living workflows, **Merimna** is a Spring Boot REST API that models these operations in a
-structured way, with explicit domain rules, controlled access, and traceability for sensitive changes.
+Inspired by real supported living workflows, **Merimna** is a full-stack management platform
+for care operations: employee management, house-unit responsibilities, temporary coverage,
+resident records, and audit history for sensitive changes.
 
-## Key Features & Architecture
+## Preview
 
-- **Authentication & authorization:** Stateless JWT authentication with short-lived access tokens and rotating,
-  database-backed opaque refresh tokens. Logout invalidates the submitted refresh token, while password changes,
-  password resets, and refresh token reuse detection revoke all active refresh tokens for the affected user. Browser
-  clients receive tokens via HttpOnly cookies; non-browser clients fall back to response body delivery.
+> Work in progress — the frontend is actively being refined.
 
-- **Placement-aware access control:** Active placements temporarily extend an employee's access to beneficiary records
-  of another house unit, with scope resolved at runtime from active assignments and placements.
+### Admin employee workflow
 
-- **Rich domain model:** Core business workflows, such as beneficiary discharge and employee termination, are captured
-  through dedicated domain methods.
+A short preview of the current admin flow: authentication, employee listing, Greek-aware search, and employee detail
+context.
 
-- **Assignment & placement lifecycle:** Domain methods handle lifecycle transitions, while validation policies use
-  repository-level overlap checks to prevent invalid date ranges and conflicting active assignments or placements.
+<div style="text-align: center;">
+  <img src="docs/screenshots/merimna-demo.gif" alt="Merimna admin employee workflow" width="760">
+</div>
 
-- **Greek-aware search:** Custom JPA Specifications support accent-insensitive and case-insensitive Greek search using
-  PostgreSQL `unaccent`, including Greek-specific variations such as σ/ς. For example, searching for `Σαββας` can match
-  `Σάββας`, `ΣΑΒΒΑΣ`, and `Σαββας`.
+## Key Features
 
-- **Centralized error handling:** Domain and validation exceptions are mapped by a global `@RestControllerAdvice` to
-  consistent `ApiResponse` error payloads with stable `ErrorCode` values.
+### Product workflows
 
-- **Audit logging:** Important domain, user-management, and security-sensitive events are captured through application
-  events and persisted as structured audit records, keeping audit concerns centralized rather than scattered across
-  services.
+- **Employee management:** Admin workflow for listing, filtering, viewing, terminating, and reactivating employees.
+- **House-unit responsibilities:** Employees are assigned to house units, defining their normal area of responsibility.
+- **Temporary coverage:** Placements allow employees to temporarily work in another house unit without changing their
+  official assignment.
+- **Resident records:** Beneficiary information and related care records are managed with house-unit-aware access rules.
+- **Audit history:** Important changes are recorded as structured audit events.
 
-- **Domain validation:** Custom validation annotations and validation group sequencing enforce domain rules while
-  reducing noisy error output.
+### Access control & security
 
-- **User & employee linkage:** User accounts are linked one-to-one with employees, and account state follows the
-  employee lifecycle, such as automatic deactivation on termination.
+- **JWT authentication:** Short-lived access tokens with rotating, database-backed opaque refresh tokens, HttpOnly
+  cookie support, logout invalidation, and reuse detection.
+- **Role-based authorization:** Permissions control access to employee, beneficiary, assignment, placement, user, and
+  reference-data workflows.
+- **Placement-aware access:** Active placements temporarily extend what an employee can access.
+- **Account lifecycle:** User accounts are linked to employees and follow employee status changes, such as automatic
+  deactivation on termination.
 
-- **Database versioning:** Flyway migrations manage schema changes, keeping database structure predictable and
-  controlled.
+### Technical foundations
+
+- **Spring Boot REST API:** Backend built around service-layer workflows and clear domain boundaries.
+- **Domain-focused workflows:** Important lifecycle actions, such as beneficiary discharge and employee termination, are
+  modeled through dedicated domain methods instead of simple field updates.
+- **Assignment & placement validation:** Repository-level overlap checks prevent invalid date ranges and conflicting
+  active assignments or placements.
+- **PostgreSQL + Flyway:** Database schema changes are versioned through migrations.
+- **Validation & error handling:** Custom validation rules with domain and validation errors mapped centrally to
+  predictable response payloads and stable error codes.
+- **Greek-aware search:** Accent-insensitive and case-insensitive search for Greek names, including `σ` / `ς`
+  normalization.
+- **OpenAPI integration:** API docs and generated frontend TypeScript types keep frontend/backend contracts aligned.
+
+## Architecture Notes
+
+- **Refresh token lifecycle:** Refresh tokens are stored as opaque database-backed tokens and rotated on use. Logout
+  invalidates the submitted refresh token.
+- **Token revocation:** Password changes, password resets, and refresh token reuse detection revoke all active refresh
+  tokens for the affected user.
+- **Browser and API clients:** Browser clients use HttpOnly cookies for refresh tokens, while non-browser clients can
+  receive tokens in the response body.
+- **Placement-aware scope resolution:** Employee access is resolved at runtime from active assignments and temporary
+  placements, so coverage changes can affect access without changing the employee's official house-unit assignment.
+- **Audit event structure:** Important domain and security-sensitive actions are captured through application events and
+  persisted as structured audit records, keeping audit concerns outside the main service logic.
 
 ## Development Context
 
@@ -56,13 +82,31 @@ to keep the development workflow structured and the project's evolution visible.
 
 ## Technical Stack
 
-- **Backend:** Java 21, Spring Boot 4.x
+### Backend
+
+- **Language:** Java 21
+- **Framework:** Spring Boot 4.x
 - **Security:** Spring Security 7.x, JWT, Argon2 password hashing
-- **Data Persistence:** Spring Data JPA, PostgreSQL, Flyway
-- **Build Tool:** Maven
+- **Data persistence:** Spring Data JPA, PostgreSQL, Flyway
+- **Validation:** Jakarta Bean Validation / Hibernate Validator
+- **API documentation:** Springdoc OpenAPI
+- **Build tool:** Maven
+
+### Frontend
+
+- **Framework:** React
+- **Language:** TypeScript
+- **Build tool:** Vite
+- **Styling:** Tailwind CSS, shadcn/ui
+- **State management:** Zustand
+- **Data fetching:** TanStack Query
+- **Forms & validation:** React Hook Form, Zod
+- **HTTP client:** Axios
+- **API types:** OpenAPI-generated TypeScript types
+
+### Development & runtime
+
 - **Containerization:** Docker, Docker Compose
-- **API Documentation:** Springdoc OpenAPI
-- **Validation Engine:** Jakarta Bean Validation (Hibernate Validator)
 
 ## API Overview
 
@@ -101,6 +145,10 @@ temporary placements, user accounts, and supporting reference data.
 - **POST** `/api/employees/{publicId}/terminate`
 - **POST** `/api/employees/{publicId}/reactivate`
 
+### Employee Activity
+
+- **GET** `/api/employees/{employeePublicId}/activity`
+
 ### Employee Assignments
 
 - **GET** `/api/employees/{employeePublicId}/assignments`
@@ -109,7 +157,7 @@ temporary placements, user accounts, and supporting reference data.
 - **POST** `/api/employees/{employeePublicId}/assignments/{assignmentPublicId}/cancel`
 - **POST** `/api/employees/{employeePublicId}/assignments/{assignmentPublicId}/terminate`
 
-### Employee Placements
+### Placements
 
 - **GET** `/api/placements`
 - **POST** `/api/placements`
@@ -158,18 +206,45 @@ cd merimna
 2. **Start the application:**
 
 ```bash
-docker compose up --build
+docker compose up -d --build
 ```
 
-The API will be available at `http://localhost:8080`.
+3. **Load demo data:**
+
+```bash
+docker compose exec -T postgres psql -U merimna_user -d merimna_db < dev/demo-data.sql
+```
+
+4. **Sign in with the demo admin account:**
+
+```text
+Email: admin@merimna.local
+Password: admin123
+```
+
+The backend API will be available at:
+
+```text
+http://localhost:8080
+```
+
+The frontend will be available at:
+
+```text
+http://localhost:5173
+```
+
+API documentation is available at:
+
+```text
+http://localhost:8080/api/scalar
+```
 
 ## Future Vision
 
-- **Care activity records:** Add staff-facing forms for recording beneficiary care activities, incidents, and daily
-  notes.
-- **Authorization testing:** Expand integration tests for placement-aware access control and other critical security
-  flows.
-- **Audit expansion:** Extend audit coverage to additional domain events and sensitive data operations.
-- **Staff dashboard:** Build a frontend application focused on common staff workflows in supported living environments.
-- **Refresh token hardening:** Expand bulk refresh token revocation flows, such as password changes and user
-  deactivation.
+- **Care activity records:** Add staff-facing forms for recording beneficiary care activities, incidents, and daily notes.
+- **Assignments and placements UI:** Expand the frontend with dedicated screens for managing assignment and placement lifecycles.
+- **Beneficiary management UI:** Build the frontend workflow for resident records and related care information.
+- **Authorization testing:** Expand integration tests for placement-aware access control and other critical security flows.
+- **Audit expansion:** Extend audit coverage and activity views to more domain events and sensitive data operations.
+- **Admin dashboard:** Add operational summaries, recent events, and follow-up tasks for administrators.
