@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+
 import { ArrowLeft } from 'lucide-react'
 
 import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
@@ -9,6 +10,8 @@ import { EmployeeWorkDetailsSection } from '@/components/employees/EmployeeWorkD
 import { EmployeeMetadataRail } from '@/components/employees/EmployeeMetadataRail'
 import { useState } from 'react'
 import { EmployeeAssignmentsSection } from '@/components/employees/EmployeeAssignmentsSection'
+import { EmployeePlacementsSection } from '@/components/employees/EmployeePlacementsSection'
+import { useEmployeePlacements } from '@/api/useEmployeePlacements'
 
 const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
 
@@ -29,6 +32,12 @@ export function EmployeeDetailsPage() {
         loading: activityLoading,
         error: activityError,
     } = useEmployeeActivity(publicId)
+
+    const {
+        placements,
+        loading: placementsLoading,
+        error: placementsError,
+    } = useEmployeePlacements(publicId)
 
     if (loading) {
         return (
@@ -113,6 +122,14 @@ export function EmployeeDetailsPage() {
 
                     {activeTab === 'Assignments' && (
                         <EmployeeAssignmentsSection assignments={employee.assignments ?? []} />
+                    )}
+
+                    {activeTab === 'Placements' && (
+                        <EmployeePlacementsSection
+                            placements={placements}
+                            loading={placementsLoading}
+                            error={placementsError}
+                        />
                     )}
                 </main>
 

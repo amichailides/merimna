@@ -19,3 +19,12 @@ export type EmployeePositionReadOnlyDTO =
 
 export type HouseUnitReadOnlyDTO =
   components['schemas']['HouseUnitReadOnlyDTO']
+
+export type EmployeePlacementReadOnlyDTO =
+  components['schemas']['EmployeePlacementReadOnlyDTO']
+
+export type EmployeePlacementSearchDTO =
+  components['schemas']['EmployeePlacementSearchDTO']
+
+export type PageResponseEmployeePlacementReadOnlyDTO =
+  components['schemas']['PageResponseEmployeePlacementReadOnlyDTO']
