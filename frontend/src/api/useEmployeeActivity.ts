@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { getEmployeeActivity } from './employeeActivityApi'
 import type { EmployeeActivityDTO } from './types'
 
+interface UseEmployeeActivityOptions {
+    size?: number
+}
+
 interface UseEmployeeActivityResult {
     activities: EmployeeActivityDTO[]
     loading: boolean
@@ -10,10 +14,13 @@ interface UseEmployeeActivityResult {
 
 export function useEmployeeActivity(
     employeePublicId: string | undefined,
+    options: UseEmployeeActivityOptions = {},
 ): UseEmployeeActivityResult {
     const [activities, setActivities] = useState<EmployeeActivityDTO[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    const size = options.size ?? 5
 
     useEffect(() => {
         let ignore = false
@@ -28,7 +35,7 @@ export function useEmployeeActivity(
         setLoading(true)
         setError(null)
 
-        getEmployeeActivity(employeePublicId)
+        getEmployeeActivity(employeePublicId, { page: 0, size })
             .then(page => {
                 if (!ignore) {
                     setActivities(page.content ?? [])
@@ -48,7 +55,7 @@ export function useEmployeeActivity(
         return () => {
             ignore = true
         }
-    }, [employeePublicId])
+    }, [employeePublicId, size])
 
     return { activities, loading, error }
 }

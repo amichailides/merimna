@@ -12,6 +12,7 @@ import { useState } from 'react'
 import { EmployeeAssignmentsSection } from '@/components/employees/EmployeeAssignmentsSection'
 import { EmployeePlacementsSection } from '@/components/employees/EmployeePlacementsSection'
 import { useEmployeePlacements } from '@/api/useEmployeePlacements'
+import { EmployeeActivitySection } from '@/components/employees/EmployeeActivitySection'
 
 const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
 
@@ -31,7 +32,9 @@ export function EmployeeDetailsPage() {
         activities,
         loading: activityLoading,
         error: activityError,
-    } = useEmployeeActivity(publicId)
+    } = useEmployeeActivity(employee?.publicId, {
+        size: activeTab === 'Activity' ? 20 : 5,
+    })
 
     const {
         placements,
@@ -129,6 +132,14 @@ export function EmployeeDetailsPage() {
                             placements={placements}
                             loading={placementsLoading}
                             error={placementsError}
+                        />
+                    )}
+
+                    {activeTab === 'Activity' && (
+                        <EmployeeActivitySection
+                            activities={activities}
+                            loading={activityLoading}
+                            error={activityError}
                         />
                     )}
                 </main>

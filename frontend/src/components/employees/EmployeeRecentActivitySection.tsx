@@ -17,28 +17,8 @@ import {
 import {
     formatActivitySubtitle,
     formatActivityTimestamp,
+    formatActivityTitle,
 } from './employeeActivityFormatters'
-
-type AuditAction = NonNullable<EmployeeActivityDTO['action']>
-
-const ACTION_META: Partial<Record<AuditAction, { label: string }>> = {
-    EMPLOYEE_CREATED: { label: 'Employee created' },
-    EMPLOYEE_UPDATED: { label: 'Employee updated' },
-    EMPLOYEE_TERMINATED: { label: 'Employment terminated' },
-    EMPLOYEE_REACTIVATED: { label: 'Employee reactivated' },
-    ASSIGNMENT_CREATED: { label: 'Assignment created' },
-    ASSIGNMENT_TERMINATED: { label: 'Assignment terminated' },
-    ASSIGNMENT_CANCELLED: { label: 'Assignment cancelled' },
-    PLACEMENT_CREATED: { label: 'Placement started' },
-    PLACEMENT_TERMINATED: { label: 'Placement ended' },
-}
-
-function humanizeAction(action: string): string {
-    return action
-        .toLowerCase()
-        .replaceAll('_', ' ')
-        .replace(/^./, c => c.toUpperCase())
-}
 
 interface Props {
     activities: EmployeeActivityDTO[]
@@ -51,7 +31,6 @@ export function EmployeeRecentActivitySection({ activities, loading, error }: Pr
         <section className="max-w-xl space-y-4">
             <div>
                 <div className="flex items-center gap-2">
-
                     <h2 className="text-[13px] font-medium text-slate-700">
                         Recent activity
                     </h2>
@@ -85,16 +64,6 @@ export function EmployeeRecentActivitySection({ activities, loading, error }: Pr
             {!loading && !error && activities.length > 0 && (
                 <Timeline defaultValue={0} className="mt-4">
                     {activities.map((activity, index) => {
-                        const action = activity.action
-
-                        const meta = action
-                            ? ACTION_META[action] ?? {
-                                label: humanizeAction(action),
-                            }
-                            : {
-                                label: 'Activity recorded',
-                            }
-
                         const subtitle = formatActivitySubtitle(activity)
 
                         return (
@@ -105,7 +74,7 @@ export function EmployeeRecentActivitySection({ activities, loading, error }: Pr
                             >
                                 <TimelineHeader>
                                     <TimelineTitle className="text-[14.5px] font-semibold leading-5 text-slate-950/80">
-                                        {meta.label}
+                                        {formatActivityTitle(activity)}
                                     </TimelineTitle>
 
                                     {subtitle && (

@@ -3,10 +3,62 @@ import type { EmployeeActivityDTO } from '@/api/types'
 type AuditAction = NonNullable<EmployeeActivityDTO['action']>
 type ActivityMetadata = EmployeeActivityDTO['metadata']
 
+export interface ActivityDetailRow {
+    label: string
+    value?: string
+    before?: string
+    after?: string
+}
+
+const ACTION_LABELS: Partial<Record<AuditAction, string>> = {
+    EMPLOYEE_CREATED: 'Employee created',
+    EMPLOYEE_UPDATED: 'Employee updated',
+    EMPLOYEE_TERMINATED: 'Employment terminated',
+    EMPLOYEE_REACTIVATED: 'Employee reactivated',
+    ASSIGNMENT_CREATED: 'Assignment created',
+    ASSIGNMENT_TERMINATED: 'Assignment terminated',
+    ASSIGNMENT_CANCELLED: 'Assignment cancelled',
+    PLACEMENT_CREATED: 'Placement started',
+    PLACEMENT_TERMINATED: 'Placement ended',
+}
+
+const ENTITY_LABELS: Record<string, string> = {
+    EMPLOYEE: 'Employee',
+    ASSIGNMENT: 'Assignment',
+    PLACEMENT: 'Placement',
+}
+
 function asMetadataRecord(metadata: ActivityMetadata): Record<string, unknown> | null {
     if (!metadata || typeof metadata !== 'object') return null
 
     return metadata as Record<string, unknown>
+}
+
+function humanizeAction(action: string): string {
+    return action
+        .toLowerCase()
+        .replaceAll('_', ' ')
+        .replace(/^./, c => c.toUpperCase())
+}
+
+function humanizeValue(value: unknown): string | null {
+    if (value === null || value === undefined || value === '') return null
+
+    if (typeof value === 'string') {
+        const date = formatDate(value)
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(value) && date) {
+            return date
+        }
+
+        return value
+    }
+
+    if (typeof value === 'number' || typeof value === 'boolean') {
+        return String(value)
+    }
+
+    return null
 }
 
 function formatDate(value: unknown): string | null {
@@ -26,6 +78,15 @@ export function formatActivityTimestamp(isoInstant: string | undefined): string 
         day: 'numeric',
         month: 'short',
         year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    })
+}
+
+export function formatActivityTimeOnly(isoInstant: string | undefined): string {
+    if (!isoInstant) return ''
+
+    return new Date(isoInstant).toLocaleTimeString('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
     })
@@ -61,6 +122,12 @@ function formatFieldName(fieldName: string): string {
         .replace(/([A-Z])/g, ' $1')
         .toLowerCase()
         .trim()
+}
+
+function formatFieldLabel(fieldName: string): string {
+    const formatted = formatFieldName(fieldName)
+
+    return formatted.replace(/^./, c => c.toUpperCase())
 }
 
 function formatEmployeeUpdated(metadata: ActivityMetadata): string | null {
@@ -202,6 +269,79 @@ function formatPlacementTerminated(metadata: ActivityMetadata): string {
     return 'Temporary placement was ended'
 }
 
+function getChangeDetailRows(metadata: ActivityMetadata): ActivityDetailRow[] {
+    const metadataRecord = asMetadataRecord(metadata)
+    const changes = metadataRecord?.changes
+
+    if (!Array.isArray(changes)) return []
+
+    const rows: ActivityDetailRow[] = []
+
+    changes.forEach(change => {
+        if (!change || typeof change !== 'object') return
+
+        const obj = change as Record<string, unknown>
+        const fieldName = typeof obj.fieldName === 'string' ? obj.fieldName : null
+
+        if (!fieldName) return
+
+        rows.push({
+            label: formatFieldLabel(fieldName),
+            before: humanizeValue(obj.oldValue) ?? '—',
+            after: humanizeValue(obj.newValue) ?? '—',
+        })
+    })
+
+    return rows
+}
+
+function getMetadataDetailRows(metadata: ActivityMetadata): ActivityDetailRow[] {
+    const metadataRecord = asMetadataRecord(metadata)
+
+    if (!metadataRecord) return []
+
+    const rows: ActivityDetailRow[] = []
+
+    const houseUnitDisplayName = humanizeValue(metadataRecord.houseUnitDisplayName)
+    const reasonDisplayName = humanizeValue(metadataRecord.reasonDisplayName)
+    const startDate = humanizeValue(metadataRecord.startDate)
+    const endDate = humanizeValue(metadataRecord.endDate)
+
+    if (houseUnitDisplayName) {
+        rows.push({ label: 'House unit', value: houseUnitDisplayName })
+    }
+
+    if (reasonDisplayName) {
+        rows.push({ label: 'Reason', value: reasonDisplayName })
+    }
+
+    if (startDate) {
+        rows.push({ label: 'Start date', value: startDate })
+    }
+
+    if (endDate) {
+        rows.push({ label: 'End date', value: endDate })
+    }
+
+    return rows
+}
+
+export function formatActivityTitle(activity: EmployeeActivityDTO): string {
+    const action = activity.action as AuditAction | undefined
+
+    if (!action) return 'Activity recorded'
+
+    return ACTION_LABELS[action] ?? humanizeAction(action)
+}
+
+export function formatActivityEntityLabel(activity: EmployeeActivityDTO): string {
+    const entityType = activity.entityType
+
+    if (!entityType) return 'Activity'
+
+    return ENTITY_LABELS[entityType] ?? humanizeAction(entityType)
+}
+
 export function formatActivitySubtitle(activity: EmployeeActivityDTO): string | null {
     const action = activity.action as AuditAction | undefined
     const metadata = activity.metadata
@@ -239,4 +379,21 @@ export function formatActivitySubtitle(activity: EmployeeActivityDTO): string | 
         default:
             return null
     }
+}
+
+export function getActivityDetails(activity: EmployeeActivityDTO): ActivityDetailRow[] {
+    const action = activity.action as AuditAction | undefined
+
+    if (!action || !activity.metadata) return []
+
+    if (action === 'EMPLOYEE_UPDATED') {
+        return getChangeDetailRows(activity.metadata)
+    }
+
+    return getMetadataDetailRows(activity.metadata)
+}
+
+
+export function formatActivityDateLabel(isoInstant: string | undefined): string {
+    return formatActivityDateOnly(isoInstant) ?? 'Unknown date'
 }
