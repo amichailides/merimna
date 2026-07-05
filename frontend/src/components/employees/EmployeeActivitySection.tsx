@@ -84,20 +84,32 @@ function EmployeeActivityRow({ activity, step }: ActivityRowProps) {
                 </button>
 
                 {expanded && hasDetails && (
-                    <div className="mt-3 space-y-2.5">
-                        {details.map(detail => (
-                            <div key={detail.label} className="text-[12px] leading-5">
-                                <div className="font-medium text-slate-500">
-                                    {detail.label}
-                                </div>
+                    <div className="mt-3 border-l border-slate-100 pl-3">
+                        {details.some(detail => detail.value !== undefined) && (
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                                {details
+                                    .filter(detail => detail.value !== undefined)
+                                    .map(detail => (
+                                        <div key={detail.label} className="min-w-0">
+                                            <div className="text-[11px] font-medium text-slate-400">
+                                                {detail.label}
+                                            </div>
+                                            <div className="mt-0.5 truncate text-[12px] leading-5 text-slate-600">
+                                                {detail.value}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
 
-                                {detail.value !== undefined && (
-                                    <div className="mt-0.5 text-slate-600">
-                                        {detail.value}
+                        {details
+                            .filter(detail => detail.before !== undefined || detail.after !== undefined)
+                            .map(detail => (
+                                <div key={detail.label} className="text-[12px] leading-5">
+                                    <div className="font-medium text-slate-500">
+                                        {detail.label}
                                     </div>
-                                )}
 
-                                {(detail.before !== undefined || detail.after !== undefined) && (
                                     <div className="mt-0.5 flex items-center gap-2">
                                         <span className="text-slate-400 line-through">
                                             {detail.before ?? '—'}
@@ -107,9 +119,8 @@ function EmployeeActivityRow({ activity, step }: ActivityRowProps) {
                                             {detail.after ?? '—'}
                                         </span>
                                     </div>
-                                )}
-                            </div>
-                        ))}
+                                </div>
+                            ))}
                     </div>
                 )}
             </TimelineHeader>
