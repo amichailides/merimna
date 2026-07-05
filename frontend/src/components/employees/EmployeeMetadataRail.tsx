@@ -41,7 +41,7 @@ type Props = {
 
 export function EmployeeMetadataRail({ employee }: Props) {
     return (
-        <aside className="self-start">
+        <aside className="self-start pt-2">
             <div className="space-y-7 border-l border-slate-100 pl-5">
                 <section className="space-y-4">
                     <h2 className="text-[13px] font-medium text-slate-700">
