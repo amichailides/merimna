@@ -7,18 +7,18 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
-public class EmployeePlacementInvalidEndDate extends BaseDomainException {
+public class EmployeePlacementInvalidEndDateException extends BaseDomainException {
 
-    public EmployeePlacementInvalidEndDate(LocalDate startDate, LocalDate endDate) {
+    public EmployeePlacementInvalidEndDateException(LocalDate startDate, LocalDate endDate) {
         super(ErrorCode.EMPLOYEE_PLACEMENT_INVALID_END_DATE, Map.of(
                 "startDate", startDate,
                 "endDate", endDate
         ));
     }
 
-    public EmployeePlacementInvalidEndDate(UUID placementPublicId,
-                                           LocalDate startDate,
-                                           LocalDate endDate) {
+    public EmployeePlacementInvalidEndDateException(UUID placementPublicId,
+                                                    LocalDate startDate,
+                                                    LocalDate endDate) {
         super(ErrorCode.EMPLOYEE_PLACEMENT_INVALID_END_DATE, Map.of(
                 "placementPublicId", placementPublicId,
                 "startDate", startDate,

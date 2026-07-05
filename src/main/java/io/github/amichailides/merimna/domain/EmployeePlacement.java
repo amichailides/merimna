@@ -1,7 +1,7 @@
 package io.github.amichailides.merimna.domain;
 
-import io.github.amichailides.merimna.placement.exception.EmployeePlacementAlreadyClosed;
-import io.github.amichailides.merimna.placement.exception.EmployeePlacementInvalidEndDate;
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementAlreadyClosedException;
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementInvalidEndDateException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -60,25 +60,27 @@ public class EmployeePlacement {
         return p;
     }
 
-    public void close(LocalDate end) {
-        Objects.requireNonNull(end, "endDate is required");
+    public void close(LocalDate endDate) {
+        Objects.requireNonNull(endDate, "endDate is required");
 
-        if (this.endDate != null && this.endDate.isBefore(LocalDate.now())) {
-            throw new EmployeePlacementAlreadyClosed(
+        LocalDate today = LocalDate.now();
+
+        if (this.endDate != null && !this.endDate.isAfter(today)) {
+            throw new EmployeePlacementAlreadyClosedException(
                     this.publicId,
                     this.endDate
             );
         }
 
-        if (end.isBefore(this.startDate)) {
-            throw new EmployeePlacementInvalidEndDate(
+        if (endDate.isBefore(this.startDate)) {
+            throw new EmployeePlacementInvalidEndDateException(
                     this.publicId,
                     this.startDate,
-                    end
+                    endDate
             );
         }
 
-        this.endDate = end;
+        this.endDate = endDate;
     }
 
     public boolean isActive(LocalDate now) {
@@ -92,7 +94,7 @@ public class EmployeePlacement {
         Objects.requireNonNull(start, "startDate is required");
 
         if (end != null && end.isBefore(start)) {
-            throw new EmployeePlacementInvalidEndDate(start, end);
+            throw new EmployeePlacementInvalidEndDateException(start, end);
         }
     }
 

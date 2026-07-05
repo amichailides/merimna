@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
-public class EmployeePlacementAlreadyClosed extends BaseDomainException {
-    public EmployeePlacementAlreadyClosed(UUID placementPublicId, LocalDate currentEndDate) {
+public class EmployeePlacementAlreadyClosedException extends BaseDomainException {
+    public EmployeePlacementAlreadyClosedException(UUID placementPublicId, LocalDate currentEndDate) {
         super(ErrorCode.EMPLOYEE_PLACEMENT_ALREADY_CLOSED, Map.of(
                 "placementPublicId", placementPublicId,
                 "currentEndDate", currentEndDate

@@ -1,10 +1,9 @@
 package io.github.amichailides.merimna.placement;
 
 import io.github.amichailides.merimna.domain.Employee;
-import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.exception.EmployeeInactiveException;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementCreateDTO;
-import io.github.amichailides.merimna.placement.exception.EmployeePlacementInvalidEndDate;
+import io.github.amichailides.merimna.placement.exception.EmployeePlacementInvalidEndDateException;
 import io.github.amichailides.merimna.placement.exception.EmployeePlacementOverlapException;
 import io.github.amichailides.merimna.placement.exception.EmployeePlacementSameAsActiveAssignmentException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,7 @@ public class EmployeePlacementValidator {
 
     private void validateDateRange(LocalDate start, LocalDate end) {
         if (end != null && end.isBefore(start)) {
-            throw new EmployeePlacementInvalidEndDate(start, end);
+            throw new EmployeePlacementInvalidEndDateException(start, end);
         }
     }
 
