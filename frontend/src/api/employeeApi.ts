@@ -3,6 +3,7 @@ import { axiosInstance } from './axiosInstance'
 import type {
   EmployeeDetailsDTO,
   EmployeeSearchDTO,
+  EmployeeUpdateDTO,
   PageResponseEmployeeListDTO,
 } from './types'
 
@@ -22,7 +23,7 @@ export async function getEmployees(
       params: {
         ...criteria,
         ...pageParams
-      },   
+      },
     }
   )
 
@@ -34,6 +35,18 @@ export async function getEmployeeByPublicId(
 ): Promise<EmployeeDetailsDTO> {
   const response = await axiosInstance.get<EmployeeDetailsDTO>(
     `/employees/${publicId}`
+  )
+
+  return response.data
+}
+
+export async function updateEmployee(
+  publicId: string,
+  payload: EmployeeUpdateDTO
+): Promise<EmployeeDetailsDTO> {
+  const response = await axiosInstance.patch<EmployeeDetailsDTO>(
+    `/employees/${publicId}`,
+    payload
   )
 
   return response.data

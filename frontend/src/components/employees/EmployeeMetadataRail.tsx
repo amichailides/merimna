@@ -1,15 +1,13 @@
+
 import type { EmployeeDetailsDTO } from '@/api/types'
 import { formatAddress } from '@/lib/formatAddress'
 import { formatDate } from '@/lib/formatDate'
 import {
-    FloatingPanelBody,
     FloatingPanelContent,
-    FloatingPanelFooter,
-    FloatingPanelForm,
-    FloatingPanelHeader,
     FloatingPanelRoot,
     FloatingPanelTrigger,
 } from '@/components/ui/floating-panel'
+import { EmployeeMetadataEditForm } from './EmployeeMetadataEditForm'
 
 function DetailItem({
     label,
@@ -46,155 +44,108 @@ function DetailItem({
 
 type Props = {
     employee: EmployeeDetailsDTO
+    onEmployeeUpdated?: () => void | Promise<void>
 }
 
-export function EmployeeMetadataRail({ employee }: Props) {
+export function EmployeeMetadataRail({
+    employee,
+    onEmployeeUpdated }: Props) {
+
     return (
         <aside className="self-start pt-2">
-            <div className="space-y-7 border-l border-slate-100 pl-5">
-                <section className="space-y-4">
+            <FloatingPanelRoot>
+                <div className="space-y-7 border-l border-slate-100 pl-5">
                     <div className="flex items-center justify-between gap-4">
+                        <h2 className="text-[13px] font-medium text-slate-700">
+                            Details
+                        </h2>
+
+                        <FloatingPanelTrigger
+                            title="Edit employee details"
+                            className="h-auto border-0 bg-transparent px-0 text-[12px] font-medium text-slate-400 shadow-none hover:text-slate-700"
+                        >
+                            Edit
+                        </FloatingPanelTrigger>
+                    </div>
+
+                    <FloatingPanelContent align="center" className="w-[420px] rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <EmployeeMetadataEditForm
+                            employee={employee}
+                            onEmployeeUpdated={onEmployeeUpdated}
+                        />
+                    </FloatingPanelContent>
+
+                    <section className="space-y-4">
                         <h2 className="text-[13px] font-medium text-slate-700">
                             Contact
                         </h2>
 
-                        <FloatingPanelRoot>
-                            <FloatingPanelTrigger
-                                title="Edit contact"
-                                className="h-auto border-0 bg-transparent px-0 text-[12px] font-medium text-slate-400 shadow-none hover:text-slate-700"
-                            >
-                                Edit
-                            </FloatingPanelTrigger>
+                        <dl className="space-y-4">
+                            <DetailItem
+                                label="Email"
+                                value={employee.contactEmail}
+                                href={employee.contactEmail ? `mailto:${employee.contactEmail}` : undefined}
+                            />
 
-                            <FloatingPanelContent align="center" className="w-[360px] rounded-xl border border-slate-200 bg-white shadow-sm">
-                                <FloatingPanelForm
-                                    className="min-h-[320px]"
-                                    onSubmit={() => {
-                                        console.log('save contact')
-                                    }}
-                                >
-                                    <FloatingPanelHeader className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                                        <div>
-                                            <div className="text-[13px] font-medium text-slate-800">
-                                                Edit contact
-                                            </div>
-                                            <p className="mt-0.5 text-[12px] font-normal text-slate-400">
-                                                Update this employee’s contact details.
-                                            </p>
-                                        </div>                                  
-                                    </FloatingPanelHeader>
+                            <DetailItem
+                                label="Mobile"
+                                value={employee.mobileNumber}
+                                href={employee.mobileNumber ? `tel:${employee.mobileNumber}` : undefined}
+                            />
 
-                                    <FloatingPanelBody className="space-y-4 px-4 py-4">
-                                        <label className="block space-y-1.5">
-                                            <span className="text-[11px] text-slate-400">Email</span>
-                                            <input
-                                                defaultValue={employee.contactEmail ?? ''}
-                                                className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                            />
-                                        </label>
+                            <DetailItem
+                                label="Address"
+                                value={formatAddress(employee.address)}
+                            />
+                        </dl>
+                    </section>
 
-                                        <label className="block space-y-1.5">
-                                            <span className="text-[11px] text-slate-400">Mobile</span>
-                                            <input
-                                                defaultValue={employee.mobileNumber ?? ''}
-                                                className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                            />
-                                        </label>
+                    <div className="border-t border-slate-100" />
 
-                                        <label className="block space-y-1.5">
-                                            <span className="text-[11px] text-slate-400">Address</span>
-                                            <input
-                                                defaultValue={formatAddress(employee.address) ?? ''}
-                                                className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                            />
-                                        </label>
-                                    </FloatingPanelBody>
+                    <section className="space-y-4">
+                        <h2 className="text-[13px] font-medium text-slate-700">
+                            Emergency contact
+                        </h2>
 
-                                    <FloatingPanelFooter className="mt-auto justify-end gap-2 border-t border-slate-100 px-4 py-3">
-                                        <button
-                                            type="button"
-                                            className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800"
-                                        >
-                                            Cancel
-                                        </button>
+                        <dl className="space-y-4">
+                            <DetailItem
+                                label="Name"
+                                value={employee.emergencyContactName}
+                            />
 
-                                        <button
-                                            type="submit"
-                                            className="rounded-lg bg-teal-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-teal-700"
-                                        >
-                                            Save changes
-                                        </button>
-                                    </FloatingPanelFooter>
-                                </FloatingPanelForm>
-                            </FloatingPanelContent>
-                        </FloatingPanelRoot>
-                    </div>
+                            <DetailItem
+                                label="Phone"
+                                value={employee.emergencyContactPhoneNumber}
+                                href={
+                                    employee.emergencyContactPhoneNumber
+                                        ? `tel:${employee.emergencyContactPhoneNumber}`
+                                        : undefined
+                                }
+                            />
+                        </dl>
+                    </section>
 
-                    <dl className="space-y-4">
-                        <DetailItem
-                            label="Email"
-                            value={employee.contactEmail}
-                            href={employee.contactEmail ? `mailto:${employee.contactEmail}` : undefined}
-                        />
+                    <div className="border-t border-slate-100" />
 
-                        <DetailItem
-                            label="Mobile"
-                            value={employee.mobileNumber}
-                            href={employee.mobileNumber ? `tel:${employee.mobileNumber}` : undefined}
-                        />
+                    <section className="space-y-4">
+                        <h2 className="text-[13px] font-medium text-slate-700">
+                            Employment
+                        </h2>
 
-                        <DetailItem
-                            label="Address"
-                            value={formatAddress(employee.address)}
-                        />
-                    </dl>
-                </section>
+                        <dl className="space-y-4">
+                            <DetailItem
+                                label="Hire date"
+                                value={formatDate(employee.hireDate)}
+                            />
 
-                <div className="border-t border-slate-100" />
-
-                <section className="space-y-4">
-                    <h2 className="text-[13px] font-medium text-slate-700">
-                        Emergency contact
-                    </h2>
-
-                    <dl className="space-y-4">
-                        <DetailItem
-                            label="Name"
-                            value={employee.emergencyContactName}
-                        />
-
-                        <DetailItem
-                            label="Phone"
-                            value={employee.emergencyContactPhoneNumber}
-                            href={
-                                employee.emergencyContactPhoneNumber
-                                    ? `tel:${employee.emergencyContactPhoneNumber}`
-                                    : undefined
-                            }
-                        />
-                    </dl>
-                </section>
-
-                <div className="border-t border-slate-100" />
-
-                <section className="space-y-4">
-                    <h2 className="text-[13px] font-medium text-slate-700">
-                        Employment
-                    </h2>
-
-                    <dl className="space-y-4">
-                        <DetailItem
-                            label="Hire date"
-                            value={formatDate(employee.hireDate)}
-                        />
-
-                        <DetailItem
-                            label="Date of birth"
-                            value={formatDate(employee.dateOfBirth)}
-                        />
-                    </dl>
-                </section>
-            </div>
+                            <DetailItem
+                                label="Date of birth"
+                                value={formatDate(employee.dateOfBirth)}
+                            />
+                        </dl>
+                    </section>
+                </div>
+            </FloatingPanelRoot>
         </aside>
     )
 }

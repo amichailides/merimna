@@ -28,3 +28,5 @@ export type EmployeePlacementSearchDTO =
 
 export type PageResponseEmployeePlacementReadOnlyDTO =
   components['schemas']['PageResponseEmployeePlacementReadOnlyDTO']
+
+export type EmployeeUpdateDTO = components['schemas']['EmployeeUpdateDTO']

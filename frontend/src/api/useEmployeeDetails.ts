@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { getEmployeeByPublicId } from './employeeApi'
 import type { EmployeeDetailsDTO } from './types'
@@ -8,7 +8,7 @@ export function useEmployeeDetails(publicId: string | undefined) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
+    const reload = useCallback(async () => {
         if (!publicId) {
             setEmployee(null)
             setError(null)
@@ -16,29 +16,28 @@ export function useEmployeeDetails(publicId: string | undefined) {
             return
         }
 
-        const employeePublicId = publicId
+        setLoading(true)
+        setError(null)
 
-        async function loadEmployee() {
-            setLoading(true)
-            setError(null)
-
-            try {
-                const data = await getEmployeeByPublicId(employeePublicId)
-                setEmployee(data)
-            } catch {
-                setEmployee(null)
-                setError('Failed to load employee details')
-            } finally {
-                setLoading(false)
-            }
+        try {
+            const data = await getEmployeeByPublicId(publicId)
+            setEmployee(data)
+        } catch {
+            setEmployee(null)
+            setError('Failed to load employee details')
+        } finally {
+            setLoading(false)
         }
-
-        loadEmployee()
     }, [publicId])
+
+    useEffect(() => {
+        reload()
+    }, [reload])
 
     return {
         employee,
         loading,
         error,
+        reload,
     }
 }
