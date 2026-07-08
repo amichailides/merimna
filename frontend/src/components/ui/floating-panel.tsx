@@ -34,7 +34,7 @@ const FloatingPanelContext = createContext<
   FloatingPanelContextType | undefined
 >(undefined)
 
-function useFloatingPanel() {
+export function useFloatingPanel() {
   const context = useContext(FloatingPanelContext)
   if (!context) {
     throw new Error(

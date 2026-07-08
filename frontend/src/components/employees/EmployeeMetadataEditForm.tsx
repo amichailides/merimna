@@ -6,6 +6,7 @@ import {
     FloatingPanelBody,
     FloatingPanelFooter,
     FloatingPanelHeader,
+    useFloatingPanel,
 } from '@/components/ui/floating-panel'
 
 type Props = {
@@ -32,6 +33,7 @@ export function EmployeeMetadataEditForm({
     employee,
     onEmployeeUpdated,
 }: Props) {
+    const { closeFloatingPanel } = useFloatingPanel()
     const form = useForm<EmployeeMetadataFormValues>({
         defaultValues: {
             contactEmail: employee.contactEmail ?? '',
@@ -195,6 +197,7 @@ export function EmployeeMetadataEditForm({
             <FloatingPanelFooter className="mt-auto justify-end gap-2 border-t border-slate-100 px-4 py-3">
                 <button
                     type="button"
+                    onClick={closeFloatingPanel}
                     className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800"
                 >
                     Cancel
