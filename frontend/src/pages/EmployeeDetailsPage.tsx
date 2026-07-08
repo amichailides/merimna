@@ -65,7 +65,9 @@ export function EmployeeDetailsPage() {
             </Link>
 
             <div>
-                <EmployeeProfileHeader employee={employee} />
+                <EmployeeProfileHeader employee={employee}
+                    onEmployeeUpdated={reload}
+                />
 
                 <div className="mt-3 border-b border-slate-200">
                     <div className="flex items-center gap-6">
