@@ -60,11 +60,13 @@ export function EmployeeProfileHeaderEditForm({
 
     useEffect(() => {
         if (!positionsLoading && employee.positionCode) {
-            form.setValue('positionCode', employee.positionCode)
+            form.setValue('positionCode', employee.positionCode, {
+                shouldDirty: false,
+            })
         }
     }, [employee.positionCode, form, positionsLoading])
 
-    const isSubmitting = form.formState.isSubmitting
+    const { isSubmitting, isDirty } = form.formState
 
     async function handleSubmit(values: EmployeeProfileHeaderFormValues) {
         const payload = buildEmployeeProfileUpdatePayload(values, employee)
@@ -136,7 +138,7 @@ export function EmployeeProfileHeaderEditForm({
 
                 <button
                     type="submit"
-                    disabled={isSubmitting || positionsLoading}
+                    disabled={isSubmitting || positionsLoading || !isDirty}
                     className="rounded-lg bg-teal-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     {isSubmitting ? 'Saving...' : 'Save changes'}
