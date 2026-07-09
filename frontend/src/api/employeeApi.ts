@@ -5,6 +5,7 @@ import type {
   EmployeeSearchDTO,
   EmployeeUpdateDTO,
   PageResponseEmployeeListDTO,
+  EmployeeTerminateDTO,
 } from './types'
 
 type EmployeePageParams = {
@@ -47,6 +48,28 @@ export async function updateEmployee(
   const response = await axiosInstance.patch<EmployeeDetailsDTO>(
     `/employees/${publicId}`,
     payload
+  )
+
+  return response.data
+}
+
+export async function terminateEmployee(
+  publicId: string,
+  payload: EmployeeTerminateDTO
+): Promise<EmployeeDetailsDTO> {
+  const response = await axiosInstance.post<EmployeeDetailsDTO>(
+    `/employees/${publicId}/terminate`,
+    payload
+  )
+
+  return response.data
+}
+
+export async function reactivateEmployee(
+  publicId: string
+): Promise<EmployeeDetailsDTO> {
+  const response = await axiosInstance.post<EmployeeDetailsDTO>(
+    `/employees/${publicId}/reactivate`
   )
 
   return response.data
