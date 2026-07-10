@@ -147,7 +147,7 @@ export function EmployeeProfileActionsMenu({
                                 onClick={handleDeactivate}
                                 className="rounded-lg bg-red-500 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-red-600"
                             >
-                                Deactivate
+                                Deactivate employee
                             </button>
                         </div>
                     </div>
@@ -181,9 +181,9 @@ export function EmployeeProfileActionsMenu({
                             <button
                                 type="button"
                                 onClick={handleReactivate}
-                                className="rounded-lg bg-slate-900 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-slate-800"
+                                className="rounded-lg bg-teal-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-teal-700"
                             >
-                                Reactivate
+                                Reactivate employee
                             </button>
                         </div>
                     </div>
