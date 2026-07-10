@@ -22,11 +22,7 @@ export function EmployeeDetailsPage() {
     const { publicId } = useParams<{ publicId: string }>()
     const [activeTab, setActiveTab] = useState<EmployeeDetailsTab>('Overview')
 
-    const {
-        employee,
-        loading,
-        error,
-    } = useEmployeeDetails(publicId)
+    const { employee, loading, error, reload } = useEmployeeDetails(publicId)
 
     const {
         activities,
@@ -69,7 +65,12 @@ export function EmployeeDetailsPage() {
             </Link>
 
             <div>
-                <EmployeeProfileHeader employee={employee} />
+                <EmployeeProfileHeader
+                    employee={employee}
+                    onEmployeeUpdated={reload}
+                    onViewActivity={() => setActiveTab('Activity')}
+                    onManageAssignments={() => setActiveTab('Assignments')}
+                />
 
                 <div className="mt-3 border-b border-slate-200">
                     <div className="flex items-center gap-6">
@@ -144,7 +145,10 @@ export function EmployeeDetailsPage() {
                     )}
                 </main>
 
-                <EmployeeMetadataRail employee={employee} />
+                <EmployeeMetadataRail
+                    employee={employee}
+                    onEmployeeUpdated={reload}
+                />
             </div>
         </div>
     )
