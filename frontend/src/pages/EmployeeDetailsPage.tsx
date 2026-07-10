@@ -65,8 +65,11 @@ export function EmployeeDetailsPage() {
             </Link>
 
             <div>
-                <EmployeeProfileHeader employee={employee}
+                <EmployeeProfileHeader
+                    employee={employee}
                     onEmployeeUpdated={reload}
+                    onViewActivity={() => setActiveTab('Activity')}
+                    onManageAssignments={() => setActiveTab('Assignments')}
                 />
 
                 <div className="mt-3 border-b border-slate-200">
