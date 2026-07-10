@@ -44,19 +44,35 @@ export function useFloatingPanel() {
   return context
 }
 
-function useFloatingPanelLogic() {
+function useFloatingPanelLogic({
+  open,
+  onOpenChange,
+}: {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+} = {}) {
   const uniqueId = useId()
-  const [isOpen, setIsOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = open ?? internalOpen
   const [note, setNote] = useState("")
   const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null)
   const [title, setTitle] = useState("")
 
+  const setOpen = (nextOpen: boolean) => {
+    if (open === undefined) {
+      setInternalOpen(nextOpen)
+    }
+
+    onOpenChange?.(nextOpen)
+  }
+
   const openFloatingPanel = (rect: DOMRect) => {
     setTriggerRect(rect)
-    setIsOpen(true)
+    setOpen(true)
   }
+
   const closeFloatingPanel = () => {
-    setIsOpen(false)
+    setOpen(false)
     setNote("")
   }
 
@@ -76,13 +92,17 @@ function useFloatingPanelLogic() {
 interface FloatingPanelRootProps {
   children: React.ReactNode
   className?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function FloatingPanelRoot({
   children,
   className,
+  open,
+  onOpenChange,
 }: FloatingPanelRootProps) {
-  const floatingPanelLogic = useFloatingPanelLogic()
+  const floatingPanelLogic = useFloatingPanelLogic({ open, onOpenChange })
 
   return (
     <FloatingPanelContext.Provider value={floatingPanelLogic}>
