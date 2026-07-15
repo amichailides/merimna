@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 
 import type { EmployeeDetailsDTO } from '@/api/types'
-import { formatDate } from '@/lib/formatDate'
+import { formatDateRange } from '@/lib/formatDate'
 
 type Assignment = EmployeeDetailsDTO['assignments'][number]
 type Placement = NonNullable<EmployeeDetailsDTO['activePlacement']>
@@ -20,25 +20,20 @@ function getActiveAssignment(assignments: Assignment[]) {
         ?? null
 }
 
-function formatDateRange(startDate?: string | null, endDate?: string | null) {
-    const start = startDate ? formatDate(startDate) : '—'
-    const end = endDate ? formatDate(endDate) : 'Open-ended'
-
-    return `${start} → ${end}`
-}
-
 function WorkContextItem({
     icon,
     label,
     badge,
     title,
     description,
+    muted = false,
 }: {
     icon: ReactNode
     label: string
     badge?: string
     title: string
     description?: string
+    muted?: boolean
 }) {
     return (
         <div className="flex gap-3">
@@ -59,7 +54,13 @@ function WorkContextItem({
                     )}
                 </div>
 
-                <p className="text-[14px] font-semibold leading-5 text-slate-950/80">
+                <p
+                    className={
+                        muted
+                            ? 'text-[14px] font-normal leading-5 text-slate-400'
+                            : 'text-[14px] font-semibold leading-5 text-slate-950/80'
+                    }
+                >
                     {title}
                 </p>
 
@@ -75,7 +76,11 @@ function WorkContextItem({
 
 function getPlacementDescription(placement: Placement) {
     const reason = placement.reasonDisplayName ?? 'Temporary placement'
-    const dates = formatDateRange(placement.startDate, placement.endDate)
+    const dates = formatDateRange(
+        placement.startDate,
+        placement.endDate,
+        'Open-ended',
+    )
 
     return `${reason} · ${dates}`
 }
@@ -83,7 +88,8 @@ function getPlacementDescription(placement: Placement) {
 function getAssignmentDescription(assignment: Assignment) {
     return `Active assignment · ${formatDateRange(
         assignment.startDate,
-        assignment.endDate
+        assignment.endDate,
+        'Open-ended',
     )}`
 }
 
@@ -92,10 +98,12 @@ export function EmployeeWorkDetailsSection({
     placement,
 }: EmployeeWorkDetailsSectionProps) {
     const activeAssignment = getActiveAssignment(assignments)
+    const hasActiveAssignment = activeAssignment !== null
 
     const currentUnitName = placement
         ? placement.houseUnitDisplayName ?? 'Unknown unit'
         : activeAssignment?.houseUnitDisplayName ?? null
+
     return (
         <section className="max-w-xl space-y-5">
             <h2 className="text-[13px] font-medium text-slate-700">
@@ -123,6 +131,7 @@ export function EmployeeWorkDetailsSection({
                         label="Current work location"
                         title="No current work unit"
                         description="This employee does not have an active assignment or placement."
+                        muted
                     />
                 )}
 
@@ -140,18 +149,24 @@ export function EmployeeWorkDetailsSection({
                             label="Official home unit"
                             title="No active assignment"
                             description="There is no official home unit assigned to this employee."
+                            muted
                         />
                     )
                 ) : (
                     <WorkContextItem
                         icon={<BriefcaseBusiness size={15} strokeWidth={1.75} />}
                         label="Official home unit"
-                        title={activeAssignment?.houseUnitDisplayName ?? 'No active assignment'}
+                        title={
+                            hasActiveAssignment
+                                ? activeAssignment.houseUnitDisplayName ?? 'Unknown unit'
+                                : 'No active assignment'
+                        }
                         description={
-                            activeAssignment
+                            hasActiveAssignment
                                 ? 'Same unit as current work location.'
                                 : undefined
                         }
+                        muted={!hasActiveAssignment}
                     />
                 )}
             </div>
