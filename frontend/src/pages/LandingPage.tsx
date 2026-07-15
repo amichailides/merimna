@@ -1,4 +1,5 @@
 import productScreenshot from '@/assets/product-screenshot.png'
+import { MerimnaLogo } from '@/components/brand/MerimnaLogo'
 
 const modeledWorkflows = [
     {
@@ -47,25 +48,17 @@ const techStack = [
     'Tailwind CSS',
 ]
 
-function LogoMark({ size = 22 }: { size?: number }) {
-    return (
-        <div
-            className="rounded-md bg-teal-600"
-            style={{ width: size, height: size }}
-            aria-hidden="true"
-        />
-    )
-}
+
 
 export default function LandingPage() {
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-[#fdfcfa] text-slate-900">
             <header className="sticky top-0 z-10 border-b border-slate-200 bg-[#fdfcfa]/90 backdrop-blur-sm">
                 <div className="mx-auto flex max-w-[1120px] items-center justify-between px-6 py-5 sm:px-8">
-                    <a href="#top" className="flex items-center gap-[9px]">
-                        <LogoMark />
+                    <a href="#top" className="flex items-center gap-[7px]">
+                        <MerimnaLogo className="h-[20px] w-[20px] text-teal-600" />
 
-                        <span className="text-[16px] font-bold tracking-tight">
+                        <span className="font-logo text-[15px] font-medium leading-none tracking-[-0.01em] text-slate-900">
                             merimna
                         </span>
                     </a>
@@ -168,27 +161,33 @@ export default function LandingPage() {
                             </h2>
                         </div>
 
-                        <div className="space-y-5 text-[16px] leading-7 text-slate-600">
+                        <div className="space-y-3.5 text-[16px] leading-7 text-slate-600">
                             <p>
-                                While studying software development at Coding Factory, I
-                                wanted my main project to be more than another task manager,
-                                online store, or tutorial application.
+                                While studying software development at Coding Factory, I wanted my
+                                main project to be more than another task manager, online store, or
+                                tutorial application.
                             </p>
 
                             <p>
                                 My partner works with an organization that supports people with
                                 disabilities through supported living facilities. Through our
-                                conversations, I became familiar with some of the operational
-                                complexity behind the work: employees assigned to facilities,
-                                temporary staff movements, changing employment states, and
-                                access to information across different units.
+                                conversations, I learned that important operational information was
+                                often spread across spreadsheets, separate files, and manual
+                                processes.
                             </p>
 
                             <p>
-                                Merimna became my attempt to understand and model part of that
-                                domain as a structured full-stack system. It is not a product
-                                commissioned by a care organization, but an independently
-                                developed portfolio project grounded in a real-world context.
+                                Employee assignments, temporary placements, employment changes, and
+                                access to information across different facilities were closely
+                                connected, but difficult to view as one consistent operational
+                                picture.
+                            </p>
+
+                            <p>
+                                Merimna became my attempt to understand and model part of that domain
+                                as a structured full-stack system. It is not a product commissioned
+                                by a care organization, but an independently developed portfolio
+                                project grounded in a real-world context.
                             </p>
                         </div>
                     </div>
@@ -334,10 +333,12 @@ export default function LandingPage() {
             <footer className="border-t border-slate-100">
                 <div className="mx-auto grid max-w-[1120px] gap-10 px-6 pb-8 pt-12 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr]">
                     <div>
-                        <div className="mb-3 flex items-center gap-[9px]">
-                            <LogoMark size={20} />
+                        <div className="mb-3 flex items-center gap-2.5">
+                            <MerimnaLogo className="h-5 w-5 text-teal-600" />
 
-                            <span className="text-[15px] font-bold">merimna</span>
+                            <span className="font-logo text-[15px] font-semibold tracking-[-0.02em] text-slate-950">
+                                Merimna
+                            </span>
                         </div>
 
                         <p className="max-w-[360px] text-[13.5px] leading-relaxed text-slate-500">
