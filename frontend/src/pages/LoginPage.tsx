@@ -40,7 +40,7 @@ export function LoginPage() {
 
     async function onSubmit(values: LoginFormValues) {
         await login(values)
-        navigate('/', { replace: true })
+        navigate('/dashboard', { replace: true })
     }
 
     return (

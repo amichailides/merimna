@@ -3,13 +3,13 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { RequireAuth } from './auth/RequireAuth'
-import { RoleBasedRedirect } from './auth/RoleBasedRedirect'
 import { useAuth } from './auth/useAuth'
 import { AppLayout } from '@/layouts/AppLayout'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { EmployeesPage } from './pages/EmployeesPage'
 import { EmployeeDetailsPage } from './pages/EmployeeDetailsPage'
+import LandingPage from "@/pages/LandingPage";
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -22,11 +22,11 @@ function App() {
     <TooltipProvider delayDuration={150}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
 
           <Route element={<RequireAuth />}>
             <Route element={<AppLayout />}>
-              <Route path="/" element={<RoleBasedRedirect />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/employees" element={<EmployeesPage />} />
               <Route
