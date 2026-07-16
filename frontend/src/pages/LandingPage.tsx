@@ -1,5 +1,5 @@
-import productScreenshot from '@/assets/product-screenshot.png'
 import { MerimnaLogo } from '@/components/brand/MerimnaLogo'
+import { ProductDemo } from '@/components/marketing/ProductDemo'
 
 const modeledWorkflows = [
     {
@@ -130,16 +130,12 @@ export default function LandingPage() {
                     <div className="mx-auto max-w-[980px] pb-24">
                         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_20px_50px_-25px_rgba(20,20,30,0.35)]">
                             <div className="flex items-center gap-1.5 border-b border-slate-100 px-4 py-[11px]">
-                                <div className="h-[9px] w-[9px] rounded-full bg-slate-200" />
-                                <div className="h-[9px] w-[9px] rounded-full bg-slate-200" />
-                                <div className="h-[9px] w-[9px] rounded-full bg-slate-200" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                                <div className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
                             </div>
 
-                            <img
-                                src={productScreenshot}
-                                alt="Employee management page in Merimna"
-                                className="block h-auto w-full"
-                            />
+                            <ProductDemo />
                         </div>
                     </div>
                 </section>
