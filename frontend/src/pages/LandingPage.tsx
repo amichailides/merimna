@@ -239,6 +239,15 @@ export default function LandingPage() {
                             parts of the application rather than isolated technical
                             exercises.
                         </p>
+
+                        <a
+                            href="https://api.merimna.care/api/scalar"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-4 inline-flex text-sm font-semibold text-teal-600 transition-colors hover:text-teal-700"
+                        >
+                            Explore the API documentation →
+                        </a>
                     </div>
 
                     <div className="grid gap-8 md:grid-cols-3">
