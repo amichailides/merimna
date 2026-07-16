@@ -105,9 +105,7 @@ export default function LandingPage() {
                         </h1>
 
                         <p className="mx-auto mb-8 max-w-[650px] text-[16px] leading-relaxed text-slate-600 sm:text-[17px]">
-                            Inspired by the operational complexity of supported living services,
-                            Merimna explores how people, facilities, assignments, and access can be
-                            modeled in one structured system.
+                            Inspired by the operational complexity of supported living services, Merimna is my attempt to represent people, facilities, assignments, and access within a structured system.
                         </p>
 
                         <div className="mb-[72px] flex flex-wrap justify-center gap-3">
@@ -163,9 +161,7 @@ export default function LandingPage() {
 
                         <div className="space-y-3.5 text-[16px] leading-7 text-slate-600">
                             <p>
-                                While studying software development at Coding Factory, I wanted my
-                                main project to be more than another task manager, online store, or
-                                tutorial application.
+                                While studying software development at Coding Factory, I wanted my main project to be grounded in a real domain and shaped by real operational needs.
                             </p>
 
                             <p>
@@ -331,25 +327,24 @@ export default function LandingPage() {
             </main>
 
             <footer className="border-t border-slate-100">
-                <div className="mx-auto grid max-w-[1120px] gap-10 px-6 pb-8 pt-12 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr]">
+                <div className="mx-auto grid max-w-[1120px] gap-10 px-6 pb-8 pt-12 sm:px-8 md:grid-cols-[1.5fr_0.8fr_0.8fr_1fr]">
                     <div>
-                        <div className="mb-3 flex items-center gap-2.5">
-                            <MerimnaLogo className="h-5 w-5 text-teal-600" />
+                        <div className="mb-3 flex items-center gap-[7px]">
+                            <MerimnaLogo className="h-[20px] w-[20px] text-teal-600" />
 
-                            <span className="font-logo text-[15px] font-semibold tracking-[-0.02em] text-slate-950">
-                                Merimna
+                            <span className="font-logo text-[15px] font-medium leading-none tracking-[-0.01em] text-slate-900">
+                                merimna
                             </span>
                         </div>
 
                         <p className="max-w-[360px] text-[13.5px] leading-relaxed text-slate-500">
-                            A personal full-stack project inspired by supported living
-                            services and developed as part of my transition into software
-                            engineering.
+                            A personal full-stack project inspired by supported living services
+                            and developed as part of my transition into software engineering.
                         </p>
                     </div>
 
                     <div>
-                        <div className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+                        <div className="mb-3 text-[13px] font-medium text-slate-500">
                             Project
                         </div>
 
@@ -373,7 +368,7 @@ export default function LandingPage() {
                     </div>
 
                     <div>
-                        <div className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+                        <div className="mb-3 text-[13px] font-medium text-slate-500">
                             Navigation
                         </div>
 
@@ -400,10 +395,36 @@ export default function LandingPage() {
                             </a>
                         </div>
                     </div>
+
+                    <div>
+                        <div>
+                            <div className="mb-3 text-[13px] font-medium text-slate-500">
+                                Contact
+                            </div>
+
+                            <div className="flex flex-col gap-[9px] text-[13.5px]">
+                                <a
+                                    href="mailto:michailides.a@gmail.com"
+                                    className="text-slate-700 transition-colors hover:text-teal-600"
+                                >
+                                    Email
+                                </a>
+
+                                <a
+                                    href="https://www.linkedin.com/in/amichailides/"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-slate-700 transition-colors hover:text-teal-600"
+                                >
+                                    LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="border-t border-slate-100 px-8 py-4 text-center text-[12.5px] text-slate-400">
-                    © 2026 Merimna — personal full-stack project
+                <div className="border-t border-slate-100 px-8 py-4 text-center text-[12.5px] text-slate-500">
+                    © 2026 Merimna · Built by Tasos Michailides
                 </div>
             </footer>
         </div>
