@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.security.auth.dto.*;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.passwordreset.PasswordResetService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,10 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(
+        name = "Authentication",
+        description = "Authenticate users and manage access and refresh tokens"
+)
 public class AuthController {
 
     private final AuthService authService;

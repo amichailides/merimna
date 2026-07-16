@@ -4,6 +4,7 @@ import io.github.amichailides.merimna.houseunit.dto.HouseUnitCreateDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitReadOnlyDTO;
 import io.github.amichailides.merimna.houseunit.dto.HouseUnitUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("house-units")
 @RequiredArgsConstructor
+@Tag(
+        name = "House Units",
+        description = "Manage supported living house units"
+)
 public class HouseUnitController {
 
     private final HouseUnitService houseUnitService;

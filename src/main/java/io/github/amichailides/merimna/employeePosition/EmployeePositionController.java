@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.employeePosition;
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionCreateDTO;
 import io.github.amichailides.merimna.employeePosition.dto.EmployeePositionReadOnlyDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,10 @@ import java.util.List;
 @RequestMapping("/employee-positions")
 @Validated
 @RequiredArgsConstructor
+@Tag(
+        name = "Employee Positions",
+        description = "Manage employee positions and their assigned permissions"
+)
 public class EmployeePositionController {
 
     private final EmployeePositionService positionService;

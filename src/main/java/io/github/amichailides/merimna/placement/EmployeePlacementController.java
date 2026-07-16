@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.placement.dto.EmployeePlacementReadOnlyDTO
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementSearchDTO;
 import io.github.amichailides.merimna.placement.dto.EmployeePlacementTerminateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/placements")
 @RequiredArgsConstructor
+@Tag(
+        name = "Employee Placements",
+        description = "Manage temporary employee placements across house units"
+)
 public class EmployeePlacementController {
 
     private final EmployeePlacementService placementService;

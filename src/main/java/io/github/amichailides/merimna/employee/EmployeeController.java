@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.employee;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/employees")
 @RequiredArgsConstructor
+@Tag(
+        name = "Employees",
+        description = "Manage employee profiles, employment details, and lifecycle"
+)
 public class EmployeeController {
     private final EmployeeService employeeService;
 

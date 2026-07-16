@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.assignment;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentCreateDTO;
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/employees/{employeePublicId}/assignments")
 @RequiredArgsConstructor
+@Tag(
+        name = "Employee Assignments",
+        description = "Manage employees' official assignments to house units"
+)
 public class EmployeeAssignmentController {
     private final EmployeeAssignmentService assignmentService;
 

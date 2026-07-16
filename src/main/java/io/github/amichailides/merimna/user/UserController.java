@@ -3,6 +3,7 @@ package io.github.amichailides.merimna.user;
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.user.dto.*;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,10 @@ import java.util.UUID;
 @RequestMapping("/users")
 @Validated
 @RequiredArgsConstructor
+@Tag(
+        name = "Users",
+        description = "Manage application users and account credentials"
+)
 public class UserController {
     private final UserService userService;
 
