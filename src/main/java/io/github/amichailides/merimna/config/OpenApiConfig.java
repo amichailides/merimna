@@ -14,7 +14,10 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Merimna API")
                         .version("v1")
-                        .description("Merimna (Μέριμνα - Greek for \"Care\") is a Spring Boot REST API for managing supported living structures for people with disabilities.")
+                        .description("""
+                                Spring Boot REST API powering Merimna, a full-stack application
+                                for managing supported living services for people with disabilities.
+                                """)
                 );
     }
 }
