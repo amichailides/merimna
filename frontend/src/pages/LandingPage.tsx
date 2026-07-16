@@ -48,8 +48,6 @@ const techStack = [
     'Tailwind CSS',
 ]
 
-
-
 export default function LandingPage() {
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-[#fdfcfa] text-slate-900">
@@ -62,7 +60,6 @@ export default function LandingPage() {
                             merimna
                         </span>
                     </a>
-
                     <nav className="hidden items-center gap-7 md:flex">
                         <a
                             href="#story"
@@ -84,13 +81,6 @@ export default function LandingPage() {
                         >
                             Technical
                         </a>
-
-                        <a
-                            href="/login"
-                            className="rounded-md bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
-                        >
-                            Open demo
-                        </a>
                     </nav>
                 </div>
             </header>
@@ -98,15 +88,20 @@ export default function LandingPage() {
             <main id="top">
                 <section className="px-6 pt-16 sm:px-8 sm:pt-20">
                     <div className="mx-auto max-w-[780px] text-center">
-                        <h1 className="mx-auto mb-5 max-w-[680px] text-[38px] font-semibold leading-[1.08] tracking-[-0.025em] text-slate-950 sm:text-[48px]">
-                            A personal project,
-                            <br className="hidden sm:block" />
-                            grounded in a real story.
+                        <h1 className="mx-auto mb-5 max-w-[820px] text-[36px] font-medium leading-[1.12] tracking-[-0.02em] text-slate-950 sm:text-[44px]">
+                            A management platform for supported living operations
                         </h1>
 
-                        <p className="mx-auto mb-8 max-w-[650px] text-[16px] leading-relaxed text-slate-600 sm:text-[17px]">
-                            Inspired by the operational complexity of supported living services, Merimna is my attempt to represent people, facilities, assignments, and access within a structured system.
-                        </p>
+                        <div className="mx-auto mb-8 max-w-[680px] space-y-2 text-[16px] leading-relaxed text-slate-600 sm:text-[17px]">
+                            <p>
+                                People, facilities, staffing, temporary coverage, and access — modeled
+                                as one system
+                            </p>
+
+                            <p className="text-[15px] text-slate-500 sm:text-[16px]">
+                                A personal project inspired by a real-world workflow
+                            </p>
+                        </div>
 
                         <div className="mb-[72px] flex flex-wrap justify-center gap-3">
                             <a
