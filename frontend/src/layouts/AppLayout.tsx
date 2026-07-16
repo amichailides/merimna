@@ -77,17 +77,17 @@ export function AppLayout() {
                   {group.label}
                 </p>
 
-                <div>
+                <div className="flex flex-col items-start">
                   {group.items.map((item: NavItem) => (
                     <NavLink
                       key={item.to}
                       to={item.to}
                       className={({ isActive }) =>
                         cn(
-                          'flex items-center gap-2 rounded-md px-2 py-[5px] text-[13px] transition-colors',
+                          'inline-flex items-center gap-2 rounded-md px-2 py-[5px] text-[13px] transition-colors',
                           isActive
-                            ? 'bg-white font-medium text-slate-950 shadow-sm ring-1 ring-slate-200/70'
-                            : 'text-slate-600 hover:bg-white/70 hover:text-slate-950'
+                            ? 'bg-teal-50 font-medium text-teal-700'
+                            : 'font-normal text-slate-600 hover:bg-white/70 hover:text-slate-950'
                         )
                       }
                     >
@@ -98,6 +98,7 @@ export function AppLayout() {
                           className="shrink-0 opacity-70"
                         />
                       )}
+
                       {item.label}
                     </NavLink>
                   ))}
