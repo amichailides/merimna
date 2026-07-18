@@ -424,7 +424,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="border-t border-slate-100 px-8 py-4 text-center text-[12.5px] text-slate-500">
-                    © 2026 Merimna · Built by Tasos Michailides
+                    © {new Date().getFullYear()} Merimna · Built by Tasos Michailides
                 </div>
             </footer>
         </div>
