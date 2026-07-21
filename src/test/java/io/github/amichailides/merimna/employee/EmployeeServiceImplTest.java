@@ -13,6 +13,8 @@ import io.github.amichailides.merimna.employee.event.EmployeeUpdatedEvent;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
+import io.github.amichailides.merimna.security.refresh.RefreshTokenRevocationService;
+import io.github.amichailides.merimna.security.refresh.RevocationReason;
 import io.github.amichailides.merimna.user.UserRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,9 @@ class EmployeeServiceImplTest {
 
     @Mock
     private HouseUnitAccessService houseUnitAccessService;
+
+    @Mock
+    private RefreshTokenRevocationService refreshTokenRevocationService;
 
     @InjectMocks
     private EmployeeServiceImpl employeeService;
@@ -228,7 +233,7 @@ class EmployeeServiceImplTest {
         }
 
         @Test
-        void shouldDeactivateLinkedUser_whenEmployeeHasUserAccount() {
+        void shouldDeactivateLinkedUserAndRevokeRefreshTokens_whenEmployeeHasUserAccount() {
             Employee employee = defaultEmployee().build();
 
             User user = defaultUser()
@@ -256,6 +261,13 @@ class EmployeeServiceImplTest {
             verify(employeeRepository).findByPublicId(EMPLOYEE_PUBLIC_ID);
             verify(employeeValidator).validateForTerminate(employee, TERMINATION_DATE);
             verify(userRepository).findByEmployeePublicId(EMPLOYEE_PUBLIC_ID);
+
+            verify(refreshTokenRevocationService).revokeAllActiveTokensForUser(
+                    eq(user),
+                    eq(RevocationReason.USER_DEACTIVATION),
+                    any(Instant.class)
+            );
+
             verify(employeeMapper).toDetailsDTO(employee);
             verify(eventPublisher).publishEvent(any(EmployeeTerminatedEvent.class));
         }

@@ -14,6 +14,8 @@ import io.github.amichailides.merimna.employee.dto.*;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employeePosition.EmployeePositionRepository;
 import io.github.amichailides.merimna.employeePosition.exception.EmployeePositionNotFoundByCodeException;
+import io.github.amichailides.merimna.security.refresh.RefreshTokenRevocationService;
+import io.github.amichailides.merimna.security.refresh.RevocationReason;
 import io.github.amichailides.merimna.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,6 +26,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeChangeDetector employeeChangeDetector;
     private final HouseUnitAccessService houseUnitAccessService;
     private final AuditLogRepository auditLogRepository;
+    private final RefreshTokenRevocationService refreshTokenRevocationService;
 
     @Override
     @Transactional
@@ -65,7 +69,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeValidator.validateForTerminate(employee, terminationDate);
         employee.terminate(terminationDate);
-        deactivateLinkedUser(publicId);
+
+        Instant now = Instant.now();
+        deactivateLinkedUser(publicId, now);
 
         eventPublisher.publishEvent(
                 EmployeeTerminatedEvent.from(employee, terminationDate));
@@ -216,9 +222,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new EmployeePositionNotFoundByCodeException(code.getValue()));
     }
 
-    private void deactivateLinkedUser(UUID publicId) {
-        Optional<User> user = userRepository.findByEmployeePublicId(publicId);
-        user.ifPresent(User::deactivate);
+    private void deactivateLinkedUser(UUID publicId, Instant now) {
+        userRepository.findByEmployeePublicId(publicId)
+                .filter(User::isActive)
+                .ifPresent(user -> {
+                    user.deactivate();
+
+                    refreshTokenRevocationService.revokeAllActiveTokensForUser(
+                            user,
+                            RevocationReason.USER_DEACTIVATION,
+                            now
+                    );
+                });
     }
 
     private void reactivateLinkedUser(UUID publicId) {
