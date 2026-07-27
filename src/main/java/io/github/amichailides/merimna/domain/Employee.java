@@ -159,8 +159,6 @@ public class Employee {
         return accessible;
     }
 
-    private static final String WHITESPACE_SEQUENCE = "\\s+";
-
     @PrePersist
     @PreUpdate
     private void normalizeFields() {

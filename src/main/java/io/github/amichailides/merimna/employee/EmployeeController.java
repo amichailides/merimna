@@ -2,6 +2,9 @@ package io.github.amichailides.merimna.employee;
 
 import io.github.amichailides.merimna.common.response.PageResponse;
 import io.github.amichailides.merimna.employee.dto.*;
+import io.github.amichailides.merimna.employee.onboarding.EmployeeOnboardingService;
+import io.github.amichailides.merimna.employee.onboarding.dto.EmployeeOnboardingRequest;
+import io.github.amichailides.merimna.employee.onboarding.dto.EmployeeOnboardingResponse;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +32,7 @@ import java.util.UUID;
 )
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final EmployeeOnboardingService employeeOnboardingService;
 
     @PostMapping
     @PreAuthorize("hasAuthority('EMPLOYEE_CREATE')")
@@ -38,6 +43,20 @@ public class EmployeeController {
         return ResponseEntity
                 .created(buildLocationUri(employee.publicId()))
                 .body(employee);
+    }
+
+    @PostMapping("/onboarding")
+    @PreAuthorize("hasAuthority('EMPLOYEE_CREATE')")
+    public ResponseEntity<EmployeeOnboardingResponse> onboardEmployee(
+            @Validated(ValidationGroupSequence.class)
+            @RequestBody EmployeeOnboardingRequest request
+    ) {
+        EmployeeOnboardingResponse response =
+                employeeOnboardingService.onboard(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
