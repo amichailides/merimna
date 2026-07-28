@@ -5,6 +5,7 @@ import io.github.amichailides.merimna.employee.EmployeeService;
 import io.github.amichailides.merimna.employee.dto.EmployeeDetailsDTO;
 import io.github.amichailides.merimna.employee.onboarding.dto.EmployeeOnboardingRequest;
 import io.github.amichailides.merimna.employee.onboarding.dto.EmployeeOnboardingResponse;
+import io.github.amichailides.merimna.security.invitation.UserInvitationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class EmployeeOnboardingServiceImpl
 
     private final EmployeeService employeeService;
     private final EmployeeAssignmentService employeeAssignmentService;
+    private final UserInvitationService userInvitationService;
 
     @Override
     @Transactional
@@ -33,6 +35,10 @@ public class EmployeeOnboardingServiceImpl
                 employeePublicId,
                 request.initialAssignment()
         );
+
+        if (request.grantSystemAccess()) {
+            userInvitationService.createForEmployee(employeePublicId);
+        }
 
         return new EmployeeOnboardingResponse(employeePublicId);
     }

@@ -30,8 +30,12 @@ public class AppProperties {
     @Getter
     @Setter
     public static class Frontend {
+
         @NotBlank
         private String resetPasswordUrl;
+
+        @NotBlank
+        private String acceptInvitationUrl;
     }
 
     @Getter

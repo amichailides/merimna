@@ -19,6 +19,7 @@ public class SecurityProperties {
     private AccessToken accessToken = new AccessToken();
     private RefreshToken refreshToken = new RefreshToken();
     private PasswordReset passwordReset = new PasswordReset();
+    private Invitation invitation = new Invitation();
 
     @Getter
     @Setter
@@ -37,5 +38,11 @@ public class SecurityProperties {
     @Setter
     public static class PasswordReset {
         private Duration expiration = Duration.ofMinutes(30);
+    }
+
+    @Getter
+    @Setter
+    public static class Invitation {
+        private Duration expiration = Duration.ofHours(24);
     }
 }
