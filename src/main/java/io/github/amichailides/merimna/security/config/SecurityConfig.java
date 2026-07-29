@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 "/auth/logout",
                                 "/auth/forgot-password",
                                 "/auth/reset-password",
+                                "/auth/accept-invitation",
                                 "/scalar/**",
                                 "/v3/api-docs/**",
                                 "/error"

@@ -2,6 +2,7 @@ package io.github.amichailides.merimna.security.auth;
 
 import io.github.amichailides.merimna.security.auth.dto.*;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
+import io.github.amichailides.merimna.security.invitation.UserInvitationService;
 import io.github.amichailides.merimna.security.passwordreset.PasswordResetService;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ public class AuthController {
     private final AuthService authService;
     private final SecurityProperties securityProperties;
     private final PasswordResetService passwordResetService;
+    private final UserInvitationService userInvitationService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
@@ -121,6 +123,20 @@ public class AuthController {
             @Validated(ValidationGroupSequence.class) @RequestBody ResetPasswordRequest request
     ) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/accept-invitation")
+    public ResponseEntity<Void> acceptInvitation(
+            @Validated(ValidationGroupSequence.class)
+            @RequestBody AcceptInvitationRequest request
+    ) {
+        userInvitationService.acceptInvitation(
+                request.token(),
+                request.username(),
+                request.password()
+        );
 
         return ResponseEntity.noContent().build();
     }

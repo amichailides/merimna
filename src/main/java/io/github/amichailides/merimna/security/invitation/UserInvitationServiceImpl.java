@@ -1,12 +1,16 @@
 package io.github.amichailides.merimna.security.invitation;
 
 import io.github.amichailides.merimna.domain.Employee;
+import io.github.amichailides.merimna.domain.Role;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.security.config.SecurityProperties;
 import io.github.amichailides.merimna.security.event.UserInvitationCreatedEvent;
+import io.github.amichailides.merimna.security.exception.InvalidUserInvitationException;
 import io.github.amichailides.merimna.security.token.OpaqueTokenGenerator;
 import io.github.amichailides.merimna.security.token.TokenHasher;
+import io.github.amichailides.merimna.user.UserService;
+import io.github.amichailides.merimna.user.dto.UserCreateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ public class UserInvitationServiceImpl implements UserInvitationService {
     private final TokenHasher tokenHasher;
     private final SecurityProperties securityProperties;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -59,5 +64,39 @@ public class UserInvitationServiceImpl implements UserInvitationService {
                         rawToken
                 )
         );
+    }
+
+    @Override
+    @Transactional
+    public void acceptInvitation(
+            String rawToken,
+            String username,
+            String password
+    ) {
+        String tokenHash = tokenHasher.hash(rawToken);
+
+        UserInvitation invitation = userInvitationRepository
+                .findByTokenHash(tokenHash)
+                .orElseThrow(InvalidUserInvitationException::new);
+
+        Instant now = Instant.now();
+
+        if (!invitation.isValid(now)) {
+            throw new InvalidUserInvitationException();
+        }
+
+        Employee employee = invitation.getEmployee();
+
+        UserCreateDTO userCreateDTO = UserCreateDTO.builder()
+                .employeePublicId(employee.getPublicId())
+                .username(username)
+                .email(employee.getContactEmail())
+                .password(password)
+                .role(Role.STAFF)
+                .build();
+
+        userService.create(userCreateDTO);
+
+        invitation.accept(now);
     }
 }
