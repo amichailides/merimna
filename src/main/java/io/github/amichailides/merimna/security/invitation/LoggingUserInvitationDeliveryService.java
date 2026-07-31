@@ -6,16 +6,15 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Profile("!mailtrap")
+@Profile("!mailtrap & !mailtrap-api")
 public class LoggingUserInvitationDeliveryService
         implements UserInvitationDeliveryService {
 
     @Override
     public void sendInvitation(String email, String rawToken) {
         log.info(
-                "User invitation token for {}: {}",
-                email,
-                rawToken
+                "User invitation generated for {}",
+                email
         );
     }
 }

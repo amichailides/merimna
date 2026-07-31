@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Profile("!mailtrap")
+@Profile("!mailtrap & !mailtrap-api")
 public class LoggingPasswordResetTokenDeliveryService implements PasswordResetTokenDeliveryService {
 
     @Override
     public void sendPasswordResetToken(String email, String rawToken) {
-        log.info("Password reset token for {}: {}", email, rawToken);
+        log.info("Password reset token generated for {}", email);
     }
 }

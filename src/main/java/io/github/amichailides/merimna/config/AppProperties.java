@@ -23,8 +23,11 @@ public class AppProperties {
     @Getter
     @Setter
     public static class Mail {
+
         @NotBlank
         private String from;
+
+        private String apiToken;
     }
 
     @Getter
@@ -41,6 +44,7 @@ public class AppProperties {
     @Getter
     @Setter
     public static class Cors {
+
         @NotEmpty
         private List<String> allowedOrigins = new ArrayList<>();
     }
