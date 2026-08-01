@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Profile("!mailtrap & !mailtrap-api")
+@Profile("!mailtrap-api")
 public class LoggingUserInvitationDeliveryService
         implements UserInvitationDeliveryService {
 
