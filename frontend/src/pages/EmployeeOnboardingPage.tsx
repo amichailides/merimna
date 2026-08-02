@@ -1,8 +1,11 @@
+import axios from 'axios'
 import { ArrowLeft } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { type Path, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { onboardEmployee } from '@/api/employeeApi'
+import type { ValidationErrorResponse } from '@/api/types'
 import { useHouseUnits } from '@/api/useHouseUnits'
 import { usePositions } from '@/api/usePositions'
 import { ContactAddressSection } from '@/components/employees/onboarding/ContactAddressSection'
@@ -16,21 +19,96 @@ import { PersonalDetailsSection } from '@/components/employees/onboarding/Person
 import { SystemAccessSection } from '@/components/employees/onboarding/SystemAccessSection'
 import { Button } from '@/components/ui/button'
 
+function isOnboardingFormPath(
+    path: string
+): path is Path<EmployeeOnboardingFormValues> {
+    const segments = path.split('.')
+    let current: unknown = employeeOnboardingDefaultValues
+
+    for (const segment of segments) {
+        if (
+            typeof current !== 'object' ||
+            current === null ||
+            !(segment in current)
+        ) {
+            return false
+        }
+
+        current = (current as Record<string, unknown>)[segment]
+    }
+
+    return true
+}
+
 export function EmployeeOnboardingPage() {
     const navigate = useNavigate()
     const { positions, loading: positionsLoading } = usePositions()
     const { houseUnits, loading: houseUnitsLoading } = useHouseUnits()
+    const [submitError, setSubmitError] = useState<string | null>(null)
 
+    // TODO(#38): Add live validation based on backend/OpenAPI constraints.
     const form = useForm<EmployeeOnboardingFormValues>({
         defaultValues: employeeOnboardingDefaultValues,
     })
 
     async function onSubmit(values: EmployeeOnboardingFormValues) {
-        const payload = toEmployeeOnboardingRequest(values)
-        const response = await onboardEmployee(payload)
+        form.clearErrors()
+        setSubmitError(null)
 
-        if (response.employeePublicId) {
-            navigate(`/employees/${response.employeePublicId}`)
+        try {
+            const payload = toEmployeeOnboardingRequest(values)
+            const response = await onboardEmployee(payload)
+
+            if (response.employeePublicId) {
+                navigate(`/employees/${response.employeePublicId}`)
+            }
+        } catch (error) {
+            if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+                const errorResponse = error.response?.data
+                const validationErrors = errorResponse?.validationErrors
+
+                if (validationErrors) {
+                    let fieldErrorApplied = false
+                    let unknownFieldError = false
+
+                    for (const [path, messages] of Object.entries(
+                        validationErrors
+                    )) {
+                        const message = messages[0]
+
+                        if (!message) {
+                            continue
+                        }
+
+                        if (!isOnboardingFormPath(path)) {
+                            unknownFieldError = true
+                            continue
+                        }
+
+                        form.setError(path, {
+                            type: 'server',
+                            message,
+                        })
+
+                        fieldErrorApplied = true
+                    }
+
+                    if (fieldErrorApplied && !unknownFieldError) {
+                        return
+                    }
+                }
+
+                setSubmitError(
+                    errorResponse?.detail ??
+                    'Could not create the employee. Please review the form and try again.'
+                )
+
+                return
+            }
+
+            setSubmitError(
+                'Could not connect to the server. Please try again.'
+            )
         }
     }
 
@@ -73,6 +151,15 @@ export function EmployeeOnboardingPage() {
                 />
 
                 <SystemAccessSection control={form.control} />
+
+                {submitError && (
+                    <div
+                        role="alert"
+                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700"
+                    >
+                        {submitError}
+                    </div>
+                )}
 
                 <div className="flex items-center justify-end border-t border-slate-100 pt-5">
                     <Button

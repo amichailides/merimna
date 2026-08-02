@@ -15,9 +15,14 @@ type ContactAddressSectionProps = {
 const inputClassName = `
     h-9 rounded-none border-0 border-b border-slate-200
     bg-transparent px-0 shadow-none
-    focus-visible:border-teal-600
+
+    focus-visible:border-b-teal-600
     focus-visible:ring-0
-    aria-invalid:border-red-500
+
+    aria-invalid:border-0
+    aria-invalid:border-b
+    aria-invalid:border-b-red-500
+    aria-invalid:ring-0
 `
 
 export function ContactAddressSection({
@@ -34,7 +39,7 @@ export function ContactAddressSection({
             <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                 <Controller
                     control={control}
-                    name="contactEmail"
+                    name="employee.contactEmail"
                     rules={{ required: 'Email is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -59,7 +64,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="mobileNumber"
+                    name="employee.mobileNumber"
                     rules={{ required: 'Mobile number is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -84,7 +89,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="street"
+                    name="employee.address.street"
                     rules={{ required: 'Street is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -108,7 +113,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="streetNumber"
+                    name="employee.address.streetNumber"
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -131,7 +136,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="city"
+                    name="employee.address.city"
                     rules={{ required: 'City is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -155,7 +160,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="zipCode"
+                    name="employee.address.zipCode"
                     rules={{ required: 'Postal code is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -179,7 +184,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="emergencyContactName"
+                    name="employee.emergencyContactName"
                     rules={{ required: 'Emergency contact name is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -203,7 +208,7 @@ export function ContactAddressSection({
 
                 <Controller
                     control={control}
-                    name="emergencyContactPhoneNumber"
+                    name="employee.emergencyContactPhoneNumber"
                     rules={{ required: 'Emergency contact phone is required' }}
                     render={({ field, fieldState }) => (
                         <Field>

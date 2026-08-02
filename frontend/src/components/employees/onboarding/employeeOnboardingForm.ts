@@ -1,42 +1,54 @@
 import type { EmployeeOnboardingRequest } from '@/api/types'
 
 export type EmployeeOnboardingFormValues = {
-    firstName: string
-    lastName: string
-    dateOfBirth: string
-    contactEmail: string
-    mobileNumber: string
-    street: string
-    streetNumber: string
-    city: string
-    zipCode: string
-    positionCode: string
-    hireDate: string
-    houseUnitPublicId: string
-    assignmentStartDate: string
-    assignmentEndDate: string
-    emergencyContactName: string
-    emergencyContactPhoneNumber: string
+    employee: {
+        firstName: string
+        lastName: string
+        dateOfBirth: string
+        contactEmail: string
+        mobileNumber: string
+        address: {
+            street: string
+            streetNumber: string
+            city: string
+            zipCode: string
+        }
+        positionCode: string
+        hireDate: string
+        emergencyContactName: string
+        emergencyContactPhoneNumber: string
+    }
+    initialAssignment: {
+        houseUnitPublicId: string
+        startDate: string
+        endDate: string
+    }
     grantSystemAccess: boolean
 }
 
 export const employeeOnboardingDefaultValues: EmployeeOnboardingFormValues = {
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    contactEmail: '',
-    mobileNumber: '',
-    street: '',
-    streetNumber: '',
-    city: '',
-    zipCode: '',
-    positionCode: '',
-    hireDate: '',
-    houseUnitPublicId: '',
-    assignmentStartDate: '',
-    assignmentEndDate: '',
-    emergencyContactName: '',
-    emergencyContactPhoneNumber: '',
+    employee: {
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        contactEmail: '',
+        mobileNumber: '',
+        address: {
+            street: '',
+            streetNumber: '',
+            city: '',
+            zipCode: '',
+        },
+        positionCode: '',
+        hireDate: '',
+        emergencyContactName: '',
+        emergencyContactPhoneNumber: '',
+    },
+    initialAssignment: {
+        houseUnitPublicId: '',
+        startDate: '',
+        endDate: '',
+    },
     grantSystemAccess: true,
 }
 
@@ -45,27 +57,16 @@ export function toEmployeeOnboardingRequest(
 ): EmployeeOnboardingRequest {
     return {
         employee: {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            dateOfBirth: values.dateOfBirth,
-            contactEmail: values.contactEmail,
-            mobileNumber: values.mobileNumber,
+            ...values.employee,
             address: {
-                street: values.street,
-                streetNumber: values.streetNumber || undefined,
-                city: values.city,
-                zipCode: values.zipCode,
+                ...values.employee.address,
+                streetNumber:
+                    values.employee.address.streetNumber || undefined,
             },
-            positionCode: values.positionCode,
-            hireDate: values.hireDate,
-            emergencyContactName: values.emergencyContactName,
-            emergencyContactPhoneNumber:
-                values.emergencyContactPhoneNumber,
         },
         initialAssignment: {
-            houseUnitPublicId: values.houseUnitPublicId,
-            startDate: values.assignmentStartDate,
-            endDate: values.assignmentEndDate || undefined,
+            ...values.initialAssignment,
+            endDate: values.initialAssignment.endDate || undefined,
         },
         grantSystemAccess: values.grantSystemAccess,
     }

@@ -30,17 +30,27 @@ type EmploymentAssignmentSectionProps = {
 const inputClassName = `
     h-9 rounded-none border-0 border-b border-slate-200
     bg-transparent px-0 shadow-none
-    focus-visible:border-teal-600
+
+    focus-visible:border-b-teal-600
     focus-visible:ring-0
-    aria-invalid:border-red-500
+
+    aria-invalid:border-0
+    aria-invalid:border-b
+    aria-invalid:border-b-red-500
+    aria-invalid:ring-0
 `
 
 const selectTriggerClassName = `
     h-9 rounded-none border-0 border-b border-slate-200
     bg-transparent px-0 shadow-none
+
     focus:ring-0
-    focus-visible:border-teal-600
-    aria-invalid:border-red-500
+    focus-visible:border-b-teal-600
+
+    aria-invalid:border-0
+    aria-invalid:border-b
+    aria-invalid:border-b-red-500
+    aria-invalid:ring-0
 `
 
 export function EmploymentAssignmentSection({
@@ -61,7 +71,7 @@ export function EmploymentAssignmentSection({
             <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                 <Controller
                     control={control}
-                    name="positionCode"
+                    name="employee.positionCode"
                     rules={{ required: 'Position is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -113,7 +123,7 @@ export function EmploymentAssignmentSection({
 
                 <Controller
                     control={control}
-                    name="hireDate"
+                    name="employee.hireDate"
                     rules={{ required: 'Hire date is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -138,7 +148,7 @@ export function EmploymentAssignmentSection({
 
                 <Controller
                     control={control}
-                    name="houseUnitPublicId"
+                    name="initialAssignment.houseUnitPublicId"
                     rules={{ required: 'House unit is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
@@ -191,7 +201,7 @@ export function EmploymentAssignmentSection({
 
                 <Controller
                     control={control}
-                    name="assignmentStartDate"
+                    name="initialAssignment.startDate"
                     rules={{
                         required: 'Assignment start date is required',
                     }}
@@ -218,7 +228,7 @@ export function EmploymentAssignmentSection({
 
                 <Controller
                     control={control}
-                    name="assignmentEndDate"
+                    name="initialAssignment.endDate"
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>

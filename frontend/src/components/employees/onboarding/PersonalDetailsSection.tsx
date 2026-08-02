@@ -15,9 +15,14 @@ type PersonalDetailsSectionProps = {
 const inputClassName = `
     h-9 rounded-none border-0 border-b border-slate-200
     bg-transparent px-0 shadow-none
-    focus-visible:border-teal-600
+
+    focus-visible:border-b-teal-600
     focus-visible:ring-0
-    aria-invalid:border-red-500
+
+    aria-invalid:border-0
+    aria-invalid:border-b
+    aria-invalid:border-b-red-500
+    aria-invalid:ring-0
 `
 
 export function PersonalDetailsSection({
@@ -34,7 +39,7 @@ export function PersonalDetailsSection({
             <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                 <Controller
                     control={control}
-                    name="firstName"
+                    name="employee.firstName"
                     rules={{
                         required: 'First name is required',
                     }}
@@ -60,7 +65,7 @@ export function PersonalDetailsSection({
 
                 <Controller
                     control={control}
-                    name="lastName"
+                    name="employee.lastName"
                     rules={{
                         required: 'Last name is required',
                     }}
@@ -86,7 +91,7 @@ export function PersonalDetailsSection({
 
                 <Controller
                     control={control}
-                    name="dateOfBirth"
+                    name="employee.dateOfBirth"
                     rules={{
                         required: 'Date of birth is required',
                     }}
