@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/employees/onboarding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["onboardEmployee"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/employee-positions": {
         parameters: {
             query?: never;
@@ -356,6 +372,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["forgotPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/accept-invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["acceptInvitation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -873,6 +905,15 @@ export interface components {
             /** Format: date */
             endDate?: string;
         };
+        EmployeeOnboardingRequest: {
+            employee?: components["schemas"]["EmployeeCreateDTO"];
+            initialAssignment?: components["schemas"]["EmployeeAssignmentCreateDTO"];
+            grantSystemAccess?: boolean;
+        };
+        EmployeeOnboardingResponse: {
+            /** Format: uuid */
+            employeePublicId?: string;
+        };
         /** @description Request payload for creating an employee position. */
         EmployeePositionCreateDTO: {
             /**
@@ -1197,6 +1238,11 @@ export interface components {
              * @example user@example.com
              */
             email?: string;
+        };
+        AcceptInvitationRequest: {
+            token?: string;
+            username?: string;
+            password?: string;
         };
         UserUpdateDTO: {
             /**
@@ -2009,6 +2055,30 @@ export interface operations {
             };
         };
     };
+    onboardEmployee: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmployeeOnboardingRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EmployeeOnboardingResponse"];
+                };
+            };
+        };
+    };
     getPositions: {
         parameters: {
             query?: never;
@@ -2420,6 +2490,28 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ForgotPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    acceptInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcceptInvitationRequest"];
             };
         };
         responses: {

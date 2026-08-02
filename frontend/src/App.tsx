@@ -10,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { EmployeesPage } from './pages/EmployeesPage'
 import { EmployeeDetailsPage } from './pages/EmployeeDetailsPage'
 import LandingPage from "@/pages/LandingPage";
+import { EmployeeOnboardingPage } from './pages/EmployeeOnboardingPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -32,6 +33,10 @@ function App() {
               <Route
                 path="/employees/:publicId"
                 element={<EmployeeDetailsPage />}
+              />
+              <Route
+                path="/employees/new"
+                element={<EmployeeOnboardingPage />}
               />
             </Route>
           </Route>

@@ -6,6 +6,8 @@ import type {
   EmployeeUpdateDTO,
   PageResponseEmployeeListDTO,
   EmployeeTerminateDTO,
+  EmployeeOnboardingRequest,
+  EmployeeOnboardingResponse,
 } from './types'
 
 type EmployeePageParams = {
@@ -74,3 +76,15 @@ export async function reactivateEmployee(
 
   return response.data
 }
+
+export async function onboardEmployee(
+  payload: EmployeeOnboardingRequest
+): Promise<EmployeeOnboardingResponse> {
+  const response = await axiosInstance.post<EmployeeOnboardingResponse>(
+    '/employees/onboarding',
+    payload
+  )
+
+  return response.data
+}
+

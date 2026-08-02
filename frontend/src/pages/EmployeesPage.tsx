@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 
 import { useEmployees } from '@/api/useEmployees'
@@ -28,6 +28,7 @@ export function EmployeesPage() {
 
     const positionCode = searchParams.get('positionCode') ?? undefined
     const houseUnitPublicId = searchParams.get('houseUnitPublicId') ?? undefined
+    const navigate = useNavigate()
 
     useEffect(() => {
         const id = window.setTimeout(() => {
@@ -119,6 +120,7 @@ export function EmployeesPage() {
                 <Button
                     type="button"
                     size="sm"
+                    onClick={() => navigate('/employees/new')}
                     className="h-8 gap-1.5 bg-teal-700 text-white hover:bg-teal-800 text-[13px]"
                 >
                     <Plus className="h-4 w-4 shrink-0" />
