@@ -13,8 +13,10 @@ public class LoggingUserInvitationDeliveryService
     @Override
     public void sendInvitation(String email, String rawToken) {
         log.info(
-                "User invitation generated for {}",
-                email
+                "User invitation generated for {}: " +
+                        "http://localhost:5173/accept-invitation?token={}",
+                email,
+                rawToken
         );
     }
 }

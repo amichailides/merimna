@@ -11,6 +11,7 @@ import { EmployeesPage } from './pages/EmployeesPage'
 import { EmployeeDetailsPage } from './pages/EmployeeDetailsPage'
 import LandingPage from "@/pages/LandingPage";
 import { EmployeeOnboardingPage } from './pages/EmployeeOnboardingPage'
+import { AcceptInvitationPage } from './pages/AcceptInvitationPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -25,6 +26,10 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/accept-invitation"
+            element={<AcceptInvitationPage />}
+          />
 
           <Route element={<RequireAuth />}>
             <Route element={<AppLayout />}>
