@@ -1,9 +1,12 @@
+import { useState } from 'react'
+import axios from 'axios'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { acceptInvitation } from '@/api/authApi'
 
+import { acceptInvitation } from '@/api/authApi'
+import type { ValidationErrorResponse } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -31,8 +34,10 @@ const inputClassName = `
 
 export function AcceptInvitationPage() {
     const [searchParams] = useSearchParams()
-    const token = searchParams.get('token')
     const navigate = useNavigate()
+    const token = searchParams.get('token')
+
+    const [submitError, setSubmitError] = useState<string | null>(null)
 
     const form = useForm<AcceptInvitationFormValues>({
         resolver: zodResolver(acceptInvitationSchema),
@@ -44,16 +49,68 @@ export function AcceptInvitationPage() {
 
     async function onSubmit(values: AcceptInvitationFormValues) {
         if (!token) {
+            setSubmitError('The invitation link is missing a token.')
             return
         }
 
-        await acceptInvitation({
-            token,
-            username: values.username,
-            password: values.password,
-        })
+        setSubmitError(null)
 
-        navigate('/login', { replace: true })
+        try {
+            await acceptInvitation({
+                token,
+                username: values.username,
+                password: values.password,
+            })
+
+            navigate('/login', { replace: true })
+        } catch (error) {
+            if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+                const errorResponse = error.response?.data
+                const validationErrors = errorResponse?.validationErrors
+
+                if (validationErrors) {
+                    let fieldErrorApplied = false
+                    let unknownFieldError = false
+
+                    for (const [path, messages] of Object.entries(
+                        validationErrors
+                    )) {
+                        const message = messages[0]
+
+                        if (!message) {
+                            continue
+                        }
+
+                        if (path !== 'username' && path !== 'password') {
+                            unknownFieldError = true
+                            continue
+                        }
+
+                        form.setError(path, {
+                            type: 'server',
+                            message,
+                        })
+
+                        fieldErrorApplied = true
+                    }
+
+                    if (fieldErrorApplied && !unknownFieldError) {
+                        return
+                    }
+                }
+
+                setSubmitError(
+                    errorResponse?.detail ??
+                    'Could not activate the account. Please try again.'
+                )
+
+                return
+            }
+
+            setSubmitError(
+                'Could not connect to the server. Please try again.'
+            )
+        }
     }
 
     return (
@@ -147,11 +204,23 @@ export function AcceptInvitationPage() {
                                 )}
                             />
 
+                            {submitError && (
+                                <p
+                                    role="alert"
+                                    className="text-[12px] leading-5 text-red-600"
+                                >
+                                    {submitError}
+                                </p>
+                            )}
+
                             <Button
                                 type="submit"
-                                className="mt-2 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800"
+                                disabled={form.formState.isSubmitting}
+                                className="mt-2 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                                Activate account
+                                {form.formState.isSubmitting
+                                    ? 'Activating...'
+                                    : 'Activate account'}
                             </Button>
                         </form>
                     </div>
