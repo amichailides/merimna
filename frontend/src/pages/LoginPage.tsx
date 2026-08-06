@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -36,6 +38,7 @@ const inputClassName = `
 export function LoginPage() {
     const navigate = useNavigate()
     const { login } = useAuth()
+    const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -123,14 +126,36 @@ export function LoginPage() {
                                                 Password
                                             </FieldLabel>
 
-                                            <Input
-                                                {...field}
-                                                id={field.name}
-                                                type="password"
-                                                autoComplete="current-password"
-                                                aria-invalid={fieldState.invalid}
-                                                className={inputClassName}
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    {...field}
+                                                    id={field.name}
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    autoComplete="current-password"
+                                                    aria-invalid={fieldState.invalid}
+                                                    className={`${inputClassName} pr-10`}
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword((current) => !current)}
+                                                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                                    aria-pressed={showPassword}
+                                                    className="
+            absolute inset-y-0 right-0 flex w-10 items-center
+            justify-center text-slate-400
+            hover:text-slate-600
+            focus-visible:outline-none
+            focus-visible:text-teal-700
+        "
+                                                >
+                                                    {showPassword ? (
+                                                        <EyeOff className="size-4" />
+                                                    ) : (
+                                                        <Eye className="size-4" />
+                                                    )}
+                                                </button>
+                                            </div>
 
                                             {fieldState.invalid && (
                                                 <FieldError

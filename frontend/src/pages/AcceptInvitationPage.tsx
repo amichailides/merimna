@@ -14,6 +14,7 @@ import {
     FieldError,
     FieldLabel,
 } from '@/components/ui/field'
+import { Eye, EyeOff } from 'lucide-react'
 
 const acceptInvitationSchema = z.object({
     username: z.string().min(1, 'Username is required'),
@@ -46,6 +47,8 @@ export function AcceptInvitationPage() {
             password: '',
         },
     })
+
+    const [showPassword, setShowPassword] = useState(false)
 
     async function onSubmit(values: AcceptInvitationFormValues) {
         if (!token) {
@@ -186,14 +189,36 @@ export function AcceptInvitationPage() {
                                             Password
                                         </FieldLabel>
 
-                                        <Input
-                                            {...field}
-                                            id={field.name}
-                                            type="password"
-                                            autoComplete="new-password"
-                                            aria-invalid={fieldState.invalid}
-                                            className={inputClassName}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                {...field}
+                                                id={field.name}
+                                                type={showPassword ? 'text' : 'password'}
+                                                autoComplete="new-password"
+                                                aria-invalid={fieldState.invalid}
+                                                className={`${inputClassName} pr-10`}
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword((current) => !current)}
+                                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                                aria-pressed={showPassword}
+                                                className="
+            absolute inset-y-0 right-0 flex w-10 items-center
+            justify-center text-slate-400
+            hover:text-slate-600
+            focus-visible:outline-none
+            focus-visible:text-teal-700
+        "
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="size-4" />
+                                                ) : (
+                                                    <Eye className="size-4" />
+                                                )}
+                                            </button>
+                                        </div>
 
                                         {fieldState.invalid && (
                                             <FieldError
