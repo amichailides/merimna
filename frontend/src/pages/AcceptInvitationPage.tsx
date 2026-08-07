@@ -50,17 +50,54 @@ export function AcceptInvitationPage() {
 
     const [showPassword, setShowPassword] = useState(false)
 
+    if (!token) {
+        return (
+            <main className="min-h-screen bg-[#f4f8f7] px-6 py-10">
+                <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
+                    <div className="w-full max-w-sm">
+                        <div className="mb-8">
+                            <p className="font-logo text-[22px] font-semibold tracking-[-0.02em] text-teal-700">
+                                Merimna
+                            </p>
+
+                            <p className="mt-1 text-[13px] text-slate-500">
+                                Supported living management platform
+                            </p>
+                        </div>
+
+                        <div className="rounded-2xl border border-teal-100 bg-white px-6 py-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+                            <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
+                                Invalid invitation link
+                            </h1>
+
+                            <p className="mt-2 text-[13px] leading-5 text-slate-500">
+                                This invitation link is missing the required token.
+                            </p>
+
+                            <Button
+                                type="button"
+                                onClick={() => navigate('/login')}
+                                className="mt-5 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800"
+                            >
+                                Go to sign in
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
+    const invitationToken = token
+
     async function onSubmit(values: AcceptInvitationFormValues) {
-        if (!token) {
-            setSubmitError('The invitation link is missing a token.')
-            return
-        }
+
 
         setSubmitError(null)
 
         try {
             await acceptInvitation({
-                token,
+                token: invitationToken,
                 username: values.username,
                 password: values.password,
             })
