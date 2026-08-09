@@ -37,7 +37,7 @@ const inputClassName = `
 
 export function LoginPage() {
     const navigate = useNavigate()
-    const { login } = useAuth()
+    const { login, isAuthenticated, isAuthLoading } = useAuth()
     const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<LoginFormValues>({
@@ -53,6 +53,14 @@ export function LoginPage() {
         navigate('/dashboard', { replace: true })
     }
 
+    if (isAuthLoading) {
+        return null
+    }
+
+    if (isAuthenticated) {
+        navigate('/dashboard', { replace: true })
+        return null
+    }
     return (
         <main className="min-h-screen bg-[#f4f8f7] px-6 py-10">
             <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
