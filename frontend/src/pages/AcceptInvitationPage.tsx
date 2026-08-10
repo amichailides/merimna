@@ -3,7 +3,8 @@ import axios from 'axios'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '@/auth/useAuth'
 
 import { acceptInvitation } from '@/api/authApi'
 import type { ValidationErrorResponse } from '@/api/types'
@@ -34,6 +35,7 @@ const inputClassName = `
 `
 
 export function AcceptInvitationPage() {
+    const { isAuthenticated, isAuthLoading } = useAuth()
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const token = searchParams.get('token')
@@ -49,6 +51,14 @@ export function AcceptInvitationPage() {
     })
 
     const [showPassword, setShowPassword] = useState(false)
+
+    if (isAuthLoading) {
+        return null
+    }
+
+    if (isAuthenticated) {
+        return <Navigate to="/dashboard" replace />
+    }
 
     if (!token) {
         return (
