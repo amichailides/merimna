@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/auth/useAuth'
 import {
     Field,
@@ -150,12 +150,12 @@ export function LoginPage() {
                                                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                                                     aria-pressed={showPassword}
                                                     className="
-            absolute inset-y-0 right-0 flex w-10 items-center
-            justify-center text-slate-400
-            hover:text-slate-600
-            focus-visible:outline-none
-            focus-visible:text-teal-700
-        "
+                                                    absolute inset-y-0 right-0 flex w-10 items-center
+                                                    justify-center text-slate-400
+                                                    hover:text-slate-600
+                                                    focus-visible:outline-none
+                                                    focus-visible:text-teal-700
+                                                    "
                                                 >
                                                     {showPassword ? (
                                                         <EyeOff className="size-4" />
@@ -173,6 +173,15 @@ export function LoginPage() {
                                         </Field>
                                     )}
                                 />
+
+                                <div className="flex justify-end">
+                                    <Link
+                                        to="/forgot-password"
+                                        className="text-[12px] font-medium text-teal-700 hover:text-teal-800"
+                                    >
+                                        Forgot password?
+                                    </Link>
+                                </div>
 
                                 <Button
                                     type="submit"

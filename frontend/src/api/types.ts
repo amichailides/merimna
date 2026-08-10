@@ -6,6 +6,11 @@ export type AcceptInvitationRequest =
   components['schemas']['AcceptInvitationRequest']
 export type ValidationErrorResponse =
   components['schemas']['ValidationErrorResponse']
+export type ForgotPasswordRequest =
+  components['schemas']['ForgotPasswordRequest']
+
+export type ResetPasswordRequest =
+  components['schemas']['ResetPasswordRequest']
 
 export type EmployeeListDTO = components['schemas']['EmployeeListDTO']
 export type EmployeeDetailsDTO = components['schemas']['EmployeeDetailsDTO']

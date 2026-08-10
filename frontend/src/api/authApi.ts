@@ -1,5 +1,11 @@
 import { axiosInstance, publicClient, refreshClient } from './axiosInstance'
-import type {AcceptInvitationRequest, AuthResponse, LoginRequest } from './types'
+import type {
+  AcceptInvitationRequest,
+  AuthResponse,
+  LoginRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest
+} from './types'
 
 export async function loginUser(
   credentials: LoginRequest,
@@ -26,4 +32,16 @@ export async function acceptInvitation(
   request: AcceptInvitationRequest,
 ): Promise<void> {
   await publicClient.post('/auth/accept-invitation', request)
+}
+
+export async function forgotPassword(
+  request: ForgotPasswordRequest,
+): Promise<void> {
+  await publicClient.post('/auth/forgot-password', request)
+}
+
+export async function resetPassword(
+  request: ResetPasswordRequest,
+): Promise<void> {
+  await publicClient.post('/auth/reset-password', request)
 }
