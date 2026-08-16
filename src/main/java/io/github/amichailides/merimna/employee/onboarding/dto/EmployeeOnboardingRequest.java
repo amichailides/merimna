@@ -22,5 +22,6 @@ public record EmployeeOnboardingRequest(
         @Valid
         EmployeeAssignmentCreateDTO initialAssignment,
 
-        boolean grantSystemAccess
+        @Valid
+        SystemAccessRequest systemAccess
 ) {}

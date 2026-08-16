@@ -30,16 +30,26 @@ public class UserInvitationServiceImpl implements UserInvitationService {
     private final SecurityProperties securityProperties;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
+    private final AccountEmailAvailabilityValidator accountEmailAvailabilityValidator;
 
     @Override
     @Transactional
-    public void createForEmployee(UUID employeePublicId) {
+    public void createForEmployee(
+            UUID employeePublicId,
+            String accountEmail
+    ) {
         Employee employee = employeeRepository.findByPublicId(employeePublicId)
                 .orElseThrow(() ->
                         new EmployeeNotFoundByPublicIdException(employeePublicId)
                 );
 
         Instant now = Instant.now();
+
+        accountEmailAvailabilityValidator.validate(
+                accountEmail,
+                employee,
+                now
+        );
 
         userInvitationRepository
                 .findFirstByEmployeeOrderByCreatedAtDesc(employee)
@@ -51,6 +61,7 @@ public class UserInvitationServiceImpl implements UserInvitationService {
 
         UserInvitation invitation = UserInvitation.createFor(
                 employee,
+                accountEmail,
                 tokenHash,
                 now,
                 now.plus(securityProperties.getInvitation().getExpiration())
@@ -90,7 +101,7 @@ public class UserInvitationServiceImpl implements UserInvitationService {
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .employeePublicId(employee.getPublicId())
                 .username(username)
-                .email(employee.getContactEmail())
+                .email(invitation.getAccountEmail())
                 .password(password)
                 .role(Role.STAFF)
                 .build();

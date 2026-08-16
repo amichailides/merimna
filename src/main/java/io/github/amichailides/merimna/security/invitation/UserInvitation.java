@@ -41,6 +41,13 @@ public class UserInvitation {
     )
     private String tokenHash;
 
+    @Column(
+            name = "account_email",
+            nullable = false,
+            updatable = false
+    )
+    private String accountEmail;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
@@ -59,11 +66,13 @@ public class UserInvitation {
 
     private UserInvitation(
             Employee employee,
+            String accountEmail,
             String tokenHash,
             Instant createdAt,
             Instant expiresAt
     ) {
         this.employee = employee;
+        this.accountEmail = accountEmail;
         this.tokenHash = tokenHash;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
@@ -71,12 +80,14 @@ public class UserInvitation {
 
     public static UserInvitation createFor(
             Employee employee,
+            String accountEmail,
             String tokenHash,
             Instant now,
             Instant expiresAt
     ) {
         return new UserInvitation(
                 employee,
+                accountEmail,
                 tokenHash,
                 now,
                 expiresAt

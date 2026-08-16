@@ -36,8 +36,11 @@ public class EmployeeOnboardingServiceImpl
                 request.initialAssignment()
         );
 
-        if (request.grantSystemAccess()) {
-            userInvitationService.createForEmployee(employeePublicId);
+        if (request.systemAccess() != null) {
+            userInvitationService.createForEmployee(
+                    employeePublicId,
+                    request.systemAccess().accountEmail()
+            );
         }
 
         return new EmployeeOnboardingResponse(employeePublicId);
