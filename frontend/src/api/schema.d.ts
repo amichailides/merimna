@@ -908,7 +908,10 @@ export interface components {
         EmployeeOnboardingRequest: {
             employee?: components["schemas"]["EmployeeCreateDTO"];
             initialAssignment?: components["schemas"]["EmployeeAssignmentCreateDTO"];
-            grantSystemAccess?: boolean;
+            systemAccess?: components["schemas"]["SystemAccessRequest"];
+        };
+        SystemAccessRequest: {
+            accountEmail?: string;
         };
         EmployeeOnboardingResponse: {
             /** Format: uuid */

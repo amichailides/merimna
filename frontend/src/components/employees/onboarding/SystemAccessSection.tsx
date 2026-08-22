@@ -1,6 +1,12 @@
-import { Controller, type Control } from 'react-hook-form'
+import { Controller, type Control, useWatch } from 'react-hook-form'
 
 import type { EmployeeOnboardingFormValues } from './employeeOnboardingForm'
+import { Input } from '@/components/ui/input'
+import {
+    Field,
+    FieldError,
+    FieldLabel,
+} from '@/components/ui/field'
 
 type SystemAccessSectionProps = {
     control: Control<EmployeeOnboardingFormValues>
@@ -9,6 +15,11 @@ type SystemAccessSectionProps = {
 export function SystemAccessSection({
     control,
 }: SystemAccessSectionProps) {
+    const grantSystemAccess = useWatch({
+        control,
+        name: 'grantSystemAccess',
+    })
+
     return (
         <section className="space-y-5">
             <div className="border-b border-slate-100 pb-2">
@@ -44,6 +55,50 @@ export function SystemAccessSection({
                     </label>
                 )}
             />
+
+            {grantSystemAccess && (
+                <Controller
+                    control={control}
+                    name="systemAccess.accountEmail"
+                    render={({ field, fieldState }) => (
+                        <Field>
+                            <FieldLabel
+                                htmlFor={field.name}
+                                className="text-[12px] font-medium text-slate-700"
+                            >
+                                Account email
+                            </FieldLabel>
+
+                            <Input
+                                {...field}
+                                id={field.name}
+                                type="email"
+                                autoComplete="off"
+                                aria-invalid={fieldState.invalid}
+                                placeholder="employee@merimna.com"
+                                className="
+                                    h-9 rounded-none border-0 border-b border-slate-200
+                                    bg-transparent px-0 shadow-none
+
+                                    focus-visible:border-b-teal-600
+                                    focus-visible:ring-0
+
+                                    aria-invalid:border-0
+                                    aria-invalid:border-b
+                                    aria-invalid:border-b-red-500
+                                    aria-invalid:ring-0
+                                "
+                            />
+
+                            {fieldState.invalid && (
+                                <FieldError
+                                    errors={[fieldState.error]}
+                                />
+                            )}
+                        </Field>
+                    )}
+                />
+            )}
         </section>
     )
 }

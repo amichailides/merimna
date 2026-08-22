@@ -18,12 +18,18 @@ export type EmployeeOnboardingFormValues = {
         emergencyContactName: string
         emergencyContactPhoneNumber: string
     }
+
     initialAssignment: {
         houseUnitPublicId: string
         startDate: string
         endDate: string
     }
+
     grantSystemAccess: boolean
+
+    systemAccess: {
+        accountEmail: string
+    }
 }
 
 export const employeeOnboardingDefaultValues: EmployeeOnboardingFormValues = {
@@ -44,12 +50,18 @@ export const employeeOnboardingDefaultValues: EmployeeOnboardingFormValues = {
         emergencyContactName: '',
         emergencyContactPhoneNumber: '',
     },
+
     initialAssignment: {
         houseUnitPublicId: '',
         startDate: '',
         endDate: '',
     },
+
     grantSystemAccess: true,
+
+    systemAccess: {
+        accountEmail: '',
+    },
 }
 
 export function toEmployeeOnboardingRequest(
@@ -68,6 +80,10 @@ export function toEmployeeOnboardingRequest(
             ...values.initialAssignment,
             endDate: values.initialAssignment.endDate || undefined,
         },
-        grantSystemAccess: values.grantSystemAccess,
+        systemAccess: values.grantSystemAccess
+            ? {
+                accountEmail: values.systemAccess.accountEmail,
+            }
+            : undefined,
     }
 }
