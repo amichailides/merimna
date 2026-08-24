@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { type Path, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import { onboardEmployee } from '@/api/employeeApi'
 import type { ValidationErrorResponse } from '@/api/types'
@@ -17,6 +18,7 @@ import {
 } from '@/components/employees/onboarding/employeeOnboardingForm'
 import { PersonalDetailsSection } from '@/components/employees/onboarding/PersonalDetailsSection'
 import { SystemAccessSection } from '@/components/employees/onboarding/SystemAccessSection'
+import { employeeOnboardingSchema } from '@/components/employees/onboarding/employeeOnboardingSchema'
 import { Button } from '@/components/ui/button'
 
 function isOnboardingFormPath(
@@ -48,6 +50,7 @@ export function EmployeeOnboardingPage() {
 
     // TODO(#38): Add live validation based on backend/OpenAPI constraints.
     const form = useForm<EmployeeOnboardingFormValues>({
+        resolver: zodResolver(employeeOnboardingSchema),
         defaultValues: employeeOnboardingDefaultValues,
     })
 

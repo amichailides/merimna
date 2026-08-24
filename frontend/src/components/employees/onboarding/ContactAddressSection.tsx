@@ -40,7 +40,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.contactEmail"
-                    rules={{ required: 'Email is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -65,7 +64,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.mobileNumber"
-                    rules={{ required: 'Mobile number is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -90,7 +88,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.address.street"
-                    rules={{ required: 'Street is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -137,7 +134,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.address.city"
-                    rules={{ required: 'City is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -161,7 +157,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.address.zipCode"
-                    rules={{ required: 'Postal code is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -185,7 +180,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.emergencyContactName"
-                    rules={{ required: 'Emergency contact name is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -209,7 +203,6 @@ export function ContactAddressSection({
                 <Controller
                     control={control}
                     name="employee.emergencyContactPhoneNumber"
-                    rules={{ required: 'Emergency contact phone is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>

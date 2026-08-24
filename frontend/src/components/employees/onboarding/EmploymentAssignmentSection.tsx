@@ -72,7 +72,6 @@ export function EmploymentAssignmentSection({
                 <Controller
                     control={control}
                     name="employee.positionCode"
-                    rules={{ required: 'Position is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>Position</FieldLabel>
@@ -124,7 +123,6 @@ export function EmploymentAssignmentSection({
                 <Controller
                     control={control}
                     name="employee.hireDate"
-                    rules={{ required: 'Hire date is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -149,7 +147,6 @@ export function EmploymentAssignmentSection({
                 <Controller
                     control={control}
                     name="initialAssignment.houseUnitPublicId"
-                    rules={{ required: 'House unit is required' }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel>House unit</FieldLabel>
@@ -202,9 +199,6 @@ export function EmploymentAssignmentSection({
                 <Controller
                     control={control}
                     name="initialAssignment.startDate"
-                    rules={{
-                        required: 'Assignment start date is required',
-                    }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>

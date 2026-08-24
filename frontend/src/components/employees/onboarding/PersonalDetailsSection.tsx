@@ -40,9 +40,6 @@ export function PersonalDetailsSection({
                 <Controller
                     control={control}
                     name="employee.firstName"
-                    rules={{
-                        required: 'First name is required',
-                    }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -66,9 +63,6 @@ export function PersonalDetailsSection({
                 <Controller
                     control={control}
                     name="employee.lastName"
-                    rules={{
-                        required: 'Last name is required',
-                    }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
@@ -92,9 +86,6 @@ export function PersonalDetailsSection({
                 <Controller
                     control={control}
                     name="employee.dateOfBirth"
-                    rules={{
-                        required: 'Date of birth is required',
-                    }}
                     render={({ field, fieldState }) => (
                         <Field>
                             <FieldLabel htmlFor={field.name}>
