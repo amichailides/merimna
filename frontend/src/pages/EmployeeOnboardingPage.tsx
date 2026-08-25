@@ -19,6 +19,7 @@ import {
 import { PersonalDetailsSection } from '@/components/employees/onboarding/PersonalDetailsSection'
 import { SystemAccessSection } from '@/components/employees/onboarding/SystemAccessSection'
 import { employeeOnboardingSchema } from '@/components/employees/onboarding/employeeOnboardingSchema'
+import { applyServerValidationErrors } from '@/lib/applyServerValidationErrors'
 import { Button } from '@/components/ui/button'
 
 function isOnboardingFormPath(
@@ -71,30 +72,14 @@ export function EmployeeOnboardingPage() {
                 const validationErrors = errorResponse?.validationErrors
 
                 if (validationErrors) {
-                    let fieldErrorApplied = false
-                    let unknownFieldError = false
-
-                    for (const [path, messages] of Object.entries(
-                        validationErrors
-                    )) {
-                        const message = messages[0]
-
-                        if (!message) {
-                            continue
-                        }
-
-                        if (!isOnboardingFormPath(path)) {
-                            unknownFieldError = true
-                            continue
-                        }
-
-                        form.setError(path, {
-                            type: 'server',
-                            message,
-                        })
-
-                        fieldErrorApplied = true
-                    }
+                    const {
+                        fieldErrorApplied,
+                        unknownFieldError,
+                    } = applyServerValidationErrors({
+                        form,
+                        validationErrors,
+                        isFormPath: isOnboardingFormPath,
+                    })
 
                     if (fieldErrorApplied && !unknownFieldError) {
                         return
