@@ -1,32 +1,55 @@
-import { useForm } from 'react-hook-form'
+import axios from 'axios'
+import { useState } from 'react'
+import { type Path, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-import type { EmployeeDetailsDTO, EmployeeUpdateDTO } from '@/api/types'
 import { updateEmployee } from '@/api/employeeApi'
+import type {
+    EmployeeDetailsDTO,
+    ValidationErrorResponse,
+} from '@/api/types'
 import {
     FloatingPanelBody,
     FloatingPanelFooter,
     FloatingPanelHeader,
     useFloatingPanel,
 } from '@/components/ui/floating-panel'
+import { applyServerValidationErrors } from '@/lib/applyServerValidationErrors'
+import { EmployeeMetadataContactSection } from './EmployeeMetadataContactSection'
+import { EmployeeMetadataEmergencyContactSection } from './EmployeeMetadataEmergencyContactSection'
+import { EmployeeMetadataEmploymentDatesSection } from './EmployeeMetadataEmploymentDatesSection'
+import {
+    employeeMetadataEditSchema,
+    type EmployeeMetadataEditFormValues,
+} from './EmployeeMetadataEditSchema'
+import { buildEmployeeMetadataUpdatePayload } from './employeeMetadataPayload'
 
 type Props = {
     employee: EmployeeDetailsDTO
     onEmployeeUpdated?: () => void | Promise<void>
 }
 
-type EmployeeMetadataFormValues = {
-    contactEmail: string
-    mobileNumber: string
-    address: {
-        street: string
-        streetNumber: string
-        city: string
-        zipCode: string
-    }
-    emergencyContactName: string
-    emergencyContactPhoneNumber: string
-    hireDate: string
-    dateOfBirth: string
+const employeeMetadataFormPaths = new Set<
+    Path<EmployeeMetadataEditFormValues>
+>([
+    'contactEmail',
+    'mobileNumber',
+    'address.street',
+    'address.streetNumber',
+    'address.city',
+    'address.zipCode',
+    'emergencyContactName',
+    'emergencyContactPhoneNumber',
+    'hireDate',
+    'dateOfBirth',
+])
+
+function isEmployeeMetadataFormPath(
+    path: string
+): path is Path<EmployeeMetadataEditFormValues> {
+    return employeeMetadataFormPaths.has(
+        path as Path<EmployeeMetadataEditFormValues>
+    )
 }
 
 export function EmployeeMetadataEditForm({
@@ -34,7 +57,10 @@ export function EmployeeMetadataEditForm({
     onEmployeeUpdated,
 }: Props) {
     const { closeFloatingPanel } = useFloatingPanel()
-    const form = useForm<EmployeeMetadataFormValues>({
+    const [submitError, setSubmitError] = useState<string | null>(null)
+
+    const form = useForm<EmployeeMetadataEditFormValues>({
+        resolver: zodResolver(employeeMetadataEditSchema),
         defaultValues: {
             contactEmail: employee.contactEmail ?? '',
             mobileNumber: employee.mobileNumber ?? '',
@@ -44,40 +70,87 @@ export function EmployeeMetadataEditForm({
                 city: employee.address?.city ?? '',
                 zipCode: employee.address?.zipCode ?? '',
             },
-            emergencyContactName: employee.emergencyContactName ?? '',
-            emergencyContactPhoneNumber: employee.emergencyContactPhoneNumber ?? '',
+            emergencyContactName:
+                employee.emergencyContactName ?? '',
+            emergencyContactPhoneNumber:
+                employee.emergencyContactPhoneNumber ?? '',
             hireDate: employee.hireDate ?? '',
             dateOfBirth: employee.dateOfBirth ?? '',
         },
     })
 
-    const isSubmitting = form.formState.isSubmitting
+    const { errors, isDirty, isSubmitting } = form.formState
 
-    async function handleSubmit(values: EmployeeMetadataFormValues) {
-        const payload: EmployeeUpdateDTO = {
-            contactEmail: values.contactEmail,
-            mobileNumber: values.mobileNumber,
-            address: values.address,
-            emergencyContactName: values.emergencyContactName,
-            emergencyContactPhoneNumber: values.emergencyContactPhoneNumber,
-            hireDate: values.hireDate,
-            dateOfBirth: values.dateOfBirth,
+    async function handleSubmit(
+        values: EmployeeMetadataEditFormValues
+    ) {
+        form.clearErrors()
+        setSubmitError(null)
+
+        const payload = buildEmployeeMetadataUpdatePayload(
+            values,
+            employee
+        )
+
+        if (Object.keys(payload).length === 0) {
+            closeFloatingPanel()
+            return
         }
 
-        await updateEmployee(employee.publicId, payload)
-        await onEmployeeUpdated?.()
+        try {
+            await updateEmployee(employee.publicId, payload)
+            await onEmployeeUpdated?.()
+            closeFloatingPanel()
+        } catch (error) {
+            if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+                const errorResponse = error.response?.data
+                const validationErrors =
+                    errorResponse?.validationErrors
+
+                if (validationErrors) {
+                    const {
+                        fieldErrorApplied,
+                        unknownFieldError,
+                    } = applyServerValidationErrors({
+                        form,
+                        validationErrors,
+                        isFormPath: isEmployeeMetadataFormPath,
+                    })
+
+                    if (
+                        fieldErrorApplied &&
+                        !unknownFieldError
+                    ) {
+                        return
+                    }
+                }
+
+                setSubmitError(
+                    errorResponse?.detail ??
+                    'Could not update the employee. Please review the form and try again.'
+                )
+
+                return
+            }
+
+            setSubmitError(
+                'Could not connect to the server. Please try again.'
+            )
+        }
     }
 
     return (
         <form
             className="min-h-[520px]"
             onSubmit={form.handleSubmit(handleSubmit)}
+            noValidate
         >
             <FloatingPanelHeader className="border-b border-slate-100 px-4 py-3">
                 <div>
                     <div className="text-[13px] font-medium text-slate-800">
                         Edit employee details
                     </div>
+
                     <p className="mt-0.5 text-[12px] font-normal text-slate-400">
                         Update this employee’s profile information.
                     </p>
@@ -85,113 +158,29 @@ export function EmployeeMetadataEditForm({
             </FloatingPanelHeader>
 
             <FloatingPanelBody className="space-y-5 px-4 py-4">
-                <section className="space-y-3">
-                    <h3 className="text-[12px] font-medium text-slate-700">
-                        Contact
-                    </h3>
+                <EmployeeMetadataContactSection
+                    register={form.register}
+                    errors={errors}
+                />
 
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Email</span>
-                        <input
-                            {...form.register('contactEmail')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
+                <EmployeeMetadataEmergencyContactSection
+                    register={form.register}
+                    errors={errors}
+                />
 
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Mobile</span>
-                        <input
-                            {...form.register('mobileNumber')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
+                <EmployeeMetadataEmploymentDatesSection
+                    register={form.register}
+                    errors={errors}
+                />
 
-                    <div className="space-y-2">
-                        <div className="text-[11px] text-slate-400">
-                            Address
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <label className="block space-y-1.5">
-                                <span className="text-[11px] text-slate-400">Street</span>
-                                <input
-                                    {...form.register('address.street')}
-                                    className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                />
-                            </label>
-
-                            <label className="block space-y-1.5">
-                                <span className="text-[11px] text-slate-400">No.</span>
-                                <input
-                                    {...form.register('address.streetNumber')}
-                                    className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                />
-                            </label>
-
-                            <label className="block space-y-1.5">
-                                <span className="text-[11px] text-slate-400">City</span>
-                                <input
-                                    {...form.register('address.city')}
-                                    className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                />
-                            </label>
-
-                            <label className="block space-y-1.5">
-                                <span className="text-[11px] text-slate-400">ZIP</span>
-                                <input
-                                    {...form.register('address.zipCode')}
-                                    className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                                />
-                            </label>
-                        </div>
+                {submitError && (
+                    <div
+                        role="alert"
+                        className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700"
+                    >
+                        {submitError}
                     </div>
-                </section>
-
-                <section className="space-y-3 border-t border-slate-100 pt-4">
-                    <h3 className="text-[12px] font-medium text-slate-700">
-                        Emergency contact
-                    </h3>
-
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Name</span>
-                        <input
-                            {...form.register('emergencyContactName')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
-
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Phone</span>
-                        <input
-                            {...form.register('emergencyContactPhoneNumber')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
-                </section>
-
-                <section className="space-y-3 border-t border-slate-100 pt-4">
-                    <h3 className="text-[12px] font-medium text-slate-700">
-                        Employment
-                    </h3>
-
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Hire date</span>
-                        <input
-                            type="date"
-                            {...form.register('hireDate')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
-
-                    <label className="block space-y-1.5">
-                        <span className="text-[11px] text-slate-400">Date of birth</span>
-                        <input
-                            type="date"
-                            {...form.register('dateOfBirth')}
-                            className="h-9 w-full rounded-lg border border-slate-200 px-3 text-[13px] text-slate-800 outline-none focus:border-slate-300"
-                        />
-                    </label>
-                </section>
+                )}
             </FloatingPanelBody>
 
             <FloatingPanelFooter className="mt-auto justify-end gap-2 border-t border-slate-100 px-4 py-3">
@@ -205,10 +194,12 @@ export function EmployeeMetadataEditForm({
 
                 <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isDirty}
                     className="rounded-lg bg-teal-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {isSubmitting ? 'Saving...' : 'Save changes'}
+                    {isSubmitting
+                        ? 'Saving...'
+                        : 'Save changes'}
                 </button>
             </FloatingPanelFooter>
         </form>
