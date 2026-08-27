@@ -7,7 +7,7 @@ import {
     FloatingPanelRoot,
     FloatingPanelTrigger,
 } from '@/components/ui/floating-panel'
-import { EmployeeMetadataEditForm } from './EmployeeMetadataEditForm'
+import { EmployeeMetadataEditForm } from '../edit/EmployeeMetadataEditForm'
 
 function DetailItem({
     label,

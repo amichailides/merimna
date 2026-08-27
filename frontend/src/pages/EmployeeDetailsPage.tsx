@@ -1,18 +1,19 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { ArrowLeft } from 'lucide-react'
 
-import { EmployeeProfileHeader } from '@/components/employees/EmployeeProfileHeader'
-import { EmployeeRecentActivitySection } from '@/components/employees/EmployeeRecentActivitySection'
 import { useEmployeeDetails } from '@/api/useEmployeeDetails'
 import { useEmployeeActivity } from '@/api/useEmployeeActivity'
-import { EmployeeWorkDetailsSection } from '@/components/employees/EmployeeWorkDetailsSection'
-import { EmployeeMetadataRail } from '@/components/employees/EmployeeMetadataRail'
-import { useState } from 'react'
-import { EmployeeAssignmentsSection } from '@/components/employees/EmployeeAssignmentsSection'
-import { EmployeePlacementsSection } from '@/components/employees/EmployeePlacementsSection'
 import { useEmployeePlacements } from '@/api/useEmployeePlacements'
-import { EmployeeActivitySection } from '@/components/employees/EmployeeActivitySection'
+
+import { EmployeeProfileHeader } from '@/components/employees/profile/EmployeeProfileHeader'
+import { EmployeeRecentActivitySection } from '@/components/employees/profile/EmployeeRecentActivitySection'
+import { EmployeeWorkDetailsSection } from '@/components/employees/profile/EmployeeWorkDetailsSection'
+import { EmployeeMetadataRail } from '@/components/employees/profile/EmployeeMetadataRail'
+import { EmployeeAssignmentsSection } from '@/components/employees/profile/EmployeeAssignmentsSection'
+import { EmployeePlacementsSection } from '@/components/employees/profile/EmployeePlacementsSection'
+import { EmployeeActivitySection } from '@/components/employees/profile/EmployeeActivitySection'
 
 const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
 

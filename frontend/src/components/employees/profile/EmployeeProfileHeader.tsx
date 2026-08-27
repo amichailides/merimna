@@ -1,6 +1,6 @@
 import type { EmployeeDetailsDTO } from '@/api/types'
-import { EmployeeProfileHeaderEditForm } from '@/components/employees/EmployeeProfileHeaderEditForm'
-import { EmployeeProfileActionsMenu } from '@/components/employees/EmployeeProfileActionsMenu'
+import { EmployeeProfileHeaderEditForm } from '@/components/employees/edit/EmployeeProfileHeaderEditForm'
+import { EmployeeProfileActionsMenu } from '@/components/employees/profile/EmployeeProfileActionsMenu'
 import {
     FloatingPanelContent,
     FloatingPanelRoot,

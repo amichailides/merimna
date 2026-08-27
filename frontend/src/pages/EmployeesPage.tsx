@@ -5,8 +5,8 @@ import { Plus } from 'lucide-react'
 import { useEmployees } from '@/api/useEmployees'
 import type { EmployeeSearchDTO } from '@/api/types'
 import { ListPagination } from '@/components/common/ListPagination'
-import { EmployeeListFilters } from '@/components/employees/EmployeeListFilters'
-import { EmployeeListRow } from '@/components/employees/EmployeeListRow'
+import { EmployeeListFilters } from '@/components/employees/list/EmployeeListFilters'
+import { EmployeeListRow } from '@/components/employees/list/EmployeeListRow'
 import { Button } from '@/components/ui/button'
 
 type EmployeeStatusFilter = NonNullable<EmployeeSearchDTO['status']>

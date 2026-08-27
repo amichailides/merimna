@@ -14,11 +14,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
 import {
     FloatingPanelContent,
     FloatingPanelRoot,
-} from '../ui/floating-panel'
+} from '@/components/ui/floating-panel'
 
 type Props = {
     employee: EmployeeDetailsDTO
