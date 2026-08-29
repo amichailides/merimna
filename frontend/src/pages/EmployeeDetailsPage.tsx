@@ -14,6 +14,8 @@ import { EmployeeMetadataRail } from '@/components/employees/profile/EmployeeMet
 import { EmployeeAssignmentsSection } from '@/components/employees/profile/EmployeeAssignmentsSection'
 import { EmployeePlacementsSection } from '@/components/employees/profile/EmployeePlacementsSection'
 import { EmployeeActivitySection } from '@/components/employees/profile/EmployeeActivitySection'
+import { useEmployeeAccess } from '@/api/useEmployeeAccess'
+import { EmployeeSystemAccessSection } from '@/components/employees/profile/EmployeeSystemAccessSection'
 
 const PROFILE_TABS = ['Overview', 'Assignments', 'Placements', 'Activity'] as const
 
@@ -38,6 +40,13 @@ export function EmployeeDetailsPage() {
         loading: placementsLoading,
         error: placementsError,
     } = useEmployeePlacements(publicId)
+
+    const {
+        access,
+        loading: accessLoading,
+        error: accessError,
+        reload: reloadAccess,
+    } = useEmployeeAccess(employee?.publicId)
 
     if (loading) {
         return (
@@ -109,6 +118,16 @@ export function EmployeeDetailsPage() {
                             <EmployeeWorkDetailsSection
                                 assignments={employee.assignments}
                                 placement={employee.activePlacement}
+                            />
+
+                            <div className="max-w-xl border-t border-slate-100" />
+
+                            <EmployeeSystemAccessSection
+                                employeePublicId={employee.publicId}
+                                access={access}
+                                loading={accessLoading}
+                                error={accessError}
+                                onAccessUpdated={reloadAccess}
                             />
 
                             <div className="max-w-xl border-t border-slate-100" />

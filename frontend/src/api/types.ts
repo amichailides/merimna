@@ -54,3 +54,6 @@ export type EmployeeOnboardingRequest =
 
 export type EmployeeOnboardingResponse =
   components['schemas']['EmployeeOnboardingResponse']
+
+export type EmployeeAccessDTO =
+  components['schemas']['EmployeeAccessDTO']

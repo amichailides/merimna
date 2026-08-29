@@ -1,6 +1,7 @@
 import { axiosInstance } from './axiosInstance'
 
 import type {
+  EmployeeAccessDTO,
   EmployeeDetailsDTO,
   EmployeeSearchDTO,
   EmployeeUpdateDTO,
@@ -88,3 +89,28 @@ export async function onboardEmployee(
   return response.data
 }
 
+export async function getEmployeeAccess(
+  publicId: string
+): Promise<EmployeeAccessDTO> {
+  const response = await axiosInstance.get<EmployeeAccessDTO>(
+    `/employees/${publicId}/access`
+  )
+
+  return response.data
+}
+
+export async function resendEmployeeInvitation(
+  publicId: string
+): Promise<void> {
+  await axiosInstance.post(
+    `/employees/${publicId}/access/invitation/resend`
+  )
+}
+
+export async function cancelEmployeeInvitation(
+  publicId: string
+): Promise<void> {
+  await axiosInstance.delete(
+    `/employees/${publicId}/access/invitation`
+  )
+}

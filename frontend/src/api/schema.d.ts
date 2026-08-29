@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/employees/{employeePublicId}/access/invitation/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["resendInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/employees/onboarding": {
         parameters: {
             query?: never;
@@ -600,6 +616,38 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/employees/{employeePublicId}/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAccessStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/employees/{employeePublicId}/access/invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["cancelInvitation"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1637,6 +1685,13 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
+        EmployeeAccessDTO: {
+            /** @enum {string} */
+            status?: "NO_ACCESS" | "INVITATION_PENDING" | "INVITATION_EXPIRED" | "ACTIVE" | "SUSPENDED";
+            accountEmail?: string;
+            /** Format: date-time */
+            invitationExpiresAt?: string;
+        };
         BeneficiarySearchDTO: {
             /**
              * @description Global search term (firstName, lastName, AMKA partial match). Ignored if amka is provided.
@@ -2044,6 +2099,26 @@ export interface operations {
             path: {
                 employeePublicId: string;
                 assignmentPublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    resendInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeePublicId: string;
             };
             cookie?: never;
         };
@@ -3106,6 +3181,48 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["PageResponseEmployeeActivityDTO"];
                 };
+            };
+        };
+    };
+    getAccessStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeePublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EmployeeAccessDTO"];
+                };
+            };
+        };
+    };
+    cancelInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeePublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
