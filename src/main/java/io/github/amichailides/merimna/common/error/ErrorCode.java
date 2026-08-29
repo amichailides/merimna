@@ -112,6 +112,7 @@ public enum ErrorCode {
     // User
     // =========================================================================
     EMPLOYEE_ALREADY_HAS_ACCOUNT("EMPLOYEE_ALREADY_HAS_ACCOUNT", HttpStatus.CONFLICT, "error.user.employeeAlreadyHasAccount"),
+    NO_PENDING_EMPLOYEE_INVITATION("NO_PENDING_EMPLOYEE_INVITATION", HttpStatus.CONFLICT, "error.user.noPendingEmployeeInvitation"),
     USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.usernameAlreadyExists"),
     EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.emailAlreadyExists"),
     USER_NOT_FOUND_BY_PUBLIC_ID("USER_NOT_FOUND_BY_PUBLIC_ID", HttpStatus.NOT_FOUND, "error.user.notFoundByPublicId"),
