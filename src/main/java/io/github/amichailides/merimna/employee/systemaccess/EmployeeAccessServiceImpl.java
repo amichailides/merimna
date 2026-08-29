@@ -6,6 +6,7 @@ import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.employee.exception.EmployeeNotFoundByPublicIdException;
 import io.github.amichailides.merimna.employee.systemaccess.dto.EmployeeAccessDTO;
 import io.github.amichailides.merimna.employee.systemaccess.exception.EmployeeAccountAlreadyExistsException;
+import io.github.amichailides.merimna.employee.systemaccess.exception.EmployeeInvitationAlreadyExistsException;
 import io.github.amichailides.merimna.employee.systemaccess.exception.NoPendingEmployeeInvitationException;
 import io.github.amichailides.merimna.security.invitation.UserInvitation;
 import io.github.amichailides.merimna.security.invitation.UserInvitationRepository;
@@ -103,15 +104,11 @@ public class EmployeeAccessServiceImpl implements EmployeeAccessService {
                 current.status() == EmployeeAccessStatus.ACTIVE
                         || current.status() == EmployeeAccessStatus.SUSPENDED
         ) {
-            throw new EmployeeAccountAlreadyExistsException(
-                    employeePublicId
-            );
+            throw new EmployeeAccountAlreadyExistsException();
         }
 
         if (current.status() == EmployeeAccessStatus.NO_ACCESS) {
-            throw new NoPendingEmployeeInvitationException(
-                    employeePublicId
-            );
+            throw new NoPendingEmployeeInvitationException();
         }
 
         userInvitationService.createForEmployee(
@@ -131,13 +128,39 @@ public class EmployeeAccessServiceImpl implements EmployeeAccessService {
                         .findFirstByEmployeeOrderByCreatedAtDesc(employee)
                         .filter(candidate -> candidate.isValid(now))
                         .orElseThrow(
-                                () ->
-                                        new NoPendingEmployeeInvitationException(
-                                                employeePublicId
-                                        )
+                                NoPendingEmployeeInvitationException::new
                         );
 
         invitation.revoke(now);
+    }
+
+    @Override
+    @Transactional
+    public void grantAccess(
+            UUID employeePublicId,
+            String accountEmail
+    ) {
+        EmployeeAccessDTO current =
+                getAccessStatus(employeePublicId);
+
+        if (
+                current.status() == EmployeeAccessStatus.ACTIVE
+                        || current.status() == EmployeeAccessStatus.SUSPENDED
+        ) {
+            throw new EmployeeAccountAlreadyExistsException();
+        }
+
+        if (
+                current.status() == EmployeeAccessStatus.INVITATION_PENDING
+                        || current.status() == EmployeeAccessStatus.INVITATION_EXPIRED
+        ) {
+            throw new EmployeeInvitationAlreadyExistsException();
+        }
+
+        userInvitationService.createForEmployee(
+                employeePublicId,
+                accountEmail
+        );
     }
 
     private Employee getEmployeeOrThrow(UUID employeePublicId) {

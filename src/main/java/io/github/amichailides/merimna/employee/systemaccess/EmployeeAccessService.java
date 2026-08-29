@@ -11,4 +11,6 @@ public interface EmployeeAccessService {
     void resendInvitation(UUID employeePublicId);
 
     void cancelInvitation(UUID employeePublicId);
+
+    void grantAccess(UUID employeePublicId, String accountEmail);
 }

@@ -1,9 +1,12 @@
 package io.github.amichailides.merimna.employee.systemaccess;
 
 import io.github.amichailides.merimna.employee.systemaccess.dto.EmployeeAccessDTO;
+import io.github.amichailides.merimna.employee.systemaccess.dto.GrantEmployeeAccessRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -42,6 +45,20 @@ public class EmployeeAccessController {
             @PathVariable UUID employeePublicId
     ) {
         employeeAccessService.cancelInvitation(employeePublicId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('USER_CREATE')")
+    public ResponseEntity<Void> grantAccess(
+            @PathVariable UUID employeePublicId,
+            @Validated @RequestBody GrantEmployeeAccessRequest request
+    ) {
+        employeeAccessService.grantAccess(
+                employeePublicId,
+                request.accountEmail()
+        );
 
         return ResponseEntity.noContent().build();
     }

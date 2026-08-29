@@ -119,6 +119,7 @@ public enum ErrorCode {
     USER_NOT_FOUND_BY_EMAIL("USER_NOT_FOUND_BY_EMAIL", HttpStatus.NOT_FOUND, "error.user.notFoundByEmail"),
     NEW_PASSWORD_MUST_BE_DIFFERENT("NEW_PASSWORD_MUST_BE_DIFFERENT", HttpStatus.BAD_REQUEST, "error.user.newPasswordMustBeDifferent"),
     INVALID_CURRENT_PASSWORD("INVALID_CURRENT_PASSWORD", HttpStatus.FORBIDDEN, "error.user.invalidCurrentPassword"),
+    EMPLOYEE_INVITATION_ALREADY_EXISTS("EMPLOYEE_INVITATION_ALREADY_EXISTS", HttpStatus.CONFLICT, "error.user.employeeInvitationAlreadyExists"),
 
     // =========================================================================
     // Employee Placement

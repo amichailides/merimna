@@ -3,10 +3,10 @@ package io.github.amichailides.merimna.employee.systemaccess.exception;
 import io.github.amichailides.merimna.common.error.ErrorCode;
 import io.github.amichailides.merimna.exception.BaseDomainException;
 
-public class EmployeeAccountAlreadyExistsException
+public class EmployeeInvitationAlreadyExistsException
         extends BaseDomainException {
 
-    public EmployeeAccountAlreadyExistsException() {
-        super(ErrorCode.EMPLOYEE_ALREADY_HAS_ACCOUNT);
+    public EmployeeInvitationAlreadyExistsException() {
+        super(ErrorCode.EMPLOYEE_INVITATION_ALREADY_EXISTS);
     }
 }
