@@ -57,3 +57,6 @@ export type EmployeeOnboardingResponse =
 
 export type EmployeeAccessDTO =
   components['schemas']['EmployeeAccessDTO']
+
+export type GrantEmployeeAccessRequest =
+  components['schemas']['GrantEmployeeAccessRequest']

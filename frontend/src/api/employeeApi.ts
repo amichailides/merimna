@@ -2,6 +2,7 @@ import { axiosInstance } from './axiosInstance'
 
 import type {
   EmployeeAccessDTO,
+  GrantEmployeeAccessRequest,
   EmployeeDetailsDTO,
   EmployeeSearchDTO,
   EmployeeUpdateDTO,
@@ -112,5 +113,15 @@ export async function cancelEmployeeInvitation(
 ): Promise<void> {
   await axiosInstance.delete(
     `/employees/${publicId}/access/invitation`
+  )
+}
+
+export async function grantEmployeeAccess(
+  publicId: string,
+  request: GrantEmployeeAccessRequest
+): Promise<void> {
+  await axiosInstance.post(
+    `/employees/${publicId}/access`,
+    request
   )
 }

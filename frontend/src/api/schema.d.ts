@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/employees/{employeePublicId}/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAccessStatus"];
+        put?: never;
+        post: operations["grantAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/employees/{employeePublicId}/access/invitation/resend": {
         parameters: {
             query?: never;
@@ -621,22 +637,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/employees/{employeePublicId}/access": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getAccessStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/employees/{employeePublicId}/access/invitation": {
         parameters: {
             query?: never;
@@ -952,6 +952,9 @@ export interface components {
             startDate?: string;
             /** Format: date */
             endDate?: string;
+        };
+        GrantEmployeeAccessRequest: {
+            accountEmail: string;
         };
         EmployeeOnboardingRequest: {
             employee?: components["schemas"]["EmployeeCreateDTO"];
@@ -2113,6 +2116,52 @@ export interface operations {
             };
         };
     };
+    getAccessStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeePublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EmployeeAccessDTO"];
+                };
+            };
+        };
+    };
+    grantAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                employeePublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantEmployeeAccessRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     resendInvitation: {
         parameters: {
             query?: never;
@@ -3180,28 +3229,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PageResponseEmployeeActivityDTO"];
-                };
-            };
-        };
-    };
-    getAccessStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                employeePublicId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["EmployeeAccessDTO"];
                 };
             };
         };
