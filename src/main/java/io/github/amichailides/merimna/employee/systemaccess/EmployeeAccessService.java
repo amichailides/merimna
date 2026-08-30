@@ -13,4 +13,6 @@ public interface EmployeeAccessService {
     void cancelInvitation(UUID employeePublicId);
 
     void grantAccess(UUID employeePublicId, String accountEmail);
+
+    // TODO: #39 add suspend/reactivate account actions.
 }
