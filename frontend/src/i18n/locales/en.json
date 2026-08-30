@@ -23,11 +23,42 @@
             "submit": "Send reset instructions",
             "backToSignIn": "Back to sign in"
         },
+        "resetPassword": {
+            "title": "Reset password",
+            "description": "Choose a new password for your Merimna account.",
+            "newPassword": "New password",
+            "showPassword": "Show password",
+            "hidePassword": "Hide password",
+            "updating": "Updating...",
+            "submit": "Reset password",
+            "successTitle": "Password updated",
+            "successDescription": "Your password has been reset successfully.",
+            "backToSignIn": "Back to sign in",
+            "invalidLinkTitle": "Invalid reset link",
+            "invalidLinkDescription": "This password reset link is missing the required token.",
+            "requestNewLink": "Request a new reset link"
+        },
+        "acceptInvitation": {
+            "invalidLinkTitle": "Invalid invitation link",
+            "invalidLinkDescription": "This invitation link is missing the required token.",
+            "goToSignIn": "Go to sign in",
+            "title": "Accept invitation",
+            "description": "Choose your username and password to activate your account.",
+            "username": "Username",
+            "password": "Password",
+            "showPassword": "Show password",
+            "hidePassword": "Hide password",
+            "activating": "Activating...",
+            "submit": "Activate account"
+        },
         "errors": {
             "invalidCredentials": "Invalid email or password.",
             "requestFailed": "Could not process the request. Please try again.",
             "network": "Could not connect to the server. Please try again.",
-            "generic": "Something went wrong. Please try again."
+            "generic": "Something went wrong. Please try again.",
+            "invalidInvitation": "This invitation is invalid or has expired.",
+            "activationFailed": "Could not activate the account. Please try again.",
+            "resetFailed": "Could not reset the password. Please try again."
         }
     },
     "validation": {
@@ -36,6 +67,9 @@
         },
         "password": {
             "required": "Password is required"
+        },
+        "username": {
+            "required": "Username is required"
         }
     }
 }

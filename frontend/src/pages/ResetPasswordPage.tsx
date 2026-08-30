@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { Eye, EyeOff } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import {
     Link,
     Navigate,
@@ -22,7 +23,7 @@ import {
 } from '@/components/ui/field'
 
 const resetPasswordSchema = z.object({
-    newPassword: z.string().min(1, 'Password is required'),
+    newPassword: z.string().min(1, 'validation.password.required'),
 })
 
 type ResetPasswordFormValues = z.infer<
@@ -38,13 +39,14 @@ const inputClassName = `
 `
 
 export function ResetPasswordPage() {
+    const { t } = useTranslation()
     const { isAuthenticated, isAuthLoading } = useAuth()
     const [searchParams] = useSearchParams()
     const token = searchParams.get('token')
 
     const [showPassword, setShowPassword] = useState(false)
     const [submitted, setSubmitted] = useState(false)
-    const [submitError, setSubmitError] = useState<string | null>(null)
+    const [submitErrorKey, setSubmitErrorKey] = useState<string | null>(null)
 
     const form = useForm<ResetPasswordFormValues>({
         resolver: zodResolver(resetPasswordSchema),
@@ -72,24 +74,24 @@ export function ResetPasswordPage() {
                             </p>
 
                             <p className="mt-1 text-[13px] text-slate-500">
-                                Supported living management platform
+                                {t('app.tagline')}
                             </p>
                         </div>
 
                         <div className="rounded-2xl border border-teal-100 bg-white px-6 py-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                             <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
-                                Invalid reset link
+                                {t('auth.resetPassword.invalidLinkTitle')}
                             </h1>
 
                             <p className="mt-2 text-[13px] leading-5 text-slate-500">
-                                This password reset link is missing the required token.
+                                {t('auth.resetPassword.invalidLinkDescription')}
                             </p>
 
                             <Link
                                 to="/forgot-password"
                                 className="mt-5 block text-center text-[12px] font-medium text-teal-700 hover:text-teal-800"
                             >
-                                Request a new reset link
+                                {t('auth.resetPassword.requestNewLink')}
                             </Link>
                         </div>
                     </div>
@@ -101,7 +103,7 @@ export function ResetPasswordPage() {
     const resetToken = token
 
     async function onSubmit(values: ResetPasswordFormValues) {
-        setSubmitError(null)
+        setSubmitErrorKey(null)
 
         try {
             await resetPassword({
@@ -112,7 +114,12 @@ export function ResetPasswordPage() {
             setSubmitted(true)
         } catch (error) {
             if (axios.isAxiosError<ValidationErrorResponse>(error)) {
-                const errorResponse = error.response?.data
+                if (!error.response) {
+                    setSubmitErrorKey('auth.errors.network')
+                    return
+                }
+
+                const errorResponse = error.response.data
                 const validationErrors = errorResponse?.validationErrors
                 const passwordMessage =
                     validationErrors?.newPassword?.[0]
@@ -126,17 +133,11 @@ export function ResetPasswordPage() {
                     return
                 }
 
-                setSubmitError(
-                    errorResponse?.detail ??
-                    'Could not reset the password. Please try again.'
-                )
-
+                setSubmitErrorKey('auth.errors.resetFailed')
                 return
             }
 
-            setSubmitError(
-                'Could not connect to the server. Please try again.'
-            )
+            setSubmitErrorKey('auth.errors.generic')
         }
     }
 
@@ -150,7 +151,7 @@ export function ResetPasswordPage() {
                         </p>
 
                         <p className="mt-1 text-[13px] text-slate-500">
-                            Supported living management platform
+                            {t('app.tagline')}
                         </p>
                     </div>
 
@@ -158,29 +159,29 @@ export function ResetPasswordPage() {
                         {submitted ? (
                             <>
                                 <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
-                                    Password updated
+                                    {t('auth.resetPassword.successTitle')}
                                 </h1>
 
                                 <p className="mt-2 text-[13px] leading-5 text-slate-500">
-                                    Your password has been reset successfully.
+                                    {t('auth.resetPassword.successDescription')}
                                 </p>
 
                                 <Link
                                     to="/login"
                                     className="mt-5 block text-center text-[12px] font-medium text-teal-700 hover:text-teal-800"
                                 >
-                                    Back to sign in
+                                    {t('auth.resetPassword.backToSignIn')}
                                 </Link>
                             </>
                         ) : (
                             <>
                                 <div className="mb-5">
                                     <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
-                                        Reset password
+                                        {t('auth.resetPassword.title')}
                                     </h1>
 
                                     <p className="mt-1 text-[13px] leading-5 text-slate-500">
-                                        Choose a new password for your Merimna account.
+                                        {t('auth.resetPassword.description')}
                                     </p>
                                 </div>
 
@@ -198,7 +199,7 @@ export function ResetPasswordPage() {
                                                     htmlFor={field.name}
                                                     className="text-[12px] font-medium text-slate-700"
                                                 >
-                                                    New password
+                                                    {t('auth.resetPassword.newPassword')}
                                                 </FieldLabel>
 
                                                 <div className="relative">
@@ -222,13 +223,17 @@ export function ResetPasswordPage() {
                                                         onClick={() =>
                                                             setShowPassword(
                                                                 (current) =>
-                                                                    !current
+                                                                    !current,
                                                             )
                                                         }
                                                         aria-label={
                                                             showPassword
-                                                                ? 'Hide password'
-                                                                : 'Show password'
+                                                                ? t(
+                                                                    'auth.resetPassword.hidePassword',
+                                                                )
+                                                                : t(
+                                                                    'auth.resetPassword.showPassword',
+                                                                )
                                                         }
                                                         aria-pressed={
                                                             showPassword
@@ -249,23 +254,27 @@ export function ResetPasswordPage() {
                                                     </button>
                                                 </div>
 
-                                                {fieldState.invalid && (
-                                                    <FieldError
-                                                        errors={[
-                                                            fieldState.error,
-                                                        ]}
-                                                    />
-                                                )}
+                                                {fieldState.invalid &&
+                                                    fieldState.error?.message && (
+                                                        <FieldError>
+                                                            {fieldState.error.type ===
+                                                                'server'
+                                                                ? fieldState.error.message
+                                                                : t(
+                                                                    fieldState.error.message,
+                                                                )}
+                                                        </FieldError>
+                                                    )}
                                             </Field>
                                         )}
                                     />
 
-                                    {submitError && (
+                                    {submitErrorKey && (
                                         <p
                                             role="alert"
                                             className="text-[12px] leading-5 text-red-600"
                                         >
-                                            {submitError}
+                                            {t(submitErrorKey)}
                                         </p>
                                     )}
 
@@ -277,8 +286,8 @@ export function ResetPasswordPage() {
                                         className="mt-2 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         {form.formState.isSubmitting
-                                            ? 'Updating...'
-                                            : 'Reset password'}
+                                            ? t('auth.resetPassword.updating')
+                                            : t('auth.resetPassword.submit')}
                                     </Button>
                                 </form>
                             </>

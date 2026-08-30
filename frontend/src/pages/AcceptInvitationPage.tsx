@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { z } from 'zod'
+import { Eye, EyeOff } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '@/auth/useAuth'
 
+import { useAuth } from '@/auth/useAuth'
 import { acceptInvitation } from '@/api/authApi'
 import type { ValidationErrorResponse } from '@/api/types'
 import { Button } from '@/components/ui/button'
@@ -15,11 +17,10 @@ import {
     FieldError,
     FieldLabel,
 } from '@/components/ui/field'
-import { Eye, EyeOff } from 'lucide-react'
 
 const acceptInvitationSchema = z.object({
-    username: z.string().min(1, 'Username is required'),
-    password: z.string().min(1, 'Password is required'),
+    username: z.string().min(1, 'validation.username.required'),
+    password: z.string().min(1, 'validation.password.required'),
 })
 
 type AcceptInvitationFormValues = z.infer<
@@ -35,12 +36,14 @@ const inputClassName = `
 `
 
 export function AcceptInvitationPage() {
+    const { t } = useTranslation()
     const { isAuthenticated, isAuthLoading } = useAuth()
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const token = searchParams.get('token')
 
-    const [submitError, setSubmitError] = useState<string | null>(null)
+    const [showPassword, setShowPassword] = useState(false)
+    const [submitErrorKey, setSubmitErrorKey] = useState<string | null>(null)
 
     const form = useForm<AcceptInvitationFormValues>({
         resolver: zodResolver(acceptInvitationSchema),
@@ -49,8 +52,6 @@ export function AcceptInvitationPage() {
             password: '',
         },
     })
-
-    const [showPassword, setShowPassword] = useState(false)
 
     if (isAuthLoading) {
         return null
@@ -71,17 +72,19 @@ export function AcceptInvitationPage() {
                             </p>
 
                             <p className="mt-1 text-[13px] text-slate-500">
-                                Supported living management platform
+                                {t('app.tagline')}
                             </p>
                         </div>
 
                         <div className="rounded-2xl border border-teal-100 bg-white px-6 py-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                             <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
-                                Invalid invitation link
+                                {t('auth.acceptInvitation.invalidLinkTitle')}
                             </h1>
 
                             <p className="mt-2 text-[13px] leading-5 text-slate-500">
-                                This invitation link is missing the required token.
+                                {t(
+                                    'auth.acceptInvitation.invalidLinkDescription',
+                                )}
                             </p>
 
                             <Button
@@ -89,7 +92,7 @@ export function AcceptInvitationPage() {
                                 onClick={() => navigate('/login')}
                                 className="mt-5 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800"
                             >
-                                Go to sign in
+                                {t('auth.acceptInvitation.goToSignIn')}
                             </Button>
                         </div>
                     </div>
@@ -101,9 +104,7 @@ export function AcceptInvitationPage() {
     const invitationToken = token
 
     async function onSubmit(values: AcceptInvitationFormValues) {
-
-
-        setSubmitError(null)
+        setSubmitErrorKey(null)
 
         try {
             await acceptInvitation({
@@ -115,7 +116,12 @@ export function AcceptInvitationPage() {
             navigate('/login', { replace: true })
         } catch (error) {
             if (axios.isAxiosError<ValidationErrorResponse>(error)) {
-                const errorResponse = error.response?.data
+                if (!error.response) {
+                    setSubmitErrorKey('auth.errors.network')
+                    return
+                }
+
+                const errorResponse = error.response.data
                 const validationErrors = errorResponse?.validationErrors
 
                 if (validationErrors) {
@@ -123,7 +129,7 @@ export function AcceptInvitationPage() {
                     let unknownFieldError = false
 
                     for (const [path, messages] of Object.entries(
-                        validationErrors
+                        validationErrors,
                     )) {
                         const message = messages[0]
 
@@ -149,17 +155,16 @@ export function AcceptInvitationPage() {
                     }
                 }
 
-                setSubmitError(
-                    errorResponse?.detail ??
-                    'Could not activate the account. Please try again.'
-                )
+                if (errorResponse?.type === 'INVALID_USER_INVITATION') {
+                    setSubmitErrorKey('auth.errors.invalidInvitation')
+                    return
+                }
 
+                setSubmitErrorKey('auth.errors.activationFailed')
                 return
             }
 
-            setSubmitError(
-                'Could not connect to the server. Please try again.'
-            )
+            setSubmitErrorKey('auth.errors.generic')
         }
     }
 
@@ -173,19 +178,18 @@ export function AcceptInvitationPage() {
                         </p>
 
                         <p className="mt-1 text-[13px] text-slate-500">
-                            Supported living management platform
+                            {t('app.tagline')}
                         </p>
                     </div>
 
                     <div className="rounded-2xl border border-teal-100 bg-white px-6 py-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                         <div className="mb-5">
                             <h1 className="text-[18px] font-medium tracking-[-0.01em] text-slate-950">
-                                Accept invitation
+                                {t('auth.acceptInvitation.title')}
                             </h1>
 
                             <p className="mt-1 text-[13px] leading-5 text-slate-500">
-                                Choose your username and password to activate
-                                your account.
+                                {t('auth.acceptInvitation.description')}
                             </p>
                         </div>
 
@@ -203,7 +207,7 @@ export function AcceptInvitationPage() {
                                             htmlFor={field.name}
                                             className="text-[12px] font-medium text-slate-700"
                                         >
-                                            Username
+                                            {t('auth.acceptInvitation.username')}
                                         </FieldLabel>
 
                                         <Input
@@ -215,11 +219,18 @@ export function AcceptInvitationPage() {
                                             className={inputClassName}
                                         />
 
-                                        {fieldState.invalid && (
-                                            <FieldError
-                                                errors={[fieldState.error]}
-                                            />
-                                        )}
+                                        {fieldState.invalid &&
+                                            fieldState.error?.message && (
+                                                <FieldError>
+                                                    {fieldState.error.type ===
+                                                        'server'
+                                                        ? fieldState.error.message
+                                                        : t(
+                                                            fieldState.error
+                                                                .message,
+                                                        )}
+                                                </FieldError>
+                                            )}
                                     </Field>
                                 )}
                             />
@@ -233,14 +244,18 @@ export function AcceptInvitationPage() {
                                             htmlFor={field.name}
                                             className="text-[12px] font-medium text-slate-700"
                                         >
-                                            Password
+                                            {t('auth.acceptInvitation.password')}
                                         </FieldLabel>
 
                                         <div className="relative">
                                             <Input
                                                 {...field}
                                                 id={field.name}
-                                                type={showPassword ? 'text' : 'password'}
+                                                type={
+                                                    showPassword
+                                                        ? 'text'
+                                                        : 'password'
+                                                }
                                                 autoComplete="new-password"
                                                 aria-invalid={fieldState.invalid}
                                                 className={`${inputClassName} pr-10`}
@@ -248,16 +263,28 @@ export function AcceptInvitationPage() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => setShowPassword((current) => !current)}
-                                                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                                onClick={() =>
+                                                    setShowPassword(
+                                                        (current) => !current,
+                                                    )
+                                                }
+                                                aria-label={
+                                                    showPassword
+                                                        ? t(
+                                                            'auth.acceptInvitation.hidePassword',
+                                                        )
+                                                        : t(
+                                                            'auth.acceptInvitation.showPassword',
+                                                        )
+                                                }
                                                 aria-pressed={showPassword}
                                                 className="
-            absolute inset-y-0 right-0 flex w-10 items-center
-            justify-center text-slate-400
-            hover:text-slate-600
-            focus-visible:outline-none
-            focus-visible:text-teal-700
-        "
+                                                    absolute inset-y-0 right-0 flex w-10 items-center
+                                                    justify-center text-slate-400
+                                                    hover:text-slate-600
+                                                    focus-visible:outline-none
+                                                    focus-visible:text-teal-700
+                                                "
                                             >
                                                 {showPassword ? (
                                                     <EyeOff className="size-4" />
@@ -267,21 +294,28 @@ export function AcceptInvitationPage() {
                                             </button>
                                         </div>
 
-                                        {fieldState.invalid && (
-                                            <FieldError
-                                                errors={[fieldState.error]}
-                                            />
-                                        )}
+                                        {fieldState.invalid &&
+                                            fieldState.error?.message && (
+                                                <FieldError>
+                                                    {fieldState.error.type ===
+                                                        'server'
+                                                        ? fieldState.error.message
+                                                        : t(
+                                                            fieldState.error
+                                                                .message,
+                                                        )}
+                                                </FieldError>
+                                            )}
                                     </Field>
                                 )}
                             />
 
-                            {submitError && (
+                            {submitErrorKey && (
                                 <p
                                     role="alert"
                                     className="text-[12px] leading-5 text-red-600"
                                 >
-                                    {submitError}
+                                    {t(submitErrorKey)}
                                 </p>
                             )}
 
@@ -291,14 +325,14 @@ export function AcceptInvitationPage() {
                                 className="mt-2 h-10 w-full rounded-lg bg-teal-700 text-[13px] font-medium text-white shadow-none hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {form.formState.isSubmitting
-                                    ? 'Activating...'
-                                    : 'Activate account'}
+                                    ? t('auth.acceptInvitation.activating')
+                                    : t('auth.acceptInvitation.submit')}
                             </Button>
                         </form>
                     </div>
 
                     <p className="mt-4 text-center text-[12px] text-slate-400">
-                        Demo environment · Merimna
+                        {t('app.demoEnvironment')}
                     </p>
                 </div>
             </div>
