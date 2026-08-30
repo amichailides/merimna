@@ -1,0 +1,41 @@
+{
+    "app": {
+        "tagline": "Supported living management platform",
+        "demoEnvironment": "Demo environment · Merimna"
+    },
+    "auth": {
+        "login": {
+            "title": "Sign in",
+            "description": "Use your Merimna account to continue.",
+            "email": "Email",
+            "password": "Password",
+            "forgotPassword": "Forgot password?",
+            "submit": "Sign in",
+            "showPassword": "Show password",
+            "hidePassword": "Hide password"
+        },
+        "forgotPassword": {
+            "title": "Forgot password",
+            "description": "Enter your email address and we'll send you instructions to reset your password.",
+            "email": "Email",
+            "success": "If an account exists for that email address, password reset instructions have been sent.",
+            "sending": "Sending...",
+            "submit": "Send reset instructions",
+            "backToSignIn": "Back to sign in"
+        },
+        "errors": {
+            "invalidCredentials": "Invalid email or password.",
+            "requestFailed": "Could not process the request. Please try again.",
+            "network": "Could not connect to the server. Please try again.",
+            "generic": "Something went wrong. Please try again."
+        }
+    },
+    "validation": {
+        "email": {
+            "invalid": "Invalid email address"
+        },
+        "password": {
+            "required": "Password is required"
+        }
+    }
+}
