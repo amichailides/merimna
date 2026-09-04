@@ -15,6 +15,7 @@ import { AcceptInvitationPage } from './pages/AcceptInvitationPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { BeneficiariesPage } from './pages/BeneficiariesPage'
+import { BeneficiaryDetailsPage } from './pages/BeneficiaryDetailsPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -41,8 +42,14 @@ function App() {
                 path="/employees/:publicId"
                 element={<EmployeeDetailsPage />}
               />
-              <Route path="/employees/new" element={<EmployeeOnboardingPage />}/>
+
+              <Route path="/employees/new" element={<EmployeeOnboardingPage />} />
+
               <Route path="/beneficiaries" element={<BeneficiariesPage />} />
+              <Route
+                path="/beneficiaries/:publicId"
+                element={<BeneficiaryDetailsPage />}
+              />
             </Route>
           </Route>
         </Routes>
