@@ -7,6 +7,8 @@ import { useBeneficiaryDetails } from '@/api/useBeneficiaryDetails'
 import { BeneficiaryProfileHeader } from '@/components/beneficiaries/profile/BeneficiaryProfileHeader'
 import { BeneficiaryMetadataRail } from '@/components/beneficiaries/profile/BeneficiaryMetadataRail'
 import { BeneficiaryOverviewSection } from '@/components/beneficiaries/profile/BeneficiaryOverviewSection'
+import { BeneficiaryMedicationsSection } from '@/components/beneficiaries/profile/BeneficiaryMedicationsSection'
+import { BeneficiaryAllergiesSection } from '@/components/beneficiaries/profile/BeneficiaryAllergiesSection'
 
 const PROFILE_TABS = [
     'Overview',
@@ -110,15 +112,15 @@ export function BeneficiaryDetailsPage() {
                             )}
 
                             {activeTab === 'Medications' && (
-                                <p className="py-6 text-[13px] text-slate-400">
-                                    Medications — coming soon.
-                                </p>
+                                <BeneficiaryMedicationsSection
+                                    medications={beneficiary.medications ?? []}
+                                />
                             )}
 
                             {activeTab === 'Allergies' && (
-                                <p className="py-6 text-[13px] text-slate-400">
-                                    Allergies — coming soon.
-                                </p>
+                                <BeneficiaryAllergiesSection
+                                    allergies={beneficiary.allergies ?? []}
+                                />
                             )}
 
                             {activeTab === 'Legal representatives' && (
