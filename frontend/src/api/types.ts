@@ -60,3 +60,24 @@ export type EmployeeAccessDTO =
 
 export type GrantEmployeeAccessRequest =
   components['schemas']['GrantEmployeeAccessRequest']
+
+export type BeneficiaryListDTO =
+  components['schemas']['BeneficiaryListDTO']
+
+export type BeneficiaryDetailsDTO =
+  components['schemas']['BeneficiaryDetailsDTO']
+
+export type BeneficiarySearchDTO =
+  components['schemas']['BeneficiarySearchDTO']
+
+export type BeneficiaryCreateDTO =
+  components['schemas']['BeneficiaryCreateDTO']
+
+export type BeneficiaryUpdateDTO =
+  components['schemas']['BeneficiaryUpdateDTO']
+
+export type DischargeRequestDTO =
+  components['schemas']['DischargeRequestDTO']
+
+export type PageResponseBeneficiaryListDTO =
+  components['schemas']['PageResponseBeneficiaryListDTO']

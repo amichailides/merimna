@@ -14,6 +14,7 @@ import { EmployeeOnboardingPage } from './pages/EmployeeOnboardingPage'
 import { AcceptInvitationPage } from './pages/AcceptInvitationPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
+import { BeneficiariesPage } from './pages/BeneficiariesPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -40,10 +41,8 @@ function App() {
                 path="/employees/:publicId"
                 element={<EmployeeDetailsPage />}
               />
-              <Route
-                path="/employees/new"
-                element={<EmployeeOnboardingPage />}
-              />
+              <Route path="/employees/new" element={<EmployeeOnboardingPage />}/>
+              <Route path="/beneficiaries" element={<BeneficiariesPage />} />
             </Route>
           </Route>
         </Routes>
