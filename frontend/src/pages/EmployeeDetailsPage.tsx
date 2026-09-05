@@ -48,22 +48,6 @@ export function EmployeeDetailsPage() {
         reload: reloadAccess,
     } = useEmployeeAccess(employee?.publicId)
 
-    if (loading) {
-        return (
-            <div className="text-[13px] text-slate-500">
-                Loading employee…
-            </div>
-        )
-    }
-
-    if (error || !employee) {
-        return (
-            <div className="text-[13px] text-slate-500">
-                {error ?? 'Employee not found'}
-            </div>
-        )
-    }
-
     return (
         <div className="max-w-6xl space-y-7">
             <Link
@@ -74,102 +58,120 @@ export function EmployeeDetailsPage() {
                 Back to employees
             </Link>
 
-            <div>
-                <EmployeeProfileHeader
-                    employee={employee}
-                    onEmployeeUpdated={reload}
-                    onViewActivity={() => setActiveTab('Activity')}
-                    onManageAssignments={() => setActiveTab('Assignments')}
-                />
-
-                <div className="mt-3 border-b border-slate-200">
-                    <div className="flex items-center gap-6">
-                        {PROFILE_TABS.map((tab) => {
-                            const active = tab === activeTab
-
-                            return (
-                                <button
-                                    key={tab}
-                                    type="button"
-                                    onClick={() => setActiveTab(tab)}
-                                    className={[
-                                        'relative cursor-pointer pb-3 text-sm leading-none transition-colors',
-                                        active
-                                            ? 'font-medium text-slate-900'
-                                            : 'font-medium text-[#586579] hover:text-slate-900',
-                                    ].join(' ')}
-                                >
-                                    {tab}
-
-                                    {active && (
-                                        <span className="absolute inset-x-0 -bottom-px h-[2px] rounded-full bg-teal-500" />
-                                    )}
-                                </button>
-                            )
-                        })}
-                    </div>
+            {loading && (
+                <div className="text-[13px] text-slate-500">
+                    Loading employee…
                 </div>
-            </div>
+            )}
 
-            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-                <main className="space-y-8 pt-2">
-                    {activeTab === 'Overview' && (
-                        <>
-                            <EmployeeWorkDetailsSection
-                                assignments={employee.assignments}
-                                placement={employee.activePlacement}
-                            />
+            {!loading && (error || !employee) && (
+                <div className="text-[13px] text-slate-500">
+                    {error ?? 'Employee not found'}
+                </div>
+            )}
 
-                            <div className="max-w-xl border-t border-slate-100" />
+            {!loading && !error && employee && (
+                <>
+                    <div>
+                        <EmployeeProfileHeader
+                            employee={employee}
+                            onEmployeeUpdated={reload}
+                            onViewActivity={() => setActiveTab('Activity')}
+                            onManageAssignments={() => setActiveTab('Assignments')}
+                        />
 
-                            <EmployeeSystemAccessSection
-                                employeePublicId={employee.publicId}
-                                access={access}
-                                loading={accessLoading}
-                                error={accessError}
-                                onAccessUpdated={reloadAccess}
-                            />
+                        <div className="mt-3 border-b border-slate-200">
+                            <div className="flex items-center gap-6">
+                                {PROFILE_TABS.map((tab) => {
+                                    const active = tab === activeTab
 
-                            <div className="max-w-xl border-t border-slate-100" />
+                                    return (
+                                        <button
+                                            key={tab}
+                                            type="button"
+                                            onClick={() => setActiveTab(tab)}
+                                            className={[
+                                                'relative cursor-pointer pb-3 text-sm leading-none transition-colors',
+                                                active
+                                                    ? 'font-medium text-slate-900'
+                                                    : 'font-medium text-[#586579] hover:text-slate-900',
+                                            ].join(' ')}
+                                        >
+                                            {tab}
 
-                            {employee.publicId && (
-                                <section>
-                                    <EmployeeRecentActivitySection
-                                        activities={activities}
-                                        loading={activityLoading}
-                                        error={activityError}
+                                            {active && (
+                                                <span className="absolute inset-x-0 -bottom-px h-[2px] rounded-full bg-teal-500" />
+                                            )}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                        <main className="space-y-8 pt-2">
+                            {activeTab === 'Overview' && (
+                                <>
+                                    <EmployeeWorkDetailsSection
+                                        assignments={employee.assignments}
+                                        placement={employee.activePlacement}
                                     />
-                                </section>
+
+                                    <div className="max-w-xl border-t border-slate-100" />
+
+                                    <EmployeeSystemAccessSection
+                                        employeePublicId={employee.publicId}
+                                        access={access}
+                                        loading={accessLoading}
+                                        error={accessError}
+                                        onAccessUpdated={reloadAccess}
+                                    />
+
+                                    <div className="max-w-xl border-t border-slate-100" />
+
+                                    {employee.publicId && (
+                                        <section>
+                                            <EmployeeRecentActivitySection
+                                                activities={activities}
+                                                loading={activityLoading}
+                                                error={activityError}
+                                            />
+                                        </section>
+                                    )}
+                                </>
                             )}
-                        </>
-                    )}
 
-                    {activeTab === 'Assignments' && (
-                        <EmployeeAssignmentsSection assignments={employee.assignments ?? []} />
-                    )}
+                            {activeTab === 'Assignments' && (
+                                <EmployeeAssignmentsSection
+                                    assignments={employee.assignments ?? []}
+                                />
+                            )}
 
-                    {activeTab === 'Placements' && (
-                        <EmployeePlacementsSection
-                            placements={placements}
-                            loading={placementsLoading}
-                            error={placementsError}
+                            {activeTab === 'Placements' && (
+                                <EmployeePlacementsSection
+                                    placements={placements}
+                                    loading={placementsLoading}
+                                    error={placementsError}
+                                />
+                            )}
+
+                            {activeTab === 'Activity' && (
+                                <EmployeeActivitySection
+                                    activities={activities}
+                                    loading={activityLoading}
+                                    error={activityError}
+                                />
+                            )}
+                        </main>
+
+                        <EmployeeMetadataRail
+                            employee={employee}
+                            onEmployeeUpdated={reload}
                         />
-                    )}
-
-                    {activeTab === 'Activity' && (
-                        <EmployeeActivitySection
-                            activities={activities}
-                            loading={activityLoading}
-                            error={activityError}
-                        />
-                    )}
-                </main>
-
-                <EmployeeMetadataRail
-                    employee={employee}
-                    onEmployeeUpdated={reload}
-                />
-            </div>
+                    </div>
+                </>
+            )}
         </div>
     )
 }
