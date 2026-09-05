@@ -9,6 +9,7 @@ import { BeneficiaryMetadataRail } from '@/components/beneficiaries/profile/Bene
 import { BeneficiaryOverviewSection } from '@/components/beneficiaries/profile/BeneficiaryOverviewSection'
 import { BeneficiaryMedicationsSection } from '@/components/beneficiaries/profile/BeneficiaryMedicationsSection'
 import { BeneficiaryAllergiesSection } from '@/components/beneficiaries/profile/BeneficiaryAllergiesSection'
+import { BeneficiaryLegalRepresentativesSection } from '@/components/beneficiaries/profile/BeneficiaryLegalRepresentativesSection'
 
 const PROFILE_TABS = [
     'Overview',
@@ -124,9 +125,9 @@ export function BeneficiaryDetailsPage() {
                             )}
 
                             {activeTab === 'Legal representatives' && (
-                                <p className="py-6 text-[13px] text-slate-400">
-                                    Legal representatives — coming soon.
-                                </p>
+                                <BeneficiaryLegalRepresentativesSection
+                                    legalRepresentatives={beneficiary.legalRepresentatives ?? []}
+                                />
                             )}
                         </main>
 
