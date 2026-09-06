@@ -9,6 +9,7 @@ import { z } from 'zod'
 //   - ValidGreekLatinText(extended=true) -> ValidationPatterns.GREEK_LATIN_EXTENDED
 //   - AddressUpdateDTO.streetNumber -> ValidationPatterns.STREET_NUMBER
 //   - AddressUpdateDTO.zipCode -> ValidationPatterns.POSTAL_CODE
+//   - ValidDateOfBirth -> DateOfBirthValidator (must be in the past, max 100 years ago)
 
 const EMAIL = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
 const MOBILE = /^(\+?\d{1,4})?\d{7,15}$/
@@ -24,6 +25,16 @@ function todayAsLocalDate(): string {
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
+}
+
+function minAllowedDateOfBirth(): string {
+    const date = new Date()
+    date.setFullYear(date.getFullYear() - 100)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
 
     return `${year}-${month}-${day}`
 }
@@ -104,6 +115,10 @@ const dateOfBirth = requiredText('Date of birth is required')
     .refine(
         (value) => value < todayAsLocalDate(),
         'Date of birth must be in the past'
+    )
+    .refine(
+        (value) => value > minAllowedDateOfBirth(),
+        'Date of birth is not valid'
     )
 
 const addressSchema = z.object({
