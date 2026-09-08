@@ -1,7 +1,15 @@
 import type { BeneficiaryDetailsDTO } from '@/api/types'
+import { BeneficiaryDetailsEditForm } from '@/components/beneficiaries/edit/BeneficiaryDetailsEditForm'
+import {
+    FloatingPanelContent,
+    FloatingPanelRoot,
+    FloatingPanelTrigger,
+} from '@/components/ui/floating-panel'
+import { Pencil } from 'lucide-react'
 
 type BeneficiaryProfileHeaderProps = {
     beneficiary: BeneficiaryDetailsDTO
+    onBeneficiaryUpdated?: () => void | Promise<void>
 }
 
 function getInitials(firstName?: string, lastName?: string) {
@@ -10,6 +18,7 @@ function getInitials(firstName?: string, lastName?: string) {
 
 export function BeneficiaryProfileHeader({
     beneficiary,
+    onBeneficiaryUpdated,
 }: BeneficiaryProfileHeaderProps) {
     const fullName =
         `${beneficiary.firstName ?? ''} ${beneficiary.lastName ?? ''}`.trim() || '—'
@@ -44,6 +53,32 @@ export function BeneficiaryProfileHeader({
                     </p>
                 </div>
             </div>
+
+            <FloatingPanelRoot>
+                <FloatingPanelTrigger
+                    title="Edit beneficiary"
+                    className="inline-flex h-auto items-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[13px] font-medium text-slate-700 shadow-none transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+                >
+                    <span className="inline-flex items-center gap-1.5">
+                        <Pencil
+                            size={13}
+                            strokeWidth={2.25}
+                            className="text-slate-500"
+                        />
+                        Edit
+                    </span>
+                </FloatingPanelTrigger>
+
+                <FloatingPanelContent
+                    align="center"
+                    className="w-[440px] rounded-xl border border-slate-100 bg-white shadow-sm"
+                >
+                    <BeneficiaryDetailsEditForm
+                        beneficiary={beneficiary}
+                        onBeneficiaryUpdated={onBeneficiaryUpdated}
+                    />
+                </FloatingPanelContent>
+            </FloatingPanelRoot>
         </div>
     )
 }

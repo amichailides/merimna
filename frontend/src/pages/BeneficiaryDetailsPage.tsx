@@ -73,6 +73,7 @@ export function BeneficiaryDetailsPage() {
                     <div>
                         <BeneficiaryProfileHeader
                             beneficiary={beneficiary}
+                            onBeneficiaryUpdated={reload}
                         />
 
                         <div className="mt-3 border-b border-slate-200">
@@ -130,7 +131,6 @@ export function BeneficiaryDetailsPage() {
                                 />
                             )}
                         </main>
-
                         <BeneficiaryMetadataRail
                             beneficiary={beneficiary}
                         />

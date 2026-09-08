@@ -56,14 +56,15 @@ export function BeneficiaryMetadataRail({
     const emergencyContact = beneficiary.emergencyContact
 
     const emergencyContactName = emergencyContact
-        ? `${emergencyContact.firstName ?? ''} ${emergencyContact.lastName ?? ''
-            }`.trim() || undefined
+        ? `${emergencyContact.firstName ?? ''} ${
+              emergencyContact.lastName ?? ''
+          }`.trim() || undefined
         : undefined
 
     const relationshipLabel = emergencyContact?.relationshipType
         ? RELATIONSHIP_LABELS[
-        emergencyContact.relationshipType as keyof typeof RELATIONSHIP_LABELS
-        ] ?? emergencyContact.relationshipType
+              emergencyContact.relationshipType as keyof typeof RELATIONSHIP_LABELS
+          ] ?? emergencyContact.relationshipType
         : undefined
 
     return (
@@ -86,7 +87,9 @@ export function BeneficiaryMetadataRail({
 
                         <DetailItem
                             label="Date of birth"
-                            value={formatDate(beneficiary.dateOfBirth)}
+                            value={formatDate(
+                                beneficiary.dateOfBirth
+                            )}
                         />
                     </dl>
                 </section>
@@ -128,7 +131,9 @@ export function BeneficiaryMetadataRail({
 
                         <DetailItem
                             label="Mobile"
-                            value={emergencyContact?.mobileNumber}
+                            value={
+                                emergencyContact?.mobileNumber
+                            }
                             href={
                                 emergencyContact?.mobileNumber
                                     ? `tel:${emergencyContact.mobileNumber}`
@@ -138,7 +143,9 @@ export function BeneficiaryMetadataRail({
 
                         <DetailItem
                             label="Landline"
-                            value={emergencyContact?.landlinePhone}
+                            value={
+                                emergencyContact?.landlinePhone
+                            }
                             href={
                                 emergencyContact?.landlinePhone
                                     ? `tel:${emergencyContact.landlinePhone}`
