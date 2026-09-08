@@ -241,3 +241,28 @@ export const addressSchema = z.object({
 
     zipCode,
 })
+
+// Mirrors @AtLeastOnePhonePresent (backend): at least one of the two phone
+// fields must be non-empty. Only applies to schemas whose backend DTO
+// carries the class-level annotation (e.g. BeneficiaryCreateDTO's
+// EmergencyContactDTO) — do not apply to PATCH/update schemas where the
+// backend DTO omits the constraint (e.g. EmergencyContactUpdateDTO).
+export function atLeastOnePhonePresent<
+    TSchema extends z.ZodType<{
+        mobileNumber?: string
+        landlinePhone?: string
+    }>,
+>(schema: TSchema) {
+    return schema.superRefine((contact, ctx) => {
+        const hasMobile = (contact.mobileNumber?.trim().length ?? 0) > 0
+        const hasLandline = (contact.landlinePhone?.trim().length ?? 0) > 0
+
+        if (!hasMobile && !hasLandline) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['mobileNumber'],
+                message: 'At least one phone number is required',
+            })
+        }
+    })
+}

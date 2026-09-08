@@ -6,17 +6,26 @@ import type {
 
 type ValidationErrors = Record<string, string[]>
 
-type ApplyServerValidationErrorsOptions<T extends FieldValues> = {
-    form: UseFormReturn<T>
+type ApplyServerValidationErrorsOptions<
+    TFieldValues extends FieldValues,
+    TTransformedValues extends FieldValues = TFieldValues,
+> = {
+    form: UseFormReturn<TFieldValues, unknown, TTransformedValues>
     validationErrors: ValidationErrors
-    isFormPath: (path: string) => path is Path<T>
+    isFormPath: (path: string) => path is Path<TFieldValues>
 }
 
-export function applyServerValidationErrors<T extends FieldValues>({
+export function applyServerValidationErrors<
+    TFieldValues extends FieldValues,
+    TTransformedValues extends FieldValues = TFieldValues,
+>({
     form,
     validationErrors,
     isFormPath,
-}: ApplyServerValidationErrorsOptions<T>): {
+}: ApplyServerValidationErrorsOptions<
+    TFieldValues,
+    TTransformedValues
+>): {
     fieldErrorApplied: boolean
     unknownFieldError: boolean
 } {
