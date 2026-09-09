@@ -9,14 +9,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Exception αποτυχίας σε business/domain validation κανόνες.
+ * Represents field-based business/domain validation failures.
  *
- * <p>Δέχεται ένα απλό Map (πεδίο -> κλειδί μηνύματος) και το μετατρέπει
- * στη δομή Map<String, List<String>> που απαιτεί η {@link BaseValidationException},
- * ώστε να διατηρείται η συνέπεια στο API error response.</p>
+ * <p>Accepts a field-to-message-key map and converts it to the
+ * {@code Map<String, List<String>>} structure required by
+ * {@link BaseValidationException}.</p>
+ * <p>
+ * TODO(#40): Align field-based domain validation HTTP statuses.
+ * DomainValidationException currently resolves all field-based domain rules
+ * through DOMAIN_RULE_VIOLATION, ignoring field-specific ErrorCode statuses.
  */
 @Getter
 public class DomainValidationException extends BaseValidationException {
+
     public DomainValidationException(Map<String, String> validationErrors) {
         super(
                 ErrorCode.DOMAIN_RULE_VIOLATION,
@@ -29,5 +34,4 @@ public class DomainValidationException extends BaseValidationException {
                         ))
         );
     }
-
 }
