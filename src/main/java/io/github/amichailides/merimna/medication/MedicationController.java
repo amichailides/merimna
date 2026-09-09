@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.medication;
 
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
+import io.github.amichailides.merimna.medication.dto.MedicationDiscontinueDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
 import io.github.amichailides.merimna.validation.groups.ValidationGroupSequence;
@@ -42,9 +43,13 @@ public class MedicationController {
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
     @GetMapping
     public List<MedicationReadOnlyDTO> getMedications(
-            @PathVariable UUID beneficiaryPublicId) {
-
-        return medicationService.getMedicationsByBeneficiary(beneficiaryPublicId);
+            @PathVariable UUID beneficiaryPublicId,
+            @RequestParam(defaultValue = "false") boolean includeInactive
+    ) {
+        return medicationService.getMedicationsByBeneficiary(
+                beneficiaryPublicId,
+                includeInactive
+        );
     }
 
     @PreAuthorize("hasAuthority('BENEFICIARY_READ')")
@@ -70,6 +75,23 @@ public class MedicationController {
         );
 
         return ResponseEntity.ok(updated);
+    }
+
+    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
+    @PostMapping("/{medicationPublicId}/discontinue")
+    public ResponseEntity<MedicationReadOnlyDTO> discontinueMedication(
+            @PathVariable UUID beneficiaryPublicId,
+            @PathVariable UUID medicationPublicId,
+            @Validated(ValidationGroupSequence.class)
+            @RequestBody MedicationDiscontinueDTO dto
+    ) {
+        MedicationReadOnlyDTO discontinued = medicationService.discontinueMedication(
+                beneficiaryPublicId,
+                medicationPublicId,
+                dto
+        );
+
+        return ResponseEntity.ok(discontinued);
     }
 
     private URI buildLocationUri(UUID medicationPublicId) {

@@ -2,6 +2,8 @@ package io.github.amichailides.merimna.medication;
 
 import io.github.amichailides.merimna.access.HouseUnitAccessService;
 import io.github.amichailides.merimna.audit.EntityChangeSet;
+import io.github.amichailides.merimna.medication.dto.MedicationDiscontinueDTO;
+import io.github.amichailides.merimna.medication.event.MedicationDiscontinuedEvent;
 import io.github.amichailides.merimna.medication.event.MedicationUpdatedEvent;
 import io.github.amichailides.merimna.medication.audit.MedicationChangeDetector;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
@@ -30,11 +32,14 @@ public class MedicationServiceImpl implements MedicationService {
     private final HouseUnitAccessService houseUnitAccessService;
     private final MedicationChangeDetector medicationChangeDetector;
     private final ApplicationEventPublisher eventPublisher;
+    private final MedicationValidator medicationValidator;
 
     @Override
     @Transactional
     public MedicationReadOnlyDTO addMedication(UUID beneficiaryPublicId, MedicationCreateDTO dto) {
         Beneficiary beneficiary = getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
+
+        medicationValidator.validateForCreate(dto);
 
         Medication medication = medicationMapper.toEntity(dto);
         beneficiary.addMedication(medication);
@@ -51,7 +56,10 @@ public class MedicationServiceImpl implements MedicationService {
             MedicationUpdateDTO dto) {
 
         getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
-        Medication medication = getMedicationOrThrow(medicationPublicId, beneficiaryPublicId);
+        Medication medication = getMedicationOrThrow(
+                medicationPublicId,
+                beneficiaryPublicId
+        );
 
         EntityChangeSet changeSet = medicationChangeDetector.detectChanges(
                 medication,
@@ -62,8 +70,8 @@ public class MedicationServiceImpl implements MedicationService {
             return medicationMapper.toDTO(medication);
         }
 
-        // TODO(#14): MedicationValidator - business rules (e.g. drug interactions,
-        // max dosage based on age/weight, or inactive beneficiary restrictions)
+        medicationValidator.validateForUpdate(dto);
+
         medicationMapper.updateEntity(medication, dto);
 
         eventPublisher.publishEvent(MedicationUpdatedEvent.of(
@@ -86,13 +94,51 @@ public class MedicationServiceImpl implements MedicationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId) {
+    public List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(
+            UUID beneficiaryPublicId,
+            boolean includeInactive
+    ) {
         getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
 
-        return medicationRepository.findAllByBeneficiaryPublicId(beneficiaryPublicId)
-                .stream()
+        List<Medication> medications = includeInactive
+                ? medicationRepository.findAllByBeneficiaryPublicId(beneficiaryPublicId)
+                : medicationRepository.findAllByBeneficiaryPublicIdAndEndedAtIsNull(
+                beneficiaryPublicId
+        );
+
+        return medications.stream()
                 .map(medicationMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public MedicationReadOnlyDTO discontinueMedication(
+            UUID beneficiaryPublicId,
+            UUID medicationPublicId,
+            MedicationDiscontinueDTO dto
+    ) {
+        getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
+
+        Medication medication = getMedicationOrThrow(
+                medicationPublicId,
+                beneficiaryPublicId
+        );
+
+        medicationValidator.validateForDiscontinue(dto);
+
+        boolean transitionOccurred = medication.discontinue(dto.endedAt());
+
+        if (transitionOccurred) {
+            eventPublisher.publishEvent(
+                    MedicationDiscontinuedEvent.of(
+                            medication,
+                            beneficiaryPublicId
+                    )
+            );
+        }
+
+        return medicationMapper.toDTO(medication);
     }
 
     private Beneficiary getBeneficiaryOrThrow(UUID beneficiaryPublicId) {

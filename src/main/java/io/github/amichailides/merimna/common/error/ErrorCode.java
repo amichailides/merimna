@@ -66,7 +66,9 @@ public enum ErrorCode {
     MEDICATION_NOT_FOUND("MEDICATION_NOT_FOUND", HttpStatus.NOT_FOUND, "error.medication.notFound"),
     MEDICATION_ALREADY_ASSIGNED("MEDICATION_ALREADY_ASSIGNED", HttpStatus.CONFLICT, "error.medication.alreadyAssigned"),
     MEDICATION_NOT_OWNED_BY_BENEFICIARY("MEDICATION_NOT_OWNED_BY_BENEFICIARY", HttpStatus.CONFLICT, "error.medication.notOwnedByBeneficiary"),
-    MEDICATION_DATE_RANGE_INVALID("MEDICATION_DATE_RANGE_INVALID", HttpStatus.BAD_REQUEST, "error.medication.dateRange.invalid"),
+    MEDICATION_DATE_RANGE_INVALID("MEDICATION_DATE_RANGE_INVALID", HttpStatus.UNPROCESSABLE_CONTENT, "error.medication.dateRange.invalid"),
+    MEDICATION_START_DATE_IN_FUTURE("MEDICATION_START_DATE_IN_FUTURE", HttpStatus.UNPROCESSABLE_CONTENT, "error.medication.startedAt.future"),
+    MEDICATION_END_DATE_IN_FUTURE("MEDICATION_END_DATE_IN_FUTURE", HttpStatus.UNPROCESSABLE_CONTENT, "error.medication.endedAt.future"),
 
     // =========================================================================
     // Employee
