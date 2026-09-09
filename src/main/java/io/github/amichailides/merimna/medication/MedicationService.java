@@ -12,8 +12,6 @@ public interface MedicationService {
 
     MedicationReadOnlyDTO updateMedication(UUID beneficiaryPublicId, UUID medicationPublicId, MedicationUpdateDTO dto);
 
-    void deleteMedication(UUID beneficiaryPublicId, UUID medicationPublicId);
-
     MedicationReadOnlyDTO getMedicationByPublicId(UUID beneficiaryPublicId, UUID medicationPublicId);
 
     List<MedicationReadOnlyDTO> getMedicationsByBeneficiary(UUID beneficiaryPublicId);

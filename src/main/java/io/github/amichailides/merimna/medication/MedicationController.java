@@ -72,17 +72,6 @@ public class MedicationController {
         return ResponseEntity.ok(updated);
     }
 
-    @PreAuthorize("hasAuthority('BENEFICIARY_UPDATE')")
-    @DeleteMapping("/{medicationPublicId}")
-    public ResponseEntity<Void> deleteMedication(
-            @PathVariable UUID beneficiaryPublicId,
-            @PathVariable UUID medicationPublicId) {
-
-        medicationService.deleteMedication(beneficiaryPublicId, medicationPublicId);
-
-        return ResponseEntity.noContent().build();
-    }
-
     private URI buildLocationUri(UUID medicationPublicId) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()

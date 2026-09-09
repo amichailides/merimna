@@ -75,14 +75,6 @@ public class MedicationServiceImpl implements MedicationService {
         return medicationMapper.toDTO(medication);
     }
 
-    @Override
-    @Transactional
-    public void deleteMedication(UUID beneficiaryPublicId, UUID medicationPublicId) {
-        Beneficiary beneficiary = getAccessibleBeneficiaryOrThrow(beneficiaryPublicId);
-        Medication medication = getMedicationOrThrow(medicationPublicId, beneficiaryPublicId);
-
-        beneficiary.removeMedication(medication);
-    }
 
     @Override
     @Transactional(readOnly = true)
