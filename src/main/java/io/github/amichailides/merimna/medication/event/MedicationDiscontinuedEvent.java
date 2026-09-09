@@ -42,7 +42,7 @@ public record MedicationDiscontinuedEvent(
         return Map.of(
                 "beneficiaryPublicId", beneficiaryPublicId,
                 "medicationName", medicationName,
-                "endedAt", endedAt
+                "endedAt", endedAt.toString()
         );
     }
 }
