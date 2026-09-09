@@ -4,6 +4,9 @@ import io.github.amichailides.merimna.validation.annotations.ValidGreekLatinText
 import io.github.amichailides.merimna.validation.groups.FirstOrder;
 import io.github.amichailides.merimna.validation.groups.SecondOrder;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
 
 public record MedicationCreateDTO(
         @NotBlank(message = "{medication.name.required}", groups = FirstOrder.class)
@@ -22,6 +25,15 @@ public record MedicationCreateDTO(
         @ValidGreekLatinText(message = "{medication.administrationTimes.size}", extended = true, groups = SecondOrder.class)
         String administrationTimes,
 
-        @ValidGreekLatinText(min = 0, max = 500, message = "{medication.instructions.size}", extended = true, groups = SecondOrder.class)
-        String instructions
+        @ValidGreekLatinText(
+                min = 0,
+                max = 500,
+                message = "{medication.instructions.size}",
+                extended = true,
+                groups = SecondOrder.class
+        )
+        String instructions,
+
+        @NotNull(message = "{medication.startedAt.required}", groups = FirstOrder.class)
+        LocalDate startedAt
 ) {}

@@ -17,7 +17,13 @@ public class MedicationChangeDetector {
                 .trackIfPresent(
                         "administrationTimes",
                         medication.getAdministrationTimes(),
-                        dto.administrationTimes())
+                        dto.administrationTimes()
+                )
+                .trackIfPresent(
+                        "startedAt",
+                        medication.getStartedAt(),
+                        dto.startedAt()
+                )
                 .build();
     }
 }

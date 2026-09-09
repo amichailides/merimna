@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static io.github.amichailides.merimna.validation.TextNormalizer.normalize;
-
 import static java.util.Collections.unmodifiableSet;
 
 @Entity
@@ -23,10 +22,12 @@ import static java.util.Collections.unmodifiableSet;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
-@Table(name = "beneficiaries",
+@Table(
+        name = "beneficiaries",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_beneficiary_amka", columnNames = "amka")
-        })
+        }
+)
 public class Beneficiary {
 
     @Id
@@ -75,8 +76,9 @@ public class Beneficiary {
     private Employee dischargedBy;
 
     /*
-     * Υποχρεωτική διεύθυνση. Αν ο ωφελούμενος δεν έχει οικογενειακή διεύθυνση,
-     * καταχωρείται η διεύθυνση της δομής φιλοξενίας.
+     * Permanent address is required.
+     * If the beneficiary does not have a family address,
+     * the supported living facility address is recorded instead.
      */
     @NonNull
     @Embedded
@@ -89,8 +91,9 @@ public class Beneficiary {
     private Address permanentAddress;
 
     /*
-     * Υποχρεωτική επαφή έκτακτης ανάγκης. Αν δεν υπάρχει συγγενής,
-     * μπορεί να καταχωρηθεί Κοινωνικός Λειτουργός ή Υπεύθυνος Δομής.
+     * Emergency contact is required.
+     * If no relative is available, a social worker or facility representative
+     * may be recorded as the emergency contact.
      */
     @NonNull
     @Embedded
@@ -114,7 +117,7 @@ public class Beneficiary {
     )
     private Set<LegalRepresentative> legalRepresentatives = new HashSet<>();
 
-    @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL)
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     @Builder.Default
@@ -123,12 +126,6 @@ public class Beneficiary {
     public void addMedication(@NonNull Medication medication) {
         this.medications.add(medication);
         medication.assignToBeneficiary(this);
-    }
-
-    public void removeMedication(@NonNull Medication medication) {
-        if (this.medications.remove(medication)) {
-            medication.clearBeneficiary();
-        }
     }
 
     public Set<Medication> getMedications() {
@@ -141,7 +138,6 @@ public class Beneficiary {
     @Builder.Default
     private Set<Allergy> allergies = new HashSet<>();
 
-
     public void addAllergy(@NonNull Allergy allergy) {
         this.allergies.add(allergy);
         allergy.assignToBeneficiary(this);
@@ -153,7 +149,6 @@ public class Beneficiary {
     }
 
     public Set<Allergy> getAllergies() {
-
         return unmodifiableSet(allergies);
     }
 
@@ -167,7 +162,6 @@ public class Beneficiary {
 
         this.legalRepresentatives.add(legalRepresentative);
         legalRepresentative.getBeneficiaries().add(this);
-
     }
 
     public void removeLegalRepresentative(@NonNull LegalRepresentative legalRepresentative) {
@@ -185,9 +179,18 @@ public class Beneficiary {
         }
 
         this.isActive = false;
-        this.dischargeDate = Objects.requireNonNull(dischargeDate, "dischargeDate must not be null");
-        this.dischargeReason = Objects.requireNonNull(dischargeReason, "dischargeReason must not be null");
-        this.dischargedBy = Objects.requireNonNull(dischargedBy, "dischargedBy must not be null");
+        this.dischargeDate = Objects.requireNonNull(
+                dischargeDate,
+                "dischargeDate must not be null"
+        );
+        this.dischargeReason = Objects.requireNonNull(
+                dischargeReason,
+                "dischargeReason must not be null"
+        );
+        this.dischargedBy = Objects.requireNonNull(
+                dischargedBy,
+                "dischargedBy must not be null"
+        );
     }
 
     public void changeHouseUnit(HouseUnit targetHouseUnit) {

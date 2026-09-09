@@ -1,9 +1,12 @@
 package io.github.amichailides.merimna.domain;
 
 import io.github.amichailides.merimna.medication.exception.MedicationAlreadyAssignedException;
+import io.github.amichailides.merimna.medication.exception.MedicationDateRangeInvalidException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -54,9 +57,18 @@ public class Medication {
     @Column
     private String instructions;
 
+    @NonNull
+    @Setter(AccessLevel.NONE)
+    @Column(name = "started_at", nullable = false)
+    private LocalDate startedAt;
+
+    @Setter(AccessLevel.NONE)
+    @Column(name = "ended_at")
+    private LocalDate endedAt;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "beneficiary_id", nullable = false)
-    @Setter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.NONE)
     private Beneficiary beneficiary;
 
     public void assignToBeneficiary(@NonNull Beneficiary beneficiary) {
@@ -66,11 +78,46 @@ public class Medication {
                     beneficiary.getPublicId()
             );
         }
+
         this.beneficiary = beneficiary;
     }
 
-    void clearBeneficiary() {
-        this.beneficiary = null;
+    public boolean isActive() {
+        return endedAt == null;
+    }
+
+    public void changeStartedAt(LocalDate startedAt) {
+        Objects.requireNonNull(startedAt, "startedAt must not be null");
+
+        if (endedAt != null && startedAt.isAfter(endedAt)) {
+            throw new MedicationDateRangeInvalidException(
+                    publicId,
+                    startedAt,
+                    endedAt
+            );
+        }
+
+        this.startedAt = startedAt;
+    }
+
+    public boolean discontinue(LocalDate endedAt) {
+        Objects.requireNonNull(endedAt, "endedAt must not be null");
+
+        if (this.endedAt != null) {
+            return false;
+        }
+
+        if (endedAt.isBefore(startedAt)) {
+            throw new MedicationDateRangeInvalidException(
+                    publicId,
+                    startedAt,
+                    endedAt
+            );
+        }
+
+        this.endedAt = endedAt;
+
+        return true;
     }
 
     @PrePersist

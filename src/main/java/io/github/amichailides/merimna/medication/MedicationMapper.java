@@ -1,9 +1,9 @@
 package io.github.amichailides.merimna.medication;
 
+import io.github.amichailides.merimna.domain.Medication;
 import io.github.amichailides.merimna.medication.dto.MedicationCreateDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationReadOnlyDTO;
 import io.github.amichailides.merimna.medication.dto.MedicationUpdateDTO;
-import io.github.amichailides.merimna.domain.Medication;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -21,6 +21,7 @@ public class MedicationMapper {
                 .frequency(dto.frequency())
                 .administrationTimes(dto.administrationTimes())
                 .instructions(dto.instructions())
+                .startedAt(dto.startedAt())
                 .build();
     }
 
@@ -33,7 +34,10 @@ public class MedicationMapper {
                 entity.getDosage(),
                 entity.getFrequency(),
                 entity.getAdministrationTimes(),
-                entity.getInstructions()
+                entity.getInstructions(),
+                entity.getStartedAt(),
+                entity.getEndedAt(),
+                entity.isActive()
         );
     }
 
@@ -46,6 +50,10 @@ public class MedicationMapper {
         updateIfNotBlank(dto.frequency(), existing::setFrequency);
         updateIfNotBlank(dto.administrationTimes(), existing::setAdministrationTimes);
         updateIfNotBlank(dto.instructions(), existing::setInstructions);
+
+        if (dto.startedAt() != null) {
+            existing.changeStartedAt(dto.startedAt());
+        }
     }
 
     private void updateIfNotBlank(String newValue, Consumer<String> setter) {
