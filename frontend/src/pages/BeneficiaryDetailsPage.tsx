@@ -118,7 +118,7 @@ export function BeneficiaryDetailsPage() {
                                     <BeneficiaryMedicationsSection
                                         beneficiaryPublicId={beneficiary.publicId}
                                         medications={beneficiary.medications ?? []}
-                                        onMedicationAdded={reload}
+                                        onMedicationsChanged={reload}
                                     />
                                 )}
 

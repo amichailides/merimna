@@ -1,22 +1,24 @@
 import type { BeneficiaryDetailsDTO } from '@/api/types'
 
 import { MedicationCreateForm } from '@/components/beneficiaries/medications/MedicationCreateForm'
+import { MedicationUpdateForm } from '@/components/beneficiaries/medications/MedicationUpdateForm'
 import {
     FloatingPanelContent,
     FloatingPanelRoot,
     FloatingPanelTrigger,
 } from '@/components/ui/floating-panel'
+import { Pencil } from 'lucide-react'
 
 type Props = {
     beneficiaryPublicId: string
     medications: NonNullable<BeneficiaryDetailsDTO['medications']>
-    onMedicationAdded?: () => void | Promise<void>
+    onMedicationsChanged?: () => void | Promise<void>
 }
 
 export function BeneficiaryMedicationsSection({
     beneficiaryPublicId,
     medications,
-    onMedicationAdded,
+    onMedicationsChanged,
 }: Props) {
     return (
         <section className="max-w-2xl space-y-5">
@@ -34,11 +36,11 @@ export function BeneficiaryMedicationsSection({
                         <FloatingPanelTrigger
                             title="Add medication"
                             className="
-                    h-auto border-0 bg-transparent px-0 py-0
-                    text-[12px] font-medium text-teal-700
-                    shadow-none transition-colors
-                    hover:text-teal-800
-                "
+                                h-auto border-0 bg-transparent px-0 py-0
+                                text-[12px] font-medium text-teal-700
+                                shadow-none transition-colors
+                                hover:text-teal-800
+                            "
                         >
                             + Add medication
                         </FloatingPanelTrigger>
@@ -49,7 +51,7 @@ export function BeneficiaryMedicationsSection({
                         >
                             <MedicationCreateForm
                                 beneficiaryPublicId={beneficiaryPublicId}
-                                onMedicationAdded={onMedicationAdded}
+                                onMedicationAdded={onMedicationsChanged}
                             />
                         </FloatingPanelContent>
                     </FloatingPanelRoot>
@@ -71,9 +73,37 @@ export function BeneficiaryMedicationsSection({
                             className="space-y-3 py-4 first:pt-0"
                         >
                             <div>
-                                <h3 className="text-[13px] font-medium text-slate-900">
-                                    {medication.name || '—'}
-                                </h3>
+                                <div className="flex items-center gap-3">
+                                    <h3 className="text-[13px] font-medium text-slate-900">
+                                        {medication.name || '—'}
+                                    </h3>
+
+                                    {medication.publicId && (
+                                        <FloatingPanelRoot>
+                                            <FloatingPanelTrigger
+                                                title="Edit medication"
+                                                className="
+                                                ml-1 h-auto border-0 bg-transparent px-0 py-0
+                                                text-slate-400 shadow-none transition-colors
+                                                hover:text-teal-700
+                                                "
+                                            >
+                                                <Pencil className="size-3.5" />
+                                            </FloatingPanelTrigger>
+
+                                            <FloatingPanelContent
+                                                align="center"
+                                                className="w-[min(92vw,34rem)]"
+                                            >
+                                                <MedicationUpdateForm
+                                                    beneficiaryPublicId={beneficiaryPublicId}
+                                                    medication={medication}
+                                                    onMedicationUpdated={onMedicationsChanged}
+                                                />
+                                            </FloatingPanelContent>
+                                        </FloatingPanelRoot>
+                                    )}
+                                </div>
 
                                 <p className="mt-0.5 text-[12px] text-slate-400">
                                     {[

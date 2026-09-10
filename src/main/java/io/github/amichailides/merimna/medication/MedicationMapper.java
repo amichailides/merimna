@@ -49,6 +49,7 @@ public class MedicationMapper {
         updateIfNotBlank(dto.dosage(), existing::setDosage);
         updateIfNotBlank(dto.frequency(), existing::setFrequency);
         updateIfNotBlank(dto.administrationTimes(), existing::setAdministrationTimes);
+        // TODO(#42): Support explicit clearing of optional PATCH fields.
         updateIfNotBlank(dto.instructions(), existing::setInstructions);
 
         if (dto.startedAt() != null) {

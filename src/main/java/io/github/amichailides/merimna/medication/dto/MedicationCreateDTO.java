@@ -21,6 +21,7 @@ public record MedicationCreateDTO(
         @ValidGreekLatinText(message = "{medication.frequency.size}", extended = true, groups = SecondOrder.class)
         String frequency,
 
+        // TODO(#44): Revisit administrationTimes as structured time-of-day data.
         @NotBlank(message = "{medication.times.required}", groups = FirstOrder.class)
         @ValidGreekLatinText(message = "{medication.administrationTimes.size}", extended = true, groups = SecondOrder.class)
         String administrationTimes,

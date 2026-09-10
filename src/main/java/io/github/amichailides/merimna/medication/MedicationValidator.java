@@ -53,6 +53,7 @@ public class MedicationValidator {
             LocalDate startedAt,
             Map<String, String> errors
     ) {
+        // TODO(#43): Revisit future startedAt support for scheduled medications.
         if (startedAt != null && startedAt.isAfter(LocalDate.now())) {
             errors.put(
                     "startedAt",
