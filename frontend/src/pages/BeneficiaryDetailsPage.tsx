@@ -113,11 +113,14 @@ export function BeneficiaryDetailsPage() {
                                 />
                             )}
 
-                            {activeTab === 'Medications' && (
-                                <BeneficiaryMedicationsSection
-                                    medications={beneficiary.medications ?? []}
-                                />
-                            )}
+                            {activeTab === 'Medications' &&
+                                beneficiary.publicId && (
+                                    <BeneficiaryMedicationsSection
+                                        beneficiaryPublicId={beneficiary.publicId}
+                                        medications={beneficiary.medications ?? []}
+                                        onMedicationAdded={reload}
+                                    />
+                                )}
 
                             {activeTab === 'Allergies' && (
                                 <BeneficiaryAllergiesSection
@@ -127,7 +130,9 @@ export function BeneficiaryDetailsPage() {
 
                             {activeTab === 'Legal representatives' && (
                                 <BeneficiaryLegalRepresentativesSection
-                                    legalRepresentatives={beneficiary.legalRepresentatives ?? []}
+                                    legalRepresentatives={
+                                        beneficiary.legalRepresentatives ?? []
+                                    }
                                 />
                             )}
                         </main>

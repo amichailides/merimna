@@ -281,6 +281,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/beneficiaries/{beneficiaryPublicId}/medications/{medicationPublicId}/discontinue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["discontinueMedication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/beneficiaries/{beneficiaryPublicId}/legal-representatives/{legalRepresentativeId}": {
         parameters: {
             query?: never;
@@ -534,7 +550,7 @@ export interface paths {
         get: operations["getMedicationByPublicId"];
         put?: never;
         post?: never;
-        delete: operations["deleteMedication"];
+        delete?: never;
         options?: never;
         head?: never;
         patch: operations["updateMedication"];
@@ -1207,6 +1223,11 @@ export interface components {
             frequency?: string;
             administrationTimes?: string;
             instructions?: string;
+            /** Format: date */
+            startedAt?: string;
+            /** Format: date */
+            endedAt?: string;
+            active?: boolean;
         };
         MedicationCreateDTO: {
             name?: string;
@@ -1214,6 +1235,12 @@ export interface components {
             frequency?: string;
             administrationTimes?: string;
             instructions?: string;
+            /** Format: date */
+            startedAt?: string;
+        };
+        MedicationDiscontinueDTO: {
+            /** Format: date */
+            endedAt?: string;
         };
         /** @description Request body used to discharge a beneficiary from active support. */
         DischargeRequestDTO: {
@@ -1444,6 +1471,8 @@ export interface components {
             frequency?: string;
             administrationTimes?: string;
             instructions?: string;
+            /** Format: date */
+            startedAt?: string;
         };
         BeneficiaryListDTO: {
             /**
@@ -1653,7 +1682,7 @@ export interface components {
              * @example EMPLOYEE_UPDATED
              * @enum {string}
              */
-            action?: "BENEFICIARY_CREATED" | "BENEFICIARY_UPDATED" | "BENEFICIARY_DISCHARGED" | "BENEFICIARY_HOUSE_UNIT_CHANGED" | "ALLERGY_UPDATED" | "MEDICATION_UPDATED" | "EMPLOYEE_CREATED" | "EMPLOYEE_UPDATED" | "EMPLOYEE_TERMINATED" | "EMPLOYEE_REACTIVATED" | "ASSIGNMENT_CREATED" | "ASSIGNMENT_TERMINATED" | "ASSIGNMENT_CANCELLED" | "PLACEMENT_CREATED" | "PLACEMENT_TERMINATED" | "USER_CREATED" | "USER_UPDATED" | "AUTH_LOGIN_SUCCESS" | "AUTH_LOGIN_FAILED" | "AUTH_LOGOUT" | "AUTH_REFRESH_TOKEN_REUSE_DETECTED" | "AUTH_PASSWORD_CHANGED" | "AUTH_PASSWORD_RESET";
+            action?: "BENEFICIARY_CREATED" | "BENEFICIARY_UPDATED" | "BENEFICIARY_DISCHARGED" | "BENEFICIARY_HOUSE_UNIT_CHANGED" | "ALLERGY_UPDATED" | "MEDICATION_UPDATED" | "MEDICATION_DISCONTINUED" | "EMPLOYEE_CREATED" | "EMPLOYEE_UPDATED" | "EMPLOYEE_TERMINATED" | "EMPLOYEE_REACTIVATED" | "ASSIGNMENT_CREATED" | "ASSIGNMENT_TERMINATED" | "ASSIGNMENT_CANCELLED" | "PLACEMENT_CREATED" | "PLACEMENT_TERMINATED" | "USER_CREATED" | "USER_UPDATED" | "AUTH_LOGIN_SUCCESS" | "AUTH_LOGIN_FAILED" | "AUTH_LOGOUT" | "AUTH_REFRESH_TOKEN_REUSE_DETECTED" | "AUTH_PASSWORD_CHANGED" | "AUTH_PASSWORD_RESET";
             /**
              * @description Type of domain entity affected by the action
              * @example EMPLOYEE
@@ -2331,7 +2360,9 @@ export interface operations {
     };
     getMedications: {
         parameters: {
-            query?: never;
+            query?: {
+                includeInactive?: boolean;
+            };
             header?: never;
             path: {
                 beneficiaryPublicId: string;
@@ -2363,6 +2394,33 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["MedicationCreateDTO"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MedicationReadOnlyDTO"];
+                };
+            };
+        };
+    };
+    discontinueMedication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                beneficiaryPublicId: string;
+                medicationPublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationDiscontinueDTO"];
             };
         };
         responses: {
@@ -2968,27 +3026,6 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["MedicationReadOnlyDTO"];
                 };
-            };
-        };
-    };
-    deleteMedication: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                beneficiaryPublicId: string;
-                medicationPublicId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

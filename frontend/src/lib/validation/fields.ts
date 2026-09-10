@@ -55,7 +55,7 @@ function minAllowedDateOfBirth(): string {
     ].join('-')
 }
 
-function isValidIsoDate(value: string): boolean {
+export function isValidIsoDate(value: string): boolean {
     if (!ISO_DATE.test(value)) {
         return false
     }
@@ -177,6 +177,54 @@ export const greekLatinText = (
                         ? GREEK_LATIN_EXTENDED
                         : GREEK_LATIN_TEXT
                 ).test(value),
+            `${label} contains invalid characters`
+        )
+
+// Form-friendly optional variant for @ValidGreekLatinText fields without
+// @NotBlank/@NotNull.
+//
+// Empty or whitespace-only form values are accepted here. The payload builder
+// decides whether they become omitted, preserved or explicitly cleared.
+export const optionalGreekLatinText = (
+    label: string,
+    {
+        min = 0,
+        max = 100,
+        extended = false,
+    }: {
+        min?: number
+        max?: number
+        extended?: boolean
+    } = {}
+) =>
+    z
+        .string()
+        .optional()
+        .refine(
+            (value) => {
+                if (value === undefined || value.trim() === '') {
+                    return true
+                }
+
+                return (
+                    value.length >= min &&
+                    value.length <= max
+                )
+            },
+            `${label} must be between ${min} and ${max} characters`
+        )
+        .refine(
+            (value) => {
+                if (value === undefined || value.trim() === '') {
+                    return true
+                }
+
+                return (
+                    extended
+                        ? GREEK_LATIN_EXTENDED
+                        : GREEK_LATIN_TEXT
+                ).test(value)
+            },
             `${label} contains invalid characters`
         )
 

@@ -76,6 +76,18 @@ export type BeneficiaryCreateDTO =
 export type BeneficiaryUpdateDTO =
   components['schemas']['BeneficiaryUpdateDTO']
 
+export type MedicationReadOnlyDTO =
+  components['schemas']['MedicationReadOnlyDTO']
+
+export type MedicationCreateDTO =
+  components['schemas']['MedicationCreateDTO']
+
+export type MedicationUpdateDTO =
+  components['schemas']['MedicationUpdateDTO']
+
+export type MedicationDiscontinueDTO =
+  components['schemas']['MedicationDiscontinueDTO']
+
 export type DischargeRequestDTO =
   components['schemas']['DischargeRequestDTO']
 
