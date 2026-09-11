@@ -13,5 +13,6 @@ public record DashboardActivityReadOnlyDTO(
         AuditEntityType entityType,
         UUID entityPublicId,
         Instant occurredAt,
-        Map<String, Object> metadata
+        Map<String, Object> metadata,
+        String subjectName
 ) {}

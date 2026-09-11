@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,4 +45,6 @@ public interface BeneficiaryRepository extends JpaRepository<Beneficiary, Long>,
     List<HouseUnitCountProjection> countActiveBeneficiariesByHouseUnit();
 
     long countByIsActiveTrue();
+
+    List<Beneficiary> findAllByPublicIdIn(Collection<UUID> publicIds);
 }
