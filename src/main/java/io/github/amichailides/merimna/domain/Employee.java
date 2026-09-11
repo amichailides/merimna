@@ -146,6 +146,9 @@ public class Employee {
     public Set<HouseUnit> getAccessibleHouseUnits(LocalDate today) {
         Set<HouseUnit> accessible = new HashSet<>();
 
+        // TODO #45: use date-aware assignment activity checks.
+        // Future assignments currently have ACTIVE status immediately and may grant
+        // house-unit access before their start date.
         assignments.stream()
                 .filter(EmployeeAssignment::isActive)
                 .map(EmployeeAssignment::getHouseUnit)
