@@ -28,6 +28,7 @@ public class AuditServiceImpl implements AuditService {
                 .subjectEmployeePublicId(event.subjectEmployeePublicId())
                 .ipAddress(auditContext.getIpAddress())
                 .userAgent(auditContext.getUserAgent())
+                // TODO #46: Clarify AuditOutcome semantics; currently always persisted as SUCCESS.
                 .outcome(AuditOutcome.SUCCESS)
                 .metadata(event.metadata())
                 .build();

@@ -36,6 +36,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final ApplicationEventPublisher eventPublisher;
     private final AuditContext auditContext;
+    private final AuthLoginFailureAuditService authLoginFailureAuditService;
 
     @Transactional
     public AuthResponse login(LoginRequest request, String userAgent, String ipAddress) {
@@ -89,9 +90,7 @@ public class AuthService {
     }
 
     private RuntimeException auditAndReturnLoginFailure(String attemptedEmail, BaseApplicationException ex) {
-        eventPublisher.publishEvent(
-                AuthLoginFailedEvent.from(attemptedEmail, ex)
-        );
+        authLoginFailureAuditService.recordFailure(attemptedEmail, ex);
 
         return ex;
     }
