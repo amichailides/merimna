@@ -1,6 +1,7 @@
 package io.github.amichailides.merimna.assignment;
 
 import io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO;
+import io.github.amichailides.merimna.common.projection.HouseUnitCountProjection;
 import io.github.amichailides.merimna.domain.Employee;
 import io.github.amichailides.merimna.domain.EmployeeAssignment;
 import io.github.amichailides.merimna.domain.HouseUnit;
@@ -21,36 +22,36 @@ public interface EmployeeAssignmentRepository
         JpaSpecificationExecutor<EmployeeAssignment> {
 
     @Query("""
-        select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
-            a.publicId,
-            hu.publicId,
-            hu.displayName,
-            a.status,
-            a.startDate,
-            a.endDate
-        )
-        from EmployeeAssignment a
-        join a.houseUnit hu
-        where a.employee.publicId = :employeePublicId
-        order by a.startDate desc
-        """)
+            select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
+                a.publicId,
+                hu.publicId,
+                hu.displayName,
+                a.status,
+                a.startDate,
+                a.endDate
+            )
+            from EmployeeAssignment a
+            join a.houseUnit hu
+            where a.employee.publicId = :employeePublicId
+            order by a.startDate desc
+            """)
     List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicId(UUID employeePublicId);
 
     @Query("""
-    select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
-        a.publicId,
-        hu.publicId,
-        hu.displayName,
-        a.status,
-        a.startDate,
-        a.endDate
-    )
-    from EmployeeAssignment a
-    join a.houseUnit hu
-    where a.employee.publicId = :employeePublicId
-      and a.status = :status
-    order by a.startDate desc
-    """)
+            select new io.github.amichailides.merimna.assignment.dto.EmployeeAssignmentReadOnlyDTO(
+                a.publicId,
+                hu.publicId,
+                hu.displayName,
+                a.status,
+                a.startDate,
+                a.endDate
+            )
+            from EmployeeAssignment a
+            join a.houseUnit hu
+            where a.employee.publicId = :employeePublicId
+              and a.status = :status
+            order by a.startDate desc
+            """)
     List<EmployeeAssignmentReadOnlyDTO> findAssignmentsByEmployeePublicIdAndStatus(UUID employeePublicId,
                                                                                    EmployeeAssignmentStatus status);
 
@@ -60,13 +61,13 @@ public interface EmployeeAssignmentRepository
     );
 
     @Query("""
-    SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
-    FROM EmployeeAssignment a
-    WHERE a.employee = :employee
-      AND a.status = :status
-      AND a.startDate <= :effectiveEndDate
-      AND (a.endDate IS NULL OR a.endDate >= :startDate)
-    """)
+            SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+            FROM EmployeeAssignment a
+            WHERE a.employee = :employee
+              AND a.status = :status
+              AND a.startDate <= :effectiveEndDate
+              AND (a.endDate IS NULL OR a.endDate >= :startDate)
+            """)
     boolean existsOverlappingAssignment(
             @Param("employee") Employee employee,
             @Param("status") EmployeeAssignmentStatus status,
@@ -78,6 +79,32 @@ public interface EmployeeAssignmentRepository
             Employee employee,
             HouseUnit houseUnit,
             EmployeeAssignmentStatus status
+    );
+
+    @Query("""
+            select a.houseUnit.publicId as houseUnitPublicId,
+                   count(a) as count
+            from EmployeeAssignment a
+            where a.status = :status
+              and a.startDate <= :today
+              and (a.endDate is null or a.endDate >= :today)
+            group by a.houseUnit.publicId
+            """)
+    List<HouseUnitCountProjection> countActiveAssignmentsByHouseUnit(
+            @Param("status") EmployeeAssignmentStatus status,
+            @Param("today") LocalDate today
+    );
+
+    @Query("""
+            select count(a)
+            from EmployeeAssignment a
+            where a.status = :status
+              and a.startDate <= :today
+              and (a.endDate is null or a.endDate >= :today)
+            """)
+    long countActiveAssignments(
+            @Param("status") EmployeeAssignmentStatus status,
+            @Param("today") LocalDate today
     );
 }
 

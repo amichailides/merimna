@@ -30,4 +30,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>,
             where e.id = :id
             """)
     Optional<Employee> findWithAccessDataById(@Param("id") Long id);
+
+    long countByIsActiveTrue();
 }
