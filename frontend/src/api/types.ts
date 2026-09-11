@@ -93,3 +93,12 @@ export type DischargeRequestDTO =
 
 export type PageResponseBeneficiaryListDTO =
   components['schemas']['PageResponseBeneficiaryListDTO']
+
+export type AdminDashboardReadOnlyDTO =
+  components['schemas']['AdminDashboardReadOnlyDTO']
+
+export type AdminDashboardSummaryReadOnlyDTO =
+  components['schemas']['AdminDashboardSummaryReadOnlyDTO']
+
+export type HouseUnitOverviewReadOnlyDTO =
+  components['schemas']['HouseUnitOverviewReadOnlyDTO']

@@ -1,4 +1,6 @@
 import { useAuth } from '@/auth/useAuth'
+import { AdminDashboard } from '@/components/dashboard/AdminDashboard'
+import { StaffDashboard } from '@/components/dashboard/StaffDashboard'
 
 export function DashboardPage() {
     const { user, isAuthLoading } = useAuth()
@@ -8,8 +10,8 @@ export function DashboardPage() {
     }
 
     if (user?.role === 'ADMIN') {
-        return <div>Admin dashboard</div>
+        return <AdminDashboard />
     }
 
-    return <div>Staff dashboard</div>
+    return <StaffDashboard />
 }

@@ -653,6 +653,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dashboard/admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAdminDashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/employees/{employeePublicId}/access/invitation": {
         parameters: {
             query?: never;
@@ -1002,13 +1018,13 @@ export interface components {
              */
             requiresExclusivePlacement?: boolean;
             /** @description Permissions granted to this employee position. */
-            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
+            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE" | "DASHBOARD_READ")[];
         };
         EmployeePositionReadOnlyDTO: {
             code?: string;
             displayName?: string;
             requiresExclusivePlacement?: boolean;
-            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE")[];
+            permissions?: ("BENEFICIARY_READ" | "BENEFICIARY_CREATE" | "BENEFICIARY_UPDATE" | "BENEFICIARY_DISCHARGE" | "EMPLOYEE_READ" | "EMPLOYEE_ACTIVITY_READ" | "EMPLOYEE_CREATE" | "EMPLOYEE_UPDATE" | "EMPLOYEE_TERMINATE" | "EMPLOYEE_REACTIVATE" | "HOUSE_UNIT_READ" | "HOUSE_UNIT_CREATE" | "HOUSE_UNIT_UPDATE" | "ASSIGNMENT_READ" | "ASSIGNMENT_CREATE" | "ASSIGNMENT_TERMINATE" | "ASSIGNMENT_CANCEL" | "USER_READ" | "USER_CREATE" | "USER_UPDATE" | "USER_DEACTIVATE" | "USER_REACTIVATE" | "PLACEMENT_READ" | "PLACEMENT_CREATE" | "PLACEMENT_UPDATE" | "PLACEMENT_TERMINATE" | "DASHBOARD_READ")[];
         };
         BeneficiaryCreateDTO: {
             /**
@@ -1723,6 +1739,36 @@ export interface components {
             accountEmail?: string;
             /** Format: date-time */
             invitationExpiresAt?: string;
+        };
+        AdminDashboardReadOnlyDTO: {
+            summary?: components["schemas"]["AdminDashboardSummaryReadOnlyDTO"];
+            houseUnits?: components["schemas"]["HouseUnitOverviewReadOnlyDTO"][];
+        };
+        AdminDashboardSummaryReadOnlyDTO: {
+            /** Format: int64 */
+            activeEmployees?: number;
+            /** Format: int64 */
+            activeBeneficiaries?: number;
+            /** Format: int64 */
+            houseUnits?: number;
+            /** Format: int64 */
+            activeAssignments?: number;
+            /** Format: int64 */
+            activePlacements?: number;
+        };
+        HouseUnitOverviewReadOnlyDTO: {
+            /** Format: uuid */
+            publicId?: string;
+            code?: string;
+            displayName?: string;
+            /** Format: int32 */
+            maxCapacity?: number;
+            /** Format: int64 */
+            activeBeneficiaries?: number;
+            /** Format: int64 */
+            activeAssignedEmployees?: number;
+            /** Format: int64 */
+            activePlacedEmployees?: number;
         };
         BeneficiarySearchDTO: {
             /**
@@ -3266,6 +3312,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PageResponseEmployeeActivityDTO"];
+                };
+            };
+        };
+    };
+    getAdminDashboard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AdminDashboardReadOnlyDTO"];
                 };
             };
         };
