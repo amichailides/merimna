@@ -4,5 +4,6 @@ import java.util.List;
 
 public record AdminDashboardReadOnlyDTO(
         AdminDashboardSummaryReadOnlyDTO summary,
-        List<HouseUnitOverviewReadOnlyDTO> houseUnits
+        List<HouseUnitOverviewReadOnlyDTO> houseUnits,
+        List<DashboardActivityReadOnlyDTO> recentActivity
 ) {}

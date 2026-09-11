@@ -9,4 +9,9 @@ import java.util.UUID;
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     Page<AuditLog> findBySubjectEmployeePublicId(UUID subjectEmployeePublicId, Pageable pageable);
+
+    Page<AuditLog> findByEntityTypeNot(
+            AuditEntityType entityType,
+            Pageable pageable
+    );
 }
