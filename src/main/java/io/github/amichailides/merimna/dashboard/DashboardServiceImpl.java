@@ -4,10 +4,7 @@ import io.github.amichailides.merimna.assignment.EmployeeAssignmentRepository;
 import io.github.amichailides.merimna.assignment.EmployeeAssignmentStatus;
 import io.github.amichailides.merimna.beneficiary.BeneficiaryRepository;
 import io.github.amichailides.merimna.common.projection.HouseUnitCountProjection;
-import io.github.amichailides.merimna.dashboard.dto.AdminDashboardReadOnlyDTO;
-import io.github.amichailides.merimna.dashboard.dto.AdminDashboardSummaryReadOnlyDTO;
-import io.github.amichailides.merimna.dashboard.dto.DashboardActivityReadOnlyDTO;
-import io.github.amichailides.merimna.dashboard.dto.HouseUnitOverviewReadOnlyDTO;
+import io.github.amichailides.merimna.dashboard.dto.*;
 import io.github.amichailides.merimna.domain.HouseUnit;
 import io.github.amichailides.merimna.employee.EmployeeRepository;
 import io.github.amichailides.merimna.houseunit.HouseUnitRepository;
@@ -33,6 +30,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final EmployeeAssignmentRepository assignmentRepository;
     private final EmployeePlacementRepository placementRepository;
     private final DashboardActivityService dashboardActivityService;
+    private final DashboardSecurityEventService dashboardSecurityEventService;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,10 +45,14 @@ public class DashboardServiceImpl implements DashboardService {
         List<DashboardActivityReadOnlyDTO> recentActivity =
                 dashboardActivityService.getRecentActivity();
 
+        List<DashboardSecurityEventReadOnlyDTO> securityEvents =
+                dashboardSecurityEventService.getRecentSecurityEvents();
+
         return new AdminDashboardReadOnlyDTO(
                 summary,
                 houseUnits,
-                recentActivity
+                recentActivity,
+                securityEvents
         );
     }
 
