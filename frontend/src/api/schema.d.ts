@@ -1743,6 +1743,7 @@ export interface components {
         AdminDashboardReadOnlyDTO: {
             summary?: components["schemas"]["AdminDashboardSummaryReadOnlyDTO"];
             houseUnits?: components["schemas"]["HouseUnitOverviewReadOnlyDTO"][];
+            recentActivity?: components["schemas"]["DashboardActivityReadOnlyDTO"][];
         };
         AdminDashboardSummaryReadOnlyDTO: {
             /** Format: int64 */
@@ -1755,6 +1756,22 @@ export interface components {
             activeAssignments?: number;
             /** Format: int64 */
             activePlacements?: number;
+        };
+        DashboardActivityReadOnlyDTO: {
+            /** Format: uuid */
+            publicId?: string;
+            /** @enum {string} */
+            action?: "BENEFICIARY_CREATED" | "BENEFICIARY_UPDATED" | "BENEFICIARY_DISCHARGED" | "BENEFICIARY_HOUSE_UNIT_CHANGED" | "ALLERGY_UPDATED" | "MEDICATION_UPDATED" | "MEDICATION_DISCONTINUED" | "EMPLOYEE_CREATED" | "EMPLOYEE_UPDATED" | "EMPLOYEE_TERMINATED" | "EMPLOYEE_REACTIVATED" | "ASSIGNMENT_CREATED" | "ASSIGNMENT_TERMINATED" | "ASSIGNMENT_CANCELLED" | "PLACEMENT_CREATED" | "PLACEMENT_TERMINATED" | "USER_CREATED" | "USER_UPDATED" | "AUTH_LOGIN_SUCCESS" | "AUTH_LOGIN_FAILED" | "AUTH_LOGOUT" | "AUTH_REFRESH_TOKEN_REUSE_DETECTED" | "AUTH_PASSWORD_CHANGED" | "AUTH_PASSWORD_RESET";
+            /** @enum {string} */
+            entityType?: "BENEFICIARY" | "ALLERGY" | "MEDICATION" | "EMPLOYEE" | "EMPLOYEE_ASSIGNMENT" | "EMPLOYEE_PLACEMENT" | "USER" | "AUTH";
+            /** Format: uuid */
+            entityPublicId?: string;
+            /** Format: date-time */
+            occurredAt?: string;
+            metadata?: {
+                [key: string]: unknown;
+            };
+            subjectName?: string;
         };
         HouseUnitOverviewReadOnlyDTO: {
             /** Format: uuid */

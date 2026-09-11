@@ -102,3 +102,6 @@ export type AdminDashboardSummaryReadOnlyDTO =
 
 export type HouseUnitOverviewReadOnlyDTO =
   components['schemas']['HouseUnitOverviewReadOnlyDTO']
+
+export type DashboardActivityReadOnlyDTO =
+  components['schemas']['DashboardActivityReadOnlyDTO']
