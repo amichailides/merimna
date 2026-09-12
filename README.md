@@ -18,12 +18,11 @@ records, user access, and structured audit history for important changes.
 
 ## Preview
 
-> The deployed frontend currently showcases the admin employee workflow. The backend API supports a broader set of
-> supported-living operations.
+> The deployed frontend currently focuses on the main administrative workflows, while the backend API supports a broader set of supported-living operations.
 
-### Admin employee workflow
+### Admin workspace
 
-Employee listing, Greek-aware search, profile context, assignments, placements, and activity history.
+Dashboard overview, employee management, beneficiary management, and supporting reference views.
 
 <p align="center">
   <img
@@ -148,13 +147,13 @@ to keep the development workflow structured and the project's evolution visible.
 
 The REST API currently covers:
 
-- Authentication and refresh-token lifecycle
-- Employee administration and lifecycle actions
+- Authentication, invitations, and refresh-token lifecycle
+- Employee administration, system access, and lifecycle actions
 - Employee assignments and temporary placements
 - Beneficiary records, allergies, medications, and legal representatives
 - User accounts and password management
 - House units, employee positions, and supporting reference data
-- Employee activity and structured audit history
+- Admin dashboard summaries and employee activity
 
 Explore the complete API through the
 [interactive Scalar documentation](https://api.merimna.care/api/scalar).
@@ -169,34 +168,59 @@ Explore the complete API through the
 - **POST** `/api/auth/logout`
 - **POST** `/api/auth/forgot-password`
 - **POST** `/api/auth/reset-password`
+- **POST** `/api/auth/accept-invitation`
+
+### Dashboard
+
+- **GET** `/api/dashboard/admin`
 
 ### Beneficiaries
 
 - **GET** `/api/beneficiaries`
 - **POST** `/api/beneficiaries`
-- **GET** `/api/beneficiaries/{publicId}`
-- **PATCH** `/api/beneficiaries/{publicId}`
-- **PATCH** `/api/beneficiaries/{publicId}/house-unit/{houseUnitPublicId}`
-- **POST** `/api/beneficiaries/{publicId}/discharge`
+- **GET** `/api/beneficiaries/{beneficiaryPublicId}`
+- **PATCH** `/api/beneficiaries/{beneficiaryPublicId}`
+- **POST** `/api/beneficiaries/{beneficiaryPublicId}/discharge`
+- **PATCH** `/api/beneficiaries/{beneficiaryPublicId}/house-unit/{houseUnitPublicId}`
 
-**Related beneficiary resources:**
+### Beneficiary Allergies
 
-- `/api/beneficiaries/{beneficiaryPublicId}/allergies`
-- `/api/beneficiaries/{beneficiaryPublicId}/medications`
-- `/api/beneficiaries/{beneficiaryPublicId}/legal-representatives/{legalRepresentativePublicId}`
+- **GET** `/api/beneficiaries/{beneficiaryPublicId}/allergies`
+- **POST** `/api/beneficiaries/{beneficiaryPublicId}/allergies`
+- **GET** `/api/beneficiaries/{beneficiaryPublicId}/allergies/{allergyPublicId}`
+- **PATCH** `/api/beneficiaries/{beneficiaryPublicId}/allergies/{allergyPublicId}`
+- **DELETE** `/api/beneficiaries/{beneficiaryPublicId}/allergies/{allergyPublicId}`
+
+### Beneficiary Medications
+
+- **GET** `/api/beneficiaries/{beneficiaryPublicId}/medications`
+- **POST** `/api/beneficiaries/{beneficiaryPublicId}/medications`
+- **GET** `/api/beneficiaries/{beneficiaryPublicId}/medications/{medicationPublicId}`
+- **PATCH** `/api/beneficiaries/{beneficiaryPublicId}/medications/{medicationPublicId}`
+- **POST** `/api/beneficiaries/{beneficiaryPublicId}/medications/{medicationPublicId}/discontinue`
+
+### Beneficiary Legal Representatives
+
+- **POST** `/api/beneficiaries/{beneficiaryPublicId}/legal-representatives/{legalRepresentativeId}`
+- **DELETE** `/api/beneficiaries/{beneficiaryPublicId}/legal-representatives/{legalRepresentativeId}`
 
 ### Employees
 
 - **GET** `/api/employees`
 - **POST** `/api/employees`
-- **GET** `/api/employees/{publicId}`
-- **PATCH** `/api/employees/{publicId}`
-- **POST** `/api/employees/{publicId}/terminate`
-- **POST** `/api/employees/{publicId}/reactivate`
-
-### Employee Activity
-
+- **POST** `/api/employees/onboarding`
+- **GET** `/api/employees/{employeePublicId}`
+- **PATCH** `/api/employees/{employeePublicId}`
 - **GET** `/api/employees/{employeePublicId}/activity`
+- **POST** `/api/employees/{employeePublicId}/terminate`
+- **POST** `/api/employees/{employeePublicId}/reactivate`
+
+### Employee Access
+
+- **GET** `/api/employees/{employeePublicId}/access`
+- **POST** `/api/employees/{employeePublicId}/access`
+- **POST** `/api/employees/{employeePublicId}/access/invitation/resend`
+- **DELETE** `/api/employees/{employeePublicId}/access/invitation`
 
 ### Employee Assignments
 
@@ -210,8 +234,8 @@ Explore the complete API through the
 
 - **GET** `/api/placements`
 - **POST** `/api/placements`
-- **GET** `/api/placements/{publicId}`
-- **POST** `/api/placements/{publicId}/terminate`
+- **GET** `/api/placements/{placementPublicId}`
+- **POST** `/api/placements/{placementPublicId}/terminate`
 
 ### Users
 
@@ -222,13 +246,23 @@ Explore the complete API through the
 - **GET** `/api/users/me`
 - **PATCH** `/api/users/me/password`
 
-### Reference data & supporting resources
+### House Units
 
-Standard CRUD operations are available for:
+- **GET** `/api/house-units`
+- **POST** `/api/house-units`
+- **GET** `/api/house-units/{houseUnitPublicId}`
+- **PATCH** `/api/house-units/{houseUnitPublicId}`
 
-- `/api/legal-representatives`
-- `/api/house-units`
-- `/api/employee-positions`
+### Employee Positions
+
+- **GET** `/api/employee-positions`
+- **POST** `/api/employee-positions`
+
+### Legal Representatives
+
+- **POST** `/api/legal-representatives`
+- **GET** `/api/legal-representatives/{legalRepresentativeId}`
+- **PATCH** `/api/legal-representatives/{legalRepresentativeId}`
 
 </details>
 
@@ -247,19 +281,22 @@ git clone https://github.com/amichailides/merimna.git
 cd merimna
 ```
 
-2. **Start the application:**
+2. **Start the full local stack:**
 
 ```bash
 docker compose up -d --build
 ```
 
-3. **Load demo data:**
+This starts:
 
-```bash
-docker compose exec -T postgres psql -U merimna_user -d merimna_db < dev/demo-data.sql
-```
+- PostgreSQL
+- Spring Boot backend
+- React frontend
+- Demo data loader
 
-4. **Sign in with the demo admin account:**
+The database schema is created through Flyway migrations, and the demo dataset is loaded automatically once the migrations complete.
+
+3. **Sign in with the demo admin account:**
 
 ```text
 Email: admin@merimna.local
@@ -269,17 +306,15 @@ Password: admin123
 ### Local URLs
 
 - **Frontend:** `http://localhost:5173`
-- **Backend API:** `http://localhost:8080`
+- **Backend API:** `http://localhost:8080/api`
 - **OpenAPI specification:** `http://localhost:8080/api/v3/api-docs`
 - **Interactive API documentation:** `http://localhost:8080/api/scalar`
 
 ## Future Vision
 
-- **Care activity records:** Add staff-facing forms for recording beneficiary care activities, incidents, and daily
-  notes.
-- **Assignments and placements UI:** Add dedicated screens for managing assignment and placement lifecycles.
-- **Beneficiary management UI:** Build frontend workflows for beneficiary records and related care information.
+- **Care activity records:** Add staff-facing forms for recording beneficiary care activities, incidents, and daily notes.
+- **Assignments and placements UI:** Replace the current placeholder pages with full lifecycle management workflows.
+- **Beneficiary care workflows:** Expand frontend support for allergies, medications, legal representatives, and other related beneficiary records.
 - **Authorization testing:** Expand integration coverage for placement-aware access and other critical security flows.
-- **Centralized audit view:** Add an admin-facing page for reviewing domain and security events across the system, with
-  filters for event type, subject, and date.
-- **Admin dashboard:** Add operational summaries, recent events, and follow-up tasks.
+- **Centralized audit view:** Add an admin-facing page for reviewing domain and security events across the system, with filters for event type, subject, and date.
+- **Dashboard expansion:** Extend the admin dashboard with additional operational summaries and follow-up views.
