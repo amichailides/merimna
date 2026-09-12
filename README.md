@@ -292,9 +292,11 @@ This starts:
 - PostgreSQL
 - Spring Boot backend
 - React frontend
-- Demo data loader
+- Demo data loader (one-shot service)
 
 The database schema is created through Flyway migrations, and the demo dataset is loaded automatically once the migrations complete.
+
+The demo data loader exits successfully after seeding the database, so `Exited (0)` is the expected status.
 
 3. **Sign in with the demo admin account:**
 
@@ -309,6 +311,16 @@ Password: admin123
 - **Backend API:** `http://localhost:8080/api`
 - **OpenAPI specification:** `http://localhost:8080/api/v3/api-docs`
 - **Interactive API documentation:** `http://localhost:8080/api/scalar`
+
+## Deployment
+
+The live application is deployed using:
+
+- **Frontend:** Vercel
+- **Backend & database:** Railway (Spring Boot API + PostgreSQL)
+- **Domain & edge security:** Cloudflare
+
+The frontend communicates with the backend through the public REST API at `api.merimna.care`.
 
 ## Future Vision
 
