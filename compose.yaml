@@ -3,7 +3,7 @@ services:
     image: postgres:17
     container_name: merimna-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-merimna}
+      POSTGRES_DB: ${POSTGRES_DB:-merimna_db}
       POSTGRES_USER: ${DB_USERNAME:-merimna_user}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-merimna_pass}
     ports:
@@ -11,7 +11,7 @@ services:
     volumes:
       - merimna-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-merimna_user} -d ${POSTGRES_DB:-merimna}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-merimna_user} -d ${POSTGRES_DB:-merimna_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,7 +25,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/merimna}
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/merimna_db}
       DB_USERNAME: ${DB_USERNAME:-merimna_user}
       DB_PASSWORD: ${DB_PASSWORD:-merimna_pass}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-supersecretkeyfordevonlydonotuseinproduction}
