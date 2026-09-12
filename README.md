@@ -5,6 +5,8 @@
 [Interactive API Documentation](https://api.merimna.care/api/scalar)
 ·
 [Architecture Decisions](docs/adr)
+·
+[GitHub Issues](https://github.com/amichailides/merimna/issues)
 
 ## Overview
 
@@ -311,6 +313,24 @@ Password: admin123
 - **Backend API:** `http://localhost:8080/api`
 - **OpenAPI specification:** `http://localhost:8080/api/v3/api-docs`
 - **Interactive API documentation:** `http://localhost:8080/api/scalar`
+
+## Testing
+
+Backend tests use JUnit and Mockito.
+
+On Linux, macOS, or Git Bash:
+
+```bash
+cd backend
+./mvnw test
+```
+
+On Windows PowerShell:
+
+```powershell
+cd backend
+.\mvnw.cmd test
+```
 
 ## Deployment
 
