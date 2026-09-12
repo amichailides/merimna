@@ -18,6 +18,8 @@ import { BeneficiariesPage } from './pages/BeneficiariesPage'
 import { BeneficiaryDetailsPage } from './pages/BeneficiaryDetailsPage'
 import { BeneficiaryCreatePage } from './pages/BeneficiaryCreatePage'
 import { HouseUnitsPage } from './pages/HouseUnitsPage'
+import { AssignmentsPage } from './pages/AssignmentsPage'
+import { PlacementsPage } from './pages/PlacementsPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -59,6 +61,8 @@ function App() {
                 element={<BeneficiaryDetailsPage />}
               />
               <Route path="/house-units" element={<HouseUnitsPage />} />
+              <Route path="/assignments" element={<AssignmentsPage />} />
+              <Route path="/placements" element={<PlacementsPage />} />
 
             </Route>
           </Route>
