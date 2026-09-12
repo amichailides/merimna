@@ -32,5 +32,17 @@ services:
     ports:
       - "${APP_PORT:-8080}:8080"
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: merimna-web
+    depends_on:
+      - app
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+
 volumes:
   merimna-postgres-data:
