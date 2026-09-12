@@ -32,13 +32,73 @@ services:
     ports:
       - "${APP_PORT:-8080}:8080"
 
+  demo-data:
+    image: postgres:17
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-merimna_pass}
+    volumes:
+      - ./dev/demo-data.sql:/demo-data.sql:ro
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo "Waiting for Flyway migrations..."
+
+        for i in $$(seq 1 30); do
+          # NOTE: Bump this version when adding a new Flyway migration.
+          if psql \
+            -h postgres \
+            -U "${DB_USERNAME:-merimna_user}" \
+            -d "${POSTGRES_DB:-merimna_db}" \
+            -tAc "SELECT to_regclass('public.flyway_schema_history') IS NOT NULL" \
+            | grep -q t; then
+
+            if psql \
+              -h postgres \
+              -U "${DB_USERNAME:-merimna_user}" \
+              -d "${POSTGRES_DB:-merimna_db}" \
+              -tAc "SELECT EXISTS (
+                SELECT 1
+                FROM flyway_schema_history
+                WHERE version = '7'
+                  AND success = true
+              )" \
+              | grep -q t; then
+
+              echo "Schema ready. Loading demo data..."
+
+              psql \
+                -v ON_ERROR_STOP=1 \
+                -h postgres \
+                -U "${DB_USERNAME:-merimna_user}" \
+                -d "${POSTGRES_DB:-merimna_db}" \
+                -f /demo-data.sql
+
+              echo "Demo data loaded."
+              exit 0
+            fi
+          fi
+
+          echo "Schema not ready yet ($$i/30)..."
+          sleep 2
+        done
+
+        echo "Schema was not ready after 60 seconds."
+        exit 1
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: merimna-web
     depends_on:
-      - app
+      app:
+        condition: service_started
+      demo-data:
+        condition: service_completed_successfully
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
     ports:
