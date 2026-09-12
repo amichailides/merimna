@@ -17,6 +17,7 @@ import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { BeneficiariesPage } from './pages/BeneficiariesPage'
 import { BeneficiaryDetailsPage } from './pages/BeneficiaryDetailsPage'
 import { BeneficiaryCreatePage } from './pages/BeneficiaryCreatePage'
+import { HouseUnitsPage } from './pages/HouseUnitsPage'
 
 function App() {
   const { initializeAuth } = useAuth()
@@ -57,6 +58,8 @@ function App() {
                 path="/beneficiaries/:publicId"
                 element={<BeneficiaryDetailsPage />}
               />
+              <Route path="/house-units" element={<HouseUnitsPage />} />
+
             </Route>
           </Route>
         </Routes>

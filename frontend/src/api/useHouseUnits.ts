@@ -8,21 +8,34 @@ export function useHouseUnits() {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        let cancelled = false
+
         async function loadHouseUnits() {
             setLoading(true)
             setError(null)
 
             try {
                 const data = await getHouseUnits()
+
+                if (cancelled) return
+
                 setHouseUnits(data)
             } catch {
-                setError('Failed to load house units')
+                if (!cancelled) {
+                    setError('Failed to load house units')
+                }
             } finally {
-                setLoading(false)
+                if (!cancelled) {
+                    setLoading(false)
+                }
             }
         }
 
         loadHouseUnits()
+
+        return () => {
+            cancelled = true
+        }
     }, [])
 
     return { houseUnits, loading, error }
