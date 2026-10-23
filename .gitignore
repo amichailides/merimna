@@ -34,3 +34,7 @@ build/
 
 ### Local environment variables ###
 .env
+
+### AI design artifacts ###
+.taste-skill/
+.impeccable/
