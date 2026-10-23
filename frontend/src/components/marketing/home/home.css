@@ -347,17 +347,17 @@
 /* ---------- Hero ---------- */
 
 .mh-hero {
-    padding-bottom: calc(var(--section) * 0.6 + var(--sheet));
+    padding-bottom: 0;
 }
 
 .mh-hero-head {
-    align-items: end;
-    row-gap: 36px;
+    align-items: start;
+    row-gap: 0;
     padding-top: clamp(40px, 5vw, 88px);
 }
 
 .mh-hero-title {
-    grid-column: 1 / 8;
+    grid-column: 1 / 13;
 }
 
 /* The mask must clear Literata's descenders (about 0.23em below the baseline). */
@@ -372,51 +372,55 @@
     display: inline-block;
 }
 
-/* The statement shares the headline's last baseline. Literata's baseline sits 0.053em above
-   the line box at 0.98 leading; Inter's sits 0.385em above it at 1.5. */
-.mh-hero-statement {
-    grid-column: 8 / 13;
-    margin-bottom: calc(var(--step-display) * 0.053 - 0.385em);
-    font-size: clamp(1.125rem, 0.55rem + 0.75vw, 1.25rem);
-    line-height: 1.5;
-}
-
-.mh-hero-actions {
+/* A quiet gloss on the headline: it starts where "clear" starts (the width of "one " in the
+   display face, 1.79em) and sits close beneath it, while the actions keep their distance. */
+.mh-hero-gloss {
     grid-column: 1 / 13;
+    max-width: 44rem;
+    margin-top: max(20px, calc(var(--step-display) * 0.27));
+    margin-left: calc(var(--step-display) * 1.79);
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: -0.003em;
+    text-wrap: balance;
 }
 
-.mh-hero-frame {
-    --settle: 1;
-    margin-top: clamp(48px, 5vw, 80px);
-    transform-origin: 50% 0;
-    transform: translateY(calc((1 - var(--settle)) * 40px)) scale(calc(0.97 + var(--settle) * 0.03));
-}
-
+/* The product, wider than the text, comes up to meet it. The Problem sheet slides over its lower edge. */
 .mh-hero-stage {
-    height: clamp(560px, 72vh, 740px);
-    padding: clamp(28px, 3vw, 48px) clamp(28px, 3vw, 48px) 0;
-    overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--stage);
+    max-width: 1560px;
+    margin: clamp(28px, 3vw, 44px) auto 0;
+    padding-inline: max(16px, calc(var(--margin) * 0.45));
 }
 
+.mh-hero-window {
+    position: relative;
+    height: clamp(560px, 70vh, 760px);
+    margin: 0;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+}
+
+/* The app window's own frame. */
 .mh-ws-hero {
     width: 100%;
-    height: 860px;
-    overflow: hidden;
-    border-radius: 14px 14px 0 0;
+    height: 900px;
+    border: 1px solid rgba(19, 32, 30, 0.1);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
 }
 
-.mh-hero-caption {
-    max-width: 40rem;
-    margin-top: 20px;
-    color: var(--muted);
-    font-size: var(--step-small);
+.mh-hero-panel {
+    position: absolute;
+    z-index: 2;
+    top: 132px;
+    right: clamp(24px, 4vw, 64px);
+    transition: opacity 320ms ease, transform 420ms var(--ease-out);
 }
 
-.mh-hero-caption > span {
-    color: var(--ink);
-    font-weight: 500;
+.mh-hero-panel.is-closed {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
 }
 
 /* ---------- Problem (stone) ---------- */
@@ -1126,7 +1130,6 @@
 
 @media (max-width: 1100px) {
     .mh-hero-title,
-    .mh-hero-statement,
     .mh-chapter-head .mh-title,
     .mh-chapter-head .mh-statement,
     .mh-onboard-steps,
@@ -1146,14 +1149,17 @@
         grid-column: 1 / 13;
     }
 
-    .mh-hero-statement {
-        max-width: 40rem;
-        margin-bottom: 0;
-    }
-
     .mh-chapter-head .mh-statement,
     .mh-onboard-head .mh-onboard-intro {
         margin-bottom: 0;
+    }
+
+    .mh-hero-panel {
+        display: none;
+    }
+
+    .mh-ws-hero {
+        min-width: 720px;
     }
 
     .mh-index-head,
@@ -1190,11 +1196,32 @@
     .mh-footer-col:nth-of-type(3) { grid-column: 9 / 13; }
 }
 
+/* Narrow tablets and phones: the hero window drops the app sidebar and puts recent activity
+   above the house table, so the live change stays in view. */
+@media (max-width: 900px) {
+    .mh-hero-window .mh-ws-side {
+        display: none;
+    }
+
+    .mh-hero-window .mh-dash-split {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+    }
+
+    .mh-hero-window .mh-dash-activity {
+        order: -1;
+    }
+}
+
 /* ---------- Phone ---------- */
 
 @media (max-width: 760px) {
     .mh {
         --section: 80px;
+    }
+
+    .mh-hero-gloss {
+        margin-left: 0;
     }
 
     .mh-nav-links,
@@ -1209,14 +1236,14 @@
         gap: 16px;
     }
 
-    .mh-hero-stage {
-        height: 440px;
-        padding: 16px 0 0 16px;
+    .mh-hero-window {
+        height: 560px;
     }
 
-    .mh-ws-hero {
-        width: 720px;
-        border-top-right-radius: 0;
+    /* The demo lives in the nav: keep it a comfortable tap target. */
+    .mh-nav .mh-button-small {
+        min-height: 44px;
+        padding: 0 18px;
     }
 
     .mh-tour-static .mh-tour-stage,
@@ -1390,13 +1417,13 @@
     .mh-onboard-step:active {
         transform: scale(0.98);
     }
+
+    .mh-hero-panel {
+        animation: mh-panel-in 700ms var(--ease-expo) 650ms both;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .mh-hero-frame {
-        transform: none;
-    }
-
     .mh-onboarding-track,
     .mh-onboard-step-bar > span {
         transition: none;

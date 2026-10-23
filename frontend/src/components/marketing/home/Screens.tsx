@@ -133,7 +133,7 @@ export function DashboardScreen({
                 ))}
             </div>
 
-            <div className="mt-8 grid grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-10">
+            <div className="mh-dash-split mt-8 grid grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-10">
                 <section>
                     <p className="text-lg font-semibold text-slate-950">House units</p>
                     <p className="mt-1 text-sm text-slate-500">Current occupancy and staffing across the organization.</p>
@@ -169,7 +169,7 @@ export function DashboardScreen({
                     </div>
                 </section>
 
-                <section>
+                <section className="mh-dash-activity">
                     <p className="text-base font-semibold text-slate-900">Recent activity</p>
                     <p className="mt-1 mb-5 text-sm text-slate-500">Latest operational changes across the organization.</p>
                     <ActivityList items={activity} highlightFirst={highlightFirst} />
