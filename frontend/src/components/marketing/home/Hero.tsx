@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { MerimnaLogo } from '@/components/brand/MerimnaLogo'
 
 import { links } from './links'
-import { DashboardScreen, MedicationPanel, type PanelField } from './Screens'
-import { ADMIN_EMAIL, DOSE_CHANGE, EFTYCHIA, recentActivity } from './showcase'
+import { DashboardScreen } from './Screens'
+import { ADMIN_EMAIL, recentActivity } from './showcase'
 import { delay, useMotionAllowed } from './useReveal'
 import { Workspace } from './Workspace'
 
@@ -42,35 +42,8 @@ export function SiteNav() {
     )
 }
 
-// The hero plays one short, real moment: a dose change is saved and arrives in recent activity.
-const UPDATED_ACTIVITY = { title: 'Medication Updated', subtitle: `Medication · ${EFTYCHIA.name}`, time: '21 Sep 2026, 10:14' }
-const metformin = EFTYCHIA.medications.find((m) => m.name === DOSE_CHANGE.medication)!
-const editFields: PanelField[] = [
-    { label: 'Name', value: metformin.name },
-    { label: 'Dosage', value: DOSE_CHANGE.to },
-    { label: 'Frequency', value: metformin.frequency },
-    { label: 'Administration times', value: metformin.times },
-    { label: 'Instructions', value: metformin.instructions, wide: true, tall: true },
-]
-
-// 0 panel open, 1 save pressed, 2 panel closing, 3 change arrived in recent activity.
-function useLiveStep() {
-    const motion = useMotionAllowed()
-    const [step, setStep] = useState(0)
-
-    useEffect(() => {
-        if (!motion) return
-        const timers = [1700, 2300, 2700].map((t, i) => window.setTimeout(() => setStep(i + 1), t))
-        return () => timers.forEach(clearTimeout)
-    }, [motion])
-
-    // With reduced motion the visitor sees the finished moment straight away.
-    return { step: motion ? step : 3, motion }
-}
-
 export function Hero() {
-    const { step, motion } = useLiveStep()
-    const activity = step >= 3 ? [UPDATED_ACTIVITY, ...recentActivity.slice(0, 2)] : recentActivity
+    const motion = useMotionAllowed()
 
     return (
         <section className="mh-hero" aria-labelledby="mh-hero-title">
@@ -90,20 +63,8 @@ export function Hero() {
             <div className="mh-hero-stage">
                 <figure className="mh-hero-window mh-load" style={delay(420)}>
                     <Workspace role="admin" active="Dashboard" email={ADMIN_EMAIL} className="mh-ws-hero">
-                        <DashboardScreen activity={activity} countUp={motion} highlightFirst={step >= 3} />
+                        <DashboardScreen activity={recentActivity} countUp={motion} />
                     </Workspace>
-                    {step < 3 && (
-                        <div className={`mh-hero-panel ${step === 2 ? 'is-closed' : ''}`} aria-hidden="true">
-                            <MedicationPanel
-                                title="Edit medication"
-                                subtitle={EFTYCHIA.name}
-                                fields={editFields}
-                                action="Save changes"
-                                pressed={step === 1}
-                                activeField={step === 1 ? -1 : 1}
-                            />
-                        </div>
-                    )}
                 </figure>
             </div>
         </section>

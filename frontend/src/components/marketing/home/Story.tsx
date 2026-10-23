@@ -45,7 +45,7 @@ export function Story() {
                             </span>
                             <span>
                                 <span className="mh-signature-name">Anastasios Michailidis</span>
-                                <span className="mh-signature-role">Founder</span>
+                                <span className="mh-signature-role">Creator of Merimna</span>
                             </span>
                         </div>
                     </div>

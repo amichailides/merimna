@@ -410,19 +410,6 @@
     border-radius: 16px 16px 0 0;
 }
 
-.mh-hero-panel {
-    position: absolute;
-    z-index: 2;
-    top: 132px;
-    right: clamp(24px, 4vw, 64px);
-    transition: opacity 320ms ease, transform 420ms var(--ease-out);
-}
-
-.mh-hero-panel.is-closed {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-}
-
 /* ---------- Problem (stone) ---------- */
 
 .mh-problem {
@@ -1154,10 +1141,6 @@
         margin-bottom: 0;
     }
 
-    .mh-hero-panel {
-        display: none;
-    }
-
     .mh-ws-hero {
         min-width: 720px;
     }
@@ -1197,7 +1180,7 @@
 }
 
 /* Narrow tablets and phones: the hero window drops the app sidebar and puts recent activity
-   above the house table, so the live change stays in view. */
+   above the house table, so the dashboard stays legible where the window is cropped. */
 @media (max-width: 900px) {
     .mh-hero-window .mh-ws-side {
         display: none;
@@ -1416,10 +1399,6 @@
 
     .mh-onboard-step:active {
         transform: scale(0.98);
-    }
-
-    .mh-hero-panel {
-        animation: mh-panel-in 700ms var(--ease-expo) 650ms both;
     }
 }
 
